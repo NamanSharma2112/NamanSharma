@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# namansharma.com — Personal Portfolio
+
+A personal portfolio site built with **Next.js**, **Tailwind CSS**, and **Framer Motion** — featuring interactive UI components, technical blog posts, and a showcase of design engineering work.
+
+---
+
+## What's Inside
+
+**Portfolio** — Selected projects with live demos and case studies, covering frontend-heavy work, full-stack apps, and hardware prototypes.
+
+**Blog** — Technical writing on design engineering, component architecture, animation, and frontend craft.
+
+**Components** — A living library of reusable UI components built from scratch, each with source code and interactive previews.
+
+---
+
+## Tech Stack
+
+| Layer | Tool |
+|---|---|
+| Framework | Next.js (App Router) |
+| Styling | Tailwind CSS |
+| Animations | Framer Motion |
+| Content | MDX (blog + component docs) |
+| Deployment | Vercel |
+
+---
+
+## Project Structure
+
+```
+├── app/
+│   ├── page.tsx              # Home / hero
+│   ├── blog/
+│   │   ├── page.tsx          # Blog index
+│   │   └── [slug]/page.tsx   # Individual post
+│   ├── components/
+│   │   ├── page.tsx          # Component gallery
+│   │   └── [slug]/page.tsx   # Component detail + preview
+│   └── projects/
+│       └── page.tsx          # Project showcase
+├── content/
+│   ├── blog/                 # MDX blog posts
+│   └── components/           # MDX component docs
+├── components/
+│   ├── ui/                   # Reusable UI primitives
+│   └── sections/             # Page-level sections
+└── public/
+    └── assets/
+```
+
+---
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Clone the repo
+git clone https://github.com/NamanSharma2112/portfolio.git
+cd portfolio
+
+# Install dependencies
+npm install
+
+# Start dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see it locally.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Writing a Blog Post
 
-## Learn More
+Create a new `.mdx` file inside `content/blog/`:
 
-To learn more about Next.js, take a look at the following resources:
+```mdx
+---
+title: "Your Post Title"
+date: "2025-01-15"
+summary: "A one-line summary shown on the blog index."
+tags: ["animation", "react", "css"]
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Your content here...
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The post will be automatically picked up and rendered at `/blog/your-post-title`.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Adding a Component
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Create a new `.mdx` file inside `content/components/`:
+
+```mdx
+---
+title: "Animated Counter"
+description: "A smooth count-up animation tied to scroll visibility."
+tags: ["animation", "framer-motion"]
+---
+
+## Usage
+
+<ComponentPreview name="AnimatedCounter" />
+
+## Code
+
+<ComponentSource name="AnimatedCounter" />
+```
+
+Then add the actual component file to `components/ui/AnimatedCounter.tsx`.
+
+---
+
+## Deployment
+
+The site is deployed on **Vercel** with automatic deploys on push to `main`.
+
+```bash
+# Production build check (run locally before pushing)
+npm run build
+```
+
+---
+
+## Featured Projects
+
+| Project | Description | Stack |
+|---|---|---|
+| **CrudeIQ** | Crude oil intelligence dashboard with LSTM predictions | Next.js, FastAPI, PostgreSQL |
+| **TruePass** | Smart student ID & tracking system (patented) | IoT, Hardware |
+| **Cognitive Trainer** | Brain-training app for elderly patients with MCI | Node.js, Express, PostgreSQL |
+
+---
+
+## Connect
+
+- **GitHub** — [NamanSharma2112](https://github.com/NamanSharma2112)
+- **X (Twitter)** — [@NamanSharma](https://x.com)
+- **Peerlist** — [naman](https://peerlist.io)
+
+---
+
+*Designed and built by Naman Sharma.*

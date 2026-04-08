@@ -1,0 +1,63 @@
+:root {
+  font-size: 16px; /* => 1rem */
+}
+
+.PressToConfirm {
+  --bg-color: #dd3b38;
+  --fill-color: #ffffff33;
+  --bg-color-hover: #d42e2c;
+  --border-color: #c33532;
+  --shadow-color: #580c0ca6;
+  --text-color: white;
+
+  box-sizing: border-box;
+  white-space: nowrap;
+  font-weight: 500;
+  font-family: inherit;
+  font-size: 0.875rem;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.1s ease-in-out;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.4rem;
+  color: var(--text-color);
+  line-height: 1.25rem;
+  padding: 0.35rem 1rem;
+  box-shadow: 0 1px 2px 0 var(--shadow-color);
+  position: relative;
+  overflow: hidden;
+  min-width: 200px;
+
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.PressToConfirm:hover:not(.active) {
+  background-color: var(--bg-color-hover);
+}
+
+.PressToConfirm:focus {
+  outline-offset: 6px;
+}
+
+.PressToConfirm:focus-visible {
+  box-shadow: none;
+}
+
+.PressToConfirm .filler {
+  background-color: var(--fill-color);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 100%;
+  pointer-events: none;
+}
+
+.text {
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}

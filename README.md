@@ -1,4 +1,4 @@
-# namansharma.com — Personal Portfolio
+# namansharma.com 
 
 A personal portfolio site built with **Next.js**, **Tailwind CSS**, and **Framer Motion** — featuring interactive UI components, technical blog posts, and a showcase of design engineering work.
 

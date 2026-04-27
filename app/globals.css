@@ -123,8 +123,25 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-weight: 460;
   }
   html {
     @apply font-sans;
   }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }

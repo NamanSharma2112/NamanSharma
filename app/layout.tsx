@@ -16,8 +16,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Naman Sharma — Portfolio",
+  title: {
+    template: "%s | Naman Sharma",
+    default: "Naman Sharma — Portfolio",
+  },
   description: "Developer, builder, and generalist. Building modern web experiences, ML pipelines, and IoT prototypes.",
+  openGraph: {
+    title: "Naman Sharma — Portfolio",
+    description: "Developer, builder, and generalist. Building modern web experiences, ML pipelines, and IoT prototypes.",
+    url: "https://namansharma.com",
+    siteName: "Naman Sharma",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Naman Sharma — Portfolio",
+    description: "Developer, builder, and generalist. Building modern web experiences, ML pipelines, and IoT prototypes.",
+  },
 };
 
 export default function RootLayout({

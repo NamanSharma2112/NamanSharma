@@ -28,7 +28,7 @@ function LetsTalkButton() {
     <div style={{ perspective: "600px" }}>
       <motion.a
         ref={ref}
-        href="mailto:naman@example.com"
+        href="mailto:namansharmans03@gmail.com"
         className="relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px] font-semibold text-white no-underline select-none"
         style={{
           background: "linear-gradient(135deg, #3b82f6, #2563eb)",

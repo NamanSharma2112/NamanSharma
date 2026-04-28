@@ -37,10 +37,10 @@ const PROJECTS: ProjectCard[] = [
 
 const FOOTER_LINKS = [
   { label: "Components", href: "/components" },
-  { label: "GitHub", href: "https://github.com" },
-  { label: "LinkedIn", href: "https://linkedin.com" },
-  { label: "X (Twitter)", href: "https://x.com" },
-  { label: "Email", href: "mailto:naman@example.com" },
+  { label: "GitHub", href: "https://github.com/NamanSharma2112" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/namansharma--ns/" },
+  { label: "X (Twitter)", href: "https://x.com/NamanSharma2112" },
+  { label: "Email", href: "mailto:namansharmans03@gmail.com" },
 ];
 
 // ──────────────────────────────────────────────
@@ -58,7 +58,7 @@ export default function Home() {
     <>
       I&apos;m Naman, a Design Engineer. I design and build whatever I can
       imagine or get inspiration from social media like{" "}
-      <a href="https://x.com" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <a href="https://x.com/NamanSharma2112" target="_blank" rel="noopener noreferrer" className={linkClass}>
         X
       </a>
       .
@@ -97,15 +97,15 @@ export default function Home() {
     </>,
     <>
       You can find me on{" "}
-      <a href="https://x.com" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <a href="https://x.com/NamanSharma2112" target="_blank" rel="noopener noreferrer" className={linkClass}>
         X
       </a>
       ,{" "}
-      <a href="https://github.com" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <a href="https://github.com/NamanSharma2112" target="_blank" rel="noopener noreferrer" className={linkClass}>
         GitHub
       </a>
       , or reach me via{" "}
-      <a href="mailto:naman@example.com" className={linkClass}>
+      <a href="mailto:namansharmans03@gmail.com" className={linkClass}>
         email
       </a>
       .
@@ -143,7 +143,7 @@ export default function Home() {
           <PortfolioBio paragraphs={bio} />
           <SectionTable title="Writing" entries={WRITING} />
           <ProjectGrid title="Projects" projects={PROJECTS} />
-          <ComponentGrid title="Components" components={COMPONENTS} />
+          <ComponentGrid title="Components" components={COMPONENTS} href="/components" />
           <WorkWithMe />
           <PortfolioFooter links={FOOTER_LINKS} />
         </main>

@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 export interface ComponentShowcase {
   name: string;
@@ -128,7 +129,7 @@ function ComponentCard({
   onClick,
 }: {
   component: ComponentShowcase;
-  onClick: () => void;
+  onClick?: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
@@ -191,9 +192,11 @@ function ComponentCard({
 export default function ComponentGrid({
   title,
   components,
+  href,
 }: {
   title: string;
   components: ComponentShowcase[];
+  href?: string;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const selectedComponent = components.find((c) => c.slug === selected);
@@ -204,20 +207,29 @@ export default function ComponentGrid({
         {title}
       </h2>
 
-      {selectedComponent ? (
+      {selectedComponent && !href ? (
         <ComponentCardExpanded
           component={selectedComponent}
           onClose={() => setSelected(null)}
         />
       ) : (
         <div className="grid grid-cols-2 gap-5">
-          {components.map((component) => (
-            <ComponentCard
-              key={component.slug}
-              component={component}
-              onClick={() => setSelected(component.slug)}
-            />
-          ))}
+          {components.map((component) => {
+            const card = (
+              <ComponentCard
+                key={component.slug}
+                component={component}
+                onClick={href ? undefined : () => setSelected(component.slug)}
+              />
+            );
+            return href ? (
+              <Link key={component.slug} href={href} className="no-underline block">
+                {card}
+              </Link>
+            ) : (
+              card
+            );
+          })}
         </div>
       )}
     </section>

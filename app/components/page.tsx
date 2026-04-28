@@ -11,10 +11,10 @@ import { COMPONENTS } from "@/components/componentsData";
 
 const FOOTER_LINKS = [
   { label: "Components", href: "/components" },
-  { label: "GitHub", href: "https://github.com" },
-  { label: "LinkedIn", href: "https://linkedin.com" },
-  { label: "X (Twitter)", href: "https://x.com" },
-  { label: "Email", href: "mailto:naman@example.com" },
+  { label: "GitHub", href: "https://github.com/NamanSharma2112" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/namansharma--ns/" },
+  { label: "X (Twitter)", href: "https://x.com/NamanSharma2112" },
+  { label: "Email", href: "mailto:namansharmans03@gmail.com" },
 ];
 
 // ──────────────────────────────────────────────

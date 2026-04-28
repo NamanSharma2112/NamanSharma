@@ -65,7 +65,15 @@ function TiltLink({ label, href }: FooterLink) {
 
 export default function PortfolioFooter({ links }: { links: FooterLink[] }) {
   return (
-    <footer className="mt-16 pt-6 border-t border-zinc-200 animate-[fadeIn_0.8s_ease_0.5s_backwards]">
+    <footer className="relative mt-16 pt-6 border-t border-zinc-200 animate-[fadeIn_0.8s_ease_0.5s_backwards]">
+      {/* White gradient mask fading out above footer */}
+      <div
+        className="pointer-events-none absolute left-0 right-0 -top-20 h-20"
+        style={{
+          background:
+            "linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,1) 100%)",
+        }}
+      />
       <div className="flex gap-3 flex-wrap" style={{ perspective: "800px" }}>
         {links.map((link) => (
           <TiltLink key={link.label} {...link} />
@@ -75,6 +83,16 @@ export default function PortfolioFooter({ links }: { links: FooterLink[] }) {
         &ldquo;Wabi-sabi nurtures all that is authentic by acknowledging three simple realities: nothing lasts, nothing is finished, and nothing is perfect.&rdquo;
         <br />
         <span className="not-italic">— Richard R. Powell</span>
+      </p>
+      <p className="mt-4 text-[11px] text-zinc-400">
+        Inspiration of design from{" "}
+        <a href="https://benji.org/" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-zinc-800 underline decoration-zinc-300 underline-offset-2 transition-colors">
+          benji
+        </a>{" "}
+        and{" "}
+        <a href="https://www.manuarora.in/" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-zinc-800 underline decoration-zinc-300 underline-offset-2 transition-colors">
+          manu arora
+        </a>
       </p>
     </footer>
   );

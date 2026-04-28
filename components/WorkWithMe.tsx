@@ -64,7 +64,7 @@ const ITEMS: WorkItem[] = [
   },
   {
     icon: <HireIcon />,
-    title: "Hire me and my team",
+    title: "Hire me",
     description: "Let's build a world class website for your business.",
   },
 ];

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export interface TableEntry {
   year: number;
   title: string;
@@ -24,6 +26,7 @@ export default function SectionTable({
         {entries.map((entry, i) => {
           const showYear = entry.year !== lastYear;
           lastYear = entry.year;
+          const isExternal = entry.href?.startsWith("http");
           return (
             <div
               className="grid grid-cols-[56px_1fr_auto] items-baseline gap-x-6 py-2.5 text-[15px] transition-opacity duration-200 group-hover/table:opacity-40 hover:!opacity-100"
@@ -34,14 +37,23 @@ export default function SectionTable({
               </span>
               <span className="flex items-center gap-2">
                 {entry.href ? (
-                  <a
-                    className="text-zinc-800 no-underline transition-colors duration-200 hover:text-black"
-                    href={entry.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {entry.title}
-                  </a>
+                  isExternal ? (
+                    <a
+                      className="text-zinc-800 no-underline transition-colors duration-200 hover:text-black"
+                      href={entry.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {entry.title}
+                    </a>
+                  ) : (
+                    <Link
+                      className="text-zinc-800 no-underline transition-colors duration-200 hover:text-black"
+                      href={entry.href}
+                    >
+                      {entry.title}
+                    </Link>
+                  )
                 ) : (
                   <span className="text-zinc-800">{entry.title}</span>
                 )}
@@ -61,3 +73,4 @@ export default function SectionTable({
     </section>
   );
 }
+

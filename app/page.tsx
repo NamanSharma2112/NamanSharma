@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Link from "next/link";
 import BlurScramble from "@/components/BlurScramble";
 import Banner from "@/components/Banner";
 import PortfolioHeader from "@/components/PortfolioHeader";
@@ -13,16 +14,18 @@ import ProjectGrid from "@/components/ProjectGrid";
 import type { ProjectCard } from "@/components/ProjectGrid";
 import PortfolioFooter from "@/components/PortfolioFooter";
 import WorkWithMe from "@/components/WorkWithMe";
+import ComponentGrid from "@/components/ComponentGrid";
+import { COMPONENTS } from "@/components/componentsData";
 
 // ──────────────────────────────────────────────
 // DATA — Edit these to personalise your portfolio
 // ──────────────────────────────────────────────
 
 const WRITING: TableEntry[] = [
-  { year: 2026, title: "Building with Agentic AI", date: "27/04", badge: "New" },
-  { year: 2026, title: "IoT Prototyping Notes", date: "16/04" },
-  { year: 2026, title: "ML Pipelines in Production", date: "13/04" },
-  { year: 2025, title: "Design Systems at Scale", date: "15/09" },
+  { year: 2026, title: "Building with Agentic AI", date: "27/04", badge: "New", href: "/blog/building-with-agentic-ai" },
+  { year: 2026, title: "IoT Prototyping Notes", date: "16/04", href: "/blog/iot-prototyping-notes" },
+  { year: 2026, title: "ML Pipelines in Production", date: "13/04", href: "/blog/ml-pipelines-in-production" },
+  { year: 2025, title: "Design Systems at Scale", date: "15/09", href: "/blog/design-systems-at-scale" },
 ];
 
 const PROJECTS: ProjectCard[] = [
@@ -33,6 +36,7 @@ const PROJECTS: ProjectCard[] = [
 ];
 
 const FOOTER_LINKS = [
+  { label: "Components", href: "/components" },
   { label: "GitHub", href: "https://github.com" },
   { label: "LinkedIn", href: "https://linkedin.com" },
   { label: "X (Twitter)", href: "https://x.com" },
@@ -139,6 +143,7 @@ export default function Home() {
           <PortfolioBio paragraphs={bio} />
           <SectionTable title="Writing" entries={WRITING} />
           <ProjectGrid title="Projects" projects={PROJECTS} />
+          <ComponentGrid title="Components" components={COMPONENTS} />
           <WorkWithMe />
           <PortfolioFooter links={FOOTER_LINKS} />
         </main>

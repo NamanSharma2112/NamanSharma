@@ -99,7 +99,7 @@ export default function PortfolioHeader({ name }: { name: string }) {
         <LetsTalkButton />
       </div>
       <p className="text-[13px] text-zinc-400 font-normal tabular-nums">
-        {formatted ? `Updated ${formatted}` : "\u00A0"}
+        {formatted ? formatted : "\u00A0"}
       </p>
     </header>
   );

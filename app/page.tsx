@@ -4,10 +4,10 @@ import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import BlurScramble from "@/components/BlurScramble";
-import Banner from "@/components/Banner";
 import PortfolioHeader from "@/components/PortfolioHeader";
 import PortfolioBio from "@/components/PortfolioBio";
 import { linkClass } from "@/components/PortfolioBio";
+import LinkPreview from "@/components/LinkPreview";
 import SectionTable from "@/components/SectionTable";
 import type { TableEntry } from "@/components/SectionTable";
 import ProjectGrid from "@/components/ProjectGrid";
@@ -58,37 +58,37 @@ export default function Home() {
     <>
       I&apos;m Naman, a Design Engineer. I design and build whatever I can
       imagine or get inspiration from social media like{" "}
-      <a href="https://x.com/NamanSharma2112" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <LinkPreview url="https://x.com/NamanSharma2112" className={linkClass}>
         X
-      </a>
+      </LinkPreview>
       .
     </>,
     <>
       If an idea pops into my head, I&apos;ll build it and ship it. My current
       main tech stack is{" "}
-      <a href="https://react.dev" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <LinkPreview url="https://react.dev" className={linkClass}>
         React
-      </a>
+      </LinkPreview>
       ,{" "}
-      <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <LinkPreview url="https://nextjs.org" className={linkClass}>
         Next.js
-      </a>
+      </LinkPreview>
       , TypeScript,{" "}
-      <a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <LinkPreview url="https://tailwindcss.com" className={linkClass}>
         Tailwind CSS
-      </a>
+      </LinkPreview>
       , and{" "}
-      <a href="https://motion.dev" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <LinkPreview url="https://motion.dev" className={linkClass}>
         Motion.dev
-      </a>
+      </LinkPreview>
       .
     </>,
     <>
       I usually make any design idea in my mind and try to replicate its
       structure on{" "}
-      <a href="https://excalidraw.com" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <LinkPreview url="https://excalidraw.com" className={linkClass}>
         ExcaliDraw
-      </a>{" "}
+      </LinkPreview>{" "}
       before I code it.
     </>,
     <>
@@ -97,13 +97,13 @@ export default function Home() {
     </>,
     <>
       You can find me on{" "}
-      <a href="https://x.com/NamanSharma2112" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <LinkPreview url="https://x.com/NamanSharma2112" className={linkClass}>
         X
-      </a>
+      </LinkPreview>
       ,{" "}
-      <a href="https://github.com/NamanSharma2112" target="_blank" rel="noopener noreferrer" className={linkClass}>
+      <LinkPreview url="https://github.com/NamanSharma2112" className={linkClass}>
         GitHub
-      </a>
+      </LinkPreview>
       , or reach me via{" "}
       <a href="mailto:namansharmans03@gmail.com" className={linkClass}>
         email
@@ -134,11 +134,8 @@ export default function Home() {
         animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        {/* Banner */}
-        <Banner />
-
         {/* Main content */}
-        <main className="relative max-w-[620px] mx-auto px-6 pt-5 pb-30 text-zinc-800 leading-[1.7] antialiased border-l border-r border-dashed border-zinc-200">
+        <main className="relative max-w-[620px] mx-auto px-6 pt-20 pb-0 text-zinc-800 dark:text-zinc-200 leading-[1.7] antialiased border-l border-r border-dashed border-zinc-200 dark:border-zinc-800">
           <PortfolioHeader name="Naman Sharma" />
           <PortfolioBio paragraphs={bio} />
           <SectionTable title="Writing" entries={WRITING} />

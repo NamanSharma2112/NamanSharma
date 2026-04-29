@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import BunnyIcon from "@/components/BunnyIcon";
+import ThemeToggle from "@/components/ThemeToggle";
 
 function LetsTalkButton() {
   const ref = useRef<HTMLAnchorElement>(null);
@@ -91,12 +92,15 @@ export default function PortfolioHeader({ name }: { name: string }) {
     <header className="mb-6 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.05s_backwards]">
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2.5">
-          <h1 className="text-base font-medium tracking-tight text-zinc-900">
+          <h1 className="text-base font-medium tracking-tight text-zinc-900 dark:text-zinc-100">
             {name}
           </h1>
-          <BunnyIcon size={28} color="#444" />
+          <BunnyIcon size={34} className="text-[#444] dark:text-zinc-400" />
         </div>
-        <LetsTalkButton />
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <LetsTalkButton />
+        </div>
       </div>
       <p className="text-[13px] text-zinc-400 font-normal tabular-nums">
         {formatted ? formatted : "\u00A0"}

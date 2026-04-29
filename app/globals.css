@@ -81,6 +81,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --bg-fade-start: rgba(255, 255, 255, 0);
+  --bg-fade-mid: rgba(255, 255, 255, 0.6);
+  --bg-fade-full: rgba(255, 255, 255, 1);
 }
 
 .dark {
@@ -115,6 +118,28 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --bg-fade-start: rgba(24, 24, 27, 0);
+  --bg-fade-mid: rgba(24, 24, 27, 0.6);
+  --bg-fade-full: rgba(24, 24, 27, 1);
+}
+
+.reading {
+  --background: oklch(0.98 0.01 90); /* Warm off-white */
+  --foreground: oklch(0.25 0.01 90); /* Soft dark gray */
+  --card: oklch(0.96 0.01 90);
+  --card-foreground: oklch(0.25 0.01 90);
+  --popover: oklch(0.96 0.01 90);
+  --popover-foreground: oklch(0.25 0.01 90);
+  --primary: oklch(0.3 0.01 90);
+  --primary-foreground: oklch(0.98 0.01 90);
+  --muted: oklch(0.95 0.01 90);
+  --muted-foreground: oklch(0.5 0.01 90);
+  --border: oklch(0.9 0.01 90);
+  --sidebar: oklch(0.96 0.01 90);
+  --sidebar-border: oklch(0.9 0.01 90);
+  --bg-fade-start: rgba(250, 249, 245, 0);
+  --bg-fade-mid: rgba(250, 249, 245, 0.6);
+  --bg-fade-full: rgba(250, 249, 245, 1);
 }
 
 @layer base {
@@ -131,6 +156,24 @@
   ::selection {
     background: rgba(59, 130, 246, 0.25);
     color: #1e293b;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
   }
 }
 

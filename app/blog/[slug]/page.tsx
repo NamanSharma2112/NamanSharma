@@ -7,6 +7,7 @@ import Link from "next/link";
 
 import PortfolioFooter from "@/components/PortfolioFooter";
 import ScrollPlant from "@/components/ScrollPlant";
+import ReadingModeToggle from "@/components/ReadingModeToggle";
 
 // ──────────────────────────────────────────────
 // BLOG CONTENT DATA
@@ -47,9 +48,9 @@ export default function BlogPostPage({
       {/* Scroll-driven plant decoration */}
       <ScrollPlant />
       {/* Main content */}
-      <main className="relative max-w-[620px] mx-auto px-6 pt-14 pb-30 text-zinc-800 leading-[1.7] antialiased border-l border-r border-dashed border-zinc-200">
+      <main className="relative max-w-[620px] mx-auto px-6 pt-14 pb-0 text-zinc-800 dark:text-zinc-200 leading-[1.7] antialiased border-l border-r border-dashed border-zinc-200 dark:border-zinc-800">
         {/* Navigation */}
-        <nav className="mb-8 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.05s_backwards]">
+        <nav className="mb-8 flex items-center justify-between animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.05s_backwards]">
           <div className="flex items-center gap-3 text-[13px] text-zinc-400">
             <Link
               href="/"
@@ -67,12 +68,13 @@ export default function BlogPostPage({
             <span className="text-zinc-200">/</span>
             <span className="text-zinc-600 truncate">{post.title}</span>
           </div>
+          <ReadingModeToggle />
         </nav>
 
         {/* Article header */}
         <header className="mb-10 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.1s_backwards]">
           <div className="flex items-center gap-2 mb-3">
-            <span className="inline-flex items-center text-[11px] font-medium px-2.5 py-0.5 rounded-full border border-zinc-200 text-zinc-500 bg-zinc-50 tracking-wide uppercase">
+            <span className="inline-flex items-center text-[11px] font-medium px-2.5 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-900 tracking-wide uppercase">
               {post.tag}
             </span>
             <span className="text-zinc-200">·</span>
@@ -82,7 +84,7 @@ export default function BlogPostPage({
             <span className="text-zinc-200">·</span>
             <span className="text-[12px] text-zinc-400">{post.readTime}</span>
           </div>
-          <h1 className="text-[22px] font-semibold tracking-tight text-zinc-900 leading-snug">
+          <h1 className="text-[22px] font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 leading-snug">
             {post.title}
           </h1>
         </header>
@@ -110,7 +112,7 @@ export default function BlogPostPage({
           {post.content.map((paragraph, i) => (
             <p
               key={i}
-              className="text-[15px] text-zinc-600 mb-5 last:mb-0 leading-[1.8]"
+              className="text-[15px] text-zinc-600 dark:text-zinc-400 mb-5 last:mb-0 leading-[1.8]"
             >
               {paragraph}
             </p>
@@ -119,7 +121,7 @@ export default function BlogPostPage({
 
         {/* Divider + back link */}
         <section className="mb-14 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.25s_backwards]">
-          <div className="pt-6 border-t border-zinc-200">
+          <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800">
             <Link
               href="/blog"
               className="inline-flex items-center gap-1.5 text-[14px] text-zinc-500 hover:text-zinc-800 transition-colors duration-200 no-underline group"

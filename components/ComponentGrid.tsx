@@ -166,11 +166,11 @@ function ComponentCard({
         style={{ transformStyle: "preserve-3d" }}
       >
         {/* Preview area */}
-        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-zinc-200/60 bg-zinc-50/50 flex items-center justify-center transition-shadow duration-300 group-hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
+        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50/50 dark:bg-zinc-800/50 flex items-center justify-center transition-shadow duration-300 group-hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:group-hover:shadow-[0_8px_30px_rgba(255,255,255,0.03)]">
           {component.preview}
 
           {/* Tag badge */}
-          <span className="absolute top-3 right-3 inline-flex items-center text-[10px] font-medium px-2 py-0.5 rounded-full border border-zinc-200 text-zinc-500 bg-white tracking-wide uppercase">
+          <span className="absolute top-3 right-3 inline-flex items-center text-[10px] font-medium px-2 py-0.5 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 tracking-wide uppercase">
             {component.tag}
           </span>
         </div>
@@ -178,11 +178,11 @@ function ComponentCard({
 
       {/* Title row */}
       <div className="flex items-baseline justify-between mt-3 px-0.5">
-        <span className="text-[14px] text-zinc-700 font-medium group-hover:text-black transition-colors duration-200">
+        <span className="text-[14px] text-zinc-700 dark:text-zinc-300 font-medium group-hover:text-black dark:group-hover:text-white transition-colors duration-200">
           {component.name}
         </span>
       </div>
-      <p className="text-[13px] text-zinc-400 mt-0.5 px-0.5 leading-snug line-clamp-2">
+      <p className="text-[13px] text-zinc-400 dark:text-zinc-500 mt-0.5 px-0.5 leading-snug line-clamp-2">
         {component.description}
       </p>
     </motion.div>
@@ -203,7 +203,7 @@ export default function ComponentGrid({
 
   return (
     <section className="mb-14 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.15s_backwards]">
-      <h2 className="mb-5 pb-4 border-b border-zinc-200 text-[13px] font-normal text-zinc-400 tracking-wide">
+      <h2 className="mb-5 pb-4 border-b border-zinc-200 dark:border-zinc-800 text-[13px] font-normal text-zinc-400 dark:text-zinc-500 tracking-wide">
         {title}
       </h2>
 

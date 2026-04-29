@@ -199,21 +199,33 @@ export default function BunnyIcon({
       animate={bodyVariants[emotion]}
     >
       {/* Left ear */}
-      <motion.g transform="rotate(-15,13,10) translate(0,1)"
+      <motion.g
         style={{ transformOrigin: "13px 18px" }}
-        animate={earVariants[emotion]} transition={earVariants[emotion].transition}>
+        animate={{ rotate: emotion === "awake" ? pupil.x * 12 + pupil.y * 8 : 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        <motion.g transform="rotate(-15,13,10) translate(0,1)"
+          style={{ transformOrigin: "13px 18px" }}
+          animate={earVariants[emotion]} transition={earVariants[emotion].transition}>
         <path
           d="M3.738 10.2164L7.224 2.007H9.167L5.676 10.2164H3.738ZM10.791 6.427C10.791 5.903 10.726 5.428 10.596 5C10.47 4.572 10.292 4.166 10.063 3.784C9.833 3.398 9.56 3.018 9.243 2.643C8.926 2.265 8.767 2.076 8.767 2.076L10.24 0.958C10.24 0.958 10.433 1.172 10.819 1.6C11.209 2.024 11.559 2.491 11.869 2.999C12.178 3.507 12.413 4.042 12.574 4.604C12.734 5.166 12.814 5.774 12.814 6.427C12.814 7.107 12.73 7.73 12.562 8.296C12.394 8.858 12.153 9.397 11.84 9.913C11.526 10.425 11.181 10.883 10.802 11.288C10.428 11.697 10.24 11.902 10.24 11.902L8.767 10.784C8.767 10.784 8.924 10.595 9.237 10.216C9.554 9.842 9.83 9.46 10.063 9.07C10.3 8.676 10.479 8.267 10.602 7.843C10.728 7.415 10.791 6.943 10.791 6.427Z"
           fill="currentColor" opacity={0.55} />
+        </motion.g>
       </motion.g>
 
       {/* Right ear */}
-      <motion.g transform="rotate(15,25,10) translate(0,1)"
+      <motion.g
         style={{ transformOrigin: "25px 18px" }}
-        animate={earRVariants[emotion]} transition={earRVariants[emotion].transition}>
+        animate={{ rotate: emotion === "awake" ? pupil.x * 12 - pupil.y * 8 : 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        <motion.g transform="rotate(15,25,10) translate(0,1)"
+          style={{ transformOrigin: "25px 18px" }}
+          animate={earRVariants[emotion]} transition={earRVariants[emotion].transition}>
         <path
           d="M15.003 10.2164L18.489 2.007H20.432L16.941 10.2164H15.003ZM22.056 6.427C22.056 5.903 21.991 5.428 21.861 5C21.735 4.572 21.557 4.166 21.328 3.784C21.098 3.398 20.825 3.018 20.508 2.643C20.191 2.265 20.032 2.076 20.032 2.076L21.505 0.958C21.505 0.958 21.698 1.172 22.084 1.6C22.474 2.024 22.824 2.491 23.133 2.999C23.443 3.507 23.678 4.042 23.839 4.604C23.999 5.166 24.079 5.774 24.079 6.427C24.079 7.107 23.995 7.73 23.827 8.296C23.659 8.858 23.418 9.397 23.105 9.913C22.791 10.425 22.445 10.883 22.067 11.288C21.693 11.697 21.505 11.902 21.505 11.902L20.032 10.784C20.032 10.784 20.189 10.595 20.502 10.216C20.819 9.842 21.094 9.46 21.328 9.07C21.565 8.676 21.744 8.267 21.866 7.843C21.993 7.415 22.056 6.943 22.056 6.427Z"
           fill="currentColor" opacity={0.55} />
+        </motion.g>
       </motion.g>
 
       {/* Body */}

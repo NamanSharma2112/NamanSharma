@@ -23,11 +23,11 @@ function WorkCard({ icon, title, description, href }: WorkItem) {
 
       {/* Text */}
       <div className="flex items-baseline gap-2 flex-wrap">
-        <span className="text-[15px] font-medium text-zinc-800 group-hover:text-black transition-colors duration-200">
+        <span className="text-[15px] font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-black dark:group-hover:text-white transition-colors duration-200">
           {title}
         </span>
-        <span className="text-zinc-300 text-sm">·</span>
-        <span className="text-[14px] text-zinc-500">{description}</span>
+        <span className="text-zinc-300 dark:text-zinc-600 text-sm">·</span>
+        <span className="text-[14px] text-zinc-500 dark:text-zinc-400">{description}</span>
       </div>
     </Tag>
   );
@@ -72,10 +72,10 @@ const ITEMS: WorkItem[] = [
 export default function WorkWithMe() {
   return (
     <section className="mb-14 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_backwards]">
-      <h2 className="mb-5 pb-4 border-b border-zinc-200 text-[13px] font-normal text-zinc-400 tracking-widest uppercase">
+      <h2 className="mb-5 pb-4 border-b border-zinc-200 dark:border-zinc-800 text-[13px] font-normal text-zinc-400 dark:text-zinc-500 tracking-widest uppercase">
         Work with me
       </h2>
-      <div className="divide-y divide-zinc-100">
+      <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
         {ITEMS.map((item) => (
           <WorkCard key={item.title} {...item} />
         ))}

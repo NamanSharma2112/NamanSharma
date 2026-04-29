@@ -55,7 +55,7 @@ function Card({ title, year, description, href, badge, accent = "#18181b" }: Pro
         >
           {/* Card preview area */}
           <div
-            className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-zinc-200/60 flex items-center justify-center transition-shadow duration-300 group-hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+            className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-zinc-200/60 dark:border-zinc-800/60 flex items-center justify-center transition-shadow duration-300 group-hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] dark:group-hover:shadow-[0_8px_30px_rgba(255,255,255,0.03)]"
             style={{ background: accent }}
           >
             {/* Decorative content inside the card */}
@@ -70,7 +70,7 @@ function Card({ title, year, description, href, badge, accent = "#18181b" }: Pro
 
             {/* Badge */}
             {badge && (
-              <span className="absolute top-3 right-3 inline-flex items-center text-[10px] font-medium px-2 py-0.5 rounded-full border border-pink-200 text-pink-500 bg-pink-50 tracking-wide">
+              <span className="absolute top-3 right-3 inline-flex items-center text-[10px] font-medium px-2 py-0.5 rounded-full border border-pink-200 dark:border-pink-500/30 text-pink-500 dark:text-pink-400 bg-pink-50 dark:bg-pink-500/10 tracking-wide">
                 {badge}
               </span>
             )}
@@ -79,13 +79,13 @@ function Card({ title, year, description, href, badge, accent = "#18181b" }: Pro
 
         {/* Title row below the card */}
         <div className="flex items-baseline justify-between mt-3 px-0.5">
-          <span className="text-[14px] text-zinc-700 font-medium group-hover:text-black transition-colors duration-200">
+          <span className="text-[14px] text-zinc-700 dark:text-zinc-300 font-medium group-hover:text-black dark:group-hover:text-white transition-colors duration-200">
             {title}
           </span>
-          <span className="text-[13px] text-zinc-400 tabular-nums">{year}</span>
+          <span className="text-[13px] text-zinc-400 dark:text-zinc-500 tabular-nums">{year}</span>
         </div>
         {description && (
-          <p className="text-[13px] text-zinc-400 mt-0.5 px-0.5 leading-snug">{description}</p>
+          <p className="text-[13px] text-zinc-400 dark:text-zinc-500 mt-0.5 px-0.5 leading-snug">{description}</p>
         )}
       </Wrapper>
     </motion.div>
@@ -101,7 +101,7 @@ export default function ProjectGrid({
 }) {
   return (
     <section className="mb-14 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_backwards]">
-      <h2 className="mb-5 pb-4 border-b border-zinc-200 text-[13px] font-normal text-zinc-400 tracking-wide">
+      <h2 className="mb-5 pb-4 border-b border-zinc-200 dark:border-zinc-800 text-[13px] font-normal text-zinc-400 dark:text-zinc-500 tracking-wide">
         {title}
       </h2>
       <div className="grid grid-cols-2 gap-5">

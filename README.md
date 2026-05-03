@@ -4,7 +4,10 @@ A personal portfolio site built with **Next.js**, **Tailwind CSS**, and **Framer
 
 
 
-Uploading Video Project 12.mp4…
+
+https://github.com/user-attachments/assets/6c13e2b2-17a4-4eda-9ef2-abbac7cfa78a
+
+
 
 
 

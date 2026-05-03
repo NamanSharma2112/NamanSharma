@@ -2,6 +2,15 @@
 
 A personal portfolio site built with **Next.js**, **Tailwind CSS**, and **Framer Motion** — featuring interactive UI components, technical blog posts, and a showcase of design engineering work.
 
+
+
+
+https://github.com/user-attachments/assets/6c13e2b2-17a4-4eda-9ef2-abbac7cfa78a
+
+
+
+
+
 ---
 
 ## What's Inside

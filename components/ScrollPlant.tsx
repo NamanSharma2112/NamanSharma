@@ -62,14 +62,12 @@ function LeafNode({
 function LeafSet({
   smoothProgress,
   stemX,
-  stemTop,
   stemBottom,
   stemLength,
   leafTimings,
 }: {
   smoothProgress: MotionValue<number>;
   stemX: number;
-  stemTop: number;
   stemBottom: number;
   stemLength: number;
   leafTimings: { start: number; end: number }[];
@@ -199,7 +197,7 @@ export default function ScrollPlant() {
         />
 
         {/* ── Leaves ── */}
-        <LeafSet smoothProgress={smoothProgress} stemX={STEM_X} stemTop={STEM_TOP} stemBottom={STEM_BOTTOM} stemLength={STEM_LENGTH} leafTimings={leafTimings} />
+        <LeafSet smoothProgress={smoothProgress} stemX={STEM_X} stemBottom={STEM_BOTTOM} stemLength={STEM_LENGTH} leafTimings={leafTimings} />
 
         {/* ── Flower ── */}
         <motion.g

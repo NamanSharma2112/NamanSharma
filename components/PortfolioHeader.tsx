@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import BunnyIcon from "@/components/BunnyIcon";
 import ThemeToggle from "@/components/ThemeToggle";
+import SnowToggle from "@/components/SnowToggle";
 
 function LetsTalkButton() {
   const ref = useRef<HTMLAnchorElement>(null);
@@ -98,7 +99,11 @@ export default function PortfolioHeader({ name }: { name: string }) {
           <BunnyIcon size={34} className="text-[#444] dark:text-zinc-400" />
         </div>
         <div className="flex items-center gap-3">
-          <ThemeToggle />
+          <div className="flex items-center bg-zinc-50 dark:bg-zinc-900/50 rounded-full px-1.5 py-0.5 border border-zinc-200/50 dark:border-zinc-800/50">
+            <SnowToggle />
+            <div className="w-[1px] h-3 bg-zinc-200 dark:bg-zinc-800 mx-1" />
+            <ThemeToggle />
+          </div>
           <LetsTalkButton />
         </div>
       </div>

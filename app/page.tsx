@@ -30,7 +30,7 @@ const WRITING: TableEntry[] = [
 
 const PROJECTS: ProjectCard[] = [
   { year: 2026, title: "TruePass IoT", description: "Proximity-based attendance via BLE", badge: "New", accent: "#1c1917" },
-  { year: 2026, title: "ML Price Forecaster", description: "Real-time commodity price prediction", accent: "#172554" },
+  { year: 2026, title: "MotionLib", description: "High-precision UI motion component library", href: "https://motion-kit-hhv6.vercel.app/", badge: "New", image: "/motionlib.png", accent: "#4c1d95" },
   { year: 2026, title: "BunnyIcon Component", description: "Interactive SVG with cursor tracking", badge: "New", accent: "#1e1b4b" },
   { year: 2026, title: "Cognitive Training App", description: "Games for MCI elderly patients", accent: "#14532d" },
 ];

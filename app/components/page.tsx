@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import PortfolioFooter from "@/components/PortfolioFooter";

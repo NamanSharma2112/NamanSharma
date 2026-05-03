@@ -15,7 +15,6 @@ export default function SectionTable({
   title: string;
   entries: TableEntry[];
 }) {
-  let lastYear: number | null = null;
 
   return (
     <section className="mb-14 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_backwards]">
@@ -24,8 +23,7 @@ export default function SectionTable({
       </h2>
       <div className="group/table">
         {entries.map((entry, i) => {
-          const showYear = entry.year !== lastYear;
-          lastYear = entry.year;
+          const showYear = i === 0 || entry.year !== entries[i - 1].year;
           const isExternal = entry.href?.startsWith("http");
           return (
             <div

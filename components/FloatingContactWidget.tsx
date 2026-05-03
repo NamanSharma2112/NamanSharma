@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Send, PhoneCall, Plus } from "lucide-react";
+import { Send, PhoneCall, Plus, MessageSquare } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function FloatingContactWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const [isVisible, setIsVisible] = useState(pathname !== "/");
+
+  useEffect(() => {
+    if (pathname === "/") {
+      // Hide during initial loader animation (approx 2.5s)
+      const timer = setTimeout(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setIsVisible(true);
+      }, 2500);
+      return () => clearTimeout(timer);
+    } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsVisible(true);
+    }
+  }, [pathname]);
+
+  if (!isVisible) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
@@ -60,9 +79,7 @@ export default function FloatingContactWidget() {
         className="relative w-16 h-16 bg-white dark:bg-zinc-800 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
         aria-label="Toggle contact dialog"
       >
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="white" strokeWidth="1.5" className="text-zinc-800 dark:text-zinc-200">
-          <path d="M4 4l7.07 17 2.51-7.39L21 11.07z" />
-        </svg>
+        <MessageSquare size={28} className="text-zinc-800 dark:text-zinc-200" />
         <span className="absolute bottom-0 right-0 w-5 h-5 bg-[#cda766] border-2 border-white dark:border-zinc-800 rounded-full" />
       </button>
     </div>

@@ -4,6 +4,10 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import FloatingContactWidget from "@/components/FloatingContactWidget";
+import MeteorShower from "@/components/MeteorShower";
+import FooterScene from "@/components/FooterScene";
+import Snowfall from "@/components/Snowfall";
+import { SnowProvider } from "@/lib/snow-context";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
@@ -57,8 +61,13 @@ export default function RootLayout({
           disableTransitionOnChange
           themes={['light', 'dark', 'reading']}
         >
-          {children}
-          <FloatingContactWidget />
+          <SnowProvider>
+            <MeteorShower />
+            <Snowfall />
+            {children}
+            <FloatingContactWidget />
+            <FooterScene />
+          </SnowProvider>
         </ThemeProvider>
       </body>
     </html>

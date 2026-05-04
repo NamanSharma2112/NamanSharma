@@ -4,6 +4,7 @@ export interface BlogPostData {
   readTime: string;
   tag: string;
   accent: string;
+  image?: string;
   content: string[];
 }
 
@@ -98,6 +99,22 @@ export const POSTS: Record<string, BlogPostData> = {
       "Testing distributed systems is its own challenge. You need to simulate network partitions, message delays, and node failures. I built a tiny framework that lets me inject faults deterministically and verify invariants after each step.",
       "None of this code will ever run in production. And that's fine. The point is understanding the ideas deeply enough that when I do encounter these problems professionally, I'll have intuition for the tradeoffs.",
       "My reading list for anyone interested: 'Designing Data-Intensive Applications' by Kleppmann, the Raft paper by Ongaro and Ousterhout, and Lamport's 'Time, Clocks, and the Ordering of Events.'",
+    ],
+  },
+  "npm-workspaces-guide": {
+    title: "A Guide to NPM Workspaces",
+    date: "May 03, 2026",
+    readTime: "3 min read",
+    tag: "Engineering",
+    accent: "#312e81",
+    image: "/blog/npm-workspaces.png",
+    content: [
+      "Earlier, developers maintained separate projects for Backend, Frontend, and Utils. They used tools like npm link to connect local packages. This was a manual, time-consuming, and error-prone task.",
+      "Managing these separately can quickly become messy and was a headache to maintain — until npm workspaces were introduced.",
+      "Workspaces let you manage multiple packages inside a single repo. Instead of maintaining separate projects, you can group them all in one root project.",
+      "Key benefits include automatic linking between local packages, easier dependency management, a cleaner project structure, and a faster development flow.",
+      "When you run npm install, npm automatically links these packages inside node_modules. Each workspace behaves like a normal npm package, but npm symlinks them locally so you can import them without publishing.",
+      "NPM Workspaces simplify how you build and manage multiple package projects. They remove friction, reduce duplication, and make your codebase more scalable.",
     ],
   },
 };

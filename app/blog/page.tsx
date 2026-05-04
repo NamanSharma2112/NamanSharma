@@ -13,6 +13,16 @@ import type { BlogPost } from "@/components/BlogCard";
 
 const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "npm-workspaces-guide",
+    title: "A Guide to NPM Workspaces",
+    excerpt:
+      "Stop wasting time with npm link. Learn how workspaces can simplify your monorepo development and streamline dependency management.",
+    date: "May 03, 2026",
+    readTime: "3 min read",
+    tag: "Engineering",
+    accent: "#312e81",
+  },
+  {
     slug: "building-with-agentic-ai",
     title: "Building with Agentic AI",
     excerpt:

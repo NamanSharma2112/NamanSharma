@@ -4,6 +4,7 @@ import { use } from "react";
 import { motion } from "motion/react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 import PortfolioFooter from "@/components/PortfolioFooter";
 import ScrollPlant from "@/components/ScrollPlant";
@@ -90,22 +91,34 @@ export default function BlogPostPage({
         </header>
 
         {/* Cover image */}
-        <div
-          className="w-full aspect-[2/1] rounded-xl mb-10 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.15s_backwards] overflow-hidden"
-          style={{
-            background: `linear-gradient(135deg, ${post.accent} 0%, ${post.accent}cc 50%, ${post.accent}88 100%)`,
-          }}
-        >
-          <div className="w-full h-full flex items-center justify-center opacity-[0.12]">
-            <div
-              className="w-full h-full"
-              style={{
-                backgroundImage: `radial-gradient(circle at 25% 75%, white 2px, transparent 2px), radial-gradient(circle at 75% 25%, white 2px, transparent 2px), radial-gradient(circle at 50% 50%, white 1.5px, transparent 1.5px)`,
-                backgroundSize: "80px 80px, 100px 100px, 50px 50px",
-              }}
+        {post.image ? (
+          <div className="w-full aspect-[16/9] rounded-xl mb-10 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.15s_backwards] overflow-hidden border border-zinc-200 dark:border-zinc-800 relative">
+            <Image
+              src={post.image}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
             />
           </div>
-        </div>
+        ) : (
+          <div
+            className="w-full aspect-[2/1] rounded-xl mb-10 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.15s_backwards] overflow-hidden"
+            style={{
+              background: `linear-gradient(135deg, ${post.accent} 0%, ${post.accent}cc 50%, ${post.accent}88 100%)`,
+            }}
+          >
+            <div className="w-full h-full flex items-center justify-center opacity-[0.12]">
+              <div
+                className="w-full h-full"
+                style={{
+                  backgroundImage: `radial-gradient(circle at 25% 75%, white 2px, transparent 2px), radial-gradient(circle at 75% 25%, white 2px, transparent 2px), radial-gradient(circle at 50% 50%, white 1.5px, transparent 1.5px)`,
+                  backgroundSize: "80px 80px, 100px 100px, 50px 50px",
+                }}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Article content */}
         <article className="mb-14 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.2s_backwards]">

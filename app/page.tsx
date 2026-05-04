@@ -22,7 +22,8 @@ import { COMPONENTS } from "@/components/componentsData";
 // ──────────────────────────────────────────────
 
 const WRITING: TableEntry[] = [
-  { year: 2026, title: "Building with Agentic AI", date: "27/04", badge: "New", href: "/blog/building-with-agentic-ai" },
+  { year: 2026, title: "A Guide to NPM Workspaces", date: "03/05", badge: "New", href: "/blog/npm-workspaces-guide" },
+  { year: 2026, title: "Building with Agentic AI", date: "27/04", href: "/blog/building-with-agentic-ai" },
   { year: 2026, title: "IoT Prototyping Notes", date: "16/04", href: "/blog/iot-prototyping-notes" },
   { year: 2026, title: "ML Pipelines in Production", date: "13/04", href: "/blog/ml-pipelines-in-production" },
   { year: 2025, title: "Design Systems at Scale", date: "15/09", href: "/blog/design-systems-at-scale" },

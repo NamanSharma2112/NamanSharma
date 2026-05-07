@@ -21,7 +21,26 @@ export default function ThemeToggle() {
   const isDark = resolvedTheme === "dark";
 
   const toggleTheme = () => {
-    setTheme(isDark ? "light" : "dark");
+    const next = isDark ? "light" : "dark";
+
+    if (!document.startViewTransition) {
+      setTheme(next);
+      return;
+    }
+
+    document.startViewTransition(() => {
+      setTheme(next);
+    });
+
+    // Animate the new snapshot with a clip-path wipe from top
+    document.documentElement.animate(
+      { clipPath: ["inset(0 0 100% 0)", "inset(0)"] },
+      {
+        duration: 600,
+        easing: "cubic-bezier(0.22,1,0.36,1)",
+        pseudoElement: "::view-transition-new(root)",
+      }
+    );
   };
 
   return (

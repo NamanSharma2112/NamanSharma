@@ -28,7 +28,7 @@ export default function ComponentsPage() {
       transition={{ duration: 0.5, delay: 0.1 }}
     >
       {/* Main content */}
-      <main className="relative max-w-[620px] mx-auto px-6 pt-14 pb-0 text-zinc-800 dark:text-zinc-200 leading-[1.7] antialiased border-l border-r border-dashed border-zinc-200 dark:border-zinc-800">
+      <main className="relative max-w-[900px] mx-auto px-8 pt-14 pb-0 text-zinc-800 dark:text-zinc-200 leading-[1.7] antialiased border-l border-r border-dashed border-zinc-200 dark:border-zinc-800">
         {/* Header */}
         <header className="mb-10 animate-[fadeUp_0.7s_cubic-bezier(0.22,1,0.36,1)_0.05s_backwards]">
           <div className="flex items-center justify-between mb-1">

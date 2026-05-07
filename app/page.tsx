@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import BlurScramble from "@/components/BlurScramble";
 import PortfolioHeader from "@/components/PortfolioHeader";
+import DeskHero from "@/components/DeskHero";
+
 import PortfolioBio from "@/components/PortfolioBio";
 import { linkClass } from "@/components/PortfolioBio";
 import LinkPreview from "@/components/LinkPreview";
@@ -38,6 +40,7 @@ const PROJECTS: ProjectCard[] = [
 
 const FOOTER_LINKS = [
   { label: "Components", href: "/components" },
+  { label: "Shadow Studio", href: "/shadow" },
   { label: "GitHub", href: "https://github.com/NamanSharma2112" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/namansharma--ns/" },
   { label: "X (Twitter)", href: "https://x.com/NamanSharma2112" },
@@ -136,7 +139,8 @@ export default function Home() {
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         {/* Main content */}
-        <main className="relative max-w-[620px] mx-auto px-6 pt-20 pb-0 text-zinc-800 dark:text-zinc-200 leading-[1.7] antialiased border-l border-r border-dashed border-zinc-200 dark:border-zinc-800">
+        <main className="relative max-w-[900px] mx-auto px-8 pt-20 pb-0 text-zinc-800 dark:text-zinc-200 leading-[1.7] antialiased border-l border-r border-dashed border-zinc-200 dark:border-zinc-800">
+          <DeskHero />
           <PortfolioHeader name="Naman Sharma" />
           <PortfolioBio paragraphs={bio} />
           <SectionTable title="Writing" entries={WRITING} />

@@ -210,3 +210,19 @@
 .animate-meteor {
   animation: meteor var(--meteor-duration, 5s) linear infinite;
 }
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── View Transition: clip-path wipe for theme switches ── */
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  animation: none;
+}
+

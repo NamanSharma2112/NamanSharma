@@ -20,9 +20,31 @@ export default function ReadingModeToggle() {
 
   const isReading = theme === "reading";
 
+  const handleToggle = () => {
+    const next = isReading ? "light" : "reading";
+
+    if (!document.startViewTransition) {
+      setTheme(next);
+      return;
+    }
+
+    document.startViewTransition(() => {
+      setTheme(next);
+    });
+
+    document.documentElement.animate(
+      { clipPath: ["inset(0 0 100% 0)", "inset(0)"] },
+      {
+        duration: 600,
+        easing: "cubic-bezier(0.22,1,0.36,1)",
+        pseudoElement: "::view-transition-new(root)",
+      }
+    );
+  };
+
   return (
     <button
-      onClick={() => setTheme(isReading ? "light" : "reading")}
+      onClick={handleToggle}
       className={cn(
         "relative w-8 h-8 flex items-center justify-center rounded-full transition-colors",
         isReading 

@@ -155,7 +155,7 @@
   }
   ::selection {
     background: rgba(59, 130, 246, 0.25);
-    color: #1e293b;
+    color: #e2e8f0;
   }
 
   ::-webkit-scrollbar {
@@ -176,6 +176,28 @@
     background: var(--muted-foreground);
   }
 }
+
+/* ── Custom grid background ── */
+.custom-bg {
+  background-color: #0a0a0a;
+  background-image:
+    linear-gradient(to right, #6b728033 1px, transparent 1px),
+    linear-gradient(to bottom, #6b728033 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping {
+  animation: ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+
 
 @keyframes fadeUp {
   from {

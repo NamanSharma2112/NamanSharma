@@ -3,13 +3,10 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import FloatingContactWidget from "@/components/FloatingContactWidget";
-import MeteorShower from "@/components/MeteorShower";
-import FooterScene from "@/components/FooterScene";
-import Snowfall from "@/components/Snowfall";
-import { SnowProvider } from "@/lib/snow-context";
+import FloatingNav from "@/components/FloatingNav";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,12 +21,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: {
     template: "%s | Naman Sharma",
-    default: "Naman Sharma — Portfolio",
+    default: "Naman Sharma — Design Engineer",
   },
-  description: "Developer, builder, and generalist. Building modern web experiences, ML pipelines, and IoT prototypes.",
+  description:
+    "Design Engineer. I design and build whatever I can imagine — React, Next.js, TypeScript, Tailwind CSS, Motion.dev.",
   openGraph: {
-    title: "Naman Sharma — Portfolio",
-    description: "Developer, builder, and generalist. Building modern web experiences, ML pipelines, and IoT prototypes.",
+    title: "Naman Sharma — Design Engineer",
+    description:
+      "Design Engineer. Building modern web experiences, UI libraries, and whatever pops into my head.",
     url: "https://namansharma.com",
     siteName: "Naman Sharma",
     locale: "en_US",
@@ -37,8 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Naman Sharma — Portfolio",
-    description: "Developer, builder, and generalist. Building modern web experiences, ML pipelines, and IoT prototypes.",
+    title: "Naman Sharma — Design Engineer",
+    description:
+      "Design Engineer. Building modern web experiences, UI libraries, and whatever pops into my head.",
   },
 };
 
@@ -51,23 +51,23 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
+      className={cn(
+        "h-full antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        inter.variable
+      )}
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
-          themes={['light', 'dark', 'reading']}
         >
-          <SnowProvider>
-            <MeteorShower />
-            <Snowfall />
-            {children}
-            <FloatingContactWidget />
-            <FooterScene />
-          </SnowProvider>
+          <FloatingNav />
+          {children}
         </ThemeProvider>
       </body>
     </html>

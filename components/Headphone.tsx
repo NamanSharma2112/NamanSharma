@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useAnimate } from "motion/react";
 export default function Headphone() {
   const [interactionState, setInteractionState] = useState<"none" | "hover" | "click">("none");
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isBlinking, setIsBlinking] = useState(false);
   const [scope, animate] = useAnimate();
 
   // Determine actual eye state based on interaction
@@ -25,6 +26,26 @@ export default function Headphone() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
+  // Blink logic
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    const blinkLoop = () => {
+      // Random interval between blinks (1.5 to 5.5 seconds)
+      const nextBlink = Math.random() * 4000 + 1500; 
+      timeoutId = setTimeout(() => {
+        setIsBlinking(true);
+        setTimeout(() => {
+          setIsBlinking(false);
+          blinkLoop();
+        }, 120); // very quick close-and-open
+      }, nextBlink);
+    };
+
+    blinkLoop();
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   // Landing sequence
   useEffect(() => {
     let isMounted = true;
@@ -32,34 +53,13 @@ export default function Headphone() {
     const run = async () => {
       if (!isMounted) return;
       
-      // 1. Headphone drops down
+      // 1. Headphone drops down (from much higher up, face remains totally fixed)
       await animate(
         ".headphone",
-        { y: [-30, 0] },
-        { type: "spring", stiffness: 200, damping: 15, mass: 1 }
+        { y: [-80, 0] },
+        { type: "spring", stiffness: 160, damping: 12, mass: 1 }
       );
-
-      if (!isMounted) return;
-
-      // 2. Impact squish (head and headphone both squish slightly)
-      animate(
-        ".head",
-        {
-          scaleX: [1, 1.12, 0.95, 1],
-          scaleY: [1, 0.88, 1.05, 1],
-        },
-        { duration: 0.5, ease: "easeInOut" }
-      );
-
-      animate(
-        ".headphone",
-        {
-          scaleX: [1, 1.12, 0.95, 1],
-          scaleY: [1, 0.88, 1.05, 1],
-          y: [0, 4, -2, 0] // pushes down slightly on impact
-        },
-        { duration: 0.5, ease: "easeInOut" }
-      );
+      // Removed the squish animations completely so they stay strictly separate and fixed
     };
 
     run();
@@ -70,8 +70,8 @@ export default function Headphone() {
   }, [animate]);
 
   // Max eye movement offset (in pixels)
-  const eyeMoveX = mousePos.x * 3.5;
-  const eyeMoveY = mousePos.y * 3.5;
+  const eyeMoveX = mousePos.x * 4.5;
+  const eyeMoveY = mousePos.y * 4.5;
 
   return (
     <div 
@@ -120,16 +120,26 @@ export default function Headphone() {
           {/* Group wrapper to follow cursor */}
           <motion.g
             animate={{ x: eyeMoveX, y: eyeMoveY }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            transition={{ type: "spring", stiffness: 250, damping: 25 }}
           >
             <AnimatePresence mode="wait">
               {eyeState === 0 && (
                 <motion.g
                   key="normal"
                   initial={{ y: -10, scale: 0.7, rotate: -6 }}
-                  animate={{ y: 0, scale: 1, rotate: 0 }}
+                  animate={{ 
+                    y: 0, 
+                    scaleX: 1, 
+                    scaleY: isBlinking ? 0.1 : 1, // blink squishes eyes vertically
+                    rotate: 0 
+                  }}
                   exit={{ y: 10, scale: 0.75, rotate: 6 }}
-                  transition={{ type: "spring", stiffness: 260, damping: 16 }}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: isBlinking ? 900 : 260, // super fast when blinking
+                    damping: isBlinking ? 30 : 16 
+                  }}
+                  style={{ transformOrigin: "center 39px" }}
                 >
                   <path
                     d="m28 39.7c-0.6 0-1.1-0.5-1.2-1.1-0.2-1.2-1.2-2.4-2.8-2.5-1.3 0.1-2.5 1-2.8 2.6-0.2 1-1.1 1.2-1.6 1s-1.1-0.8-0.9-1.6c0.3-2.3 2.5-4.4 5.2-4.5 2.7 0 5 2 5.3 4.8 0 0.8-0.5 1.3-1.2 1.3z"
@@ -153,14 +163,14 @@ export default function Headphone() {
                   <path
                     d="M20 37 Q24 33 28 37"
                     stroke="#22343D"
-                    strokeWidth="2"
+                    strokeWidth="2.5"
                     fill="transparent"
                     strokeLinecap="round"
                   />
                   <path
                     d="M36 37 Q40 33 44 37"
                     stroke="#22343D"
-                    strokeWidth="2"
+                    strokeWidth="2.5"
                     fill="transparent"
                     strokeLinecap="round"
                   />

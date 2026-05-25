@@ -78,30 +78,34 @@ function BioText({ style }: { style?: React.CSSProperties }) {
 // ── Main page ─────────────────────────────────────────────────────────
 export default function HeroName() {
   const boxRef   = useRef<HTMLDivElement>(null);
-  const [cursorY, setCursorY] = useState<number | null>(null);
+  const [cursorX, setCursorX] = useState<number | null>(null);
+  const [rawPos, setRawPos] = useState({ x: 0, y: 0 });
   const [isInBox, setIsInBox] = useState(false);
 
   const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!boxRef.current) return;
     const rect = boxRef.current.getBoundingClientRect();
-    setCursorY(Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100)));
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setRawPos({ x: Math.round(x), y: Math.round(y) });
+    setCursorX(Math.max(0, Math.min(100, (x / rect.width) * 100)));
   }, []);
 
   const onMouseLeave = useCallback(() => {
     setIsInBox(false);
-    setCursorY(null);
+    setCursorX(null);
   }, []);
 
-  // Layer A (solid white name) — clip HIDES the top Y% → bottom portion stays
-  const solidClip = cursorY !== null
-    ? `inset(${cursorY.toFixed(2)}% 0 0 0)`
+  // Layer A (solid white name) — clip HIDES the left X% → right portion stays
+  const solidClip = cursorX !== null
+    ? `inset(0 0 0 ${cursorX.toFixed(2)}%)`
     : "inset(0 0 0 0)"; // fully visible when not hovering
 
-  // Layer B (bio reveal) — clip HIDES the bottom (100-Y)% → top Y% shows
+  // Layer B (bio reveal) — clip HIDES the right (100-X)% → left X% shows
   // Hidden entirely when cursor is out
-  const bioClip = cursorY !== null
-    ? `inset(0 0 ${(100 - cursorY).toFixed(2)}% 0)`
-    : "inset(0 0 100% 0)";
+  const bioClip = cursorX !== null
+    ? `inset(0 ${(100 - cursorX).toFixed(2)}% 0 0)`
+    : "inset(0 100% 0 0)";
 
   return (
     <div
@@ -138,9 +142,9 @@ export default function HeroName() {
 
       {/* ── Animated Headphone Face ── */}
       <motion.div
-        initial={{ y: 140, opacity: 0, rotate: -8 }}
-        animate={{ y: 0, opacity: 1, rotate: 0 }}
-        transition={{ type: "spring", stiffness: 250, damping: 16, mass: 1, delay: 0.35 }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
         className="absolute bottom-[10%] left-[5%] md:left-[9%] z-10 pointer-events-none"
       >
         <Headphone />
@@ -187,6 +191,20 @@ export default function HeroName() {
               style={{ ...pos, background: isInBox ? "#60a5fa" : "rgba(107,114,128,0.35)", transition: "background 0.3s ease" }}
             />
           ))}
+          
+          {/* X / Y Coordinates */}
+          <div 
+            className={`absolute -top-7 left-0 text-[11px] font-mono tracking-widest transition-opacity duration-300 ${isInBox ? 'opacity-100' : 'opacity-0'}`}
+            style={{ color: "#60a5fa" }}
+          >
+            Y: {rawPos.y}
+          </div>
+          <div 
+            className={`absolute -top-7 right-0 text-[11px] font-mono tracking-widest transition-opacity duration-300 ${isInBox ? 'opacity-100' : 'opacity-0'}`}
+            style={{ color: "#60a5fa" }}
+          >
+            X: {rawPos.x}
+          </div>
         </div>
 
         {/* ── Dark base background ── */}
@@ -218,7 +236,7 @@ export default function HeroName() {
           className="absolute inset-0 z-10"
           style={{
             clipPath: bioClip,
-            pointerEvents: cursorY !== null ? "auto" : "none",
+            pointerEvents: cursorX !== null ? "auto" : "none",
           }}
         >
           {/* Blue-dark tinted background */}
@@ -232,13 +250,13 @@ export default function HeroName() {
         </div>
 
         {/* ── Split line ── */}
-        {cursorY !== null && (
+        {cursorX !== null && (
           <div
-            className="absolute left-0 right-0 pointer-events-none z-40"
+            className="absolute top-0 bottom-0 pointer-events-none z-40"
             style={{
-              top: `${cursorY}%`,
-              height: "1px",
-              background: "linear-gradient(to right, transparent 0%, #2563eb 10%, #93c5fd 50%, #2563eb 90%, transparent 100%)",
+              left: `${cursorX}%`,
+              width: "1px",
+              background: "linear-gradient(to bottom, transparent 0%, #2563eb 10%, #93c5fd 50%, #2563eb 90%, transparent 100%)",
               boxShadow: "0 0 4px rgba(96,165,250,0.8), 0 0 14px rgba(96,165,250,0.3)",
             }}
           />
@@ -251,7 +269,7 @@ export default function HeroName() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.85, duration: 0.6 }}
         className="z-10 flex items-center gap-2"
-        style={{ marginTop: 32 }}
+        style={{ marginTop: 56 }}
       >
         <span className="relative flex" style={{ width: 8, height: 8 }}>
           <span className="animate-ping absolute inline-flex rounded-full bg-emerald-400 opacity-75" style={{ inset: 0 }} />
@@ -268,7 +286,7 @@ export default function HeroName() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4, duration: 1 }}
         className="absolute z-10"
-        style={{ bottom: 28, color: "rgba(63,63,70,0.8)", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase" }}
+        style={{ bottom: 20, color: "rgba(63,63,70,0.8)", fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase" }}
       >
         move cursor over name ↑
       </motion.p>

@@ -7,9 +7,8 @@ import { motion } from "motion/react";
 
 const TABS = [
   { name: "Home",       href: "/" },
-  { name: "Work",       href: "/components" },
-  { name: "Writing",    href: "/blog" },
-  { name: "Shadow",     href: "/shadow" },
+  { name: "Projects",   href: "/#projects" },
+  { name: "Blog",       href: "/#blog" },
 ];
 
 export default function FloatingNav() {

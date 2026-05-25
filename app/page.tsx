@@ -1,4 +1,8 @@
 import HeroName from "@/components/HeroName";
+import TechStack from "@/components/TechStack";
+import Projects from "@/components/Projects";
+import BlogSection from "@/components/BlogSection";
+import ContactFloating from "@/components/ContactFloating";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,5 +12,13 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <HeroName />;
+  return (
+    <main className="bg-zinc-950 overflow-hidden">
+      <HeroName />
+      <TechStack />
+      <Projects />
+      <BlogSection />
+      <ContactFloating />
+    </main>
+  );
 }

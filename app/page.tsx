@@ -3,6 +3,7 @@ import TechStack from "@/components/TechStack";
 import Projects from "@/components/Projects";
 import BlogSection from "@/components/BlogSection";
 import ContactFloating from "@/components/ContactFloating";
+import ScrollIndicator from "@/components/ScrollIndicator";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,11 +14,12 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="bg-zinc-950 overflow-hidden">
+    <main className="bg-zinc-950 overflow-hidden relative">
       <HeroName />
       <TechStack />
       <Projects />
       <BlogSection />
+      <ScrollIndicator />
       <ContactFloating />
     </main>
   );

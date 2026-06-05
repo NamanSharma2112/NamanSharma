@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   enrichTweet,
   useTweet,
@@ -39,18 +39,8 @@ const formatDate = (dateString: string): string => {
   const ampm = hours >= 12 ? "PM" : "AM";
   const hour12 = hours % 12 || 12;
   const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   ];
   const month = monthNames[date.getMonth()];
   const day = date.getDate();
@@ -59,15 +49,16 @@ const formatDate = (dateString: string): string => {
   return `${hour12}:${minutes.toString().padStart(2, "0")} ${ampm} · ${month} ${day}, ${year}`;
 };
 
-const TweetSkeleton = ({ className }: { className?: string }) => (
+const TweetSkeleton = ({ className, size = "large" }: { className?: string; size?: "small" | "large" }) => (
   <div
     className={cn(
-      "block w-full max-w-[590px] rounded-xl p-4 border border-zinc-200 bg-[#fafafa]",
+      "block w-full rounded-xl border border-zinc-200 bg-[#fafafa]",
+      size === "small" ? "p-3" : "p-4",
       className
     )}
   >
     <div className="flex items-center gap-2">
-      <div className="size-[38px] shrink-0 animate-pulse rounded-full bg-zinc-200" />
+      <div className={cn("shrink-0 animate-pulse rounded-full bg-zinc-200", size === "small" ? "size-[30px]" : "size-[38px]")} />
       <div className="flex flex-col gap-1">
         <div className="h-4 w-24 animate-pulse rounded bg-zinc-200" />
         <div className="h-3 w-16 animate-pulse rounded bg-zinc-200" />
@@ -80,10 +71,11 @@ const TweetSkeleton = ({ className }: { className?: string }) => (
   </div>
 );
 
-const TweetNotFound = ({ className }: { className?: string }) => (
+const TweetNotFound = ({ className, size = "large" }: { className?: string; size?: "small" | "large" }) => (
   <div
     className={cn(
-      "flex w-full max-w-[590px] flex-col items-center justify-center gap-2 rounded-xl p-6 text-zinc-400 border border-zinc-200 bg-[#fafafa]",
+      "flex w-full flex-col items-center justify-center gap-2 rounded-xl text-zinc-400 border border-zinc-200 bg-[#fafafa]",
+      size === "small" ? "p-4" : "p-6",
       className
     )}
   >
@@ -91,37 +83,39 @@ const TweetNotFound = ({ className }: { className?: string }) => (
   </div>
 );
 
-const TweetHeader = ({ tweet }: { tweet: EnrichedTweet }) => (
+const TweetHeader = ({ tweet, size = "large" }: { tweet: EnrichedTweet; size?: "small" | "large" }) => (
   <div className="flex items-start justify-between">
     <div className="flex items-center gap-2">
       <img
         src={tweet.user.profile_image_url_https}
         alt={tweet.user.name}
         loading="lazy"
-        width={38}
-        height={38}
+        width={size === "small" ? 30 : 38}
+        height={size === "small" ? 30 : 38}
         className="rounded-full"
       />
       <div className="flex flex-col">
-        <span className="flex items-center gap-1 text-[15px] font-semibold text-black">
+        <span className={cn("flex items-center gap-1 font-semibold text-black", size === "small" ? "text-sm" : "text-[15px]")}>
           {tweet.user.name}
           {(tweet.user.verified || tweet.user.is_blue_verified) && (
-            <VerifiedBadge className="size-4 text-[#1C9BF1]" />
+            <VerifiedBadge className={size === "small" ? "size-3.5 text-[#1C9BF1]" : "size-4 text-[#1C9BF1]"} />
           )}
         </span>
-        <span className="-mt-0.5 text-[13px] text-zinc-500">
+        <span className={cn("text-zinc-500", size === "small" ? "text-xs -mt-1" : "text-[13px] -mt-0.5")}>
           @{tweet.user.screen_name}
         </span>
       </div>
     </div>
-    <a href={tweet.url} target="_blank" rel="noopener noreferrer">
-      <SiX className="size-4 text-black" />
-    </a>
+    {size === "large" && (
+      <a href={tweet.url} target="_blank" rel="noopener noreferrer">
+        <SiX className="size-4 text-black" />
+      </a>
+    )}
   </div>
 );
 
-const TweetBody = ({ tweet }: { tweet: EnrichedTweet }) => (
-  <p className="mt-3 leading-6 text-zinc-800 text-sm font-normal">
+const TweetBody = ({ tweet, size = "large" }: { tweet: EnrichedTweet; size?: "small" | "large" }) => (
+  <p className={cn("mt-3 text-zinc-800 font-normal leading-relaxed", size === "small" ? "text-xs mt-2" : "text-sm")}>
     {tweet.entities.map((entity, idx) => {
       switch (entity.type) {
         case "url":
@@ -153,7 +147,40 @@ const TweetBody = ({ tweet }: { tweet: EnrichedTweet }) => (
   </p>
 );
 
-const TweetMedia = ({ tweet }: { tweet: EnrichedTweet }) => {
+const VideoPlayer = ({ src, poster }: { src: string; poster?: string }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    // Force play on mount/load
+    const playVideo = async () => {
+      if (videoRef.current) {
+        try {
+          await videoRef.current.play();
+        } catch (err) {
+          console.warn("Autoplay failed, trying again on click/interaction:", err);
+        }
+      }
+    };
+    playVideo();
+  }, [src]);
+
+  return (
+    <video
+      key={src}
+      ref={videoRef}
+      src={src}
+      poster={poster}
+      autoPlay
+      loop
+      muted
+      playsInline
+      controls
+      className="w-full rounded-lg"
+    />
+  );
+};
+
+const TweetMedia = ({ tweet, size = "large" }: { tweet: EnrichedTweet; size?: "small" | "large" }) => {
   if (!tweet.video && !tweet.photos) return null;
 
   const getVideoSource = () => {
@@ -182,17 +209,9 @@ const TweetMedia = ({ tweet }: { tweet: EnrichedTweet }) => {
   const videoSource = getVideoSource();
 
   return (
-    <div className="mt-4">
+    <div className={cn("mt-4", size === "small" ? "mt-2.5" : "mt-4")}>
       {tweet.video && videoSource && (
-        <video
-          src={videoSource.src}
-          poster={tweet.video.poster}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full rounded-lg"
-        />
+        <VideoPlayer src={videoSource.src} poster={tweet.video.poster} />
       )}
       {tweet.photos && (
         <div
@@ -229,6 +248,7 @@ interface TweetFooterProps {
   showDate?: boolean;
   showLikeButton?: boolean;
   showCopyLink?: boolean;
+  size?: "small" | "large";
 }
 
 const TweetFooter = ({
@@ -236,6 +256,7 @@ const TweetFooter = ({
   showDate = true,
   showLikeButton = true,
   showCopyLink = true,
+  size = "large",
 }: TweetFooterProps) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -312,6 +333,7 @@ interface TweetContentProps {
   showDate?: boolean;
   showLikeButton?: boolean;
   showCopyLink?: boolean;
+  size?: "small" | "large";
 }
 
 const TweetContent = ({
@@ -320,22 +342,25 @@ const TweetContent = ({
   showDate,
   showLikeButton,
   showCopyLink,
+  size = "large",
 }: TweetContentProps) => {
   return (
     <div
       className={cn(
-        "w-full rounded-xl p-4 border border-zinc-200 bg-[#fafafa]",
+        "w-full rounded-xl border border-zinc-200 bg-[#fafafa]",
+        size === "small" ? "p-3" : "p-4",
         className
       )}
     >
-      <TweetHeader tweet={tweet} />
-      <TweetBody tweet={tweet} />
-      <TweetMedia tweet={tweet} />
+      <TweetHeader tweet={tweet} size={size} />
+      <TweetBody tweet={tweet} size={size} />
+      <TweetMedia tweet={tweet} size={size} />
       <TweetFooter
         tweet={tweet}
         showDate={showDate}
         showLikeButton={showLikeButton}
         showCopyLink={showCopyLink}
+        size={size}
       />
     </div>
   );
@@ -347,6 +372,7 @@ interface TweetProps {
   showDate?: boolean;
   showLikeButton?: boolean;
   showCopyLink?: boolean;
+  size?: "small" | "large";
 }
 
 export function Tweet({
@@ -355,15 +381,16 @@ export function Tweet({
   showDate = true,
   showLikeButton = true,
   showCopyLink = true,
+  size = "large",
 }: TweetProps) {
   const { data: tweet, isLoading, error } = useTweet(id);
 
   if (isLoading) {
-    return <TweetSkeleton className={className} />;
+    return <TweetSkeleton className={className} size={size} />;
   }
 
   if (error || !tweet) {
-    return <TweetNotFound className={className} />;
+    return <TweetNotFound className={className} size={size} />;
   }
 
   const enrichedTweet = enrichTweet(tweet);
@@ -372,9 +399,10 @@ export function Tweet({
     <TweetContent
       tweet={enrichedTweet}
       className={className}
-      showDate={showDate}
-      showLikeButton={showLikeButton}
-      showCopyLink={showCopyLink}
+      showDate={size === "large" ? showDate : false}
+      showLikeButton={size === "large" ? showLikeButton : false}
+      showCopyLink={size === "large" ? showCopyLink : false}
+      size={size}
     />
   );
 }

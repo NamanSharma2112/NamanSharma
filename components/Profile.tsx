@@ -10,6 +10,29 @@ import { LogosCarousel } from "./LogosCarousel";
 import { SpotifyCard } from "@/registry/spell-ui/spotify-card";
 import { Tweet } from "@/registry/spell-ui/tweet";
 import { ShimmerText } from "./shimmer-text";
+import BunnyIcon from "./BunnyIcon";
+import { SiX, SiGmail, SiGithub } from "@icons-pack/react-simple-icons";
+
+function LinkedinIcon({ size = 24, ...props }: React.SVGProps<SVGSVGElement> & { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect width="4" height="12" x="2" y="9" />
+      <circle cx="4" cy="4" r="2" />
+    </svg>
+  );
+}
+
 
 /* ── Stagger animation config ── */
 const STAGGER_DELAY = 0.06;
@@ -46,6 +69,23 @@ export default function Profile() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [selectedTweetId, setSelectedTweetId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [time, setTime] = useState<string>("");
+
+  // Dynamic clock in Jalandhar timezone (IST)
+  useEffect(() => {
+    const updateTime = () => {
+      const options: Intl.DateTimeFormatOptions = {
+        timeZone: "Asia/Kolkata",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      };
+      setTime(new Intl.DateTimeFormat("en-US", options).format(new Date()));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Fade out loader after signature animation
   useEffect(() => {
@@ -104,8 +144,8 @@ export default function Profile() {
         className="transition-opacity duration-500"
         style={{ opacity: 0 }}
       >
-        <main className="flex min-h-screen w-full justify-center overflow-x-clip bg-[#fafafa] px-5 pt-12 pb-24 text-black sm:pt-[100px]">
-        <div className="flex w-full flex-col items-center pb-8 text-[14px] leading-[20px] font-sans font-medium">
+        <main className="flex min-h-screen w-full justify-center overflow-x-clip bg-[#fafafa] px-5 pt-12 pb-0 text-black sm:pt-[100px]">
+        <div className="flex w-full flex-col items-center pb-0 text-[14px] leading-[20px] font-sans font-medium">
           <div className="flex w-full flex-col items-center gap-10">
             {/* ═══════════════════════════════════════
                 HEADER
@@ -293,6 +333,69 @@ export default function Profile() {
                 ))}
               </div>
             </motion.div>
+
+            {/* ═══════════════════════════════════════
+                FOOTER
+            ═══════════════════════════════════════ */}
+            <motion.footer
+              {...fadeUp(i++)}
+              className="w-full max-w-[576px] mt-16 pt-10 pb-16 border-t border-zinc-200/80 flex flex-col items-center gap-8"
+            >
+              {/* Bunny mascot */}
+              <div className="flex flex-col items-center gap-2">
+                <BunnyIcon size={56} className="text-zinc-400 hover:text-black transition-colors" />
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className="text-[10px] text-zinc-400 font-mono tracking-wider">SAY HI!</span>
+                  <span className="text-[11px] text-zinc-500 font-mono min-h-[16px]">
+                    Jalandhar, India {time ? `— ${time}` : ""}
+                  </span>
+                </div>
+              </div>
+
+              {/* Social links */}
+              <div className="flex items-center gap-6 text-zinc-500 font-medium flex-wrap justify-center">
+                <a
+                  href="https://x.com/NamanSharma2112"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-black transition-colors text-[13px] tracking-tight group"
+                >
+                  <SiX size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <span>Twitter / X</span>
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/namansharmans03"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-black transition-colors text-[13px] tracking-tight group"
+                >
+                  <LinkedinIcon size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <span>LinkedIn</span>
+                </a>
+                <a
+                  href="https://github.com/NamanSharma2112"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-black transition-colors text-[13px] tracking-tight group"
+                >
+                  <SiGithub size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <span>GitHub</span>
+                </a>
+                <a
+                  href="mailto:namansharmans03@gmail.com"
+                  className="flex items-center gap-2 hover:text-black transition-colors text-[13px] tracking-tight group"
+                >
+                  <SiGmail size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <span>Gmail</span>
+                </a>
+              </div>
+
+              {/* Copyright */}
+              <div className="w-full flex justify-between items-center text-[11px] text-zinc-400 font-mono pt-4 border-t border-zinc-100/50">
+                <span>© {new Date().getFullYear()} NAMAN SHARMA</span>
+                <span className="opacity-60">DESIGN ENGINEER</span>
+              </div>
+            </motion.footer>
 
           </div>
         </div>

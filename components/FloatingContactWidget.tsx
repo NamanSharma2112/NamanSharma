@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { MessageSquare, Mail, X } from "lucide-react";
 import { SiX as Twitter } from "@icons-pack/react-simple-icons";
@@ -12,6 +12,38 @@ export default function FloatingContactWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
+
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
+  // Focus management
+  useEffect(() => {
+    if (isOpen) {
+      // Focus close button after a small mount tick
+      const timer = setTimeout(() => {
+        closeBtnRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(timer);
+    } else if (isVisible) {
+      // Return focus to the trigger button when card closes
+      triggerRef.current?.focus();
+    }
+  }, [isOpen, isVisible]);
 
   useEffect(() => {
     if (pathname === "/") {
@@ -39,6 +71,9 @@ export default function FloatingContactWidget() {
             onClick={() => setIsOpen(false)}
           >
             <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="contact-card-title"
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
@@ -47,8 +82,10 @@ export default function FloatingContactWidget() {
               className="relative"
             >
               <button 
+                ref={closeBtnRef}
                 onClick={() => setIsOpen(false)}
-                className="absolute -top-12 right-0 text-zinc-500 hover:text-black transition-colors bg-white/50 rounded-full p-2"
+                className="absolute -top-12 right-0 text-zinc-500 hover:text-black transition-colors bg-white/50 rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-black"
+                aria-label="Close contact card"
               >
                 <X size={20} />
               </button>
@@ -65,7 +102,7 @@ export default function FloatingContactWidget() {
                 {/* Header */}
                 <div className="mt-10 text-center pb-4 border-b border-zinc-200 px-6">
                   <p className="text-[10px] font-bold tracking-[0.2em] text-zinc-400 mb-1">IDENTIFICATION</p>
-                  <p className="font-mono text-sm font-semibold tracking-tight uppercase">Staff ID Card</p>
+                  <p id="contact-card-title" className="font-mono text-sm font-semibold tracking-tight uppercase">Staff ID Card</p>
                 </div>
 
                 {/* Photo Area */}
@@ -120,9 +157,12 @@ export default function FloatingContactWidget() {
 
       <div className="fixed bottom-6 right-6 z-[100]">
         <button
+          ref={triggerRef}
           onClick={() => setIsOpen(true)}
-          className="relative w-14 h-14 bg-black rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+          className="relative w-14 h-14 bg-black rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
           aria-label="Contact Me"
+          aria-haspopup="dialog"
+          aria-expanded={isOpen}
         >
           <MessageSquare size={24} className="text-white" />
           <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />

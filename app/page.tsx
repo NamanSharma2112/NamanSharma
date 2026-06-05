@@ -1,26 +1,12 @@
-import HeroName from "@/components/HeroName";
-import TechStack from "@/components/TechStack";
-import Projects from "@/components/Projects";
-import BlogSection from "@/components/BlogSection";
-import ContactFloating from "@/components/ContactFloating";
-import ScrollIndicator from "@/components/ScrollIndicator";
+import Profile from "@/components/Profile";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Naman Sharma — Design Engineer",
+  title: "Naman Sharma",
   description:
-    "I'm Naman, a Design Engineer. I design and build whatever I can imagine — React, Next.js, TypeScript, Tailwind CSS, Motion.dev.",
+    "Naman Sharma is a Design Engineer building modern web experiences.",
 };
 
 export default function Home() {
-  return (
-    <main className="bg-zinc-950 overflow-hidden relative">
-      <HeroName />
-      <TechStack />
-      <Projects />
-      <BlogSection />
-      <ScrollIndicator />
-      <ContactFloating />
-    </main>
-  );
+  return <Profile />;
 }

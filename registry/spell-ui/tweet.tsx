@@ -52,7 +52,7 @@ const formatDate = (dateString: string): string => {
 const TweetSkeleton = ({ className, size = "large" }: { className?: string; size?: "small" | "large" }) => (
   <div
     className={cn(
-      "block w-full rounded-xl border border-zinc-200 bg-[#fafafa]",
+      "tweet-card block w-full rounded-xl border border-zinc-200 bg-[#fafafa]",
       size === "small" ? "p-3" : "p-4",
       className
     )}
@@ -74,7 +74,7 @@ const TweetSkeleton = ({ className, size = "large" }: { className?: string; size
 const TweetNotFound = ({ className, size = "large" }: { className?: string; size?: "small" | "large" }) => (
   <div
     className={cn(
-      "flex w-full flex-col items-center justify-center gap-2 rounded-xl text-zinc-400 border border-zinc-200 bg-[#fafafa]",
+      "tweet-card flex w-full flex-col items-center justify-center gap-2 rounded-xl text-zinc-400 border border-zinc-200 bg-[#fafafa]",
       size === "small" ? "p-4" : "p-6",
       className
     )}
@@ -347,7 +347,7 @@ const TweetContent = ({
   return (
     <div
       className={cn(
-        "w-full rounded-xl border border-zinc-200 bg-[#fafafa]",
+        "tweet-card w-full rounded-xl border border-zinc-200 bg-[#fafafa]",
         size === "small" ? "p-3" : "p-4",
         className
       )}

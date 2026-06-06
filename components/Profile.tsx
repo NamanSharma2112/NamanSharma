@@ -11,6 +11,7 @@ import { SpotifyCard } from "@/registry/spell-ui/spotify-card";
 import { Tweet } from "@/registry/spell-ui/tweet";
 import { ShimmerText } from "./shimmer-text";
 import BunnyIcon from "./BunnyIcon";
+import SakuraBlossoms from "./SakuraBlossoms";
 import { SiX, SiGmail, SiGithub } from "@icons-pack/react-simple-icons";
 
 function LinkedinIcon({ size = 24, ...props }: React.SVGProps<SVGSVGElement> & { size?: number }) {
@@ -29,6 +30,20 @@ function LinkedinIcon({ size = 24, ...props }: React.SVGProps<SVGSVGElement> & {
       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
       <rect width="4" height="12" x="2" y="9" />
       <circle cx="4" cy="4" r="2" />
+    </svg>
+  );
+}
+
+function SakuraIcon({ size = 24, ...props }: React.SVGProps<SVGSVGElement> & { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      {...props}
+    >
+      <path d="M12 2.3c-.3 0-.5.2-.6.4C10.4 5.3 8.3 6.4 6 5.8c-.3-.1-.6.1-.7.4-.7 2-.2 4.2.8 5.9-1.2-.8-2.7-1.1-4.2-.6-.3.1-.4.4-.3.7.6 2 2.2 3.5 4 4.1-.9.7-1.5 1.7-1.7 2.8-.1.3.1.6.4.7 1.9.7 4.1.2 5.7-.8-.8 1.2-1.1 2.7-.6 4.2.1.3.4.4.7.3 2-.6 3.5-2.2 4.1-4 .7.9 1.7 1.5 2.8 1.7.3.1.6-.1.7-.4.7-1.9.2-4.1-.8-5.7 1.2.8 2.7 1.1 4.2.6.3-.1.4-.4.3-.7-.6-2-2.2-3.5-4-4.1.9-.7 1.5-1.7 1.7-2.8.1-.3-.1-.6-.4-.7-1.9-.7-4.1-.2-5.7.8.8-1.2 1.1-2.7.6-4.2-.1-.3-.4-.4-.7-.3zM12 9.5c1.4 0 2.5 1.1 2.5 2.5S13.4 14.5 12 14.5 9.5 13.4 9.5 12 10.6 9.5 12 9.5z" />
     </svg>
   );
 }
@@ -52,14 +67,42 @@ const PROJECTS = [
   {
     label: "MotionKit",
     description: "Animation Library",
-    href: "https://motion-kit-three.vercel.app/",
+    href: "https://www.motionlib.me/",
     external: true,
+    cards: [
+      {
+        src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=360&fit=crop",
+        alt: "Abstract gradient art",
+        dx: 34,
+        r: 11.9,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1634017839464-5c339afa0df4?w=300&h=360&fit=crop",
+        alt: "3D abstract shapes",
+        dx: -34,
+        r: -6.58,
+      },
+    ],
   },
   {
     label: "ChurnRate",
     description: "SaaS Dashboard",
     href: "https://www.churnrate.fun/",
     external: true,
+    cards: [
+      {
+        src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&h=360&fit=crop",
+        alt: "Analytics dashboard",
+        dx: 34,
+        r: 8.5,
+      },
+      {
+        src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=300&h=360&fit=crop",
+        alt: "Data visualization",
+        dx: -34,
+        r: -10.2,
+      },
+    ],
   },
 ];
 
@@ -69,6 +112,7 @@ export default function Profile() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [selectedTweetId, setSelectedTweetId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSakura, setIsSakura] = useState(false);
   const [time, setTime] = useState<string>("");
 
   // Dynamic clock in Jalandhar timezone (IST)
@@ -139,12 +183,30 @@ export default function Profile() {
         )}
       </AnimatePresence>
 
+      <SakuraBlossoms isActive={isSakura} />
+
+      {/* Floating Sakura Blossom Theme Toggle */}
+      <button
+        onClick={() => setIsSakura(!isSakura)}
+        className={`fixed top-6 right-6 z-[60] w-10 h-10 flex items-center justify-center rounded-full shadow-md backdrop-blur-md border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+          isSakura
+            ? "bg-pink-100/90 border-pink-200 text-pink-600 hover:bg-pink-200/90 focus:ring-pink-400"
+            : "bg-white/80 border-zinc-200/60 text-zinc-600 hover:bg-zinc-50 focus:ring-black"
+        }`}
+        aria-label="Toggle Sakura theme"
+        title="Toggle Sakura theme"
+      >
+        <SakuraIcon size={20} className={isSakura ? "animate-spin-slow" : ""} />
+      </button>
+
       <div
         ref={wrapperRef}
-        className="transition-opacity duration-500"
+        className={`transition-opacity duration-500 ${isSakura ? "theme-sakura" : ""}`}
         style={{ opacity: 0 }}
       >
-        <main className="flex min-h-screen w-full justify-center overflow-x-clip bg-[#fafafa] px-5 pt-12 pb-0 text-black sm:pt-[100px]">
+        <main className={`flex min-h-screen w-full justify-center overflow-x-clip px-5 pt-12 pb-0 sm:pt-[100px] transition-colors duration-[800ms] ease-in-out ${
+          isSakura ? "bg-[#fff2f4] text-[#4a2e35]" : "bg-[#fafafa] text-black"
+        }`}>
         <div className="flex w-full flex-col items-center pb-0 text-[14px] leading-[20px] font-sans font-medium">
           <div className="flex w-full flex-col items-center gap-10">
             {/* ═══════════════════════════════════════
@@ -431,7 +493,122 @@ export default function Profile() {
       </AnimatePresence>
 
       {/* Bottom white gradient overlay */}
-      <div className="fixed bottom-0 left-0 right-0 h-[10vh] bg-gradient-to-t from-[#fafafa] to-transparent pointer-events-none z-40" />
+      <div className="bottom-gradient-overlay fixed bottom-0 left-0 right-0 h-[10vh] bg-gradient-to-t from-[#fafafa] to-transparent pointer-events-none z-40" />
+
+      {/* Dynamic Sakura Theme overrides & animations */}
+      <style>{`
+        @keyframes spin-slow {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 12s linear infinite;
+        }
+
+        /* ── Image hover spring effect (all images) ── */
+        img {
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease !important;
+        }
+        img:hover {
+          transform: scale(1.04);
+          box-shadow: 0 8px 25px rgba(0,0,0,0.12), 0 3px 8px rgba(0,0,0,0.08);
+        }
+        /* Keep profile avatars subtle — no scale jump on tiny rounded pics */
+        img.rounded-full:hover {
+          transform: scale(1.08);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+
+
+        /* ── Smooth CSS transitions for the Sakura theme cascade ── */
+        .theme-sakura,
+        .theme-sakura * {
+          transition: background-color 800ms ease-in-out, border-color 800ms ease-in-out, color 800ms ease-in-out !important;
+        }
+        /* Restore image transitions inside sakura so hover spring still works */
+        .theme-sakura img {
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 800ms ease-in-out !important;
+        }
+
+        .theme-sakura a,
+        .theme-sakura button:not(.close-btn) {
+          color: #ff4d6d !important;
+        }
+        .theme-sakura a:hover,
+        .theme-sakura button:not(.close-btn):hover {
+          color: #ff758f !important;
+        }
+        .theme-sakura .text-black {
+          color: #4a2e35 !important;
+        }
+        .theme-sakura .text-\[\#8d8d8d\] {
+          color: #b38f97 !important;
+        }
+        .theme-sakura .bg-\[\#fafafa\],
+        .theme-sakura .bg-white\/50,
+        .theme-sakura .bg-\[\#fff2f4\] {
+          background-color: #fff2f4 !important;
+        }
+        .theme-sakura .bg-\[\#e8e8e8\],
+        .theme-sakura .bg-zinc-200\/60,
+        .theme-sakura .bg-zinc-100\/50 {
+          background-color: #ffd1dc !important;
+        }
+        .theme-sakura .border-zinc-200,
+        .theme-sakura .border-zinc-200\/80,
+        .theme-sakura .border-zinc-200\/60,
+        .theme-sakura .border-zinc-100\/50,
+        .theme-sakura .border-\[\#e8e8e8\] {
+          border-color: #ffccd5 !important;
+        }
+        .theme-sakura .bg-black {
+          background-color: #ff4d6d !important;
+          color: #ffffff !important;
+        }
+        .theme-sakura .bg-black .text-white {
+          color: #ffffff !important;
+        }
+
+        /* ── Tweet card Sakura overrides ── */
+        .theme-sakura .tweet-card {
+          background-color: #fff9fa !important;
+          border-color: #ffccd5 !important;
+        }
+        .theme-sakura .tweet-card .text-black {
+          color: #4a2e35 !important;
+        }
+        .theme-sakura .tweet-card .text-zinc-800 {
+          color: #5c3e45 !important;
+        }
+        .theme-sakura .tweet-card .text-zinc-500 {
+          color: #b38f97 !important;
+        }
+        .theme-sakura .tweet-card .text-zinc-400 {
+          color: #c9a0aa !important;
+        }
+        .theme-sakura .tweet-card .border-zinc-100 {
+          border-color: #ffe0e6 !important;
+        }
+
+        /* Spotify and logo carousel filters for pink palette theme-matching */
+        .theme-sakura [class*="SpotifyCard"] {
+          filter: sepia(0.2) hue-rotate(325deg) saturate(1.3) contrast(0.95);
+        }
+        /* Only tint tech stack logos — NOT profile pictures or photos */
+        .theme-sakura img[alt*="logo" i] {
+          filter: sepia(0.35) hue-rotate(320deg) saturate(1.6) contrast(0.95);
+        }
+        /* Profile avatars (rounded-full) stay completely natural */
+        .theme-sakura img.rounded-full {
+          filter: none !important;
+        }
+
+        /* ── Bottom gradient adapts to Sakura mode ── */
+        .theme-sakura .bottom-gradient-overlay {
+          background: linear-gradient(to top, #fff2f4, transparent) !important;
+        }
+      `}</style>
     </div>
     </>
   );

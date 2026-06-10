@@ -188,7 +188,7 @@ export default function Profile() {
       {/* Floating Sakura Blossom Theme Toggle */}
       <button
         onClick={() => setIsSakura(!isSakura)}
-        className={`fixed top-6 right-6 z-[60] w-10 h-10 flex items-center justify-center rounded-full shadow-md backdrop-blur-md border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+        className={`fixed top-24 right-4 md:top-6 md:right-6 z-[60] w-10 h-10 flex items-center justify-center rounded-full shadow-md backdrop-blur-md border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
           isSakura
             ? "bg-pink-100/90 border-pink-200 text-pink-600 hover:bg-pink-200/90 focus:ring-pink-400"
             : "bg-white/80 border-zinc-200/60 text-zinc-600 hover:bg-zinc-50 focus:ring-black"

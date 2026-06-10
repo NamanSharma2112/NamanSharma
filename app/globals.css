@@ -138,5 +138,10 @@
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to   { opacity: 1; }
+}
+
+.custom-bg {
+  background-color: #0a0a0a;
+  background-image: linear-gradient(to right, #6b728052 1px, transparent 1px), linear-gradient(to bottom, #6b728052 1px, transparent 1px);
+  background-size: 24px 24px;
 }

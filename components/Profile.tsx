@@ -324,7 +324,7 @@ export default function Profile() {
               <motion.p {...fadeUp(i++)}>
                 Open to design engineering roles and freelance collaborations.
                 Reach out to me via{" "}
-                <CopyEmail email="namansharma@email.com" /> or DM me on{" "}
+                <CopyEmail email="namansharmans03@gmail.com" /> or DM me on{" "}
                 <a
                   href="https://x.com/NamanSharma2112"
                   target="_blank"

@@ -63,7 +63,7 @@ export default function ContactFloating() {
         
         {/* Avatar Image */}
         <img 
-          src="/avatar.png" // Save your uploaded image to public/avatar.png
+          src="/avatar.jpg"
           alt="Contact Me" 
           className="w-full h-full object-cover relative z-10"
           style={{ backfaceVisibility: "hidden", transform: "translateZ(0)" }}

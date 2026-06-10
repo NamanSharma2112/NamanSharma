@@ -71,14 +71,14 @@ const PROJECTS = [
     external: true,
     cards: [
       {
-        src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=360&fit=crop",
-        alt: "Abstract gradient art",
+        src: "/motionkit-preview.png",
+        alt: "MotionKit Components",
         dx: 34,
         r: 11.9,
       },
       {
-        src: "https://images.unsplash.com/photo-1634017839464-5c339afa0df4?w=300&h=360&fit=crop",
-        alt: "3D abstract shapes",
+        src: "/isometric-studio.png",
+        alt: "Isometric Studio",
         dx: -34,
         r: -6.58,
       },
@@ -91,14 +91,14 @@ const PROJECTS = [
     external: true,
     cards: [
       {
-        src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&h=360&fit=crop",
-        alt: "Analytics dashboard",
+        src: "/churnrate-analysis.png",
+        alt: "ChurnRate Churn Analysis",
         dx: 34,
         r: 8.5,
       },
       {
-        src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=300&h=360&fit=crop",
-        alt: "Data visualization",
+        src: "/churnrate-dashboard.png",
+        alt: "ChurnRate Analytics Dashboard",
         dx: -34,
         r: -10.2,
       },
@@ -260,14 +260,14 @@ export default function Profile() {
                   label="React & Next.js"
                   cards={[
                     {
-                      src: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=300&h=360&fit=crop",
-                      alt: "React code on screen",
+                      src: "https://api.microlink.io/?url=https://nextjs.org&screenshot=true&meta=false&embed=screenshot.url",
+                      alt: "Next.js Homepage",
                       dx: 34,
                       r: 11.9,
                     },
                     {
-                      src: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=300&h=360&fit=crop",
-                      alt: "Code editor",
+                      src: "https://api.microlink.io/?url=https://react.dev&screenshot=true&meta=false&embed=screenshot.url",
+                      alt: "React Homepage",
                       dx: -34,
                       r: -6.58,
                     },
@@ -278,14 +278,14 @@ export default function Profile() {
                   label="Motion.dev"
                   cards={[
                     {
-                      src: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&h=360&fit=crop",
-                      alt: "Animations and motion",
+                      src: "https://api.microlink.io/?url=https://motion.dev&screenshot=true&meta=false&embed=screenshot.url",
+                      alt: "Motion.dev Homepage",
                       dx: 34,
                       r: 8.5,
                     },
                     {
-                      src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=300&h=360&fit=crop",
-                      alt: "Creative coding",
+                      src: "https://api.microlink.io/?url=https://motion.dev/docs&screenshot=true&meta=false&embed=screenshot.url",
+                      alt: "Motion.dev Docs",
                       dx: -34,
                       r: -10.2,
                     },
@@ -299,18 +299,23 @@ export default function Profile() {
               <motion.p {...fadeUp(i++)}>
                 I usually sketch out any design idea in my mind and try to
                 replicate its structure on{" "}
-                <a
-                  href="https://excalidraw.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-dotted underline-offset-2 transition-opacity duration-150 [@media(hover:hover)]:hover:opacity-70"
-                  style={{
-                    transitionTimingFunction:
-                      "cubic-bezier(0.16, 1, 0.3, 1)",
-                  }}
-                >
-                  Excalidraw
-                </a>{" "}
+                <HoverCards
+                  label="Excalidraw"
+                  cards={[
+                    {
+                      src: "https://api.microlink.io/?url=https://excalidraw.com&screenshot=true&meta=false&embed=screenshot.url",
+                      alt: "Excalidraw Homepage",
+                      dx: 34,
+                      r: 9.5,
+                    },
+                    {
+                      src: "https://api.microlink.io/?url=https://plus.excalidraw.com&screenshot=true&meta=false&embed=screenshot.url",
+                      alt: "Excalidraw Plus",
+                      dx: -34,
+                      r: -7.2,
+                    },
+                  ]}
+                />{" "}
                 before I code it.
               </motion.p>
 

@@ -2,59 +2,40 @@ import Image from "next/image";
 
 const INSPIRATIONS = [
   {
-    name: "Klack",
-    desc: "Neat product and website",
-    icon: "https://api.dicebear.com/7.x/initials/svg?seed=Klack&backgroundColor=ffffff&textColor=000000",
-  },
-  {
-    name: "Oğuz",
-    desc: "Designer with god level skills",
-    icon: "https://api.dicebear.com/7.x/notionists/svg?seed=Oguz&backgroundColor=f4f4f5",
-  },
-  {
-    name: "Interface Craft",
-    desc: "Amazing resource to learn motion",
-    icon: "https://api.dicebear.com/7.x/shapes/svg?seed=InterfaceCraft",
-  },
-  {
-    name: "Shadcn UI",
-    desc: "A library that changed my life",
-    icon: "https://api.dicebear.com/7.x/initials/svg?seed=SU&backgroundColor=ffffff&textColor=000000",
-  },
-  {
-    name: "Tailwind Plus",
-    desc: "Where it all started",
-    icon: "https://api.dicebear.com/7.x/initials/svg?seed=TP&backgroundColor=e0f2fe&textColor=0ea5e9",
-  },
-  {
-    name: "Posthog",
-    desc: "Analytics tool that has made my life so much easier.",
-    icon: "https://api.dicebear.com/7.x/initials/svg?seed=PH&backgroundColor=ffffff&textColor=ea580c",
-  },
-  {
-    name: "Derek Briggs",
-    desc: "Designer I look up to",
-    icon: "https://api.dicebear.com/7.x/notionists/svg?seed=Derek&backgroundColor=e4e4e7",
-  },
-  {
-    name: "Fireship",
-    desc: "All time favourite YouTuber",
-    icon: "https://api.dicebear.com/7.x/initials/svg?seed=F&backgroundColor=ffffff&textColor=ea580c",
-  },
-  {
     name: "Rauno",
     desc: "God level design engineer",
-    icon: "https://api.dicebear.com/7.x/notionists/svg?seed=Rauno&backgroundColor=dcfce7",
+    url: "https://rauno.me/",
+    icon: "https://www.google.com/s2/favicons?domain=rauno.me&sz=256",
   },
   {
-    name: "Naval",
-    desc: "Entrepreneur, philosopher and investor I look up to",
-    icon: "https://api.dicebear.com/7.x/notionists/svg?seed=Naval&backgroundColor=f3f4f6",
+    name: "Emil Kowalski",
+    desc: "Incredible design engineer and creator of Animations.dev",
+    url: "https://emilkowal.ski/",
+    icon: "https://www.google.com/s2/favicons?domain=emilkowal.ski&sz=256",
   },
   {
-    name: "Autosend",
-    desc: "Landing page that I love, software that I admire.",
-    icon: "https://api.dicebear.com/7.x/initials/svg?seed=A&backgroundColor=ffffff&textColor=52525b",
+    name: "Animations.dev",
+    desc: "The best place to learn Framer Motion",
+    url: "https://animations.dev/",
+    icon: "https://www.google.com/s2/favicons?domain=animations.dev&sz=256",
+  },
+  {
+    name: "Yui540",
+    desc: "Creative frontend developer with amazing interactive works",
+    url: "https://yui540.com/",
+    icon: "https://www.google.com/s2/favicons?domain=yui540.com&sz=256",
+  },
+  {
+    name: "Manu Arora",
+    desc: "Creator of Aceternity UI and amazing developer",
+    url: "https://manuarora.in/",
+    icon: "https://www.google.com/s2/favicons?domain=manuarora.in&sz=256",
+  },
+  {
+    name: "Josh W Comeau",
+    desc: "Phenomenal educator and CSS wizard",
+    url: "https://www.joshwcomeau.com/",
+    icon: "https://www.google.com/s2/favicons?domain=joshwcomeau.com&sz=256",
   },
 ];
 
@@ -77,19 +58,25 @@ export default function InspirationPage() {
         <ul className="flex flex-col gap-6">
           {INSPIRATIONS.map((item, i) => (
             <li key={i} className="flex items-center gap-4 group">
-              {/* Squircle Icon */}
-              <div className="relative w-10 h-10 shrink-0 rounded-[12px] border border-zinc-200/80 bg-white overflow-hidden shadow-sm flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+              {/* Avatar Icon */}
+              <div className="relative w-10 h-10 shrink-0 rounded-full border border-zinc-200/80 bg-white overflow-hidden shadow-sm flex items-center justify-center">
                 <img 
                   src={item.icon} 
                   alt={item.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
                 />
               </div>
 
               {/* Text Content */}
               <div className="flex items-baseline gap-2">
                 <span className="text-[15px] font-medium text-zinc-800 tracking-tight">
-                  {item.name}
+                  {item.url ? (
+                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-black transition-colors">
+                      {item.name}
+                    </a>
+                  ) : (
+                    item.name
+                  )}
                 </span>
                 <span className="text-zinc-300 text-[10px]">
                   •

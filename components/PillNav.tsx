@@ -112,11 +112,11 @@ export default function PillNav() {
     >
       <div
         ref={containerRef}
-        className="relative flex items-center gap-1 rounded-full px-1.5 py-1.5 backdrop-blur-2xl backdrop-saturate-[1.8]"
+        className="relative flex items-center gap-1 rounded-full px-1.5 py-1.5 backdrop-blur-xl backdrop-saturate-200"
         style={{
-          background: "rgba(255,255,255,0.15)",
-          boxShadow: "0 4px 30px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.04)",
-          border: "1px solid rgba(255,255,255,0.3)",
+          background: "rgba(255, 255, 255, 0.05)",
+          boxShadow: "0 4px 30px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.02)",
+          border: "1px solid rgba(255, 255, 255, 0.15)",
         }}
       >
         {/* Sliding active indicator */}

@@ -146,3 +146,34 @@
   background-image: linear-gradient(to right, #6b728052 1px, transparent 1px), linear-gradient(to bottom, #6b728052 1px, transparent 1px);
   background-size: 24px 24px;
 }
+
+/* ── CmdK Animations ── */
+@keyframes cmkEnter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 15px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes cmkExit {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.98);
+  }
+}
+
+.cmk-animate-in {
+  animation: cmkEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+.cmk-animate-out {
+  animation: cmkExit 0.2s ease-in forwards !important;
+}

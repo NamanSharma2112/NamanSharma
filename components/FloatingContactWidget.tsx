@@ -7,6 +7,17 @@ import { SiX as Twitter } from "@icons-pack/react-simple-icons";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { TiltCard } from "./tilt-card";
+import { QRCode, QRCodeSvg } from "@/components/ui/qr-code";
+
+const vCardData = [
+  "BEGIN:VCARD",
+  "VERSION:3.0",
+  "FN:Naman Sharma",
+  "TEL;TYPE=CELL:9872029716",
+  "EMAIL:namansharmans03@gmail.com",
+  "URL:https://namansharma.com",
+  "END:VCARD"
+].join("\r\n");
 
 export default function FloatingContactWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -94,7 +105,7 @@ export default function FloatingContactWidget() {
                 tiltLimit={10}
                 scale={1.02}
                 spotlight={true}
-                className="w-[300px] h-auto bg-[#fafafa] rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden flex flex-col"
+                className="w-[340px] h-auto bg-[#fafafa] rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden flex flex-col"
               >
                 {/* Lanyard Hole */}
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 w-16 h-3 bg-zinc-200 rounded-full shadow-inner border border-zinc-300" />
@@ -105,10 +116,41 @@ export default function FloatingContactWidget() {
                   <p id="contact-card-title" className="font-mono text-sm font-semibold tracking-tight uppercase">Staff ID Card</p>
                 </div>
 
-                {/* Photo Area */}
-                <div className="flex justify-center mt-5">
-                  <div className="w-28 h-28 rounded-xl border-4 border-white shadow-sm overflow-hidden relative bg-zinc-200">
-                    <Image src="/banner.jpg" alt="Naman Sharma" fill className="object-cover" />
+                {/* Photo Area with QR Code Reveal on Hover */}
+                <div className="flex justify-center mt-5 group cursor-crosshair">
+                  <div className="relative w-32 h-32">
+                    {/* Invisible Hover Extender */}
+                    <div className="absolute -inset-8 z-30" />
+                    
+                    {/* Front: Photo */}
+                    <div className="absolute inset-0 rounded-xl border-4 border-white shadow-sm overflow-hidden bg-zinc-200 transition-all duration-300 group-hover:scale-95 group-hover:opacity-0 group-hover:-rotate-3">
+                      <Image src="/banner.jpg" alt="Naman Sharma" fill className="object-cover" />
+                    </div>
+                    {/* Back: QR Code */}
+                    <div className="absolute inset-0 rounded-xl border-4 border-white shadow-sm bg-white flex items-center justify-center opacity-0 scale-95 rotate-3 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100 group-hover:rotate-0">
+                      <div className="w-full h-full p-2.5">
+                        <QRCode value={vCardData}>
+                          <QRCodeSvg className="w-full h-full text-black" />
+                        </QRCode>
+                      </div>
+                    </div>
+
+                    {/* Hand-drawn Arrow and Text */}
+                    <div className="absolute top-1/2 -right-4 -translate-y-1/2 translate-x-full pointer-events-none flex items-center gap-1 z-20">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="-translate-y-1 -rotate-12 shrink-0">
+                        <path d="M4 14s2-6 8-4" />
+                        <path d="M4 14l3.5-2" />
+                        <path d="M4 14l1.5-3.5" />
+                      </svg>
+                      <div className="relative flex items-center justify-center -translate-y-0.5">
+                        <span className="font-sans text-[11px] font-bold text-red-500 -rotate-3 z-10 px-1.5 whitespace-nowrap transition-opacity duration-300 group-hover:opacity-0">Hover me</span>
+                        <span className="absolute font-sans text-[11px] font-bold text-red-500 -rotate-3 z-10 px-1.5 whitespace-nowrap transition-opacity duration-300 opacity-0 group-hover:opacity-100">Scan me!</span>
+                        {/* Messy hand-drawn circle */}
+                        <svg className="absolute inset-0 w-[120%] h-[150%] -left-[10%] -top-[25%] text-red-500 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                          <path d="M 20 50 C 10 20 80 10 90 40 C 100 70 30 90 10 60 C 0 45 40 15 50 20" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

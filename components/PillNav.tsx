@@ -175,6 +175,43 @@ export default function PillNav() {
             </Link>
           );
         })}
+        
+        {/* CmdK Trigger Button */}
+        <div className="w-[1px] h-4 bg-zinc-300/50 mx-1 rounded-full z-10" />
+        <motion.button
+          initial="initial"
+          whileHover="hover"
+          whileTap="tap"
+          onClick={() => {
+            playTap();
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }));
+          }}
+          className="relative z-10 select-none outline-none block group px-2 py-2 cursor-pointer"
+        >
+          <div className="flex items-center gap-1.5 rounded-full text-[13px] font-medium text-zinc-400 group-hover:text-zinc-800 transition-colors duration-200">
+            <motion.svg 
+              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              variants={{
+                hover: { scale: 1.15, rotate: -10 },
+                tap: { scale: 0.9 }
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </motion.svg>
+            <motion.span 
+              variants={{
+                hover: { x: 1, scale: 1.05 },
+                tap: { scale: 0.95 }
+              }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              className="hidden sm:inline-flex items-center gap-0.5 bg-black/5 dark:bg-white/10 px-1.5 py-[3px] rounded text-[10px] font-mono leading-none border border-black/5 dark:border-white/10 group-hover:border-black/20 group-hover:bg-black/10 transition-colors duration-200"
+            >
+              <span className="text-[11px] leading-none">⌘</span>K
+            </motion.span>
+          </div>
+        </motion.button>
       </div>
     </nav>
   );

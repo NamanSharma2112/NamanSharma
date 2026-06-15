@@ -34,6 +34,7 @@ export const metadata: Metadata = {
 
 import FloatingContactWidget from "@/components/FloatingContactWidget";
 import PillNav from "@/components/PillNav";
+import { CommandMenu } from "@/components/CommandMenu";
 
 export default function RootLayout({
   children,
@@ -49,6 +50,7 @@ export default function RootLayout({
         <PillNav />
         {children}
         <FloatingContactWidget />
+        <CommandMenu />
       </body>
     </html>
   );

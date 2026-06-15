@@ -147,7 +147,7 @@ const TweetBody = ({ tweet, size = "large" }: { tweet: EnrichedTweet; size?: "sm
   </p>
 );
 
-const VideoPlayer = ({ src, poster }: { src: string; poster?: string }) => {
+const VideoPlayer = ({ src, poster, aspectRatio }: { src: string; poster?: string; aspectRatio?: [number, number] }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -164,19 +164,23 @@ const VideoPlayer = ({ src, poster }: { src: string; poster?: string }) => {
     playVideo();
   }, [src]);
 
+  const ratioString = aspectRatio ? `${aspectRatio[0]} / ${aspectRatio[1]}` : "16 / 9";
+
   return (
-    <video
-      key={src}
-      ref={videoRef}
-      src={src}
-      poster={poster}
-      autoPlay
-      loop
-      muted
-      playsInline
-      controls
-      className="w-full rounded-lg"
-    />
+    <div className="relative w-full rounded-lg overflow-hidden bg-black/5" style={{ aspectRatio: ratioString }}>
+      <video
+        key={src}
+        ref={videoRef}
+        src={src}
+        poster={poster}
+        autoPlay
+        loop
+        muted
+        playsInline
+        controls
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+    </div>
   );
 };
 
@@ -211,7 +215,11 @@ const TweetMedia = ({ tweet, size = "large" }: { tweet: EnrichedTweet; size?: "s
   return (
     <div className={cn("mt-4", size === "small" ? "mt-2.5" : "mt-4")}>
       {tweet.video && videoSource && (
-        <VideoPlayer src={videoSource.src} poster={tweet.video.poster} />
+        <VideoPlayer 
+          src={videoSource.src} 
+          poster={tweet.video.poster} 
+          aspectRatio={tweet.video.aspectRatio} 
+        />
       )}
       {tweet.photos && (
         <div

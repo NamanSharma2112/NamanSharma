@@ -27,7 +27,8 @@
   }
 
   ::selection {
-    background: rgba(0, 0, 0, 0.08);
+    background: rgba(99, 102, 241, 0.25);
+    color: inherit;
   }
 
   ::-webkit-scrollbar {

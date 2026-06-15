@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { playTap } from "@/lib/sounds";
 
 /* ── Tab config ── */
 const TABS = [
@@ -148,6 +149,7 @@ export default function PillNav() {
               key={tab.href}
               href={tab.href}
               ref={(el) => { tabRefs.current[i] = el; }}
+              onClick={() => playTap()}
               className="relative z-10 select-none outline-none block"
             >
               <motion.div

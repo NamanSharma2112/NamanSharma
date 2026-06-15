@@ -9,7 +9,7 @@ type TOCItem = {
   heading: string;
 };
 
-export default function TableOfContents({ items }: { items: TOCItem[] }) {
+export default function TableOfContents({ items, isDark = false }: { items: TOCItem[]; isDark?: boolean }) {
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
@@ -38,7 +38,8 @@ export default function TableOfContents({ items }: { items: TOCItem[] }) {
     <nav className="sticky top-32 flex flex-col gap-8 w-48 shrink-0 hidden md:flex">
       <Link 
         href="/blog" 
-        className="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+        className="flex items-center gap-2 text-sm transition-colors"
+        style={{ color: isDark ? "#71717a" : "#71717a" }}
       >
         <ArrowLeft size={14} />
         Back to Blog
@@ -49,12 +50,13 @@ export default function TableOfContents({ items }: { items: TOCItem[] }) {
           <li key={item.id}>
             <a
               href={`#${item.id}`}
-              className={`text-[13px] transition-colors duration-200 block ${
-                activeId === item.id
-                  ? "text-zinc-900 font-medium translate-x-1"
-                  : "text-zinc-400 hover:text-zinc-600"
-              }`}
+              className="text-[13px] transition-all duration-200 block"
               style={{
+                color: activeId === item.id
+                  ? (isDark ? "#fafafa" : "#18181b")
+                  : (isDark ? "#52525b" : "#a1a1aa"),
+                fontWeight: activeId === item.id ? 500 : 400,
+                transform: activeId === item.id ? "translateX(4px)" : "translateX(0)",
                 transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             >

@@ -13,6 +13,7 @@ import { ShimmerText } from "./shimmer-text";
 import BunnyIcon from "./BunnyIcon";
 import SakuraBlossoms from "./SakuraBlossoms";
 import { SiX, SiGmail, SiGithub } from "@icons-pack/react-simple-icons";
+import { playTap, playToggle } from "@/lib/sounds";
 
 function LinkedinIcon({ size = 24, ...props }: React.SVGProps<SVGSVGElement> & { size?: number }) {
   return (
@@ -187,7 +188,7 @@ export default function Profile() {
 
       {/* Floating Sakura Blossom Theme Toggle */}
       <button
-        onClick={() => setIsSakura(!isSakura)}
+        onClick={() => { setIsSakura(!isSakura); playToggle(); }}
         className={`fixed top-24 right-4 md:top-6 md:right-6 z-[60] w-10 h-10 flex items-center justify-center rounded-full shadow-md backdrop-blur-md border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
           isSakura
             ? "bg-pink-100/90 border-pink-200 text-pink-600 hover:bg-pink-200/90 focus:ring-pink-400"
@@ -220,9 +221,9 @@ export default function Profile() {
                   Naman Sharma
                 </motion.p>
 
-                <motion.p {...fadeUp(i++)} className="text-[#8d8d8d]">
+                <motion.div {...fadeUp(i++)} className="text-[#8d8d8d]">
                   <ShimmerText>Design Engineer</ShimmerText>
-                </motion.p>
+                </motion.div>
               </div>
 
               <motion.div {...fadeUp(i++)} className="hidden sm:block shrink-0 mt-2">
@@ -390,10 +391,10 @@ export default function Profile() {
                 ].map((id) => (
                   <div
                     key={id}
-                    onClick={() => setSelectedTweetId(id)}
+                    onClick={() => { setSelectedTweetId(id); playTap(); }}
                     className="relative cursor-pointer select-none active:scale-[0.98] transition-all duration-200 hover:scale-[1.015] hover:shadow-sm rounded-xl"
                   >
-                    <div className="pointer-events-none w-full">
+                    <div className="pointer-events-none [&_video]:pointer-events-auto w-full">
                       <Tweet id={id} size="small" className="w-full" />
                     </div>
                   </div>
@@ -479,7 +480,7 @@ export default function Profile() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
               className="absolute inset-0 bg-black/40 backdrop-blur-[2px] cursor-zoom-out"
-              onClick={() => setSelectedTweetId(null)}
+              onClick={() => { setSelectedTweetId(null); playTap(); }}
             />
 
             {/* Dialog Content */}

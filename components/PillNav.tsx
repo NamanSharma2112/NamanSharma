@@ -113,21 +113,12 @@ export default function PillNav() {
     >
       <div
         ref={containerRef}
-        className="relative flex items-center gap-1 rounded-full px-1.5 py-1.5 backdrop-blur-xl backdrop-saturate-200"
-        style={{
-          background: "rgba(255, 255, 255, 0.05)",
-          boxShadow: "0 4px 30px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(0,0,0,0.02)",
-          border: "1px solid rgba(255, 255, 255, 0.15)",
-        }}
+        className="relative flex items-center gap-1 rounded-full px-1.5 py-1.5 backdrop-blur-xl backdrop-saturate-200 bg-white/40 dark:bg-zinc-900/40 border border-white/20 dark:border-zinc-800/50 shadow-sm"
       >
         {/* Sliding active indicator */}
         {mounted && (
           <motion.div
-            className="absolute top-1.5 bottom-1.5 rounded-full"
-            style={{
-              background: "rgba(255,255,255,0.7)",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
-            }}
+            className="absolute top-1.5 bottom-1.5 rounded-full bg-white dark:bg-zinc-800 shadow-[0_1px_4px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
             animate={{
               left: activeRect.left,
               width: activeRect.width,
@@ -157,7 +148,7 @@ export default function PillNav() {
                 whileHover="hover"
                 whileTap="tap"
                 className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition-colors duration-200 whitespace-nowrap ${
-                  isActive ? "text-black" : "text-zinc-400 hover:text-zinc-600"
+                  isActive ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200"
                 }`}
               >
                 <motion.span
@@ -176,8 +167,7 @@ export default function PillNav() {
           );
         })}
         
-        {/* CmdK Trigger Button */}
-        <div className="w-[1px] h-4 bg-zinc-300/50 mx-1 rounded-full z-10" />
+        <div className="w-[1px] h-4 bg-zinc-300 dark:bg-zinc-700 mx-1 rounded-full z-10" />
         <motion.button
           initial="initial"
           whileHover="hover"
@@ -188,7 +178,7 @@ export default function PillNav() {
           }}
           className="relative z-10 select-none outline-none block group px-2 py-2 cursor-pointer"
         >
-          <div className="flex items-center gap-1.5 rounded-full text-[13px] font-medium text-zinc-400 group-hover:text-zinc-800 transition-colors duration-200">
+          <div className="flex items-center gap-1.5 rounded-full text-[13px] font-medium text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-800 dark:group-hover:text-zinc-200 transition-colors duration-200">
             <motion.svg 
               width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
               variants={{
@@ -206,7 +196,7 @@ export default function PillNav() {
                 tap: { scale: 0.95 }
               }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              className="hidden sm:inline-flex items-center gap-0.5 bg-black/5 dark:bg-white/10 px-1.5 py-[3px] rounded text-[10px] font-mono leading-none border border-black/5 dark:border-white/10 group-hover:border-black/20 group-hover:bg-black/10 transition-colors duration-200"
+              className="hidden sm:inline-flex items-center gap-0.5 bg-black/5 dark:bg-white/10 px-1.5 py-[3px] rounded text-[10px] font-mono leading-none border border-black/5 dark:border-white/10 group-hover:border-black/20 dark:group-hover:border-white/20 group-hover:bg-black/10 dark:group-hover:bg-white/20 transition-colors duration-200"
             >
               <span className="text-[11px] leading-none">⌘</span>K
             </motion.span>

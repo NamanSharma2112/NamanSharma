@@ -60,12 +60,6 @@ type Props = {
 
 export default function HighlightList({ title, items }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const highlightRef = useRef<HTMLDivElement>(null);
-  const [highlightStyle, setHighlightStyle] = useState({
-    top: 0,
-    height: 0,
-    opacity: 0,
-  });
   const [activeCards, setActiveCards] = useState<Card[] | null>(null);
 
   /* Spring-based cursor tracking */
@@ -77,13 +71,8 @@ export default function HighlightList({ title, items }: Props) {
     (e: React.MouseEvent<HTMLAnchorElement>, cards?: Card[]) => {
       const container = containerRef.current;
       if (!container) return;
-      const rect = e.currentTarget.getBoundingClientRect();
       const containerRect = container.getBoundingClientRect();
-      setHighlightStyle({
-        top: rect.top - containerRect.top,
-        height: rect.height,
-        opacity: 1,
-      });
+      
       if (cards && cards.length > 0) {
         setActiveCards(cards);
         cardX.set(e.clientX - containerRect.left);
@@ -106,69 +95,55 @@ export default function HighlightList({ title, items }: Props) {
   );
 
   const onLeave = useCallback(() => {
-    setHighlightStyle((prev) => ({ ...prev, opacity: 0 }));
     setActiveCards(null);
   }, []);
 
   return (
-    <section className="flex w-full max-w-[576px] flex-col gap-4">
-      <p className="pb-2 text-black">{title}</p>
-      <div className="h-px w-8 bg-[#e8e8e8]" />
+    <section className="flex w-full max-w-[576px] flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <p className="font-medium text-zinc-900 dark:text-zinc-100">{title}</p>
+        <div className="h-px w-8 bg-zinc-200 dark:bg-zinc-800" />
+      </div>
+      
       <div
         ref={containerRef}
-        className="relative -mt-1 flex flex-col gap-1"
+        className="relative flex flex-col gap-2"
         onMouseLeave={onLeave}
         onMouseMove={onMove}
       >
-        {/* Animated highlight background */}
-        <div
-          ref={highlightRef}
-          aria-hidden="true"
-          className="pointer-events-none absolute -inset-x-3 z-0 rounded-xl"
-          style={{
-            background: "rgba(0,0,0,0.04)",
-            top: highlightStyle.top,
-            height: highlightStyle.height,
-            opacity: highlightStyle.opacity,
-            transition: "top 0.2s ease, height 0.2s ease, opacity 0.15s ease",
-          }}
-        />
-
         {/* Cursor-following preview card */}
         <AnimatePresence>
           {activeCards && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.7, y: 10 }}
+              initial={{ opacity: 0, scale: 0.8, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.7, y: 10 }}
+              exit={{ opacity: 0, scale: 0.8, y: 15 }}
               transition={{
-                duration: 0.3,
-                ease: [0.34, 1.56, 0.64, 1],
+                duration: 0.4,
+                ease: [0.16, 1, 0.3, 1], // Custom smooth ease
               }}
               className="pointer-events-none absolute left-0 top-0 z-50"
               style={{ x: cardX, y: cardY }}
             >
               {/* Offset so card appears above-right of cursor */}
-              <div className="relative" style={{ transform: "translate(16px, -105%)" }}>
-                <div className="flex gap-[-8px]">
+              <div className="relative" style={{ transform: "translate(20px, -110%)" }}>
+                <div className="flex gap-[-12px]">
                   {activeCards.map((card, i) => (
                     <div
                       key={i}
-                      className="rounded-xl overflow-hidden border border-white/80"
+                      className="rounded-xl overflow-hidden border-2 border-white shadow-xl bg-white"
                       style={{
-                        width: 130,
-                        height: 160,
+                        width: 140,
+                        height: 170,
                         transform: `rotate(${card.r}deg) translateX(${card.dx}px)`,
-                        boxShadow:
-                          "0 12px 40px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1)",
-                        transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                        transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                       }}
                     >
                       <img
                         src={card.src}
                         alt={card.alt}
-                        width={130}
-                        height={160}
+                        width={140}
+                        height={170}
                         className="h-full w-full object-cover"
                         loading="eager"
                       />
@@ -187,14 +162,20 @@ export default function HighlightList({ title, items }: Props) {
             target={item.external ? "_blank" : undefined}
             rel={item.external ? "noopener noreferrer" : undefined}
             onMouseEnter={(e) => onEnter(e, item.cards)}
-            className="relative z-10 -mx-3 flex w-[calc(100%+24px)] cursor-pointer items-center justify-between rounded-xl px-3 py-3 text-black outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-black/15"
+            className="group relative flex w-full cursor-pointer items-center justify-between rounded-2xl border border-transparent px-4 py-3.5 transition-all duration-300 hover:bg-white dark:hover:bg-zinc-800/50 hover:shadow-sm hover:border-zinc-200/60 dark:hover:border-zinc-700/50"
           >
-            <span className="flex items-center gap-1">
-              {item.isNew && <NewDot />}
-              <span>{item.label}</span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+              <span className="flex items-center gap-2 font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                {item.isNew && <NewDot />}
+                {item.label}
+              </span>
+              <span className="hidden sm:block text-zinc-300 dark:text-zinc-700">•</span>
+              <span className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">{item.description}</span>
+            </div>
+            
+            <div className="text-zinc-400 dark:text-zinc-600 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
               {item.external && <ArrowIcon />}
-            </span>
-            <span className="text-[#8d8d8d]">{item.description}</span>
+            </div>
           </a>
         ))}
       </div>

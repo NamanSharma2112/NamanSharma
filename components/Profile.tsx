@@ -7,11 +7,13 @@ import HoverCards from "./HoverCards";
 import HighlightList from "./HighlightList";
 import CopyEmail from "./CopyEmail";
 import { LogosCarousel } from "./LogosCarousel";
+import AnimatedCardDemo from "./AnimatedCardDemo";
+import { TweetGrid } from "./TweetGrid";
 import { SpotifyCard } from "@/registry/spell-ui/spotify-card";
 import { Tweet } from "@/registry/spell-ui/tweet";
 import { ShimmerText } from "./shimmer-text";
 import BunnyIcon from "./BunnyIcon";
-import SakuraBlossoms from "./SakuraBlossoms";
+import { ThemeToggle } from "./ThemeToggle";
 import { SiX, SiGmail, SiGithub } from "@icons-pack/react-simple-icons";
 import { playTap, playToggle } from "@/lib/sounds";
 
@@ -34,22 +36,6 @@ function LinkedinIcon({ size = 24, ...props }: React.SVGProps<SVGSVGElement> & {
     </svg>
   );
 }
-
-function SakuraIcon({ size = 24, ...props }: React.SVGProps<SVGSVGElement> & { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      {...props}
-    >
-      <path d="M12 2.3c-.3 0-.5.2-.6.4C10.4 5.3 8.3 6.4 6 5.8c-.3-.1-.6.1-.7.4-.7 2-.2 4.2.8 5.9-1.2-.8-2.7-1.1-4.2-.6-.3.1-.4.4-.3.7.6 2 2.2 3.5 4 4.1-.9.7-1.5 1.7-1.7 2.8-.1.3.1.6.4.7 1.9.7 4.1.2 5.7-.8-.8 1.2-1.1 2.7-.6 4.2.1.3.4.4.7.3 2-.6 3.5-2.2 4.1-4 .7.9 1.7 1.5 2.8 1.7.3.1.6-.1.7-.4.7-1.9.2-4.1-.8-5.7 1.2.8 2.7 1.1 4.2.6.3-.1.4-.4.3-.7-.6-2-2.2-3.5-4-4.1.9-.7 1.5-1.7 1.7-2.8.1-.3-.1-.6-.4-.7-1.9-.7-4.1-.2-5.7.8.8-1.2 1.1-2.7.6-4.2-.1-.3-.4-.4-.7-.3zM12 9.5c1.4 0 2.5 1.1 2.5 2.5S13.4 14.5 12 14.5 9.5 13.4 9.5 12 10.6 9.5 12 9.5z" />
-    </svg>
-  );
-}
-
-
 /* ── Stagger animation config ── */
 const STAGGER_DELAY = 0.06;
 const DURATION = 0.5;
@@ -113,7 +99,6 @@ export default function Profile() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [selectedTweetId, setSelectedTweetId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSakura, setIsSakura] = useState(false);
   const [time, setTime] = useState<string>("");
 
   // Dynamic clock in Jalandhar timezone (IST)
@@ -132,11 +117,19 @@ export default function Profile() {
     return () => clearInterval(interval);
   }, []);
 
-  // Fade out loader after signature animation
+  // Intro loading state (run only once per session)
   useEffect(() => {
+    const hasVisited = sessionStorage.getItem("hasVisited");
+    if (hasVisited === "true") {
+      setIsLoading(false);
+      return;
+    }
+
     const timer = setTimeout(() => {
       setIsLoading(false);
+      sessionStorage.setItem("hasVisited", "true");
     }, 2600); // 2.6s (allows signature to draw completely)
+    
     return () => clearTimeout(timer);
   }, []);
 
@@ -175,41 +168,27 @@ export default function Profile() {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#fafafa]"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-[#1f1f23]"
           >
             <div className="w-[160px] sm:w-[200px]">
-              <Signature className="h-auto w-full text-black overflow-visible" />
+              <Signature className="h-auto w-full text-black dark:text-white overflow-visible" />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <SakuraBlossoms isActive={isSakura} />
-
-      {/* Floating Sakura Blossom Theme Toggle */}
-      <button
-        onClick={() => { setIsSakura(!isSakura); playToggle(); }}
-        className={`fixed top-24 right-4 md:top-6 md:right-6 z-[60] w-10 h-10 flex items-center justify-center rounded-full shadow-md backdrop-blur-md border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-          isSakura
-            ? "bg-pink-100/90 border-pink-200 text-pink-600 hover:bg-pink-200/90 focus:ring-pink-400"
-            : "bg-white/80 border-zinc-200/60 text-zinc-600 hover:bg-zinc-50 focus:ring-black"
-        }`}
-        aria-label="Toggle Sakura theme"
-        title="Toggle Sakura theme"
-      >
-        <SakuraIcon size={20} className={isSakura ? "animate-spin-slow" : ""} />
-      </button>
+      <div className="fixed top-24 right-4 md:top-6 md:right-6 z-[60]">
+        <ThemeToggle />
+      </div>
 
       <div
         ref={wrapperRef}
-        className={`transition-opacity duration-500 ${isSakura ? "theme-sakura" : ""}`}
+        className="transition-opacity duration-500"
         style={{ opacity: 0 }}
       >
-        <main className={`flex min-h-screen w-full justify-center overflow-x-clip px-5 pt-12 pb-0 sm:pt-[100px] transition-colors duration-[800ms] ease-in-out ${
-          isSakura ? "bg-[#fff2f4] text-[#4a2e35]" : "bg-[#fafafa] text-black"
-        }`}>
-        <div className="flex w-full flex-col items-center pb-0 text-[14px] leading-[20px] font-sans font-medium">
-          <div className="flex w-full flex-col items-center gap-10">
+        <main className="flex min-h-screen w-full justify-center overflow-x-clip transition-colors duration-[800ms] ease-in-out">
+        <div className="flex w-full max-w-3xl flex-col items-center border-x-[0.5px] px-5 pt-12 pb-6 sm:px-12 sm:pt-[100px] text-[14px] leading-[20px] font-sans font-medium shadow-sm transition-colors duration-[800ms] ease-in-out border-zinc-200/10 dark:border-zinc-800/10 bg-white/20 dark:bg-[#111110]/20 backdrop-blur-xl">
+          <div className="flex w-full flex-col items-center gap-12 flex-1 justify-between">
             {/* ═══════════════════════════════════════
                 HEADER
             ═══════════════════════════════════════ */}
@@ -217,7 +196,7 @@ export default function Profile() {
               <div className="flex flex-col gap-1">
                 <Signature />
 
-                <motion.p {...fadeUp(i++)} className="text-black">
+                <motion.p {...fadeUp(i++)} className="text-black dark:text-white">
                   Naman Sharma
                 </motion.p>
 
@@ -345,28 +324,8 @@ export default function Profile() {
             {/* ═══════════════════════════════════════
                 TECH LOGOS
             ═══════════════════════════════════════ */}
-            <motion.div {...fadeUp(i++)} className="w-full max-w-[576px] py-6">
-              <LogosCarousel>
-                {[
-                  { src: "https://cdn.simpleicons.org/react/000000", alt: "React logo" },
-                  { src: "https://cdn.simpleicons.org/typescript/000000", alt: "TypeScript logo" },
-                  { src: "https://cdn.simpleicons.org/nextdotjs/000000", alt: "Next.js logo" },
-                  { src: "https://cdn.simpleicons.org/tailwindcss/000000", alt: "Tailwind CSS logo" },
-                  { src: "https://cdn.simpleicons.org/vercel/000000", alt: "Vercel logo" },
-                  { src: "https://cdn.simpleicons.org/framer/000000", alt: "Motion (Framer) logo" },
-                  { src: "https://cdn.simpleicons.org/claude/000000", alt: "Claude logo" },
-                  { src: "https://cdn.simpleicons.org/excalidraw/000000", alt: "Excalidraw logo" },
-                ].map((logo) => (
-                  <img
-                    key={logo.src}
-                    src={logo.src}
-                    alt={logo.alt}
-                    width={96}
-                    height={96}
-                    className="h-9 w-9 object-contain opacity-60 hover:opacity-100 transition-opacity duration-200 pointer-events-none select-none"
-                  />
-                ))}
-              </LogosCarousel>
+            <motion.div {...fadeUp(i++)} className="w-full max-w-[576px] py-6 flex justify-center">
+              <AnimatedCardDemo />
             </motion.div>
 
             {/* ═══════════════════════════════════════
@@ -380,25 +339,21 @@ export default function Profile() {
                 TWEETS (Feedback)
             ═══════════════════════════════════════ */}
             <motion.div {...fadeUp(i++)} className="w-full max-w-[576px] flex flex-col gap-4">
-              <p className="text-black">Tweets</p>
-              <div className="h-px w-8 bg-[#e8e8e8] mb-2" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-                {[
-                  "2060428797443473817",
-                  "2059578920849342776",
-                  "2053411484752052536",
-                  "2056804349117186363",
-                ].map((id) => (
-                  <div
-                    key={id}
-                    onClick={() => { setSelectedTweetId(id); playTap(); }}
-                    className="relative cursor-pointer select-none active:scale-[0.98] transition-all duration-200 hover:scale-[1.015] hover:shadow-sm rounded-xl"
-                  >
-                    <div className="pointer-events-none [&_video]:pointer-events-auto w-full">
-                      <Tweet id={id} size="small" className="w-full" />
-                    </div>
-                  </div>
-                ))}
+              <p className="font-medium text-zinc-900 dark:text-zinc-100">Tweets</p>
+              <div className="h-px w-8 bg-zinc-200 dark:bg-zinc-800 mb-2" />
+              <div className="w-full flex justify-center mt-2">
+                <TweetGrid
+                  tweets={[
+                    "2060428797443473817",
+                    "2059578920849342776",
+                    "2053411484752052536",
+                    "2056804349117186363",
+                  ]}
+                  onSelect={(id) => { 
+                    setSelectedTweetId(id); 
+                    playTap(); 
+                  }} 
+                />
               </div>
             </motion.div>
 
@@ -459,7 +414,7 @@ export default function Profile() {
               </div>
 
               {/* Copyright */}
-              <div className="w-full flex justify-between items-center text-[11px] text-zinc-400 font-mono pt-4 border-t border-zinc-100/50">
+              <div className="w-full flex justify-between items-center text-[11px] text-zinc-400 dark:text-zinc-500 font-mono pt-4 border-t border-zinc-100/50 dark:border-zinc-800 mt-auto">
                 <span>© {new Date().getFullYear()} NAMAN SHARMA</span>
                 <span className="opacity-60">DESIGN ENGINEER</span>
               </div>
@@ -498,22 +453,11 @@ export default function Profile() {
         )}
       </AnimatePresence>
 
-      {/* Bottom white gradient overlay */}
-      <div className="bottom-gradient-overlay fixed bottom-0 left-0 right-0 h-[10vh] bg-gradient-to-t from-[#fafafa] to-transparent pointer-events-none z-40" />
-
-      {/* Dynamic Sakura Theme overrides & animations */}
+      {/* Dynamic styles & animations */}
       <style>{`
-        @keyframes spin-slow {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        .animate-spin-slow {
-          animation: spin-slow 12s linear infinite;
-        }
-
         /* ── Image hover spring effect (all images) ── */
         img {
-          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease !important;
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
         }
         img:hover {
           transform: scale(1.04);
@@ -523,96 +467,6 @@ export default function Profile() {
         img.rounded-full:hover {
           transform: scale(1.08);
           box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        }
-
-
-
-        /* ── Smooth CSS transitions for the Sakura theme cascade ── */
-        .theme-sakura,
-        .theme-sakura * {
-          transition: background-color 800ms ease-in-out, border-color 800ms ease-in-out, color 800ms ease-in-out !important;
-        }
-        /* Restore image transitions inside sakura so hover spring still works */
-        .theme-sakura img {
-          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 800ms ease-in-out !important;
-        }
-
-        .theme-sakura a,
-        .theme-sakura button:not(.close-btn) {
-          color: #ff4d6d !important;
-        }
-        .theme-sakura a:hover,
-        .theme-sakura button:not(.close-btn):hover {
-          color: #ff758f !important;
-        }
-        .theme-sakura .text-black {
-          color: #4a2e35 !important;
-        }
-        .theme-sakura .text-\[\#8d8d8d\] {
-          color: #b38f97 !important;
-        }
-        .theme-sakura .bg-\[\#fafafa\],
-        .theme-sakura .bg-white\/50,
-        .theme-sakura .bg-\[\#fff2f4\] {
-          background-color: #fff2f4 !important;
-        }
-        .theme-sakura .bg-\[\#e8e8e8\],
-        .theme-sakura .bg-zinc-200\/60,
-        .theme-sakura .bg-zinc-100\/50 {
-          background-color: #ffd1dc !important;
-        }
-        .theme-sakura .border-zinc-200,
-        .theme-sakura .border-zinc-200\/80,
-        .theme-sakura .border-zinc-200\/60,
-        .theme-sakura .border-zinc-100\/50,
-        .theme-sakura .border-\[\#e8e8e8\] {
-          border-color: #ffccd5 !important;
-        }
-        .theme-sakura .bg-black {
-          background-color: #ff4d6d !important;
-          color: #ffffff !important;
-        }
-        .theme-sakura .bg-black .text-white {
-          color: #ffffff !important;
-        }
-
-        /* ── Tweet card Sakura overrides ── */
-        .theme-sakura .tweet-card {
-          background-color: #fff9fa !important;
-          border-color: #ffccd5 !important;
-        }
-        .theme-sakura .tweet-card .text-black {
-          color: #4a2e35 !important;
-        }
-        .theme-sakura .tweet-card .text-zinc-800 {
-          color: #5c3e45 !important;
-        }
-        .theme-sakura .tweet-card .text-zinc-500 {
-          color: #b38f97 !important;
-        }
-        .theme-sakura .tweet-card .text-zinc-400 {
-          color: #c9a0aa !important;
-        }
-        .theme-sakura .tweet-card .border-zinc-100 {
-          border-color: #ffe0e6 !important;
-        }
-
-        /* Spotify and logo carousel filters for pink palette theme-matching */
-        .theme-sakura [class*="SpotifyCard"] {
-          filter: sepia(0.2) hue-rotate(325deg) saturate(1.3) contrast(0.95);
-        }
-        /* Only tint tech stack logos — NOT profile pictures or photos */
-        .theme-sakura img[alt*="logo" i] {
-          filter: sepia(0.35) hue-rotate(320deg) saturate(1.6) contrast(0.95);
-        }
-        /* Profile avatars (rounded-full) stay completely natural */
-        .theme-sakura img.rounded-full {
-          filter: none !important;
-        }
-
-        /* ── Bottom gradient adapts to Sakura mode ── */
-        .theme-sakura .bottom-gradient-overlay {
-          background: linear-gradient(to top, #fff2f4, transparent) !important;
         }
       `}</style>
     </div>

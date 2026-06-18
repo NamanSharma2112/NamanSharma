@@ -52,21 +52,21 @@ const formatDate = (dateString: string): string => {
 const TweetSkeleton = ({ className, size = "large" }: { className?: string; size?: "small" | "large" }) => (
   <div
     className={cn(
-      "tweet-card block w-full rounded-xl border border-zinc-200 bg-[#fafafa]",
+      "tweet-card block w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#fafafa] dark:bg-zinc-900",
       size === "small" ? "p-3" : "p-4",
       className
     )}
   >
     <div className="flex items-center gap-2">
-      <div className={cn("shrink-0 animate-pulse rounded-full bg-zinc-200", size === "small" ? "size-[30px]" : "size-[38px]")} />
+      <div className={cn("shrink-0 animate-pulse rounded-full bg-zinc-200 dark:bg-zinc-800", size === "small" ? "size-[30px]" : "size-[38px]")} />
       <div className="flex flex-col gap-1">
-        <div className="h-4 w-24 animate-pulse rounded bg-zinc-200" />
-        <div className="h-3 w-16 animate-pulse rounded bg-zinc-200" />
+        <div className="h-4 w-24 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-3 w-16 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
       </div>
     </div>
     <div className="mt-4 space-y-2">
-      <div className="h-4 w-full animate-pulse rounded bg-zinc-200" />
-      <div className="h-4 w-3/4 animate-pulse rounded bg-zinc-200" />
+      <div className="h-4 w-full animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+      <div className="h-4 w-3/4 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
     </div>
   </div>
 );
@@ -74,7 +74,7 @@ const TweetSkeleton = ({ className, size = "large" }: { className?: string; size
 const TweetNotFound = ({ className, size = "large" }: { className?: string; size?: "small" | "large" }) => (
   <div
     className={cn(
-      "tweet-card flex w-full flex-col items-center justify-center gap-2 rounded-xl text-zinc-400 border border-zinc-200 bg-[#fafafa]",
+      "tweet-card flex w-full flex-col items-center justify-center gap-2 rounded-xl text-zinc-400 dark:text-zinc-500 border border-zinc-200 dark:border-zinc-800 bg-[#fafafa] dark:bg-zinc-900",
       size === "small" ? "p-4" : "p-6",
       className
     )}
@@ -90,32 +90,33 @@ const TweetHeader = ({ tweet, size = "large" }: { tweet: EnrichedTweet; size?: "
         src={tweet.user.profile_image_url_https}
         alt={tweet.user.name}
         loading="lazy"
-        width={size === "small" ? 30 : 38}
-        height={size === "small" ? 30 : 38}
-        className="rounded-full"
+        className={cn(
+          "rounded-full shrink-0 object-cover",
+          size === "small" ? "w-[30px] h-[30px]" : "w-[38px] h-[38px]"
+        )}
       />
       <div className="flex flex-col">
-        <span className={cn("flex items-center gap-1 font-semibold text-black", size === "small" ? "text-sm" : "text-[15px]")}>
+        <span className={cn("flex items-center gap-1 font-semibold text-black dark:text-white", size === "small" ? "text-sm" : "text-[15px]")}>
           {tweet.user.name}
           {(tweet.user.verified || tweet.user.is_blue_verified) && (
             <VerifiedBadge className={size === "small" ? "size-3.5 text-[#1C9BF1]" : "size-4 text-[#1C9BF1]"} />
           )}
         </span>
-        <span className={cn("text-zinc-500", size === "small" ? "text-xs -mt-1" : "text-[13px] -mt-0.5")}>
+        <span className={cn("text-zinc-500 dark:text-zinc-400", size === "small" ? "text-xs -mt-1" : "text-[13px] -mt-0.5")}>
           @{tweet.user.screen_name}
         </span>
       </div>
     </div>
     {size === "large" && (
       <a href={tweet.url} target="_blank" rel="noopener noreferrer">
-        <SiX className="size-4 text-black" />
+        <SiX className="size-4 text-black dark:text-white" />
       </a>
     )}
   </div>
 );
 
 const TweetBody = ({ tweet, size = "large" }: { tweet: EnrichedTweet; size?: "small" | "large" }) => (
-  <p className={cn("mt-3 text-zinc-800 font-normal leading-relaxed", size === "small" ? "text-xs mt-2" : "text-sm")}>
+  <p className={cn("mt-3 text-zinc-800 dark:text-zinc-200 font-normal leading-relaxed", size === "small" ? "text-xs mt-2" : "text-sm")}>
     {tweet.entities.map((entity, idx) => {
       switch (entity.type) {
         case "url":
@@ -154,6 +155,7 @@ const VideoPlayer = ({ src, poster, aspectRatio }: { src: string; poster?: strin
     // Force play on mount/load
     const playVideo = async () => {
       if (videoRef.current) {
+        videoRef.current.muted = true; // Ensure muted property is set in DOM
         try {
           await videoRef.current.play();
         } catch (err) {
@@ -177,8 +179,7 @@ const VideoPlayer = ({ src, poster, aspectRatio }: { src: string; poster?: strin
         loop
         muted
         playsInline
-        controls
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-auto"
       />
     </div>
   );
@@ -283,7 +284,7 @@ const TweetFooter = ({
       {showDate && (
         <div className="mt-4">
           <time
-            className="text-xs text-zinc-400"
+            className="text-xs text-zinc-400 dark:text-zinc-500"
             dateTime={tweet.created_at}
           >
             {formatDate(tweet.created_at)}
@@ -291,7 +292,7 @@ const TweetFooter = ({
         </div>
       )}
       {showActions && (
-        <div className="mt-3 flex gap-4 border-t border-zinc-100 pt-3 text-[13px] text-zinc-500">
+        <div className="mt-3 flex gap-4 border-t border-zinc-100 dark:border-zinc-800 pt-3 text-[13px] text-zinc-500">
           {showLikeButton && (
             <a
               href={`https://x.com/intent/like?tweet_id=${tweet.id_str}`}
@@ -319,7 +320,7 @@ const TweetFooter = ({
           {showCopyLink && (
             <button
               onClick={handleCopyLink}
-              className="flex cursor-pointer items-center gap-1.5 hover:text-zinc-800 transition-colors"
+              className="flex cursor-pointer items-center gap-1.5 hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors"
             >
               {isCopied ? (
                 <Check className="size-3.5 text-emerald-500" />
@@ -355,7 +356,7 @@ const TweetContent = ({
   return (
     <div
       className={cn(
-        "tweet-card w-full rounded-xl border border-zinc-200 bg-[#fafafa]",
+        "tweet-card w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#fafafa] dark:bg-zinc-900",
         size === "small" ? "p-3" : "p-4",
         className
       )}

@@ -35,6 +35,7 @@ export const metadata: Metadata = {
 import FloatingContactWidget from "@/components/FloatingContactWidget";
 import PillNav from "@/components/PillNav";
 import { CommandMenu } from "@/components/CommandMenu";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export default function RootLayout({
   children,
@@ -46,11 +47,20 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <PillNav />
-        {children}
-        <FloatingContactWidget />
-        <CommandMenu />
+      <body className="min-h-full flex flex-col bg-white dark:bg-[#111110] text-black dark:text-white transition-colors duration-300">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <PillNav />
+          <div className="flex-1">
+            {children}
+          </div>
+          <FloatingContactWidget />
+          <CommandMenu />
+        </ThemeProvider>
       </body>
     </html>
   );

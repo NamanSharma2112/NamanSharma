@@ -87,11 +87,16 @@ const TweetHeader = ({ tweet, size = "large" }: { tweet: EnrichedTweet; size?: "
   <div className="flex items-start justify-between">
     <div className="flex items-center gap-2">
       <img
-        src={tweet.user.profile_image_url_https}
+        src="/twitter-avatar.png"
         alt={tweet.user.name}
         loading="lazy"
+        onError={(e) => {
+          (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            tweet.user.name
+          )}&background=random&color=fff&size=100`;
+        }}
         className={cn(
-          "rounded-full shrink-0 object-cover",
+          "rounded-full shrink-0 object-cover bg-zinc-100 dark:bg-zinc-800",
           size === "small" ? "w-[30px] h-[30px]" : "w-[38px] h-[38px]"
         )}
       />

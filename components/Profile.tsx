@@ -186,6 +186,7 @@ export default function Profile() {
         className="transition-opacity duration-500"
         style={{ opacity: 0 }}
       >
+        <div className="fixed top-0 inset-x-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-[50] transition-colors duration-[800ms] dark:hidden" />
         <main className="flex min-h-screen w-full justify-center overflow-x-clip transition-colors duration-[800ms] ease-in-out">
         <div className="flex w-full max-w-3xl flex-col items-center border-x-[0.5px] px-5 pt-12 pb-6 sm:px-12 sm:pt-[100px] text-[14px] leading-[20px] font-sans font-medium shadow-sm transition-colors duration-[800ms] ease-in-out border-zinc-200/10 dark:border-zinc-800/10 bg-white/20 dark:bg-[#111110]/20 backdrop-blur-xl">
           <div className="flex w-full flex-col items-center gap-12 flex-1 justify-between">

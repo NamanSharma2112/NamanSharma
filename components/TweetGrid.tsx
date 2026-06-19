@@ -44,7 +44,7 @@ export function TweetGrid({
 
       {tweets.length > maxDisplayed && !showAll && (
         <>
-          <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-[#fafafa] dark:from-[#1f1f23] to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-white to-transparent pointer-events-none dark:hidden" />
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 z-20">
             <Button 
               variant="secondary" 

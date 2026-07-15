@@ -145,9 +145,12 @@
 }
 
 .custom-bg {
-  background-color: #0a0a0a;
-  background-image: linear-gradient(to right, #6b728052 1px, transparent 1px), linear-gradient(to bottom, #6b728052 1px, transparent 1px);
+  background-image: linear-gradient(to right, #6b728020 1px, transparent 1px), linear-gradient(to bottom, #6b728020 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+.dark .custom-bg {
+  background-image: linear-gradient(to right, #6b728040 1px, transparent 1px), linear-gradient(to bottom, #6b728040 1px, transparent 1px);
 }
 
 /* ── CmdK Animations ── */

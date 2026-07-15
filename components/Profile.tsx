@@ -168,7 +168,7 @@ export default function Profile() {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-[#1f1f23]"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#f5f5f5] dark:bg-[#1f1f23]"
           >
             <div className="w-[160px] sm:w-[200px]">
               <Signature className="h-auto w-full text-black dark:text-white overflow-visible" />
@@ -186,22 +186,22 @@ export default function Profile() {
         className="transition-opacity duration-500"
         style={{ opacity: 0 }}
       >
-        <div className="fixed top-0 inset-x-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-[50] transition-colors duration-[800ms] dark:hidden" />
-        <main className="flex min-h-screen w-full justify-center overflow-x-clip transition-colors duration-[800ms] ease-in-out">
-        <div className="flex w-full max-w-3xl flex-col items-center border-x-[0.5px] px-5 pt-12 pb-6 sm:px-12 sm:pt-[100px] text-[14px] leading-[20px] font-sans font-medium shadow-sm transition-colors duration-[800ms] ease-in-out border-zinc-200/10 dark:border-zinc-800/10 bg-white/20 dark:bg-[#111110]/20 backdrop-blur-xl">
-          <div className="flex w-full flex-col items-center gap-12 flex-1 justify-between">
+        <div className="fixed top-0 inset-x-0 h-16 bg-gradient-to-b from-[#f5f5f5] to-transparent pointer-events-none z-[50] transition-colors duration-[800ms] dark:from-[#111110]" />
+        <main className="flex min-h-screen w-full justify-center overflow-x-clip transition-colors duration-500">
+        <div className="flex w-full max-w-[576px] flex-col items-center px-6 pt-24 pb-6 sm:pt-[120px] text-[15px] leading-[1.6] font-sans text-zinc-600 dark:text-zinc-400">
+          <div className="flex w-full flex-col gap-14 flex-1">
             {/* ═══════════════════════════════════════
                 HEADER
             ═══════════════════════════════════════ */}
-            <header className="flex w-full max-w-[576px] items-start justify-between gap-4">
+            <header className="flex w-full items-start justify-between gap-4">
               <div className="flex flex-col gap-1">
                 <Signature />
 
-                <motion.p {...fadeUp(i++)} className="text-black dark:text-white">
+                <motion.p {...fadeUp(i++)} className="text-zinc-900 dark:text-zinc-100 font-medium">
                   Naman Sharma
                 </motion.p>
 
-                <motion.div {...fadeUp(i++)} className="text-[#8d8d8d]">
+                <motion.div {...fadeUp(i++)}>
                   <ShimmerText>Design Engineer</ShimmerText>
                 </motion.div>
               </div>
@@ -215,7 +215,7 @@ export default function Profile() {
             </header>
 
             {/* Mobile Spotify Card */}
-            <motion.div {...fadeUp(i++)} className="sm:hidden flex w-full max-w-[576px]">
+            <motion.div {...fadeUp(i++)} className="sm:hidden flex w-full">
               <SpotifyCard
                 url="https://open.spotify.com/track/0DTSnA1bcVI5niJzoyBPyZ"
                 className="w-full max-h-[80px]"
@@ -225,14 +225,12 @@ export default function Profile() {
             {/* ═══════════════════════════════════════
                 BIO
             ═══════════════════════════════════════ */}
-            <div className="flex w-full max-w-[576px] flex-col gap-0 break-words">
+            <div className="flex w-full flex-col gap-6 break-words">
               <motion.p {...fadeUp(i++)}>
                 I&apos;m a Design Engineer who designs and builds whatever I can
                 imagine or get inspiration from. Currently exploring modern web
                 experiences and shipping projects that push creative boundaries.
               </motion.p>
-
-              <p aria-hidden="true">&nbsp;</p>
 
               <motion.p {...fadeUp(i++)}>
                 Currently working on passion projects and refining my craft with
@@ -275,8 +273,6 @@ export default function Profile() {
                 and Claude.
               </motion.p>
 
-              <p aria-hidden="true">&nbsp;</p>
-
               <motion.p {...fadeUp(i++)}>
                 I usually sketch out any design idea in my mind and try to
                 replicate its structure on{" "}
@@ -300,8 +296,6 @@ export default function Profile() {
                 before I code it.
               </motion.p>
 
-              <p aria-hidden="true">&nbsp;</p>
-
               <motion.p {...fadeUp(i++)}>
                 Open to design engineering roles and freelance collaborations.
                 Reach out to me via{" "}
@@ -310,11 +304,7 @@ export default function Profile() {
                   href="https://x.com/NamanSharma2112"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline decoration-dotted underline-offset-2 transition-opacity duration-150 [@media(hover:hover)]:hover:opacity-70"
-                  style={{
-                    transitionTimingFunction:
-                      "cubic-bezier(0.16, 1, 0.3, 1)",
-                  }}
+                  className="text-zinc-900 dark:text-zinc-100 underline underline-offset-[3px] decoration-zinc-300 dark:decoration-zinc-700 hover:decoration-zinc-900 dark:hover:decoration-zinc-100 transition-colors duration-200"
                 >
                   Twitter
                 </a>
@@ -325,7 +315,7 @@ export default function Profile() {
             {/* ═══════════════════════════════════════
                 TECH LOGOS
             ═══════════════════════════════════════ */}
-            <motion.div {...fadeUp(i++)} className="w-full max-w-[576px] py-6 flex justify-center">
+            <motion.div {...fadeUp(i++)} className="w-full py-4 flex justify-center">
               <AnimatedCardDemo />
             </motion.div>
 
@@ -339,8 +329,8 @@ export default function Profile() {
             {/* ═══════════════════════════════════════
                 TWEETS (Feedback)
             ═══════════════════════════════════════ */}
-            <motion.div {...fadeUp(i++)} className="w-full max-w-[576px] flex flex-col gap-4">
-              <p className="font-medium text-zinc-900 dark:text-zinc-100">Tweets</p>
+            <motion.div {...fadeUp(i++)} className="w-full flex flex-col gap-4">
+              <p className="font-medium text-zinc-900 dark:text-zinc-100 tracking-tight">Tweets</p>
               <div className="h-px w-8 bg-zinc-200 dark:bg-zinc-800 mb-2" />
               <div className="w-full flex justify-center mt-2">
                 <TweetGrid
@@ -363,12 +353,12 @@ export default function Profile() {
             ═══════════════════════════════════════ */}
             <motion.footer
               {...fadeUp(i++)}
-              className="w-full max-w-[576px] mt-16 pt-10 pb-16 border-t border-zinc-200/80 flex flex-col items-center gap-8"
+              className="w-full mt-12 pt-10 pb-16 border-t border-zinc-200/80 dark:border-zinc-800/80 flex flex-col items-center gap-8"
             >
               {/* Bunny mascot */}
               <div className="flex flex-col items-center gap-2">
-                <BunnyIcon size={56} className="text-zinc-400 hover:text-black transition-colors" />
-                <div className="flex flex-col items-center gap-1.5">
+                <BunnyIcon size={56} className="text-zinc-300 dark:text-zinc-700 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors duration-300" />
+                <div className="flex flex-col items-center gap-1.5 mt-2">
                   <span className="text-[10px] text-zinc-400 font-mono tracking-wider">SAY HI!</span>
                   <span className="text-[11px] text-zinc-500 font-mono min-h-[16px]">
                     Jalandhar, India {time ? `— ${time}` : ""}
@@ -378,44 +368,52 @@ export default function Profile() {
 
               {/* Social links */}
               <div className="flex items-center gap-6 text-zinc-500 font-medium flex-wrap justify-center">
-                <a
+                <motion.a
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.16 }}
                   href="https://x.com/NamanSharma2112"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 hover:text-black transition-colors text-[13px] tracking-tight group"
+                  className="flex items-center gap-2 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors text-[13.5px] tracking-tight group"
                 >
                   <SiX size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
                   <span>Twitter / X</span>
-                </a>
-                <a
+                </motion.a>
+                <motion.a
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.16 }}
                   href="https://www.linkedin.com/in/namansharmans03"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 hover:text-black transition-colors text-[13px] tracking-tight group"
+                  className="flex items-center gap-2 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors text-[13.5px] tracking-tight group"
                 >
                   <LinkedinIcon size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
                   <span>LinkedIn</span>
-                </a>
-                <a
+                </motion.a>
+                <motion.a
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.16 }}
                   href="https://github.com/NamanSharma2112"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 hover:text-black transition-colors text-[13px] tracking-tight group"
+                  className="flex items-center gap-2 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors text-[13.5px] tracking-tight group"
                 >
                   <SiGithub size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
                   <span>GitHub</span>
-                </a>
-                <a
+                </motion.a>
+                <motion.a
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ ease: [0.23, 1, 0.32, 1], duration: 0.16 }}
                   href="mailto:namansharmans03@gmail.com"
-                  className="flex items-center gap-2 hover:text-black transition-colors text-[13px] tracking-tight group"
+                  className="flex items-center gap-2 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors text-[13.5px] tracking-tight group"
                 >
                   <SiGmail size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />
                   <span>Gmail</span>
-                </a>
+                </motion.a>
               </div>
 
               {/* Copyright */}
-              <div className="w-full flex justify-between items-center text-[11px] text-zinc-400 dark:text-zinc-500 font-mono pt-4 border-t border-zinc-100/50 dark:border-zinc-800 mt-auto">
+              <div className="w-full flex justify-between items-center text-[11px] text-zinc-400 dark:text-zinc-600 font-mono pt-4 border-t border-zinc-100 dark:border-zinc-800/60 mt-auto">
                 <span>© {new Date().getFullYear()} NAMAN SHARMA</span>
                 <span className="opacity-60">DESIGN ENGINEER</span>
               </div>

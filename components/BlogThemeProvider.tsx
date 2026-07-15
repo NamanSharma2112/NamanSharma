@@ -22,16 +22,38 @@ export function BlogThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem("blog-theme") as BlogTheme | null;
-    if (saved) setTheme(saved);
+    if (saved) {
+      setTheme(saved);
+      // Sync with global dark class for PillNav
+      if (saved === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    }
   }, []);
 
   const toggle = () => {
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light";
       localStorage.setItem("blog-theme", next);
+      // Sync with global dark class for PillNav
+      if (next === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
       return next;
     });
   };
+
+  // Restore global dark class on unmount (when leaving blog)
+  useEffect(() => {
+    return () => {
+      // When leaving blog pages, remove the class so main site theme takes over
+      document.documentElement.classList.remove("dark");
+    };
+  }, []);
 
   const isDark = theme === "dark";
 

@@ -1,4 +1,6 @@
-import Image from "next/image";
+"use client";
+
+import { motion } from "motion/react";
 
 const INSPIRATIONS = [
   {
@@ -41,55 +43,90 @@ const INSPIRATIONS = [
 
 export default function InspirationPage() {
   return (
-    <div className="min-h-screen bg-[#fafafa] pt-32 pb-32">
+    <div className="min-h-screen pt-32 pb-32 transition-colors duration-500">
       <div className="max-w-[650px] mx-auto px-6">
         
         {/* Header Text */}
-        <div className="mb-14 text-[15px] leading-[1.6] text-zinc-600 flex flex-col gap-5">
-          <p>
+        <div className="mb-12 text-[15px] leading-[1.6] text-zinc-600 dark:text-zinc-400 flex flex-col gap-5">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+          >
             A list of all the people that I look up to, websites that I admire, tools that I use and everything else that follows.
-          </p>
-          <p>
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+          >
             I will keep on updating this list as I find more inspiration.
-          </p>
+          </motion.p>
         </div>
 
         {/* Inspiration List */}
-        <ul className="flex flex-col gap-6">
+        <ul className="flex flex-col">
           {INSPIRATIONS.map((item, i) => (
-            <li key={i} className="flex items-center gap-4 group">
-              {/* Avatar Icon */}
-              <div className="relative w-10 h-10 shrink-0 rounded-full border border-zinc-200/80 bg-white overflow-hidden shadow-sm flex items-center justify-center">
-                <img 
-                  src={item.icon} 
-                  alt={item.name}
-                  className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
-                />
-              </div>
-
-              {/* Text Content */}
-              <div className="flex items-baseline gap-2">
-                <span className="text-[15px] font-medium text-zinc-800 tracking-tight">
-                  {item.url ? (
-                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-black transition-colors">
-                      {item.name}
-                    </a>
-                  ) : (
-                    item.name
-                  )}
-                </span>
-                <span className="text-zinc-300 text-[10px]">
-                  •
-                </span>
-                <span className="text-[15px] text-zinc-500">
-                  {item.desc}
-                </span>
-              </div>
-            </li>
+            <motion.li
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              // Emil: 30-80ms stagger delay for list items
+              transition={{ delay: 0.1 + i * 0.06, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+            >
+              {item.url ? (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block outline-none -mx-4 px-4 py-3 rounded-xl transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                >
+                  <motion.div
+                    // Emil: button scale feedback
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ duration: 0.16, ease: [0.23, 1, 0.32, 1] }}
+                    className="flex items-center gap-4"
+                  >
+                    <Icon item={item} />
+                    <Content item={item} />
+                  </motion.div>
+                </a>
+              ) : (
+                <div className="flex items-center gap-4 py-3 px-4 -mx-4">
+                  <Icon item={item} />
+                  <Content item={item} />
+                </div>
+              )}
+            </motion.li>
           ))}
         </ul>
 
       </div>
+    </div>
+  );
+}
+
+function Icon({ item }: { item: any }) {
+  return (
+    <div className="relative w-10 h-10 shrink-0 rounded-full border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm flex items-center justify-center">
+      <img 
+        src={item.icon} 
+        alt={item.name}
+        className="w-full h-full object-cover transition-transform duration-[400ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-110"
+      />
+    </div>
+  );
+}
+
+function Content({ item }: { item: any }) {
+  return (
+    <div className="flex flex-col justify-center">
+      <span className="text-[15px] font-medium text-zinc-900 dark:text-zinc-100 tracking-tight transition-colors duration-300">
+        {item.name}
+      </span>
+      <span className="text-[14px] text-zinc-500 dark:text-zinc-400 line-clamp-1 transition-colors duration-300">
+        {item.desc}
+      </span>
     </div>
   );
 }

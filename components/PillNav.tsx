@@ -147,6 +147,9 @@ export default function PillNav() {
                 initial="initial"
                 whileHover="hover"
                 whileTap="tap"
+                variants={{
+                  tap: { scale: 0.97 }
+                }}
                 className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition-colors duration-200 whitespace-nowrap ${
                   isActive ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200"
                 }`}
@@ -154,8 +157,7 @@ export default function PillNav() {
                 <motion.span
                   className="flex items-center"
                   variants={{
-                    hover: { scale: 1.15, rotate: isActive ? 0 : -8 },
-                    tap: { scale: 0.9 }
+                    hover: { scale: 1.05, rotate: isActive ? 0 : -5 },
                   }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
@@ -172,6 +174,7 @@ export default function PillNav() {
           initial="initial"
           whileHover="hover"
           whileTap="tap"
+          variants={{ tap: { scale: 0.97 } }}
           onClick={() => {
             playTap();
             document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }));
@@ -182,8 +185,7 @@ export default function PillNav() {
             <motion.svg 
               width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
               variants={{
-                hover: { scale: 1.15, rotate: -10 },
-                tap: { scale: 0.9 }
+                hover: { scale: 1.05, rotate: -5 },
               }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
@@ -192,8 +194,7 @@ export default function PillNav() {
             </motion.svg>
             <motion.span 
               variants={{
-                hover: { x: 1, scale: 1.05 },
-                tap: { scale: 0.95 }
+                hover: { x: 1, scale: 1.02 },
               }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
               className="hidden sm:inline-flex items-center gap-0.5 bg-black/5 dark:bg-white/10 px-1.5 py-[3px] rounded text-[10px] font-mono leading-none border border-black/5 dark:border-white/10 group-hover:border-black/20 dark:group-hover:border-white/20 group-hover:bg-black/10 dark:group-hover:bg-white/20 transition-colors duration-200"

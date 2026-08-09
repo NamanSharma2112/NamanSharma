@@ -24,21 +24,12 @@ export const metadata: Metadata = {
     url: "https://namansharma.com",
     siteName: "Naman Sharma",
     type: "website",
-    images: [
-      {
-        url: "/banner.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Naman Sharma - Design Engineer",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Naman Sharma",
     description:
       "Naman Sharma is a Design Engineer building modern web experiences.",
-    images: ["/banner.jpg"],
   },
 };
 

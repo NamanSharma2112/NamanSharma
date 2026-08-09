@@ -91,6 +91,26 @@ const PROJECTS = [
       },
     ],
   },
+  {
+    label: "Task Management App",
+    description: "Productivity Tool",
+    href: "https://taskmangementapplication-production.up.railway.app",
+    external: true,
+    cards: [
+      {
+        src: "https://api.microlink.io/?url=https://taskmangementapplication-production.up.railway.app&screenshot=true&meta=false&embed=screenshot.url",
+        alt: "Task Management Application Preview",
+        dx: 34,
+        r: 9.5,
+      },
+      {
+        src: "https://api.microlink.io/?url=https://taskmangementapplication-production.up.railway.app&screenshot=true&meta=false&embed=screenshot.url",
+        alt: "Task Management Application",
+        dx: -34,
+        r: -7.2,
+      },
+    ],
+  },
 ];
 
 

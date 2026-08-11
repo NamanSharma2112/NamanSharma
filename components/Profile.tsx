@@ -7,7 +7,6 @@ import HoverCards from "./HoverCards";
 import HighlightList from "./HighlightList";
 import CopyEmail from "./CopyEmail";
 import { LogosCarousel } from "./LogosCarousel";
-import AnimatedCardDemo from "./AnimatedCardDemo";
 import { TweetGrid } from "./TweetGrid";
 import { SpotifyCard } from "@/registry/spell-ui/spotify-card";
 import { Tweet } from "@/registry/spell-ui/tweet";
@@ -333,14 +332,7 @@ export default function Profile() {
             </div>
 
             {/* ═══════════════════════════════════════
-                TECH LOGOS
-            ═══════════════════════════════════════ */}
-            <motion.div {...fadeUp(i++)} className="w-full py-4 flex justify-center">
-              <AnimatedCardDemo />
-            </motion.div>
-
-            {/* ═══════════════════════════════════════
-                HIGHLIGHTS (Projects)
+                BUNNY / CONTACT CTA
             ═══════════════════════════════════════ */}
             <motion.div {...fadeUp(i++)} className="w-full flex justify-center">
               <HighlightList title="Highlights" items={PROJECTS} />

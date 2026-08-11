@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ControlCenterIcon, WifiIcon, BatteryIcon, SearchIcon, AppleIcon } from "./icons";
+
 import WeatherWidget from "./WeatherWidget";
 
 export function DesktopMenuBar() {

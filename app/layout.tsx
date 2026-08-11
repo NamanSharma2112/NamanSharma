@@ -34,7 +34,6 @@ export const metadata: Metadata = {
 };
 
 import FloatingContactWidget from "@/components/FloatingContactWidget";
-import PillNav from "@/components/PillNav";
 import { CommandMenu } from "@/components/CommandMenu";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
@@ -46,16 +45,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#f5f5f5] dark:bg-[#111110] text-black dark:text-white transition-colors duration-300">
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-[#f5f5f5] dark:bg-[#111110] text-black dark:text-white transition-colors duration-300">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          forcedTheme="dark"
           disableTransitionOnChange
         >
-          <PillNav />
           <div className="flex-1">
             {children}
           </div>

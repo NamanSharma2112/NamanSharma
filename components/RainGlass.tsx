@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 /**
  * A pane of rainy glass laid over the page.
@@ -185,10 +186,25 @@ function createBrushSprite(px: number): HTMLCanvasElement {
 export default function RainGlass({
   intensity = 1,
   isActive = true,
+  glass = true,
+  className,
 }: {
   /** Scales how much water is on the glass and how hard it rains. */
   intensity?: number;
   isActive?: boolean;
+  /**
+   * Renders the blurred pane the drops sit on, which is what lets the cursor
+   * open a sharp patch. It costs a full-screen backdrop-filter that the
+   * compositor redraws whenever the mask moves, so pages that already animate
+   * a lot are better off with just the water.
+   */
+  glass?: boolean;
+  /**
+   * Overrides the layer the pane sits on. It defaults to sitting above the
+   * page, which suits a bare backdrop; put it below the content instead when
+   * there is anything on the page that needs to stay sharp.
+   */
+  className?: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const glassRef = useRef<HTMLDivElement>(null);
@@ -197,8 +213,8 @@ export default function RainGlass({
     if (!isActive) return;
 
     const canvas = canvasRef.current;
-    const glass = glassRef.current;
-    if (!canvas || !glass) return;
+    const pane = glassRef.current;
+    if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -240,6 +256,7 @@ export default function RainGlass({
     const mask = { x: -1, y: -1, r: -1 };
 
     const applyMask = () => {
+      if (!pane) return;
       const hx = Math.round(hole.x);
       const hy = Math.round(hole.y);
       const hr = Math.round(hole.r);
@@ -253,8 +270,8 @@ export default function RainGlass({
         hr <= 0
           ? "none"
           : `radial-gradient(circle ${hr}px at ${hx}px ${hy}px, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 42%, rgba(0,0,0,1) 100%)`;
-      glass.style.setProperty("-webkit-mask-image", value);
-      glass.style.setProperty("mask-image", value);
+      pane.style.setProperty("-webkit-mask-image", value);
+      pane.style.setProperty("mask-image", value);
     };
 
     /* ── setup ─────────────────────────────────────────────────────────── */
@@ -680,20 +697,27 @@ export default function RainGlass({
       window.removeEventListener("blur", onBlur);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [intensity, isActive]);
+  }, [intensity, isActive, glass]);
 
   if (!isActive) return null;
 
   return (
-    <div className="fixed inset-0 z-[45] pointer-events-none overflow-hidden">
+    <div
+      className={cn(
+        "fixed inset-0 z-[45] pointer-events-none overflow-hidden",
+        className
+      )}
+    >
       {/* The pane itself: everything behind it is refracted, except the patch
           under the cursor, which the mask keeps sharp. */}
       {/* The mask that opens the clear patch is applied imperatively, so React
           never re-renders this node mid-animation. */}
-      <div
-        ref={glassRef}
-        className="absolute inset-0 backdrop-blur-[2px] backdrop-saturate-[1.15] bg-[#0b1622]/10"
-      />
+      {glass ? (
+        <div
+          ref={glassRef}
+          className="absolute inset-0 backdrop-blur-[2px] backdrop-saturate-[1.15] bg-[#0b1622]/10"
+        />
+      ) : null}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
     </div>
   );

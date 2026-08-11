@@ -208,7 +208,7 @@ export default function Profile() {
       >
         <div className="fixed top-0 inset-x-0 h-16 bg-gradient-to-b from-[#f5f5f5] to-transparent pointer-events-none z-[50] transition-colors duration-[800ms] dark:from-[#111110]" />
         <main className="flex min-h-screen w-full justify-center overflow-x-clip transition-colors duration-500">
-        <div className="flex w-full max-w-[576px] flex-col items-center px-6 pt-24 pb-6 sm:pt-[120px] text-[15px] leading-[1.6] font-sans text-zinc-600 dark:text-zinc-400">
+        <div className="flex w-full max-w-[576px] flex-col items-center px-6 pt-12 pb-6 sm:pt-16 text-[15px] leading-[1.6] font-sans text-zinc-600 dark:text-zinc-400">
           <div className="flex w-full flex-col gap-14 flex-1">
             {/* ═══════════════════════════════════════
                 HEADER

@@ -16,7 +16,6 @@ import CopyEmail from "@/components/CopyEmail";
 import DesktopIcon from "@/components/DesktopIcon";
 import DesktopBlogPost from "@/components/DesktopBlogPost";
 import { DesktopMenuBar } from "@/components/DesktopMenuBar";
-import WeatherWidget from "@/components/WeatherWidget";
 
 import { TweetGrid } from "@/components/TweetGrid";
 import { SpotifyCard } from "@/registry/spell-ui/spotify-card";
@@ -289,7 +288,6 @@ export default function DesktopHome() {
         style={{ opacity: 0 }}
       >
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-4 overflow-hidden">
-          <WeatherWidget />
           {/* Desktop Icons */}
           {PROJECTS.map((project, i) => (
             <DesktopIcon

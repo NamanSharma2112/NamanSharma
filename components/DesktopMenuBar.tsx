@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ControlCenterIcon, WifiIcon, BatteryIcon, SearchIcon, AppleIcon } from "./icons";
+import WeatherWidget from "./WeatherWidget";
 
 export function DesktopMenuBar() {
   const [timeString, setTimeString] = useState("");
@@ -53,8 +55,14 @@ export function DesktopMenuBar() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         </div>
         
-        <div className="hover:bg-white/20 px-3 h-full flex items-center cursor-pointer transition-colors whitespace-pre tabular-nums tracking-tight">
-          {timeString || "..."}
+        <div className="relative h-full group flex items-center">
+          <div className="hover:bg-white/20 px-3 h-full flex items-center cursor-pointer transition-colors whitespace-pre tabular-nums tracking-tight">
+            {timeString || "..."}
+          </div>
+          
+          <div className="absolute top-full right-2 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-50">
+            <WeatherWidget />
+          </div>
         </div>
       </div>
     </div>

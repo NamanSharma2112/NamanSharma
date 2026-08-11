@@ -13,19 +13,12 @@ import { cn } from "@/lib/utils";
  * one sharpens. This guarantees the black container never shows through.
  */
 
-const BACKDROPS = [
-  // Custom Local Wallpapers
+const INITIAL_BACKDROPS = [
   "/backdrops/kyoto-alley.jpg",
   "/backdrops/shibuya-rain.jpg",
   "/backdrops/london-night.jpg",
   "/backdrops/beach-blue-hour.jpg",
   "/backdrops/jdm-sunset.jpg",
-  // High-Resolution Stock Wallpapers
-  "https://images.unsplash.com/photo-1707343843437-caacff5cfa74?q=80&w=2940&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1699099238350-f8bfceb41315?q=80&w=2940&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2864&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2874&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1601662528567-526cd06f6582?q=80&w=2915&auto=format&fit=crop"
 ];
 
 export default function HomeBackdrop({
@@ -35,19 +28,20 @@ export default function HomeBackdrop({
   intervalMs?: number;
   className?: string;
 }) {
+  const [backdrops, setBackdrops] = useState(INITIAL_BACKDROPS);
   const [current, setCurrent] = useState(0);
   const [prev, setPrev] = useState(-1);
 
   useEffect(() => {
-    if (BACKDROPS.length < 2) return;
+    if (backdrops.length < 2) return;
     const id = setInterval(() => {
       setCurrent((cur) => {
         setPrev(cur);
-        return (cur + 1) % BACKDROPS.length;
+        return (cur + 1) % backdrops.length;
       });
     }, intervalMs);
     return () => clearInterval(id);
-  }, [intervalMs]);
+  }, [intervalMs, backdrops.length]);
 
   // Clear prev after the crossfade completes
   useEffect(() => {
@@ -57,9 +51,24 @@ export default function HomeBackdrop({
     return () => clearTimeout(t);
   }, [prev]);
 
+  const handleImageError = (failedSrc: string) => {
+    setBackdrops((currentList) => {
+      const newList = currentList.filter((src) => src !== failedSrc);
+      // Reset current index if it goes out of bounds due to a removal
+      if (current >= newList.length && newList.length > 0) {
+        setCurrent(0);
+      }
+      return newList;
+    });
+  };
+
+  if (backdrops.length === 0) {
+    return <div className={cn("fixed inset-0 z-0 bg-zinc-900", className)} />;
+  }
+
   return (
-    <div className={cn("fixed inset-0 z-0 bg-[#0a0a0a]", className)}>
-      {BACKDROPS.map((src, i) => {
+    <div className={cn("fixed inset-0 z-0 bg-zinc-900", className)}>
+      {backdrops.map((src, i) => {
         const isActive = i === current;
         const isOutgoing = i === prev;
 
@@ -70,9 +79,10 @@ export default function HomeBackdrop({
             alt=""
             fill
             sizes="100vw"
-            quality={90}
+            quality={100}
             priority={i === 0}
             className="object-cover"
+            onError={() => handleImageError(src)}
             style={{
               // Sequence: Blur over 0.5s, THEN crossfade opacity over 0.6s
               transition: "filter 0.5s ease-in, opacity 0.6s ease-in-out 0.5s, transform 1.1s ease-out",

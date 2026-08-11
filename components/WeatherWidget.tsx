@@ -114,11 +114,9 @@ export default function WeatherWidget() {
 
   return (
     <motion.div
-      drag
-      dragMomentum={false}
-      initial={{ opacity: 0, scale: 0.9, y: -10, x: 10 }}
-      animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-      className="absolute top-12 right-4 hidden sm:flex flex-col w-[330px] rounded-[28px] bg-black/40 backdrop-blur-[40px] backdrop-saturate-[150%] border border-white/10 p-5 text-white shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5)] z-40 select-none cursor-grab active:cursor-grabbing font-sans pointer-events-auto"
+      initial={{ opacity: 0, scale: 0.95, y: -5 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      className="hidden sm:flex flex-col w-[330px] rounded-[24px] bg-black/40 backdrop-blur-[40px] backdrop-saturate-[150%] border border-white/10 p-5 text-white shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5)] z-40 select-none font-sans pointer-events-auto"
     >
       {/* Top Section */}
       <div className="flex justify-between items-start mb-3">

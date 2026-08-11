@@ -1,4 +1,5 @@
 import InfiniteCanvas from "@/components/InfiniteCanvas";
+import RainGlass from "@/components/RainGlass";
 
 export const metadata = {
   title: "About | Naman Sharma",
@@ -13,6 +14,12 @@ export default function AboutPage() {
         It covers the entire screen and provides a draggable infinity grid.
       */}
       <InfiniteCanvas />
+
+      {/*
+        Rain on the far side of the glass, water clinging to the near side.
+        Moving the cursor wipes the pane clear; it fogs back over on its own.
+      */}
+      <RainGlass />
     </main>
   );
 }

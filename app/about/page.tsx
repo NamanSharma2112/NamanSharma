@@ -7,11 +7,13 @@ export const metadata = {
 };
 
 /**
- * Swap this for whichever shot you want behind the rain. Anything dropped in
- * `public/` works — until the file exists the page falls back to the dark
- * background below, so it degrades to bare rain rather than a broken image.
+ * Swap this for any other file in `public/backdrops/`:
+ * london-night, kyoto-alley, jdm-sunset, beach-blue-hour.
+ *
+ * A missing file falls back to the dark background below, so the page
+ * degrades to bare rain rather than a broken image.
  */
-const BACKGROUND = "/about-bg.jpg";
+const BACKGROUND = "/backdrops/shibuya-rain.jpg";
 
 export default function AboutPage() {
   return (

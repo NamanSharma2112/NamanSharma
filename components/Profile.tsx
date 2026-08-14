@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import Signature from "./Signature";
 import HoverCards from "./HoverCards";
@@ -118,8 +119,11 @@ const PROJECTS = [
 export default function Profile() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [selectedTweetId, setSelectedTweetId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [time, setTime] = useState<string>("");
+  // The dialog portal needs a DOM to attach to, so it waits for the client.
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   // Dynamic clock in Jalandhar timezone (IST)
   useEffect(() => {
@@ -135,22 +139,6 @@ export default function Profile() {
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, []);
-
-  // Intro loading state (run only once per session)
-  useEffect(() => {
-    const hasVisited = sessionStorage.getItem("hasVisited");
-    if (hasVisited === "true") {
-      setIsLoading(false);
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      sessionStorage.setItem("hasVisited", "true");
-    }, 2600); // 2.6s (allows signature to draw completely)
-    
-    return () => clearTimeout(timer);
   }, []);
 
   // Fade in entire wrapper after mount (matches kosta.fyi pattern)
@@ -181,22 +169,6 @@ export default function Profile() {
 
   return (
     <>
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            key="loader"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#f5f5f5] dark:bg-[#1f1f23]"
-          >
-            <div className="w-[160px] sm:w-[200px]">
-              <Signature className="h-auto w-full text-black dark:text-white overflow-visible" />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <div className="fixed top-24 right-4 md:top-6 md:right-6 z-[60]">
         <ThemeToggle />
       </div>
@@ -206,7 +178,6 @@ export default function Profile() {
         className="transition-opacity duration-500"
         style={{ opacity: 0 }}
       >
-        <div className="fixed top-0 inset-x-0 h-16 bg-gradient-to-b from-[#f5f5f5] to-transparent pointer-events-none z-[50] transition-colors duration-[800ms] dark:from-[#111110]" />
         <main className="flex min-h-screen w-full justify-center overflow-x-clip transition-colors duration-500">
         <div className="flex w-full max-w-[576px] flex-col items-center px-6 pt-12 pb-6 sm:pt-16 text-[15px] leading-[1.6] font-sans text-zinc-600 dark:text-zinc-400">
           <div className="flex w-full flex-col gap-14 flex-1">
@@ -443,10 +414,15 @@ export default function Profile() {
         </div>
       </main>
 
-      {/* dialog overlay */}
-      <AnimatePresence>
-        {selectedTweetId && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Dialog overlay. Portalled to the body because the desktop window is
+          transformed, which would otherwise make it the containing block for
+          this fixed overlay and centre the dialog inside the window's box
+          rather than the viewport. */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {selectedTweetId && (
+              <div className="fixed inset-0 z-[90] flex items-center justify-center">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -468,9 +444,11 @@ export default function Profile() {
               {/* Full interactive tweet (pointer-events allowed) */}
               <Tweet id={selectedTweetId} size="large" className="w-full border-none bg-transparent !p-0" />
             </motion.div>
-          </div>
+              </div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
 
       {/* Dynamic styles & animations */}
       <style>{`

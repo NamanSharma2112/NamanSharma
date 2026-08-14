@@ -47,19 +47,23 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#f5f5f5] dark:bg-[#111110] text-black dark:text-white transition-colors duration-300">
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-[#f5f5f5] dark:bg-[#111110] text-black dark:text-white transition-colors duration-300">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          forcedTheme="dark"
           disableTransitionOnChange
         >
           <DesktopProvider>
             <div className="flex-1">
               {children}
             </div>
+            {/* Navigation for every route except the home desktop, which
+                renders its own dock wired to its window manager. Without this
+                the blog, inspiration and about pages have no nav at all. */}
             <Dock />
           </DesktopProvider>
           <FloatingContactWidget />

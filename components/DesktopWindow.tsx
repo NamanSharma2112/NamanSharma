@@ -1,160 +1,157 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useRef, useState, type ReactNode } from "react";
+import { motion, useDragControls } from "motion/react";
 import { cn } from "@/lib/utils";
-import { useDesktop } from "@/components/DesktopState";
-import { playTap } from "@/lib/sounds";
 
 /**
- * A macOS-style window that the page content sits inside, floating over the
- * wallpaper. The traffic lights work: red puts the window away, yellow drops
- * it into the dock, green toggles full width. The dock icon brings it back.
+ * A macOS-style window that can be opened, closed, and dragged around.
+ *
+ * Traffic-light buttons, all three live:
+ *  - Red: closes the window
+ *  - Yellow: minimises it away
+ *  - Green: toggles fullscreen
  */
-
-const LIGHTS = {
-  close: "#ff5f57",
-  minimize: "#febc2e",
-  zoom: "#28c840",
-};
-
-/** The marks macOS fades in over the lights while you point at them. */
-const glyph = {
-  fill: "none",
-  stroke: "rgba(0,0,0,0.55)",
-  strokeWidth: 1.6,
-  strokeLinecap: "round" as const,
-};
-
-function TrafficLight({
-  color,
-  label,
-  onClick,
-  children,
-}: {
-  color: string;
-  label: string;
-  onClick: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      title={label}
-      onClick={onClick}
-      style={{ backgroundColor: color }}
-      className="flex size-3 items-center justify-center rounded-full ring-1 ring-black/15 transition-transform active:scale-90"
-    >
-      <svg
-        viewBox="0 0 10 10"
-        className="size-full opacity-0 transition-opacity duration-100 group-hover/lights:opacity-100"
-      >
-        {children}
-      </svg>
-    </button>
-  );
-}
-
 export default function DesktopWindow({
+  id,
   title,
   children,
   className,
+  onClose,
+  onFocus,
+  zIndex = 10,
+  defaultPosition = { x: 0, y: 0 },
+  constraintsRef,
 }: {
+  id?: string;
   title?: string;
   children: ReactNode;
   className?: string;
+  onClose?: () => void;
+  onFocus?: () => void;
+  zIndex?: number;
+  defaultPosition?: { x: number; y: number };
+  constraintsRef?: React.RefObject<Element | null>;
 }) {
-  const { open, maximized, exit, close, minimize, toggleMaximize } =
-    useDesktop();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const windowRef = useRef<HTMLDivElement>(null);
+  const dragControls = useDragControls();
 
-  const act = (fn: () => void) => () => {
-    playTap();
-    fn();
-  };
-
-  // The top inset clears nothing now that the nav moved to the dock, but the
-  // bottom one keeps the last of the content clear of it.
   return (
-    <div
+    <motion.div
+      ref={windowRef}
+      layoutId={id}
+      drag={!isFullscreen}
+      dragConstraints={constraintsRef || { top: -600, left: -1000, right: 1000, bottom: 800 }}
+      dragElastic={0.05}
+      dragMomentum={true}
+      dragTransition={{ power: 0.15, timeConstant: 250, bounceStiffness: 400, bounceDamping: 30 }}
+      dragControls={dragControls}
+      dragListener={false} // We only want dragging from the title bar
+      onPointerDown={onFocus}
+      initial={{ opacity: 0, scale: 0.92, filter: "blur(8px)", x: defaultPosition.x, y: defaultPosition.y + 30 }}
+      animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: defaultPosition.x, y: defaultPosition.y }}
+      exit={{ opacity: 0, scale: 0.92, filter: "blur(8px)", y: defaultPosition.y + 20 }}
+      transition={{
+        type: "spring",
+        stiffness: 360,
+        damping: 34,
+        mass: 0.9,
+        filter: { duration: 0.35, ease: [0.23, 1, 0.32, 1] },
+      }}
       className={cn(
-        "relative z-10 mx-auto w-full pt-8 pb-32 transition-[max-width,padding] duration-300 ease-out",
-        maximized
-          ? "max-w-none px-2 sm:px-3"
-          : "max-w-[688px] px-3 sm:px-6 sm:pt-12"
+        "absolute flex flex-col border border-black/10 bg-[#f5f5f5] shadow-[0_40px_90px_-25px_rgba(0,0,0,0.75)] transition-[border-radius,width,height] duration-300",
+        isFullscreen ? "rounded-none !fixed !inset-0 !max-w-none !max-h-none z-[100] !transform-none" : "rounded-xl",
+        "dark:border-white/10 dark:bg-[#111110]",
+        // Mobile responsiveness: Force center, ignore drag translations, and avoid dock overlap
+        "max-sm:!transform-none max-sm:!w-[calc(100vw-24px)] max-sm:!h-[calc(100vh-130px)] max-sm:!max-h-[85vh] max-sm:mt-2 max-sm:mb-auto",
+        className
       )}
+      style={{
+        zIndex: isFullscreen ? 100 : zIndex,
+        width: isFullscreen ? "100vw" : "100%",
+        maxWidth: isFullscreen ? "100vw" : "688px",
+        maxHeight: isFullscreen ? "100vh" : "85vh",
+      }}
     >
-      <AnimatePresence mode="wait">
-        {open && (
-          <motion.div
-            key="window"
-            initial={{ opacity: 0, scale: 0.97, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={
-              exit === "minimized"
-                ? {
-                    opacity: 0,
-                    scale: 0.2,
-                    y: 460,
-                    transition: { duration: 0.42, ease: [0.5, 0, 0.9, 0.4] },
-                  }
-                : { opacity: 0, scale: 0.95, transition: { duration: 0.18 } }
-            }
-            transition={{ type: "spring", stiffness: 260, damping: 26 }}
-            /**
-             * Anchors the page's own fixed chrome — the top scrim, the theme
-             * toggle — to this window rather than the viewport, so none of it
-             * paints across the wallpaper. `will-change` makes the window a
-             * containing block even between animations, when the animated
-             * transform resolves back to none.
-             */
-            style={{ willChange: "transform", transformOrigin: "bottom center" }}
-            className={cn(
-              "overflow-hidden rounded-xl border border-black/10 bg-[#f5f5f5] shadow-[0_40px_90px_-25px_rgba(0,0,0,0.75)]",
-              "dark:border-white/10 dark:bg-[#111110]",
-              className
-            )}
-          >
-            <div className="flex items-center gap-2 border-b border-black/5 px-4 py-3 dark:border-white/10">
-              <div className="group/lights flex items-center gap-2">
-                <TrafficLight
-                  color={LIGHTS.close}
-                  label="Close"
-                  onClick={act(close)}
-                >
-                  <path d="M3.4 3.4l3.2 3.2M6.6 3.4L3.4 6.6" {...glyph} />
-                </TrafficLight>
-                <TrafficLight
-                  color={LIGHTS.minimize}
-                  label="Minimise"
-                  onClick={act(minimize)}
-                >
-                  <path d="M3 5h4" {...glyph} />
-                </TrafficLight>
-                <TrafficLight
-                  color={LIGHTS.zoom}
-                  label={maximized ? "Restore" : "Zoom"}
-                  onClick={act(toggleMaximize)}
-                >
-                  {maximized ? (
-                    <path d="M3.2 5h3.6M5 3.2v3.6" {...glyph} />
-                  ) : (
-                    <path d="M3.4 6.6V3.4h3.2M6.6 3.4v3.2H3.4" {...glyph} />
-                  )}
-                </TrafficLight>
-              </div>
-
-              {title ? (
-                <span className="ml-2 text-[13px] font-medium text-zinc-500 dark:text-zinc-400">
-                  {title}
-                </span>
-              ) : null}
-            </div>
-
-            {children}
-          </motion.div>
+      {/* Title bar (Draggable Area) */}
+      <div
+        className={cn(
+          "flex shrink-0 items-center gap-2 border-b border-black/5 px-4 py-3 dark:border-white/10 cursor-grab active:cursor-grabbing",
+          isFullscreen ? "rounded-none" : "rounded-t-xl"
         )}
-      </AnimatePresence>
-    </div>
+        onPointerDown={(e) => {
+          if (!isFullscreen) dragControls.start(e);
+        }}
+      >
+        {/* Red — close */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // Don't trigger drag
+            onClose?.();
+          }}
+          className="group relative size-3 rounded-full bg-[#ff5f57] hover:brightness-90 transition-all duration-150 cursor-pointer pointer-events-auto"
+          aria-label="Close window"
+        >
+          <svg
+            viewBox="0 0 12 12"
+            className="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+          >
+            <line x1="3" y1="3" x2="9" y2="9" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" />
+            <line x1="9" y1="3" x2="3" y2="9" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+        </button>
+        {/* Yellow — minimise */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            if (isFullscreen) setIsFullscreen(false);
+            onClose?.();
+          }}
+          className="group relative size-3 rounded-full bg-[#febc2e] hover:brightness-90 transition-all duration-150 cursor-pointer pointer-events-auto"
+          aria-label="Minimize window"
+        >
+          <svg
+            viewBox="0 0 12 12"
+            className="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+          >
+            <line x1="2.5" y1="6" x2="9.5" y2="6" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+        </button>
+        {/* Green — fullscreen. The state was already here and wired into the
+            class list; nothing was flipping it. */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsFullscreen((prev) => !prev);
+            onFocus?.();
+          }}
+          className="group relative size-3 rounded-full bg-[#28c840] hover:brightness-90 transition-all duration-150 cursor-pointer pointer-events-auto"
+          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        >
+          <svg
+            viewBox="0 0 12 12"
+            className="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+          >
+            {isFullscreen ? (
+              <path d="M3.5 6h5M6 3.5v5" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" />
+            ) : (
+              <path d="M3.5 8.5v-5h5M8.5 3.5v5h-5" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" />
+            )}
+          </svg>
+        </button>
+
+        {title && (
+          <span className="ml-2 text-[13px] font-medium text-zinc-500 dark:text-zinc-400 select-none flex-1 text-center pr-12">
+            {title}
+          </span>
+        )}
+      </div>
+
+      {/* Content Area (Scrollable) */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden rounded-b-xl min-h-0">
+        {children}
+      </div>
+    </motion.div>
   );
 }

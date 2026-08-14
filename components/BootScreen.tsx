@@ -18,24 +18,27 @@ import Signature from "./Signature";
 export default function BootScreen({
   /** Seconds the bar takes to fill before the screen lifts. */
   duration = 2.6,
+  /** Show it only on the first load of a session rather than every load. */
+  oncePerSession = false,
 }: {
   duration?: number;
+  oncePerSession?: boolean;
 }) {
   const [visible, setVisible] = useState(true);
   // Nudges the bunny into its hop every so often instead of leaving it still.
   const [hop, setHop] = useState(1);
 
   useEffect(() => {
-    if (sessionStorage.getItem("hasVisited") === "true") {
+    if (oncePerSession && sessionStorage.getItem("hasVisited") === "true") {
       setVisible(false);
       return;
     }
     const timer = window.setTimeout(() => {
       setVisible(false);
-      sessionStorage.setItem("hasVisited", "true");
+      if (oncePerSession) sessionStorage.setItem("hasVisited", "true");
     }, duration * 1000);
     return () => window.clearTimeout(timer);
-  }, [duration]);
+  }, [duration, oncePerSession]);
 
   useEffect(() => {
     if (!visible) return;

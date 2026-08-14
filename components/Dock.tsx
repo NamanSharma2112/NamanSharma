@@ -246,6 +246,10 @@ export default function Dock() {
   const pointerX = useMotionValue(Number.POSITIVE_INFINITY);
   const { open, restore } = useDesktop();
 
+  // The home desktop ships its own dock, wired to its window manager. Two of
+  // them on one screen would just be a bug.
+  if (pathname === "/") return null;
+
   const isCurrent = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 

@@ -37,26 +37,30 @@ export function CommandMenu() {
     playTap();
   };
 
+  const openWindow = (id: string) => {
+    window.dispatchEvent(new CustomEvent("open-desktop-window", { detail: id }));
+  };
+
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         
-        <CommandGroup heading="Navigation">
-          <CommandItem onSelect={() => runCommand(() => router.push("/"))}>
+        <CommandGroup heading="Applications">
+          <CommandItem onSelect={() => runCommand(() => openWindow("home"))}>
             <Home className="mr-2 h-4 w-4" />
-            <span>Home</span>
+            <span>Desktop (Minimize All)</span>
           </CommandItem>
-          <CommandItem onSelect={() => runCommand(() => router.push("/about"))}>
+          <CommandItem onSelect={() => runCommand(() => openWindow("about"))}>
             <User className="mr-2 h-4 w-4" />
-            <span>About</span>
+            <span>About Me</span>
           </CommandItem>
-          <CommandItem onSelect={() => runCommand(() => router.push("/blog"))}>
+          <CommandItem onSelect={() => runCommand(() => openWindow("blog"))}>
             <PenTool className="mr-2 h-4 w-4" />
-            <span>Blog</span>
+            <span>Writing</span>
           </CommandItem>
-          <CommandItem onSelect={() => runCommand(() => router.push("/inspiration"))}>
+          <CommandItem onSelect={() => runCommand(() => openWindow("inspiration"))}>
             <Lightbulb className="mr-2 h-4 w-4" />
             <span>Inspiration</span>
           </CommandItem>

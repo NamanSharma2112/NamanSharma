@@ -21,12 +21,19 @@
     @apply font-sans;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
   }
 
   body {
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    overscroll-behavior: none;
   }
 
   ::selection {

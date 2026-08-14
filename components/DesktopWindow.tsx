@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 /**
  * A macOS-style window that can be opened, closed, and dragged around.
  *
- * Traffic-light buttons:
- *  - Red: closes the window (calls onClose)
- *  - Yellow: minimizes (calls onClose)
- *  - Green: fullscreen (no-op for now)
+ * Traffic-light buttons, all three live:
+ *  - Red: closes the window
+ *  - Yellow: minimises it away
+ *  - Green: toggles fullscreen
  */
 export default function DesktopWindow({
   id,
@@ -101,12 +101,12 @@ export default function DesktopWindow({
             <line x1="9" y1="3" x2="3" y2="9" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
         </button>
-        {/* Yellow — maximize/fullscreen */}
+        {/* Yellow — minimise */}
         <button
           onClick={(e) => {
             e.stopPropagation();
-            setIsFullscreen(prev => !prev);
-            onFocus?.();
+            if (isFullscreen) setIsFullscreen(false);
+            onClose?.();
           }}
           className="group relative size-3 rounded-full bg-[#febc2e] hover:brightness-90 transition-all duration-150 cursor-pointer pointer-events-auto"
           aria-label="Minimize window"
@@ -118,8 +118,28 @@ export default function DesktopWindow({
             <line x1="2.5" y1="6" x2="9.5" y2="6" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" />
           </svg>
         </button>
-        {/* Green — fullscreen (no-op) */}
-        <span className="size-3 rounded-full bg-[#28c840]" />
+        {/* Green — fullscreen. The state was already here and wired into the
+            class list; nothing was flipping it. */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsFullscreen((prev) => !prev);
+            onFocus?.();
+          }}
+          className="group relative size-3 rounded-full bg-[#28c840] hover:brightness-90 transition-all duration-150 cursor-pointer pointer-events-auto"
+          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        >
+          <svg
+            viewBox="0 0 12 12"
+            className="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+          >
+            {isFullscreen ? (
+              <path d="M3.5 6h5M6 3.5v5" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" />
+            ) : (
+              <path d="M3.5 8.5v-5h5M8.5 3.5v5h-5" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round" />
+            )}
+          </svg>
+        </button>
 
         {title && (
           <span className="ml-2 text-[13px] font-medium text-zinc-500 dark:text-zinc-400 select-none flex-1 text-center pr-12">

@@ -9,6 +9,7 @@ import DesktopDock from "@/components/DesktopDock";
 import type { DockApp } from "@/components/DesktopDock";
 import HomeBackdrop from "@/components/HomeBackdrop";
 import RainGlass from "@/components/RainGlass";
+import BootScreen from "@/components/BootScreen";
 import Signature from "@/components/Signature";
 import HoverCards from "@/components/HoverCards";
 import HighlightList from "@/components/HighlightList";
@@ -187,8 +188,6 @@ export default function DesktopHome() {
   });
   const [topZ, setTopZ] = useState(16);
 
-  // Intro loader
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedTweetId, setSelectedTweetId] = useState<string | null>(null);
   const [time, setTime] = useState("");
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -207,14 +206,6 @@ export default function DesktopHome() {
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, []);
-
-  // Intro loader
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2600);
-    return () => clearTimeout(timer);
   }, []);
 
   // Fade in wrapper
@@ -258,22 +249,8 @@ export default function DesktopHome() {
   return (
     <>
       <DesktopMenuBar />
-      {/* Signature intro loader */}
-      <AnimatePresence>
-        {isLoading && (
-          <motion.div
-            key="loader"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0a]"
-          >
-            <div className="w-[160px] sm:w-[200px]">
-              <Signature className="h-auto w-full text-white overflow-visible" />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Intro: mascot above, signature below, boot bar under both. */}
+      <BootScreen duration={2.6} />
 
       {/* Wallpaper */}
       <HomeBackdrop />

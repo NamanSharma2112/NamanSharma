@@ -34,9 +34,10 @@ export const metadata: Metadata = {
 };
 
 import FloatingContactWidget from "@/components/FloatingContactWidget";
-import PillNav from "@/components/PillNav";
+import Dock from "@/components/Dock";
 import { CommandMenu } from "@/components/CommandMenu";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { DesktopProvider } from "@/components/DesktopState";
 
 export default function RootLayout({
   children,
@@ -55,10 +56,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <PillNav />
-          <div className="flex-1">
-            {children}
-          </div>
+          <DesktopProvider>
+            <div className="flex-1">
+              {children}
+            </div>
+            <Dock />
+          </DesktopProvider>
           <FloatingContactWidget />
           <CommandMenu />
         </ThemeProvider>

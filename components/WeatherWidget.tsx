@@ -18,9 +18,11 @@ const getWeatherDetails = (code: number) => {
   return { label: "Unknown", Icon: Cloud };
 };
 
+const JALANDHAR = { lat: 31.326, lon: 75.5762, name: "Jalandhar" };
+
 export default function WeatherWidget() {
   const [data, setData] = useState<any>(null);
-  const [city, setCity] = useState<string>("Loading...");
+  const [city, setCity] = useState<string>(JALANDHAR.name);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,17 +54,9 @@ export default function WeatherWidget() {
       }
     };
 
-    const loadJalandhar = () => fetchWeather(31.3260, 75.5762, "Jalandhar");
-
-    // Request Location
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => fetchWeather(pos.coords.latitude, pos.coords.longitude),
-        () => loadJalandhar() // Fallback to Jalandhar if denied/failed
-      );
-    } else {
-      loadJalandhar();
-    }
+    // Always Jalandhar. Asking the browser for a location puts a permission
+    // prompt in front of a visitor who only came to look at a portfolio.
+    fetchWeather(JALANDHAR.lat, JALANDHAR.lon, JALANDHAR.name);
   }, []);
 
   if (loading || !data) {

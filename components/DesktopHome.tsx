@@ -10,7 +10,7 @@ import type { DockApp } from "@/components/DesktopDock";
 import HomeBackdrop from "@/components/HomeBackdrop";
 import RainGlass from "@/components/RainGlass";
 import BootScreen from "@/components/BootScreen";
-import JapaneseAccents from "@/components/JapaneseAccents";
+import DeskAccents from "@/components/DeskAccents";
 import Signature from "@/components/Signature";
 import HoverCards from "@/components/HoverCards";
 import HighlightList from "@/components/HighlightList";
@@ -302,7 +302,7 @@ export default function DesktopHome() {
       {/* Wallpaper */}
       <HomeBackdrop />
       <RainGlass className="z-[1]" intensity={0.85} glass={false} />
-      <JapaneseAccents />
+      <DeskAccents />
 
 
 

@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Signature from "./Signature";
+import KatanaLoader from "./KatanaLoader";
 
 /**
- * The intro screen: the signature draws itself over a boot bar that fills
- * while the desktop gets ready behind it.
+ * The intro screen: the signature draws itself, then a katana draws, spins and
+ * slashes on a loop while the desktop gets ready behind it.
  *
  * This has to be rendered outside the desktop window. The window animates, and
  * an element with a transform becomes the containing block for its fixed
@@ -68,14 +69,14 @@ export default function BootScreen({
             ナマン・シャルマ
           </motion.p>
 
-          <div className="mt-9 h-[3px] w-40 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration, ease: "easeInOut" }}
-              className="h-full origin-left rounded-full bg-zinc-900 dark:bg-zinc-100"
-            />
-          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+            className="mt-6 text-zinc-900 dark:text-zinc-100"
+          >
+            <KatanaLoader />
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -10,6 +10,7 @@ import type { DockApp } from "@/components/DesktopDock";
 import HomeBackdrop from "@/components/HomeBackdrop";
 import RainGlass from "@/components/RainGlass";
 import BootScreen from "@/components/BootScreen";
+import JapaneseAccents from "@/components/JapaneseAccents";
 import Signature from "@/components/Signature";
 import HoverCards from "@/components/HoverCards";
 import HighlightList from "@/components/HighlightList";
@@ -267,6 +268,18 @@ export default function DesktopHome() {
     });
   };
 
+  // Menu-bar actions. `open` differs from `toggle`: picking something from a
+  // menu should bring it forward, never dismiss it.
+  const openWindow = (id: string) => {
+    setOpenWindows((prev) => ({ ...prev, [id]: true }));
+    focusWindow(id);
+  };
+
+  const closeAllWindows = () =>
+    setOpenWindows((prev) =>
+      Object.fromEntries(Object.keys(prev).map((k) => [k, false]))
+    );
+
   const dockApps: DockApp[] = [
     { id: "about", label: "About Me", icon: <UserIcon />, isOpen: openWindows.about },
     { id: "blog", label: "Writing", icon: <PenIcon />, isOpen: openWindows.blog },
@@ -277,13 +290,19 @@ export default function DesktopHome() {
 
   return (
     <>
-      <DesktopMenuBar />
+      <DesktopMenuBar
+        windows={openWindows}
+        onToggleWindow={toggle}
+        onOpenWindow={openWindow}
+        onCloseAll={closeAllWindows}
+      />
       {/* Intro: mascot above, signature below, boot bar under both. */}
       <BootScreen duration={2.6} />
 
       {/* Wallpaper */}
       <HomeBackdrop />
       <RainGlass className="z-[1]" intensity={0.85} glass={false} />
+      <JapaneseAccents />
 
 
 

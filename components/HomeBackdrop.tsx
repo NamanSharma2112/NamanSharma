@@ -87,11 +87,15 @@ export default function HomeBackdrop({
               // Sequence: Blur over 0.5s, THEN crossfade opacity over 0.6s
               transition: "filter 0.5s ease-in, opacity 0.6s ease-in-out 0.5s, transform 1.1s ease-out",
               opacity: isActive ? 1 : 0,
+              // The visible photo sits at 1:1. These sources are ~700px wide
+              // and already stretched about 2x to cover a desktop, so an idle
+              // zoom on top of that only costs sharpness. The outgoing frame
+              // still scales up to cover the fringe its blur leaves behind.
               transform: isActive
-                ? "scale(1.05)"
+                ? "scale(1)"
                 : isOutgoing
-                  ? "scale(1.08)"
-                  : "scale(1.05)",
+                  ? "scale(1.06)"
+                  : "scale(1)",
               filter: isActive
                 ? "blur(0px)"
                 : isOutgoing

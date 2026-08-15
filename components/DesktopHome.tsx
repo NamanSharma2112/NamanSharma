@@ -110,54 +110,83 @@ const INSPIRATIONS = [
   },
 ];
 
-/* ── Liquid Glass macOS-style Icons ── */
-// Shared icon wrapper for tinted frosted glass
-const IconWrapper = ({ tintColor, textColor, children }: { tintColor: string, textColor: string, children: React.ReactNode }) => (
-  <div className={`w-full h-full rounded-[14px] sm:rounded-[16px] flex items-center justify-center backdrop-blur-xl backdrop-saturate-[150%] ${tintColor} ${textColor} border shadow-[0_8px_16px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.6),inset_0_-1px_1px_rgba(255,255,255,0.1)] dark:shadow-[0_8px_16px_rgba(0,0,0,0.3),inset_0_1px_1px_rgba(255,255,255,0.2)] overflow-hidden relative`}>
-    <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent dark:from-white/10 pointer-events-none mix-blend-overlay" />
-    <div className="relative z-10 drop-shadow-sm">{children}</div>
+/* ── macOS-style app tiles ── */
+/**
+ * A dock icon the way macOS draws one: a saturated gradient squircle with a
+ * white glyph, a sheen across the top and a soft contact shadow. A translucent
+ * tint over a photo wallpaper washes out instead of reading as an app.
+ */
+const IconWrapper = ({
+  gradient,
+  children,
+}: {
+  gradient: string;
+  children: React.ReactNode;
+}) => (
+  <div
+    className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-[23%] ring-1 ring-black/15 shadow-[0_6px_14px_-4px_rgba(0,0,0,0.5)] ${gradient}`}
+  >
+    <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/35 via-white/5 to-transparent" />
+    <span className="relative z-10 drop-shadow-[0_1px_1.5px_rgba(0,0,0,0.28)]">
+      {children}
+    </span>
   </div>
 );
 
+/** Shared glyph geometry, so every icon carries the same weight. */
+const glyphProps = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.9,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+};
+
+// Contacts blue.
 const UserIcon = () => (
-  <IconWrapper tintColor="bg-blue-500/20 border-blue-500/30 dark:bg-blue-500/30 dark:border-blue-400/30" textColor="text-blue-700 dark:text-blue-300">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
+  <IconWrapper gradient="bg-gradient-to-b from-[#7dd3fc] to-[#2563eb] text-white">
+    <svg width="26" height="26" viewBox="0 0 24 24" {...glyphProps}>
+      <circle cx="12" cy="8.5" r="3.8" />
+      <path d="M19 20a7 7 0 0 0-14 0" />
     </svg>
   </IconWrapper>
 );
 
+// Notes yellow — a dark glyph, since white on yellow barely reads.
 const PenIcon = () => (
-  <IconWrapper tintColor="bg-amber-500/20 border-amber-500/30 dark:bg-amber-500/30 dark:border-amber-400/30" textColor="text-amber-700 dark:text-amber-300">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="translate-x-[1px] -translate-y-[1px]">
-      <path d="M12 20h9" />
-      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+  <IconWrapper gradient="bg-gradient-to-b from-[#ffe27a] to-[#f0a92b] text-amber-950">
+    <svg width="25" height="25" viewBox="0 0 24 24" {...glyphProps}>
+      <path d="M6 3.5h12a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z" />
+      <path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4" />
     </svg>
   </IconWrapper>
 );
 
+// Inspiration — a spark rather than a heart.
 const HeartIcon = () => (
-  <IconWrapper tintColor="bg-pink-500/20 border-pink-500/30 dark:bg-pink-500/30 dark:border-pink-400/30" textColor="text-pink-700 dark:text-pink-300">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="translate-y-[1px]">
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+  <IconWrapper gradient="bg-gradient-to-b from-[#ff9db3] to-[#e6486f] text-white">
+    <svg width="26" height="26" viewBox="0 0 24 24" {...glyphProps}>
+      <path d="M12 3.2l1.95 4.65L18.6 9.8l-4.65 1.95L12 16.4l-1.95-4.65L5.4 9.8l4.65-1.95z" />
+      <path d="M18.2 15.4l.72 1.78 1.78.72-1.78.72-.72 1.78-.72-1.78-1.78-.72 1.78-.72z" />
     </svg>
   </IconWrapper>
 );
 
+// Messages green.
 const MessageIcon = () => (
-  <IconWrapper tintColor="bg-emerald-500/20 border-emerald-500/30 dark:bg-emerald-500/30 dark:border-emerald-400/30" textColor="text-emerald-700 dark:text-emerald-300">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+  <IconWrapper gradient="bg-gradient-to-b from-[#7ceb9f] to-[#12a150] text-white">
+    <svg width="26" height="26" viewBox="0 0 24 24" {...glyphProps}>
+      <path d="M20 11.4c0 3.9-3.6 7-8 7a9 9 0 0 1-2.2-.27L5 20l1.2-3.3A6.7 6.7 0 0 1 4 11.4c0-3.9 3.6-7 8-7s8 3.1 8 7z" />
     </svg>
   </IconWrapper>
 );
 
+// Mail blue.
 const MailIcon = () => (
-  <IconWrapper tintColor="bg-sky-500/20 border-sky-500/30 dark:bg-sky-500/30 dark:border-sky-400/30" textColor="text-sky-700 dark:text-sky-300">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <rect width="20" height="16" x="2" y="4" rx="2" />
-      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  <IconWrapper gradient="bg-gradient-to-b from-[#7fd0ff] to-[#1a72e8] text-white">
+    <svg width="25" height="25" viewBox="0 0 24 24" {...glyphProps}>
+      <rect x="3" y="5.5" width="18" height="13" rx="2.4" />
+      <path d="m3.9 7.2 7.2 5.3a1.5 1.5 0 0 0 1.8 0l7.2-5.3" />
     </svg>
   </IconWrapper>
 );

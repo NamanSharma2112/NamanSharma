@@ -14,12 +14,19 @@ import { motion } from "motion/react";
 export default function KatanaLoader({
   size = 132,
   cycle = 1.9,
+  once = false,
 }: {
   size?: number;
   /** Seconds per full draw-spin-slash loop. */
   cycle?: number;
+  /** Run the sequence a single time instead of looping. */
+  once?: boolean;
 }) {
-  const loop = { duration: cycle, repeat: Infinity, ease: "easeInOut" as const };
+  const loop = {
+    duration: cycle,
+    repeat: once ? 0 : Infinity,
+    ease: "easeInOut" as const,
+  };
 
   return (
     <div

@@ -117,7 +117,7 @@ export default function FloatingContactWidget() {
                   <div 
                     className={`max-w-[85%] px-4 py-2 rounded-2xl text-[14px] leading-relaxed ${
                       msg.sender === "user" 
-                        ? "bg-blue-500 text-white rounded-tr-sm" 
+                        ? "bg-white text-black rounded-tr-sm" 
                         : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-tl-sm border border-zinc-200/50 dark:border-zinc-700/50"
                     }`}
                   >
@@ -147,12 +147,12 @@ export default function FloatingContactWidget() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="iMessage"
-                  className="w-full bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/80 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 transition-shadow"
+                  className="w-full bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/80 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-white/30 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 transition-shadow"
                 />
                 <button 
                   type="submit"
                   disabled={!inputValue.trim()}
-                  className="absolute right-1 w-8 h-8 flex items-center justify-center rounded-full bg-blue-500 text-white disabled:opacity-50 disabled:bg-zinc-300 dark:disabled:bg-zinc-700 transition-colors"
+                  className="absolute right-1 w-8 h-8 flex items-center justify-center rounded-full bg-white text-black disabled:opacity-50 disabled:bg-zinc-300 dark:disabled:bg-zinc-700 transition-colors"
                 >
                   <ArrowUp size={16} strokeWidth={2.5} />
                 </button>
@@ -165,17 +165,17 @@ export default function FloatingContactWidget() {
       <div className="fixed bottom-6 right-6 z-[100]">
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="relative w-14 h-14 bg-blue-500 rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-[#111110]"
+          className="relative w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-black"
           aria-label="Open Chat"
         >
           {isOpen ? (
-            <X size={24} className="text-white" />
+            <X size={20} className="text-black" />
           ) : (
             <>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square text-black">
                 <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path>
               </svg>
-              <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 border-2 border-white dark:border-[#111110] rounded-full" />
+              <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-black border-2 border-white rounded-full" />
             </>
           )}
         </button>

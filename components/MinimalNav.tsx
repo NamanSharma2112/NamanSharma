@@ -30,11 +30,20 @@ export default function MinimalNav() {
       aria-label="Main navigation"
       className="mx-auto flex w-full max-w-[560px] items-baseline justify-between px-6 pt-14 text-[13px] sm:pt-20"
     >
+      {/* The mark: lowercase, tight, with the stop carrying the only colour
+          shift so it reads as drawn rather than typed. */}
       <Link
         href="/"
-        className="font-medium text-white transition-opacity hover:opacity-70"
+        aria-label="Naman Sharma — home"
+        className="group inline-flex items-baseline font-medium tracking-tight text-white"
       >
-        naman.
+        <span className="relative">
+          naman
+          <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100" />
+        </span>
+        <span className="text-zinc-500 transition-colors duration-300 group-hover:text-white">
+          .
+        </span>
       </Link>
 
       <div className="flex items-baseline gap-4">

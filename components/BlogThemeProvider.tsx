@@ -18,7 +18,7 @@ export function useBlogTheme() {
 }
 
 export function BlogThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<BlogTheme>("light");
+  const [theme, setTheme] = useState<BlogTheme>("dark");
 
   useEffect(() => {
     const saved = localStorage.getItem("blog-theme") as BlogTheme | null;

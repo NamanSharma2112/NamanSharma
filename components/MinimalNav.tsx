@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import ThemeButton from "@/components/ThemeButton";
 
 /**
  * The whole navigation: a wordmark on the left, a few quiet links on the right.
@@ -36,13 +37,13 @@ export default function MinimalNav() {
       <Link
         href="/"
         aria-label="Naman Sharma — home"
-        className="group inline-flex items-baseline font-medium tracking-tight text-white"
+        className="group inline-flex items-baseline font-medium tracking-tight text-zinc-900 dark:text-white"
       >
         <span className="relative">
           naman
-          <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100" />
+          <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-zinc-900 transition-transform duration-300 ease-out group-hover:scale-x-100 dark:bg-white" />
         </span>
-        <span className="text-zinc-500 transition-colors duration-300 group-hover:text-white">
+        <span className="text-zinc-400 transition-colors duration-300 group-hover:text-zinc-900 dark:text-zinc-500 dark:group-hover:text-white">
           .
         </span>
       </Link>
@@ -55,8 +56,8 @@ export default function MinimalNav() {
             className={cn(
               "transition-colors",
               pathname.startsWith(link.href)
-                ? "text-white"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "text-zinc-900 dark:text-white"
+                : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300"
             )}
           >
             {link.label}
@@ -66,10 +67,11 @@ export default function MinimalNav() {
           href={TWITTER}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-zinc-500 transition-colors hover:text-zinc-300"
+          className="text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-zinc-300"
         >
           twitter
         </a>
+        <ThemeButton className="cursor-pointer text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-zinc-300" />
       </div>
     </nav>
   );

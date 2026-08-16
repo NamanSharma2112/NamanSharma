@@ -190,3 +190,16 @@
 .cmk-animate-out {
   animation: cmkExit 0.2s ease-in forwards !important;
 }
+
+/* ── Theme switch: circular blur reveal ── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}

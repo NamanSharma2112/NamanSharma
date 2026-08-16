@@ -9,7 +9,6 @@ import DesktopDock from "@/components/DesktopDock";
 import type { DockApp } from "@/components/DesktopDock";
 import HomeBackdrop from "@/components/HomeBackdrop";
 import RainGlass from "@/components/RainGlass";
-import BootScreen from "@/components/BootScreen";
 import DeskAccents from "@/components/DeskAccents";
 import Signature from "@/components/Signature";
 import HoverCards from "@/components/HoverCards";
@@ -295,8 +294,6 @@ export default function DesktopHome() {
         onOpenWindow={openWindow}
         onCloseAll={closeAllWindows}
       />
-      {/* Intro: mascot above, signature below, boot bar under both. */}
-      <BootScreen duration={2.6} />
 
       {/* Wallpaper */}
       <HomeBackdrop />

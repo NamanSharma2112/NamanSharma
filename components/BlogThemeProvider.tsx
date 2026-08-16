@@ -18,7 +18,7 @@ export function useBlogTheme() {
 }
 
 export function BlogThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<BlogTheme>("light");
+  const [theme, setTheme] = useState<BlogTheme>("dark");
 
   useEffect(() => {
     const saved = localStorage.getItem("blog-theme") as BlogTheme | null;
@@ -59,12 +59,17 @@ export function BlogThemeProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <BlogThemeContext.Provider value={{ theme, toggle }}>
+      {/* Painted across the whole viewport rather than only behind the article.
+          The nav is rendered above this by the root layout, so a background on
+          the wrapper alone left a visible seam under it. */}
+      <div
+        aria-hidden
+        className="fixed inset-0 -z-10 transition-colors duration-500 ease-in-out"
+        style={{ backgroundColor: isDark ? "#0a0a0a" : "#fafafa" }}
+      />
       <div
         className="transition-colors duration-500 ease-in-out min-h-screen"
-        style={{
-          backgroundColor: isDark ? "#0a0a0a" : "#fafafa",
-          color: isDark ? "#e4e4e7" : "#18181b",
-        }}
+        style={{ color: isDark ? "#e4e4e7" : "#18181b" }}
       >
         {children}
 

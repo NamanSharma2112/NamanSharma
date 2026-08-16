@@ -11,7 +11,7 @@ export default function BlogIndexPage() {
   const isDark = theme === "dark";
 
   return (
-    <div className="pt-32 pb-32">
+    <div className="pt-24 pb-32">
       <div className="max-w-[600px] mx-auto px-6">
         <header className="mb-16">
           <motion.h1

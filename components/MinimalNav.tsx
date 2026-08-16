@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import ThemeButton from "@/components/ThemeButton";
 
 /**
  * The whole navigation: a wordmark on the left, a few quiet links on the right.
@@ -56,7 +57,7 @@ export default function MinimalNav() {
               "transition-colors",
               pathname.startsWith(link.href)
                 ? "text-white"
-                : "text-zinc-500 hover:text-zinc-300"
+                : "text-zinc-400 hover:text-white"
             )}
           >
             {link.label}
@@ -66,10 +67,11 @@ export default function MinimalNav() {
           href={TWITTER}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-zinc-500 transition-colors hover:text-zinc-300"
+          className="text-zinc-400 transition-colors hover:text-white"
         >
           twitter
         </a>
+        <ThemeButton className="cursor-pointer text-zinc-400 transition-colors hover:text-white" />
       </div>
     </nav>
   );

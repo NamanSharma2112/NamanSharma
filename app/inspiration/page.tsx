@@ -43,8 +43,8 @@ const INSPIRATIONS = [
 
 export default function InspirationPage() {
   return (
-    <div className="min-h-screen pt-32 pb-32 transition-colors duration-500">
-      <div className="max-w-[650px] mx-auto px-6">
+    <div className="pt-10 pb-28">
+      <div className="mx-auto max-w-[620px] rounded-2xl border border-black/10 bg-white/70 p-7 backdrop-blur-xl sm:p-9 dark:border-white/10 dark:bg-black/55">
         
         {/* Header Text */}
         <div className="mb-12 text-[15px] leading-[1.6] text-zinc-600 dark:text-zinc-400 flex flex-col gap-5">

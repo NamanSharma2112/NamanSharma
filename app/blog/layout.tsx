@@ -5,5 +5,9 @@ export default function BlogLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <BlogThemeProvider>{children}</BlogThemeProvider>;
+  return (
+    <BlogThemeProvider>
+      <div className="min-h-screen bg-black">{children}</div>
+    </BlogThemeProvider>
+  );
 }

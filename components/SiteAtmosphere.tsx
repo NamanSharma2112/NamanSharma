@@ -21,12 +21,16 @@ export default function SiteAtmosphere() {
   const pathname = usePathname();
   const [src, setSrc] = useState(PREFERRED);
 
-  // The desktop brings its own wallpaper and rain.
-  if (pathname.startsWith("/desktop")) return null;
+  // The photo stays dark whichever theme is on — only the sheets in front of
+  // it change tone — so anything sitting directly on it stays light.
+
+  // The desktop brings its own wallpaper and rain, and the blog stays a
+  // plain black page to read on.
+  if (pathname.startsWith("/desktop") || pathname.startsWith("/blog")) return null;
 
   return (
     <>
-      <div className="fixed inset-0 z-0 bg-[#f5f5f5] dark:bg-[#0a0a0a]">
+      <div className="fixed inset-0 z-0 bg-[#0a0a0a]">
         <Image
           src={src}
           alt=""
@@ -38,7 +42,7 @@ export default function SiteAtmosphere() {
           onError={() => setSrc(FALLBACK)}
         />
         {/* Holds the photo back so the panels in front keep their contrast. */}
-        <div className="absolute inset-0 bg-white/55 dark:bg-black/60" />
+        <div className="absolute inset-0 bg-black/60" />
       </div>
 
       {/* Rain sits on the photo, under the content, so writing stays sharp. */}

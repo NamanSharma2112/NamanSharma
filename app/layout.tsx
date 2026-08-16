@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 };
 
 import FloatingContactWidget from "@/components/FloatingContactWidget";
-import Dock from "@/components/Dock";
+import MinimalNav from "@/components/MinimalNav";
 import { CommandMenu } from "@/components/CommandMenu";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { DesktopProvider } from "@/components/DesktopState";
@@ -58,13 +58,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <DesktopProvider>
+            {/* Hides itself on /desktop, which brings its own menu bar and
+                dock. */}
+            <MinimalNav />
             <div className="flex-1">
               {children}
             </div>
-            {/* Navigation for every route except the home desktop, which
-                renders its own dock wired to its window manager. Without this
-                the blog, inspiration and about pages have no nav at all. */}
-            <Dock />
           </DesktopProvider>
           <FloatingContactWidget />
           <CommandMenu />

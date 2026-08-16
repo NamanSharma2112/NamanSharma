@@ -20,7 +20,6 @@ import DesktopBlogPost from "@/components/DesktopBlogPost";
 import { DesktopMenuBar } from "@/components/DesktopMenuBar";
 
 import { TweetGrid } from "@/components/TweetGrid";
-import { SpotifyCard } from "@/registry/spell-ui/spotify-card";
 import { Tweet } from "@/registry/spell-ui/tweet";
 import { ShimmerText } from "@/components/shimmer-text";
 import BunnyIcon from "@/components/BunnyIcon";
@@ -352,13 +351,7 @@ export default function DesktopHome() {
                         <p className="text-zinc-900 dark:text-zinc-100 font-medium">Naman Sharma</p>
                         <ShimmerText>Design Engineer</ShimmerText>
                       </div>
-                      <div className="hidden sm:block shrink-0 mt-2">
-                        <SpotifyCard url="https://open.spotify.com/track/0DTSnA1bcVI5niJzoyBPyZ" className="max-w-[325px] max-h-[80px]" />
-                      </div>
                     </header>
-                    <div className="sm:hidden flex w-full">
-                      <SpotifyCard url="https://open.spotify.com/track/0DTSnA1bcVI5niJzoyBPyZ" className="w-full max-h-[80px]" />
-                    </div>
                     <div className="flex flex-col gap-6 break-words">
                       <p>I&apos;m a Design Engineer who designs and builds whatever I can imagine or get inspiration from. Currently exploring modern web experiences and shipping projects that push creative boundaries.</p>
                       <p>Currently working on passion projects and refining my craft with my go-to stack: <HoverCards label="React & Next.js" cards={[{ src: "https://api.microlink.io/?url=https://nextjs.org&screenshot=true&meta=false&embed=screenshot.url", alt: "Next.js Homepage", dx: 34, r: 11.9 }, { src: "https://api.microlink.io/?url=https://react.dev&screenshot=true&meta=false&embed=screenshot.url", alt: "React Homepage", dx: -34, r: -6.58 }]} />, TypeScript, Tailwind CSS, <HoverCards label="Motion.dev" cards={[{ src: "https://api.microlink.io/?url=https://motion.dev&screenshot=true&meta=false&embed=screenshot.url", alt: "Motion.dev Homepage", dx: 34, r: 8.5 }, { src: "https://api.microlink.io/?url=https://motion.dev/docs&screenshot=true&meta=false&embed=screenshot.url", alt: "Motion.dev Docs", dx: -34, r: -10.2 }]} /> and Claude.</p>

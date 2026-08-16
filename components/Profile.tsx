@@ -9,7 +9,6 @@ import HighlightList from "./HighlightList";
 import CopyEmail from "./CopyEmail";
 import { LogosCarousel } from "./LogosCarousel";
 import { TweetGrid } from "./TweetGrid";
-import { SpotifyCard } from "@/registry/spell-ui/spotify-card";
 import { Tweet } from "@/registry/spell-ui/tweet";
 import { ShimmerText } from "./shimmer-text";
 import BunnyIcon from "./BunnyIcon";
@@ -196,21 +195,7 @@ export default function Profile() {
                 </motion.div>
               </div>
 
-              <motion.div {...fadeUp(i++)} className="hidden sm:block shrink-0 mt-2">
-                <SpotifyCard
-                  url="https://open.spotify.com/track/0DTSnA1bcVI5niJzoyBPyZ"
-                  className="max-w-[325px] max-h-[80px]"
-                />
-              </motion.div>
             </header>
-
-            {/* Mobile Spotify Card */}
-            <motion.div {...fadeUp(i++)} className="sm:hidden flex w-full">
-              <SpotifyCard
-                url="https://open.spotify.com/track/0DTSnA1bcVI5niJzoyBPyZ"
-                className="w-full max-h-[80px]"
-              />
-            </motion.div>
 
             {/* ═══════════════════════════════════════
                 BIO

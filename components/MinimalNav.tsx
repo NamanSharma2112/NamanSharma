@@ -28,7 +28,8 @@ export default function MinimalNav() {
   return (
     <nav
       aria-label="Main navigation"
-      className="mx-auto flex w-full max-w-[560px] items-baseline justify-between px-6 pt-14 text-[13px] sm:pt-20"
+      // z-20 keeps it above pages that lay a fixed backdrop behind themselves.
+      className="relative z-20 mx-auto flex w-full max-w-[560px] items-baseline justify-between px-6 pt-14 text-[13px] sm:pt-20"
     >
       {/* The mark: lowercase, tight, with the stop carrying the only colour
           shift so it reads as drawn rather than typed. */}

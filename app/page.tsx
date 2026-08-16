@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import HoverCards from "@/components/HoverCards";
 import CopyEmail from "@/components/CopyEmail";
+import Signature from "@/components/Signature";
 
 export const metadata: Metadata = {
   title: "Naman Sharma",
@@ -121,6 +122,11 @@ export default function Home() {
         </a>
         .
       </p>
+
+      {/* Signed off at the bottom. It draws itself in on load. */}
+      <div className="mt-14 w-[148px] text-white/75">
+        <Signature className="h-auto w-full overflow-visible" />
+      </div>
     </main>
   );
 }

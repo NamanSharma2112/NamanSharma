@@ -45,7 +45,7 @@ export default function BootScreen({
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#f5f5f5] dark:bg-[#1f1f23]"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black"
         >
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -53,7 +53,7 @@ export default function BootScreen({
             transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
             className="w-[160px] sm:w-[200px]"
           >
-            <Signature className="h-auto w-full overflow-visible text-black dark:text-white" />
+            <Signature className="h-auto w-full overflow-visible text-white" />
           </motion.div>
 
           {/* ナマン・シャルマ — "Naman Sharuma", the katakana the name is
@@ -64,7 +64,7 @@ export default function BootScreen({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 1.1, ease: "easeOut" }}
-            className="mt-4 text-[12px] tracking-[0.3em] text-zinc-500 dark:text-zinc-400"
+            className="mt-4 text-[12px] tracking-[0.3em] text-zinc-400"
           >
             ナマン・シャルマ
           </motion.p>
@@ -73,7 +73,7 @@ export default function BootScreen({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.5 }}
-            className="mt-6 text-zinc-900 dark:text-zinc-100"
+            className="mt-6 text-zinc-100"
           >
             <KatanaLoader />
           </motion.div>

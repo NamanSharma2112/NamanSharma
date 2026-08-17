@@ -230,3 +230,20 @@
     opacity: 1;
   }
 }
+
+/* ── Social icon roll ── */
+/* Two stacked copies inside a window one icon tall; hovering slides the pair
+   up by exactly that height so the second lands where the first was. */
+.icon-roll {
+  transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .icon-roll,
+.group:focus-visible .icon-roll {
+  transform: translateY(-16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-roll {
+    transition: none;
+  }
+}

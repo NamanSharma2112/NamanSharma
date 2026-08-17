@@ -58,9 +58,37 @@ type Props = {
   items: ListItem[];
 };
 
+/**
+ * Which edge of `el` the cursor crossed to get inside.
+ *
+ * Takes the angle from the centre to the cursor, corrected for the element's
+ * aspect so a wide row does not report "top" for a cursor that came in the
+ * side, then rounds it to one of four quadrants.
+ */
+function getDirection(
+  event: React.MouseEvent,
+  el: HTMLElement
+): keyof typeof ENTER {
+  const { width, height, left, top } = el.getBoundingClientRect();
+  const x = event.clientX - left - width / 2;
+  const y = event.clientY - top - height / 2;
+  const quadrant =
+    Math.round(Math.atan2(y * (width / height), x) / (Math.PI / 2) + 5) % 4;
+  return (["top", "right", "bottom", "left"] as const)[quadrant];
+}
+
+/** The card starts offset toward whichever edge the cursor came from. */
+const ENTER = {
+  top: { y: 20, x: 0 },
+  bottom: { y: -20, x: 0 },
+  left: { x: 20, y: 0 },
+  right: { x: -20, y: 0 },
+};
+
 export default function HighlightList({ title, items }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeCards, setActiveCards] = useState<Card[] | null>(null);
+  const [from, setFrom] = useState<keyof typeof ENTER>("bottom");
 
   /* Spring-based cursor tracking */
   const springConfig = { stiffness: 180, damping: 22 };
@@ -74,6 +102,7 @@ export default function HighlightList({ title, items }: Props) {
       const containerRect = container.getBoundingClientRect();
       
       if (cards && cards.length > 0) {
+        setFrom(getDirection(e, e.currentTarget));
         setActiveCards(cards);
         cardX.set(e.clientX - containerRect.left);
         cardY.set(e.clientY - containerRect.top);
@@ -115,18 +144,17 @@ export default function HighlightList({ title, items }: Props) {
         <AnimatePresence>
           {activeCards && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 15 }}
-              transition={{
-                duration: 0.4,
-                ease: [0.16, 1, 0.3, 1], // Custom smooth ease
-              }}
               className="pointer-events-none absolute left-0 top-0 z-50"
               style={{ x: cardX, y: cardY }}
             >
               {/* Offset so card appears above-right of cursor */}
               <div className="relative" style={{ transform: "translate(20px, -110%)" }}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85, ...ENTER[from] }}
+                  animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.85, ...ENTER[from] }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                >
                 <div className="flex gap-[-12px]">
                   {activeCards.map((card, i) => (
                     <div
@@ -149,7 +177,8 @@ export default function HighlightList({ title, items }: Props) {
                       />
                     </div>
                   ))}
-                </div>
+                  </div>
+                </motion.div>
               </div>
             </motion.div>
           )}

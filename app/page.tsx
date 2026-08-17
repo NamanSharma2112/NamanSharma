@@ -4,6 +4,7 @@ import CopyEmail from "@/components/CopyEmail";
 import Signature from "@/components/Signature";
 import Panel from "@/components/Panel";
 import CpuIcon from "@/components/CpuIcon";
+import SocialLinks from "@/components/SocialLinks";
 
 export const metadata: Metadata = {
   title: "Naman Sharma",
@@ -116,7 +117,9 @@ export default function Home() {
           </a>
         </div>
 
-        <p className="mt-8 text-[13px] text-zinc-600 dark:text-zinc-500">
+        <SocialLinks className="mt-7 -ml-2" />
+
+        <p className="mt-7 text-[13px] text-zinc-600 dark:text-zinc-500">
           Poke around the{" "}
           <a
             href="/desktop"

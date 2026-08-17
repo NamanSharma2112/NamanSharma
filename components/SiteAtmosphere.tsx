@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import RainGlass from "@/components/RainGlass";
 import NeonCat from "@/components/NeonCat";
+import NeonTorii from "@/components/NeonTorii";
 
 /**
  * The weather every page sits in: a photo behind glass with rain running on it.
@@ -51,6 +52,11 @@ export default function SiteAtmosphere() {
       <NeonCat
         size={150}
         className="pointer-events-none fixed bottom-8 left-8 z-[2] hidden lg:block"
+      />
+
+      <NeonTorii
+        size={140}
+        className="pointer-events-none fixed right-10 top-[30%] z-[2] hidden lg:block"
       />
     </>
   );

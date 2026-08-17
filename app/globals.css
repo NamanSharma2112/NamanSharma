@@ -203,3 +203,30 @@
 ::view-transition-new(root) {
   z-index: 2;
 }
+
+/* ── Neon line drawing (yui540's technique) ── */
+/* Light a stroke up along its length, hold, then pull it away by the tail.
+   Every path declares pathLength="1", so this covers any real length. */
+.neon-stroke {
+  stroke-dasharray: 0 1;
+  stroke-dashoffset: 0;
+  opacity: 0;
+  animation: neon-cycle 3.6s ease-in-out infinite;
+}
+
+@keyframes neon-cycle {
+  0%   { stroke-dasharray: 0 1;  stroke-dashoffset: 0;  opacity: 0; }
+  6%   { opacity: 1; }
+  30%  { stroke-dasharray: 1 1;  stroke-dashoffset: 0;  opacity: 1; }
+  58%  { stroke-dasharray: 1 1;  stroke-dashoffset: 0;  opacity: 1; }
+  92%  { stroke-dasharray: 1 1;  stroke-dashoffset: -1; opacity: 1; }
+  100% { stroke-dasharray: 1 1;  stroke-dashoffset: -1; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neon-stroke {
+    animation: none;
+    stroke-dasharray: 1 1;
+    opacity: 1;
+  }
+}

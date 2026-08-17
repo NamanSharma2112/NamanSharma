@@ -3,6 +3,7 @@ import HoverCards from "@/components/HoverCards";
 import CopyEmail from "@/components/CopyEmail";
 import Signature from "@/components/Signature";
 import Panel from "@/components/Panel";
+import CpuIcon from "@/components/CpuIcon";
 
 export const metadata: Metadata = {
   title: "Naman Sharma",
@@ -119,9 +120,12 @@ export default function Home() {
           Poke around the{" "}
           <a
             href="/desktop"
-            className="text-zinc-900 underline underline-offset-[3px] decoration-zinc-400 transition-colors hover:decoration-zinc-900 dark:text-white dark:decoration-zinc-600 dark:hover:decoration-white"
+            className="group inline-flex items-center gap-1.5 align-middle text-zinc-900 dark:text-white"
           >
-            desktop
+            <CpuIcon className="transition-transform duration-300 ease-out group-hover:-translate-y-0.5" />
+            <span className="underline underline-offset-[3px] decoration-zinc-400 transition-colors group-hover:decoration-zinc-900 dark:decoration-zinc-600 dark:group-hover:decoration-white">
+              desktop
+            </span>
           </a>
           .
         </p>

@@ -1,91 +1,35 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
-import { Moon, Sun } from "lucide-react";
+import { createContext, useContext } from "react";
 
-type BlogTheme = "light" | "dark";
+/**
+ * The blog is always a dark page to read on, whichever theme the rest of the
+ * site is in — the same call the backdrop makes, which stays dark in both.
+ *
+ * It gets there by carrying its own `.dark` scope rather than by writing to
+ * the document. An earlier version toggled the class on <html> directly and
+ * stripped it again on unmount, which quietly reset the site's real theme
+ * every time you left a post.
+ */
 
-const BlogThemeContext = createContext<{
-  theme: BlogTheme;
-  toggle: () => void;
-}>({
-  theme: "light",
-  toggle: () => {},
-});
+type BlogTheme = "dark";
 
+const BlogThemeContext = createContext<{ theme: BlogTheme }>({ theme: "dark" });
+
+/** Kept for the reading-view pieces that style themselves from it. */
 export function useBlogTheme() {
   return useContext(BlogThemeContext);
 }
 
 export function BlogThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<BlogTheme>("dark");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("blog-theme") as BlogTheme | null;
-    if (saved) {
-      setTheme(saved);
-      // Sync with global dark class for PillNav
-      if (saved === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    }
-  }, []);
-
-  const toggle = () => {
-    setTheme((prev) => {
-      const next = prev === "light" ? "dark" : "light";
-      localStorage.setItem("blog-theme", next);
-      // Sync with global dark class for PillNav
-      if (next === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-      return next;
-    });
-  };
-
-  // Restore global dark class on unmount (when leaving blog)
-  useEffect(() => {
-    return () => {
-      // When leaving blog pages, remove the class so main site theme takes over
-      document.documentElement.classList.remove("dark");
-    };
-  }, []);
-
-  const isDark = theme === "dark";
-
   return (
-    <BlogThemeContext.Provider value={{ theme, toggle }}>
-      {/* Painted across the whole viewport rather than only behind the article.
-          The nav is rendered above this by the root layout, so a background on
-          the wrapper alone left a visible seam under it. */}
-      <div
-        aria-hidden
-        className="fixed inset-0 -z-10 transition-colors duration-500 ease-in-out"
-        style={{ backgroundColor: isDark ? "#0a0a0a" : "#fafafa" }}
-      />
-      <div
-        className="transition-colors duration-500 ease-in-out min-h-screen"
-        style={{ color: isDark ? "#e4e4e7" : "#18181b" }}
-      >
-        {children}
-
-        {/* Floating Dark Mode Toggle */}
-        <button
-          onClick={toggle}
-          className={`fixed top-24 right-4 md:top-6 md:right-6 z-[60] w-10 h-10 flex items-center justify-center rounded-full shadow-md backdrop-blur-md border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-            isDark
-              ? "bg-zinc-800/90 border-zinc-700 text-amber-400 hover:bg-zinc-700/90 focus:ring-amber-400"
-              : "bg-white/80 border-zinc-200/60 text-zinc-600 hover:bg-zinc-50 focus:ring-black"
-          }`}
-          aria-label="Toggle dark mode"
-          title="Toggle dark mode"
-        >
-          {isDark ? <Moon size={18} /> : <Sun size={18} />}
-        </button>
+    <BlogThemeContext.Provider value={{ theme: "dark" }}>
+      <div className="dark">
+        {/* Painted across the whole viewport rather than only behind the
+            article. The nav sits above this, so a background on the wrapper
+            alone left a visible seam under it. */}
+        <div aria-hidden className="fixed inset-0 -z-10 bg-[#0a0a0a]" />
+        <div className="min-h-screen text-zinc-200">{children}</div>
       </div>
     </BlogThemeContext.Provider>
   );

@@ -1,108 +1,57 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { ALL_POSTS } from "@/lib/blog-data";
-import { useBlogTheme } from "@/components/BlogThemeProvider";
-import { motion } from "motion/react";
-import { ArrowRight } from "lucide-react";
+import Panel from "@/components/Panel";
 
+/**
+ * The index, on the same sheet the rest of the site writes on — one column,
+ * one type scale, the date sitting out to the left of each entry.
+ */
 export default function BlogIndexPage() {
-  const { theme } = useBlogTheme();
-  const isDark = theme === "dark";
-
   return (
-    <div className="pt-5 pb-28">
-      <div className="mx-auto max-w-[560px] px-6">
-        <header className="mb-12">
-          <motion.h1
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className="text-[13.5px] font-medium mb-6 transition-colors duration-500"
-            style={{ color: isDark ? "#fafafa" : "#18181b" }}
-          >
-            Writing.
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className="text-[13.5px] leading-[1.75] transition-colors duration-500"
-            style={{ color: isDark ? "#71717a" : "#71717a" }}
-          >
-            Thoughts on design engineering, micro-interactions, and building
-            interfaces that feel alive.
-          </motion.p>
-        </header>
+    <main className="mx-auto w-full max-w-[560px] px-6 pt-5 pb-28">
+      <Panel>
+        <h1 className="text-[13.5px] font-medium text-zinc-900 dark:text-white">
+          Writing.
+        </h1>
 
-        <div className="flex flex-col gap-2">
-          {ALL_POSTS.map((post, i) => (
-            <motion.div
+        <p className="mt-6 text-[13.5px] leading-[1.75] text-zinc-700 dark:text-zinc-300">
+          Thoughts on design engineering, micro-interactions, and building
+          interfaces that feel alive.
+        </p>
+
+        <div className="mt-8 flex flex-col">
+          {ALL_POSTS.map((post) => (
+            <Link
               key={post.slug}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              // Emil: 30-80ms stagger delay
-              transition={{ delay: 0.1 + i * 0.05, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+              href={`/blog/${post.slug}`}
+              className="group -mx-3 rounded-xl px-3 py-3.5 outline-none transition-colors hover:bg-black/[0.04] focus-visible:bg-black/[0.04] dark:hover:bg-white/[0.05] dark:focus-visible:bg-white/[0.05]"
             >
-              <Link href={`/blog/${post.slug}`} className="block outline-none group">
-                <motion.article
-                  // Emil: Buttons must feel responsive, subtle scale on active
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ duration: 0.16, ease: [0.23, 1, 0.32, 1] }}
-                  className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 p-4 -mx-4 rounded-xl transition-colors duration-200"
-                  style={{
-                    backgroundColor: "transparent",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = isDark
-                      ? "rgba(255,255,255,0.04)"
-                      : "rgba(0,0,0,0.03)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                >
-                  <p
-                    className="text-[13px] shrink-0 sm:w-24 transition-colors duration-500"
-                    style={{ color: isDark ? "#52525b" : "#a1a1aa" }}
-                  >
-                    {post.date}
-                  </p>
-                  
-                  <div className="flex-1 flex items-center justify-between gap-4">
-                    <div>
-                      <h2
-                        className="text-[13.5px] font-medium mb-1 transition-colors duration-500"
-                        style={{ color: isDark ? "#e4e4e7" : "#27272a" }}
-                      >
-                        {post.title}
-                      </h2>
-                      <p
-                        className="text-[13.5px] leading-[1.75] line-clamp-1 transition-colors duration-500"
-                        style={{ color: isDark ? "#71717a" : "#71717a" }}
-                      >
-                        {post.content[0].paragraphs[0]}
-                      </p>
-                    </div>
+              <div className="flex items-baseline gap-4">
+                <span className="shrink-0 text-[12.5px] tabular-nums text-zinc-500 dark:text-zinc-500">
+                  {post.date}
+                </span>
 
-                    <div
-                      // Emil: Specify exact properties, use strong ease-out for entering
-                      className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 ease-[cubic-bezier(0.23,1,0.32,1)]"
-                      style={{ 
-                        color: isDark ? "#e4e4e7" : "#27272a",
-                        transitionProperty: "opacity, transform",
-                        transitionDuration: "250ms"
-                      }}
-                    >
-                      <ArrowRight size={16} />
-                    </div>
-                  </div>
-                </motion.article>
-              </Link>
-            </motion.div>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-1.5">
+                    <span className="truncate text-[13.5px] font-medium text-zinc-900 dark:text-zinc-100">
+                      {post.title}
+                    </span>
+                    <ArrowUpRight
+                      className="size-[14px] shrink-0 -translate-x-1 text-zinc-400 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 dark:text-zinc-500"
+                    />
+                  </span>
+                  <span className="mt-1 line-clamp-1 block text-[13px] leading-[1.7] text-zinc-600 dark:text-zinc-400">
+                    {post.content[0].paragraphs[0]}
+                  </span>
+                </span>
+              </div>
+            </Link>
           ))}
         </div>
-      </div>
-    </div>
+      </Panel>
+    </main>
   );
 }

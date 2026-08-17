@@ -57,12 +57,16 @@ type Splash = {
  * across, and squeezing a 96px bitmap down to 3px throws away the highlight
  * that makes them read as water.
  */
-const MIP_SIZES = [96, 48, 24, 12];
+const MIP_SIZES = [96, 48, 24, 12, 6];
 /** The droplet art fills 74% of its bitmap; the rest is shadow headroom. */
 const SPRITE_PAD = 1 / 0.74;
 const SPRITE_COUNT = 4;
 
-const MAX_DROPS = 2400;
+/**
+ * The glass carries a fine mist rather than a scattering of fat beads, so there
+ * are a lot of drops and nearly all of them are around a pixel across.
+ */
+const MAX_DROPS = 7000;
 const CELL = 48;
 
 /** How much glass the cursor clears, in px. */
@@ -282,7 +286,7 @@ export default function RainGlass({
       r,
       vx: 0,
       vy: 0,
-      slideAt: 3.4 + Math.random() * 2.4,
+      slideAt: 3 + Math.random() * 1.8,
       sliding: false,
       travel: 0,
       wiped: false,
@@ -290,12 +294,14 @@ export default function RainGlass({
       sprite: (Math.random() * SPRITE_COUNT) | 0,
     });
 
+    // Overwhelmingly mist, with a few drops big enough to read as drops and a
+    // rare one heavy enough to run.
     const randomRadius = () => {
       const roll = Math.random();
-      if (roll > 0.975) return 4.2 + Math.random() * 3.2; // runners
-      if (roll > 0.87) return 2.6 + Math.random() * 1.6;
+      if (roll > 0.993) return 2.4 + Math.random() * 1.8; // runners
+      if (roll > 0.94) return 1.3 + Math.random() * 0.7;
       const t = Math.random();
-      return 0.8 + t * t * 2.1;
+      return 0.32 + t * t * 0.85;
     };
 
     const spawnStreaks = () => {
@@ -308,7 +314,7 @@ export default function RainGlass({
           len: 8 + (speed / 1700) * 52,
           speed,
           alpha: 0.05 + Math.random() * 0.13,
-          width: 0.6 + Math.random() * 0.9,
+          width: 0.4 + Math.random() * 0.6,
           lands: Math.random() < 0.4,
           landY: h * (0.1 + Math.random() * 0.9),
         };
@@ -344,7 +350,7 @@ export default function RainGlass({
     resize();
 
     // Start with the glass already wet rather than filling up from empty.
-    const seed = Math.min(MAX_DROPS, Math.round(((w * h) / 1150) * intensity));
+    const seed = Math.min(MAX_DROPS, Math.round(((w * h) / 260) * intensity));
     for (let i = 0; i < seed; i++) {
       drops.push(makeDrop(Math.random() * w, Math.random() * h, randomRadius()));
     }
@@ -456,14 +462,14 @@ export default function RainGlass({
 
         if (s.lands && prevY < s.landY && s.y >= s.landY) {
           if (drops.length < MAX_DROPS) {
-            drops.push(makeDrop(s.x, s.landY, 1.4 + Math.random() * 1.6));
-            const satellites = 1 + ((Math.random() * 3) | 0);
+            drops.push(makeDrop(s.x, s.landY, 1.1 + Math.random() * 1.1));
+            const satellites = 2 + ((Math.random() * 4) | 0);
             for (let n = 0; n < satellites && drops.length < MAX_DROPS; n++) {
               drops.push(
                 makeDrop(
                   s.x + (Math.random() - 0.5) * 22,
                   s.landY + (Math.random() - 0.5) * 22,
-                  0.5 + Math.random() * 0.8
+                  0.32 + Math.random() * 0.5
                 )
               );
             }
@@ -486,7 +492,7 @@ export default function RainGlass({
       }
 
       // New water arriving on the glass.
-      spawnDebt += ((w * h) / 12000) * intensity * dt;
+      spawnDebt += ((w * h) / 2600) * intensity * dt;
       while (spawnDebt >= 1) {
         spawnDebt -= 1;
         if (drops.length >= MAX_DROPS) break;
@@ -512,13 +518,14 @@ export default function RainGlass({
 
         if (d.wiped) {
           d.r -= 34 * dt;
-          if (d.r <= 0.15) d.dead = true;
+          if (d.r <= 0.1) d.dead = true;
           continue;
         }
 
         if (!d.sliding) {
-          // Drops feed on the mist until they are too heavy to hold on.
-          d.r += 0.1 * dt;
+          // Drops feed on the mist until they are too heavy to hold on. Slow,
+          // so the glass stays misted rather than beading up.
+          d.r += 0.05 * dt;
           if (d.r >= d.slideAt) {
             d.sliding = true;
             d.vy = 6 + Math.random() * 12;
@@ -553,7 +560,7 @@ export default function RainGlass({
               if (o.dead || o === d) continue;
               const ddx = o.x - d.x;
               const ddy = o.y - d.y;
-              const reach = d.r + o.r * 0.7;
+              const reach = d.r + o.r * 0.55;
               if (ddx * ddx + ddy * ddy < reach * reach) {
                 d.r = Math.sqrt(d.r * d.r + o.r * o.r);
                 d.vy += o.r * 2.4;
@@ -564,10 +571,10 @@ export default function RainGlass({
         }
 
         // Shed part of itself as a trail.
-        const gap = d.r * 2.4 + 7;
+        const gap = d.r * 2 + 4.5;
         if (d.travel >= gap) {
           d.travel = 0;
-          const leftR = d.r * (0.2 + Math.random() * 0.14);
+          const leftR = d.r * (0.14 + Math.random() * 0.1);
           if (drops.length < MAX_DROPS) {
             drops.push(
               makeDrop(d.x + (Math.random() - 0.5) * d.r * 0.5, d.y, leftR)
@@ -576,7 +583,7 @@ export default function RainGlass({
           d.r = Math.sqrt(Math.max(0, d.r * d.r - leftR * leftR)) * 0.995;
         }
 
-        if (d.r < 0.9 || d.y - d.r > h || d.x < -40 || d.x > w + 40) {
+        if (d.r < 0.3 || d.y - d.r > h || d.x < -40 || d.x > w + 40) {
           d.dead = true;
         }
       }

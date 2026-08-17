@@ -11,23 +11,23 @@ export default function BlogIndexPage() {
   const isDark = theme === "dark";
 
   return (
-    <div className="pt-24 pb-32">
-      <div className="max-w-[600px] mx-auto px-6">
-        <header className="mb-16">
+    <div className="pt-10 pb-28">
+      <div className="mx-auto max-w-[560px] px-6">
+        <header className="mb-12">
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className="text-[28px] font-semibold tracking-tight mb-3 transition-colors duration-500"
+            className="text-[13.5px] font-medium mb-6 transition-colors duration-500"
             style={{ color: isDark ? "#fafafa" : "#18181b" }}
           >
-            Writing
+            Writing.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className="text-[15px] transition-colors duration-500"
+            className="text-[13.5px] leading-[1.75] transition-colors duration-500"
             style={{ color: isDark ? "#71717a" : "#71717a" }}
           >
             Thoughts on design engineering, micro-interactions, and building
@@ -63,7 +63,7 @@ export default function BlogIndexPage() {
                   }}
                 >
                   <p
-                    className="text-[13px] font-medium shrink-0 sm:w-24 transition-colors duration-500"
+                    className="text-[13px] shrink-0 sm:w-24 transition-colors duration-500"
                     style={{ color: isDark ? "#52525b" : "#a1a1aa" }}
                   >
                     {post.date}
@@ -72,13 +72,13 @@ export default function BlogIndexPage() {
                   <div className="flex-1 flex items-center justify-between gap-4">
                     <div>
                       <h2
-                        className="text-[16px] font-medium tracking-tight mb-1 transition-colors duration-500"
+                        className="text-[13.5px] font-medium mb-1 transition-colors duration-500"
                         style={{ color: isDark ? "#e4e4e7" : "#27272a" }}
                       >
                         {post.title}
                       </h2>
                       <p
-                        className="text-[14px] leading-relaxed line-clamp-1 transition-colors duration-500"
+                        className="text-[13.5px] leading-[1.75] line-clamp-1 transition-colors duration-500"
                         style={{ color: isDark ? "#71717a" : "#71717a" }}
                       >
                         {post.content[0].paragraphs[0]}

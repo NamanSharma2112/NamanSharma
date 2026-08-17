@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    // Required from Next 16 — an undeclared `quality` is rejected, which was
+    // silently downgrading the full-bleed backdrops.
+    qualities: [75, 90, 100],
     remotePatterns: [
       {
         protocol: "https",

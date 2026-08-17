@@ -15,7 +15,7 @@ import {
   InputGroup,
   InputGroupAddon,
 } from "@/components/ui/input-group"
-import { SearchIcon, CheckIcon } from "lucide-react"
+import { SearchIcon } from "lucide-react"
 
 function Command({
   className,
@@ -60,9 +60,7 @@ function CommandDialog({
         )}
         showCloseButton={showCloseButton}
       >
-        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-          {children}
-        </Command>
+        <Command className="p-0">{children}</Command>
       </DialogContent>
     </Dialog>
   )
@@ -128,7 +126,7 @@ function CommandGroup({
     <CommandPrimitive.Group
       data-slot="command-group"
       className={cn(
-        "overflow-hidden p-1 text-foreground **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:py-1.5 **:[[cmdk-group-heading]]:text-xs **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground",
+        "overflow-hidden **:[[cmdk-group-heading]]:px-3 **:[[cmdk-group-heading]]:pt-1 **:[[cmdk-group-heading]]:pb-1.5 **:[[cmdk-group-heading]]:text-[12px] **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-zinc-500 dark:**:[[cmdk-group-heading]]:text-zinc-400",
         className
       )}
       {...props}
@@ -143,7 +141,7 @@ function CommandSeparator({
   return (
     <CommandPrimitive.Separator
       data-slot="command-separator"
-      className={cn("-mx-1 h-px w-auto bg-zinc-200 dark:bg-zinc-800", className)}
+      className={cn("h-px w-full bg-black/10 dark:bg-white/10", className)}
       {...props}
     />
   )
@@ -158,13 +156,12 @@ function CommandItem({
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        "group/command-item relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden in-data-[slot=dialog-content]:rounded-lg! data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-zinc-100 dark:data-[selected=true]:bg-zinc-800 data-[selected=true]:text-zinc-900 dark:data-[selected=true]:text-zinc-100 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/command-item relative flex cursor-default select-none items-center outline-hidden data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-black/[0.055] dark:data-[selected=true]:bg-white/[0.07] data-[selected=true]:text-zinc-900 dark:data-[selected=true]:text-white [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className
       )}
       {...props}
     >
       {children}
-      <CheckIcon className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />
     </CommandPrimitive.Item>
   )
 }

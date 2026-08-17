@@ -14,24 +14,29 @@
 type Stroke = { d: string; delay: number; color: string };
 
 const CAT: Stroke[] = [
-  // Ears and head.
-  { d: "M22 46 L30 22 L47 36", delay: 0, color: "#6bff9e" },
-  { d: "M98 46 L90 22 L73 36", delay: 0.12, color: "#6bff9e" },
-  { d: "M22 46 C 14 66, 20 88, 40 96 C 55 102, 65 102, 80 96 C 100 88, 106 66, 98 46", delay: 0.24, color: "#6bff9e" },
-  // Eyes.
-  { d: "M40 60 C 44 55, 50 55, 54 60", delay: 0.6, color: "#ffab02" },
-  { d: "M66 60 C 70 55, 76 55, 80 60", delay: 0.68, color: "#ffab02" },
-  // Nose and mouth.
-  { d: "M60 71 L56 75 L60 78 L64 75 Z", delay: 0.78, color: "#ff5fa2" },
-  { d: "M60 78 C 60 86, 52 86, 50 81", delay: 0.86, color: "#ff5fa2" },
-  { d: "M60 78 C 60 86, 68 86, 70 81", delay: 0.92, color: "#ff5fa2" },
-  // Whiskers.
-  { d: "M36 70 L14 66", delay: 1.0, color: "#8ab4ff" },
-  { d: "M36 76 L15 78", delay: 1.06, color: "#8ab4ff" },
-  { d: "M84 70 L106 66", delay: 1.0, color: "#8ab4ff" },
-  { d: "M84 76 L105 78", delay: 1.06, color: "#8ab4ff" },
-  // Tail.
-  { d: "M98 92 C 118 92, 122 70, 110 62", delay: 1.16, color: "#c77dff" },
+  // Small ears on a round head — the proportions do most of the work.
+  { d: "M31 48 L38 26 L54 39", delay: 0, color: "#6bff9e" },
+  { d: "M89 48 L82 26 L66 39", delay: 0.1, color: "#6bff9e" },
+  { d: "M31 48 C 25 70, 38 94, 60 94 C 82 94, 95 70, 89 48", delay: 0.2, color: "#6bff9e" },
+  // Eyes shut and smiling.
+  { d: "M43 62 Q 49 54, 55 62", delay: 0.56, color: "#ffe066" },
+  { d: "M65 62 Q 71 54, 77 62", delay: 0.62, color: "#ffe066" },
+  // A dot of a nose over a small ω of a mouth.
+  { d: "M57 70 L63 70 L60 74 Z", delay: 0.72, color: "#ff8fc7" },
+  { d: "M54 78 Q 57 82, 60 78 Q 63 82, 66 78", delay: 0.78, color: "#ff8fc7" },
+  // Blush.
+  { d: "M36 72 Q 40 76, 44 72", delay: 0.86, color: "#ff5fa2" },
+  { d: "M76 72 Q 80 76, 84 72", delay: 0.9, color: "#ff5fa2" },
+  // Short whiskers, kept close so the face stays round.
+  { d: "M30 66 L17 63", delay: 0.98, color: "#8ab4ff" },
+  { d: "M30 73 L17 76", delay: 1.02, color: "#8ab4ff" },
+  { d: "M90 66 L103 63", delay: 0.98, color: "#8ab4ff" },
+  { d: "M90 73 L103 76", delay: 1.02, color: "#8ab4ff" },
+  // Two little paws tucked under.
+  { d: "M47 93 Q 51 98, 55 93", delay: 1.1, color: "#6bff9e" },
+  { d: "M65 93 Q 69 98, 73 93", delay: 1.14, color: "#6bff9e" },
+  // A tail curled up behind.
+  { d: "M89 84 C 105 88, 112 70, 100 62", delay: 1.2, color: "#c77dff" },
 ];
 
 /** Seconds for one draw, hold and wipe. */
@@ -70,32 +75,6 @@ export default function NeonCat({
         ))}
       </svg>
 
-      <style>{`
-        .neon-stroke {
-          stroke-dasharray: 0 1;
-          stroke-dashoffset: 0;
-          opacity: 0;
-          animation: neon-cycle ${CYCLE}s ease-in-out infinite;
-        }
-
-        /* Draw on, hold, then pull the stroke off by its own length. */
-        @keyframes neon-cycle {
-          0%   { stroke-dasharray: 0 1;  stroke-dashoffset: 0;  opacity: 0; }
-          6%   { opacity: 1; }
-          30%  { stroke-dasharray: 1 1;  stroke-dashoffset: 0;  opacity: 1; }
-          58%  { stroke-dasharray: 1 1;  stroke-dashoffset: 0;  opacity: 1; }
-          92%  { stroke-dasharray: 1 1;  stroke-dashoffset: -1; opacity: 1; }
-          100% { stroke-dasharray: 1 1;  stroke-dashoffset: -1; opacity: 0; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .neon-stroke {
-            animation: none;
-            stroke-dasharray: 1 1;
-            opacity: 1;
-          }
-        }
-      `}</style>
     </div>
   );
 }

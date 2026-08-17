@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * The desktop wallpaper: a full-bleed photo that cross-fades to the next one
- * on a timer with a cinematic blur-pull effect.
+ * A full-bleed photo that cross-fades to the next one on a timer with a
+ * cinematic blur-pull effect.
  *
  * All images stay mounted — the active one is sharp and visible, the rest are
  * hidden. During a transition the outgoing image blurs up while the incoming
@@ -21,56 +21,65 @@ const INITIAL_BACKDROPS = [
   "/backdrops/jdm-sunset.jpg",
 ];
 
+/** Blur (0.5s) then cross-fade (0.6s). */
+const TRANSITION_MS = 1200;
+
 export default function HomeBackdrop({
+  sources = INITIAL_BACKDROPS,
   intervalMs = 10_000,
+  scrimClassName = "bg-black/25",
   className,
 }: {
+  /** Photos to cycle. Any that fail to load drop out of the rotation. */
+  sources?: string[];
   intervalMs?: number;
+  /** How hard the photos are held back so content in front stays readable. */
+  scrimClassName?: string;
   className?: string;
 }) {
-  const [backdrops, setBackdrops] = useState(INITIAL_BACKDROPS);
-  const [current, setCurrent] = useState(0);
-  const [prev, setPrev] = useState(-1);
+  const [broken, setBroken] = useState<string[]>([]);
+  const [index, setIndex] = useState(0);
+  const [outgoing, setOutgoing] = useState<string | null>(null);
+
+  // A missing file is expected — the list may name a photo that has not been
+  // added yet — so it leaves the rotation instead of showing a gap.
+  const backdrops = useMemo(
+    () => sources.filter((src) => !broken.includes(src)),
+    [sources, broken]
+  );
+
+  const current = backdrops.length
+    ? backdrops[index % backdrops.length]
+    : null;
 
   useEffect(() => {
     if (backdrops.length < 2) return;
-    const id = setInterval(() => {
-      setCurrent((cur) => {
-        setPrev(cur);
-        return (cur + 1) % backdrops.length;
-      });
-    }, intervalMs);
+    const id = setInterval(
+      () => setIndex((i) => (i + 1) % backdrops.length),
+      intervalMs
+    );
     return () => clearInterval(id);
-  }, [intervalMs, backdrops.length]);
+  }, [intervalMs, backdrops]);
 
-  // Clear prev after the crossfade completes
+  // Hold the photo we just left on screen, blurring, until the fade is over.
+  const shown = useRef<string | null>(null);
   useEffect(() => {
-    if (prev < 0) return;
-    // Total transition is 0.5s (blur) + 0.6s (fade) = 1.1s
-    const t = setTimeout(() => setPrev(-1), 1200);
+    const previous = shown.current;
+    shown.current = current;
+    if (!previous || previous === current) return;
+    setOutgoing(previous);
+    const t = setTimeout(() => setOutgoing(null), TRANSITION_MS);
     return () => clearTimeout(t);
-  }, [prev]);
+  }, [current]);
 
-  const handleImageError = (failedSrc: string) => {
-    setBackdrops((currentList) => {
-      const newList = currentList.filter((src) => src !== failedSrc);
-      // Reset current index if it goes out of bounds due to a removal
-      if (current >= newList.length && newList.length > 0) {
-        setCurrent(0);
-      }
-      return newList;
-    });
-  };
-
-  if (backdrops.length === 0) {
-    return <div className={cn("fixed inset-0 z-0 bg-zinc-900", className)} />;
-  }
+  const handleImageError = (failedSrc: string) =>
+    setBroken((list) => (list.includes(failedSrc) ? list : [...list, failedSrc]));
 
   return (
     <div className={cn("fixed inset-0 z-0 bg-zinc-900", className)}>
       {backdrops.map((src, i) => {
-        const isActive = i === current;
-        const isOutgoing = i === prev;
+        const isActive = src === current;
+        const isOutgoing = src === outgoing;
 
         return (
           <Image
@@ -85,29 +94,22 @@ export default function HomeBackdrop({
             onError={() => handleImageError(src)}
             style={{
               // Sequence: Blur over 0.5s, THEN crossfade opacity over 0.6s
-              transition: "filter 0.5s ease-in, opacity 0.6s ease-in-out 0.5s, transform 1.1s ease-out",
+              transition:
+                "filter 0.5s ease-in, opacity 0.6s ease-in-out 0.5s, transform 1.1s ease-out",
               opacity: isActive ? 1 : 0,
               // The visible photo sits at 1:1. These sources are ~700px wide
               // and already stretched about 2x to cover a desktop, so an idle
               // zoom on top of that only costs sharpness. The outgoing frame
               // still scales up to cover the fringe its blur leaves behind.
-              transform: isActive
-                ? "scale(1)"
-                : isOutgoing
-                  ? "scale(1.06)"
-                  : "scale(1)",
-              filter: isActive
-                ? "blur(0px)"
-                : isOutgoing
-                  ? "blur(12px)"
-                  : "blur(0px)",
+              transform: isOutgoing ? "scale(1.06)" : "scale(1)",
+              filter: isOutgoing ? "blur(12px)" : "blur(0px)",
             }}
           />
         );
       })}
 
       {/* Holds the photos back so the window in front keeps its contrast. */}
-      <div className="absolute inset-0 bg-black/25" />
+      <div className={cn("absolute inset-0", scrimClassName)} />
     </div>
   );
 }

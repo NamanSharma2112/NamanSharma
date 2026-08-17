@@ -34,7 +34,7 @@ export default function MinimalNav() {
   return (
     <nav
       aria-label="Main navigation"
-      className="relative z-20 flex justify-center px-6 pt-10 sm:pt-14"
+      className="relative z-20 flex justify-center px-6 pt-5 sm:pt-7"
     >
       <button
         type="button"

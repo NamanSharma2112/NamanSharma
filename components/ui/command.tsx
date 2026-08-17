@@ -54,13 +54,22 @@ function CommandDialog({
       </DialogHeader>
       <DialogContent
         className={cn(
-          "top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0 bg-white/95 dark:bg-[#111110]/95 backdrop-blur-xl shadow-2xl border border-zinc-200/50 dark:border-zinc-800/50",
+          // Centred, and carrying one edge rather than a border and a ring.
+          "overflow-hidden rounded-xl! p-0 bg-white/95 dark:bg-[#111110]/95 backdrop-blur-xl shadow-2xl border-0 ring-1 ring-black/10 dark:ring-white/10",
           "data-open:animate-none data-closed:animate-none data-[state=open]:cmk-animate-in data-[state=closed]:cmk-animate-out",
           className
         )}
         showCloseButton={showCloseButton}
+        onOpenAutoFocus={(event) => {
+          // Left alone, the dialog focuses the first button — the theme
+          // toggle — which then opens wearing a focus ring. cmdk's root owns
+          // the arrow-key handling and is already focusable, so parking focus
+          // there keeps the keyboard working with nothing highlighted.
+          event.preventDefault()
+          document.querySelector<HTMLElement>("[cmdk-root]")?.focus()
+        }}
       >
-        <Command className="p-0">{children}</Command>
+        <Command className="p-0 outline-none">{children}</Command>
       </DialogContent>
     </Dialog>
   )

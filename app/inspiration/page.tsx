@@ -43,7 +43,7 @@ const INSPIRATIONS = [
 
 export default function InspirationPage() {
   return (
-    <div className="pt-10 pb-28">
+    <div className="pt-5 pb-28">
       <div className="mx-auto max-w-[620px] rounded-2xl border border-black/10 bg-white/70 p-7 backdrop-blur-xl sm:p-9 dark:border-white/10 dark:bg-black/55">
         
         {/* Header Text */}

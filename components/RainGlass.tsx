@@ -79,7 +79,7 @@ const FOG_STRENGTH = 0.055;
 /** Seconds for a wiped patch to fog back over. */
 const FOG_RECOVERY = 3.4;
 
-const SPLASH_LIFE = 0.36;
+const SPLASH_LIFE = 0.55;
 
 /* ── sprites ────────────────────────────────────────────────────────────── */
 
@@ -307,11 +307,11 @@ export default function RainGlass({
     const spawnStreaks = () => {
       const count = Math.min(220, Math.round(((w * h) / 9000) * intensity));
       streaks = Array.from({ length: count }, () => {
-        const speed = 700 + Math.random() * 1000;
+        const speed = 300 + Math.random() * 420;
         return {
           x: Math.random() * (w + 160) - 80,
           y: Math.random() * h,
-          len: 8 + (speed / 1700) * 52,
+          len: 7 + (speed / 720) * 34,
           speed,
           alpha: 0.05 + Math.random() * 0.13,
           width: 0.4 + Math.random() * 0.6,
@@ -528,17 +528,18 @@ export default function RainGlass({
           d.r += 0.05 * dt;
           if (d.r >= d.slideAt) {
             d.sliding = true;
-            d.vy = 6 + Math.random() * 12;
+            d.vy = 3 + Math.random() * 6;
           }
           continue;
         }
 
-        const vMax = 25 + d.r * 40;
-        d.vy += (240 + d.r * 46) * dt;
+        // Water on glass creeps rather than falls — slow enough to follow.
+        const vMax = 11 + d.r * 18;
+        d.vy += (95 + d.r * 20) * dt;
         if (d.vy > vMax) d.vy = vMax;
 
         // Real drops wander and stall as they catch on the glass.
-        if (Math.random() < dt * 2.4) d.vx += (Math.random() - 0.5) * 34;
+        if (Math.random() < dt * 2.4) d.vx += (Math.random() - 0.5) * 16;
         if (Math.random() < dt * 0.7) d.vy *= 0.3;
         d.vx *= Math.exp(-dt * 4);
 
@@ -634,7 +635,7 @@ export default function RainGlass({
         if (d.r <= 0.1) continue;
         const size = d.r * 2 * SPRITE_PAD;
         // Running drops stretch out behind themselves.
-        const stretch = d.sliding ? 1 + Math.min(d.vy / 640, 0.5) : 1;
+        const stretch = d.sliding ? 1 + Math.min(d.vy / 220, 0.5) : 1;
         ctx.drawImage(
           sprites[d.sprite][pickMip(size * stretch)],
           d.x - size / 2,

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <main className="mx-auto w-full max-w-[560px] px-6 pt-10 pb-28">
+    <main className="mx-auto w-full max-w-[560px] px-6 pt-5 pb-28">
       <Panel>
         <h1 className="text-[13.5px] font-medium text-zinc-900 dark:text-white">Work.</h1>
 

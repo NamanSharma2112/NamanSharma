@@ -17,12 +17,14 @@ export default function Taskbar({
   startOpen,
   onToggleStart,
   onSelect,
+  onShowDesktop,
 }: {
   windows: WindowInstance[];
   activeId: string | null;
   startOpen: boolean;
   onToggleStart: () => void;
   onSelect: (id: string) => void;
+  onShowDesktop: () => void;
 }) {
   const [now, setNow] = useState<Date | null>(null);
 
@@ -71,9 +73,9 @@ export default function Taskbar({
         })}
       </div>
 
-      <div className="ml-auto flex shrink-0 items-center gap-2.5 pl-2 pr-1 text-white/85">
+      <div className="ml-auto flex shrink-0 items-center gap-2.5 pl-2 text-white/85">
         <TrayGlyphs />
-        <div className="text-right leading-[1.15]">
+        <div className="pr-1 text-right leading-[1.15]">
           <p className="text-[11px] tabular-nums">
             {now
               ? now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
@@ -83,6 +85,19 @@ export default function Taskbar({
             {now ? now.toLocaleDateString() : ""}
           </p>
         </div>
+
+        {/* The sliver at the very end that clears the screen. */}
+        <button
+          type="button"
+          onClick={onShowDesktop}
+          aria-label="Show desktop"
+          title="Show desktop"
+          className="h-[38px] w-[11px] shrink-0 rounded-[2px] transition-colors"
+          style={{
+            boxShadow: "inset 1px 0 0 rgba(255,255,255,0.35)",
+            background: "rgba(255,255,255,0.06)",
+          }}
+        />
       </div>
     </div>
   );

@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import BootSequence from "./BootSequence";
+import DesktopMenu, { type DesktopMenuItem } from "./DesktopMenu";
 import StartMenu from "./StartMenu";
 import Taskbar from "./Taskbar";
 import WindowFrame from "./WindowFrame";
 import { APPS, getApp } from "./registry";
-import type { AppId, WindowInstance } from "./types";
+import type { AppId, Geometry, SnapZone, WindowInstance } from "./types";
 import "./win7.css";
 
 /**
@@ -32,6 +33,9 @@ export default function Win7() {
   const [startOpen, setStartOpen] = useState(false);
   const [selected, setSelected] = useState<AppId | null>(null);
   const [bounds, setBounds] = useState({ width: 1280, height: 720 });
+  const [snapPreview, setSnapPreview] = useState<SnapZone>(null);
+  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
+  const [wallpaper, setWallpaper] = useState(0);
 
   const topZ = useRef(10);
   const opened = useRef(0);
@@ -86,6 +90,8 @@ export default function Win7() {
           z: topZ.current,
           minimized: false,
           maximized: false,
+          snapped: null,
+          restore: null,
         },
       ]);
       setActiveId(id);
@@ -93,18 +99,66 @@ export default function Win7() {
     [bounds.height, bounds.width, focus, windows]
   );
 
-  const close = useCallback(
-    (id: string) => {
-      setWindows((list) => list.filter((w) => w.id !== id));
-      setActiveId((current) => (current === id ? null : current));
-    },
-    []
-  );
+  const close = useCallback((id: string) => {
+    setWindows((list) => list.filter((w) => w.id !== id));
+    setActiveId((current) => (current === id ? null : current));
+  }, []);
 
   const update = useCallback(
     (id: string, patch: Partial<WindowInstance>) =>
       setWindows((list) => list.map((w) => (w.id === id ? { ...w, ...patch } : w))),
     []
+  );
+
+  /** Maximise remembers the size to come back to, snapping included. */
+  const toggleMaximise = useCallback((id: string) => {
+    setWindows((list) =>
+      list.map((w) => {
+        if (w.id !== id) return w;
+        if (w.maximized) {
+          const back = w.restore ?? { x: w.x, y: w.y, w: w.w, h: w.h };
+          return { ...w, ...back, maximized: false, snapped: null, restore: null };
+        }
+        return {
+          ...w,
+          maximized: true,
+          snapped: null,
+          restore: w.restore ?? { x: w.x, y: w.y, w: w.w, h: w.h },
+        };
+      })
+    );
+  }, []);
+
+  /** Where a drag ended: an edge takes half the screen, the top maximises. */
+  const applySnap = useCallback(
+    (id: string, zone: SnapZone, geometry: Geometry) => {
+      setWindows((list) =>
+        list.map((w) => {
+          if (w.id !== id) return w;
+          const restore = w.restore ?? { x: w.x, y: w.y, w: w.w, h: w.h };
+
+          if (zone === "top") {
+            return { ...w, maximized: true, snapped: null, restore };
+          }
+          if (zone === "left" || zone === "right") {
+            const half = Math.round(bounds.width / 2);
+            return {
+              ...w,
+              x: zone === "left" ? 0 : bounds.width - half,
+              y: 0,
+              w: half,
+              h: bounds.height,
+              maximized: false,
+              snapped: zone,
+              restore,
+            };
+          }
+          // Dropped in open space — it keeps wherever it was let go.
+          return { ...w, ...geometry, maximized: false, snapped: null, restore: null };
+        })
+      );
+    },
+    [bounds.height, bounds.width]
   );
 
   /** Taskbar click: focus it, or fold it away if it already has focus. */
@@ -122,11 +176,32 @@ export default function Win7() {
     [activeId, focus, update, windows]
   );
 
+  /** Show desktop: fold everything away, or bring it all back if already bare. */
+  const toggleShowDesktop = useCallback(() => {
+    setWindows((list) => {
+      const anyOpen = list.some((w) => !w.minimized);
+      return list.map((w) => ({ ...w, minimized: anyOpen }));
+    });
+    setActiveId(null);
+  }, []);
+
   const shutDown = useCallback(() => {
     setStartOpen(false);
     setWindows([]);
     setPower("off");
   }, []);
+
+  const menuItems: DesktopMenuItem[] = [
+    { label: "Refresh", onSelect: () => setSelected(null) },
+    {
+      label: "Next wallpaper",
+      divided: true,
+      onSelect: () => setWallpaper((n) => (n + 1) % WALLPAPERS.length),
+    },
+    { label: "Show the desktop", onSelect: toggleShowDesktop },
+    { label: "Open Computer", divided: true, onSelect: () => open("computer") },
+    { label: "Personalize", onSelect: () => open("paint") },
+  ];
 
   if (power === "booting") {
     return (
@@ -142,7 +217,9 @@ export default function Win7() {
       <div className="win7 fixed inset-0 z-[100] grid place-items-center bg-black text-center">
         <div data-fixed-screen hidden />
         <div>
-          <p className="text-[13px] text-white/55">It is now safe to turn off your computer.</p>
+          <p className="text-[13px] text-white/55">
+            It is now safe to turn off your computer.
+          </p>
           <button
             type="button"
             onClick={() => setPower("booting")}
@@ -163,11 +240,7 @@ export default function Win7() {
   return (
     <div
       className="win7 fixed inset-0 z-[100] overflow-hidden"
-      style={{
-        // Aero's default wallpaper, near enough: a lit horizon over deep blue.
-        background:
-          "radial-gradient(ellipse 120% 80% at 50% 108%, #6fc2f0 0%, #2b7cc0 26%, #14487e 52%, #0a2846 78%, #061726 100%)",
-      }}
+      style={{ background: WALLPAPERS[wallpaper] }}
     >
       <div data-fixed-screen hidden />
 
@@ -178,8 +251,16 @@ export default function Win7() {
         onPointerDown={(e) => {
           if (e.target === e.currentTarget) setSelected(null);
         }}
+        onContextMenu={(e) => {
+          if (e.target !== e.currentTarget) return;
+          e.preventDefault();
+          setMenu({
+            x: Math.min(e.clientX, bounds.width - 190),
+            y: Math.min(e.clientY, bounds.height - 170),
+          });
+        }}
       >
-        <div className="grid w-[92px] grid-cols-1 gap-1 p-2">
+        <div className="pointer-events-none grid w-[92px] grid-cols-1 gap-1 p-2">
           {APPS.filter((a) => a.onDesktop).map((app) => {
             const Icon = app.icon;
             return (
@@ -188,7 +269,7 @@ export default function Win7() {
                 type="button"
                 onClick={() => setSelected(app.id)}
                 onDoubleClick={() => open(app.id)}
-                className={`w7-desktop-icon flex w-[84px] flex-col items-center gap-1 rounded-[3px] p-1.5 ${
+                className={`w7-desktop-icon pointer-events-auto flex w-[84px] flex-col items-center gap-1 rounded-[3px] p-1.5 ${
                   selected === app.id ? "is-selected" : ""
                 }`}
               >
@@ -206,8 +287,23 @@ export default function Win7() {
         <p className="pointer-events-none absolute bottom-3 right-4 text-right text-[11px] leading-[1.5] text-white/45">
           Windows 7 · Portfolio Edition
           <br />
-          Double-click an icon to open it
+          Double-click to open · right-click the wallpaper
         </p>
+
+        {/* Where the window would land if let go now. */}
+        {snapPreview && (
+          <div
+            className="pointer-events-none absolute z-[90] rounded-[3px] transition-all duration-100"
+            style={{
+              left: snapPreview === "right" ? bounds.width / 2 : 0,
+              top: 0,
+              width: snapPreview === "top" ? bounds.width : bounds.width / 2,
+              height: bounds.height,
+              background: "rgba(150,205,255,0.24)",
+              boxShadow: "inset 0 0 0 2px rgba(200,232,255,0.75)",
+            }}
+          />
+        )}
 
         {windows.map((win) => (
           <WindowFrame
@@ -221,12 +317,25 @@ export default function Win7() {
               update(win.id, { minimized: true });
               setActiveId(null);
             }}
-            onToggleMaximise={() => update(win.id, { maximized: !win.maximized })}
-            onMove={(x, y) => update(win.id, { x, y })}
+            onToggleMaximise={() => toggleMaximise(win.id)}
+            onGeometry={(geometry) =>
+              update(win.id, { ...geometry, snapped: null, restore: null })
+            }
+            onSnapPreview={setSnapPreview}
+            onSnap={(zone, geometry) => applySnap(win.id, zone, geometry)}
           >
             {getApp(win.appId).render()}
           </WindowFrame>
         ))}
+
+        {menu && (
+          <DesktopMenu
+            x={menu.x}
+            y={menu.y}
+            items={menuItems}
+            onClose={() => setMenu(null)}
+          />
+        )}
       </div>
 
       {startOpen && (
@@ -243,7 +352,15 @@ export default function Win7() {
         startOpen={startOpen}
         onToggleStart={() => setStartOpen((v) => !v)}
         onSelect={selectFromTaskbar}
+        onShowDesktop={toggleShowDesktop}
       />
     </div>
   );
 }
+
+/** Aero's wallpapers, near enough — a lit horizon, a dusk, and a green field. */
+const WALLPAPERS = [
+  "radial-gradient(ellipse 120% 80% at 50% 108%, #6fc2f0 0%, #2b7cc0 26%, #14487e 52%, #0a2846 78%, #061726 100%)",
+  "radial-gradient(ellipse 130% 90% at 50% 104%, #ffb066 0%, #e06b4f 22%, #8c3f63 48%, #3b2350 76%, #140f28 100%)",
+  "radial-gradient(ellipse 120% 85% at 50% 106%, #a8e063 0%, #56ab2f 24%, #2b7a3f 50%, #14512f 76%, #0a2a1c 100%)",
+];

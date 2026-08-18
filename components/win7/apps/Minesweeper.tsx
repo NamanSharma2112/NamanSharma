@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useWindowSize } from "../WindowContext";
 
 /**
- * Minesweeper, Beginner board.
+ * Minesweeper, on any of the three original boards.
  *
  * Two rules carried over from the original because the game is unfair without
  * them: the first square you open is never a mine (the board is laid *after*
@@ -11,9 +12,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * it reaches numbers.
  */
 
-const COLS = 9;
-const ROWS = 9;
-const MINES = 10;
+/** The three original boards. */
+const LEVELS = {
+  Beginner: { cols: 9, rows: 9, mines: 10 },
+  Intermediate: { cols: 16, rows: 16, mines: 40 },
+  Expert: { cols: 30, rows: 16, mines: 99 },
+} as const;
+
+type Level = keyof typeof LEVELS;
+
+/** Square size, in px — the grid and the window sizing both read it. */
+const CELL = 24;
 
 /** The original palette, one colour per count. */
 const NUMBER_COLOR = [
@@ -37,33 +46,36 @@ type Cell = {
 
 type Status = "ready" | "playing" | "won" | "lost";
 
-const emptyBoard = (): Cell[] =>
-  Array.from({ length: COLS * ROWS }, () => ({
+const emptyBoard = (level: Level): Cell[] => {
+  const { cols, rows } = LEVELS[level];
+  return Array.from({ length: cols * rows }, () => ({
     mine: false,
     count: 0,
     open: false,
     flagged: false,
   }));
+};
 
-const neighbours = (i: number) => {
-  const x = i % COLS;
-  const y = Math.floor(i / COLS);
+const neighbours = (i: number, level: Level) => {
+  const { cols, rows } = LEVELS[level];
+  const x = i % cols;
+  const y = Math.floor(i / cols);
   const out: number[] = [];
   for (let dy = -1; dy <= 1; dy++) {
     for (let dx = -1; dx <= 1; dx++) {
       if (!dx && !dy) continue;
       const nx = x + dx;
       const ny = y + dy;
-      if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) continue;
-      out.push(ny * COLS + nx);
+      if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+      out.push(ny * cols + nx);
     }
   }
   return out;
 };
 
 /** Lays mines anywhere except the opening click and the squares touching it. */
-const layMines = (board: Cell[], safe: number) => {
-  const forbidden = new Set([safe, ...neighbours(safe)]);
+const layMines = (board: Cell[], safe: number, level: Level) => {
+  const forbidden = new Set([safe, ...neighbours(safe, level)]);
   const spots: number[] = [];
   for (let i = 0; i < board.length; i++) if (!forbidden.has(i)) spots.push(i);
   for (let i = spots.length - 1; i > 0; i--) {
@@ -71,14 +83,14 @@ const layMines = (board: Cell[], safe: number) => {
     [spots[i], spots[j]] = [spots[j], spots[i]];
   }
   const next = board.map((c) => ({ ...c }));
-  for (const spot of spots.slice(0, MINES)) next[spot].mine = true;
+  for (const spot of spots.slice(0, LEVELS[level].mines)) next[spot].mine = true;
   for (let i = 0; i < next.length; i++) {
-    next[i].count = neighbours(i).filter((n) => next[n].mine).length;
+    next[i].count = neighbours(i, level).filter((n) => next[n].mine).length;
   }
   return next;
 };
 
-const cascade = (board: Cell[], from: number) => {
+const cascade = (board: Cell[], from: number, level: Level) => {
   const next = board.map((c) => ({ ...c }));
   const stack = [from];
   while (stack.length) {
@@ -86,7 +98,7 @@ const cascade = (board: Cell[], from: number) => {
     const cell = next[i];
     if (cell.open || cell.flagged) continue;
     cell.open = true;
-    if (cell.count === 0 && !cell.mine) stack.push(...neighbours(i));
+    if (cell.count === 0 && !cell.mine) stack.push(...neighbours(i, level));
   }
   return next;
 };
@@ -94,12 +106,20 @@ const cascade = (board: Cell[], from: number) => {
 const pad = (n: number) => String(Math.max(0, Math.min(999, n))).padStart(3, "0");
 
 export default function Minesweeper() {
-  const [board, setBoard] = useState<Cell[]>(emptyBoard);
+  const [level, setLevel] = useState<Level>("Beginner");
+  const [board, setBoard] = useState<Cell[]>(() => emptyBoard("Beginner"));
   const [status, setStatus] = useState<Status>("ready");
   const [seconds, setSeconds] = useState(0);
   const [pressed, setPressed] = useState(false);
 
   const flags = board.filter((c) => c.flagged).length;
+  const { requestSize } = useWindowSize();
+
+  // The board decides how big the window has to be, not the other way round.
+  useEffect(() => {
+    const { cols, rows } = LEVELS[level];
+    requestSize(cols * CELL + 34, rows * CELL + 150);
+  }, [level, requestSize]);
 
   useEffect(() => {
     if (status !== "playing") return;
@@ -107,11 +127,15 @@ export default function Minesweeper() {
     return () => window.clearInterval(id);
   }, [status]);
 
-  const reset = useCallback(() => {
-    setBoard(emptyBoard());
-    setStatus("ready");
-    setSeconds(0);
-  }, []);
+  const reset = useCallback(
+    (to: Level = level) => {
+      setLevel(to);
+      setBoard(emptyBoard(to));
+      setStatus("ready");
+      setSeconds(0);
+    },
+    [level]
+  );
 
   const open = (i: number) => {
     if (status === "won" || status === "lost") return;
@@ -119,7 +143,7 @@ export default function Minesweeper() {
 
     let laid = board;
     if (status === "ready") {
-      laid = layMines(board, i);
+      laid = layMines(board, i, level);
       setStatus("playing");
       setSeconds(0);
     }
@@ -132,7 +156,7 @@ export default function Minesweeper() {
       return;
     }
 
-    const next = cascade(laid, i);
+    const next = cascade(laid, i, level);
     const remaining = next.filter((c) => !c.open && !c.mine).length;
     setBoard(next);
     if (remaining === 0) {
@@ -147,14 +171,39 @@ export default function Minesweeper() {
   };
 
   const face = status === "lost" ? "😵" : status === "won" ? "😎" : pressed ? "😮" : "🙂";
+  const { cols, mines } = LEVELS[level];
 
   return (
-    <div className="flex h-full flex-col items-center bg-[#c6c6c6] p-3">
+    <div className="flex h-full flex-col items-center overflow-auto bg-[#c6c6c6] p-3">
+      <div className="mb-2 flex w-full items-center gap-1">
+        {(Object.keys(LEVELS) as Level[]).map((name) => (
+          <button
+            key={name}
+            type="button"
+            onClick={() => reset(name)}
+            aria-pressed={level === name}
+            className="w7-btn flex-1 px-1.5 py-1 text-[10.5px]"
+            style={
+              level === name
+                ? {
+                    background: "linear-gradient(to bottom,#bfe2fb,#8cc4ee)",
+                    boxShadow:
+                      "inset 0 0 0 1px rgba(255,255,255,0.85), 0 0 0 1px #3a7fb5, inset 0 2px 4px rgba(0,60,110,0.28)",
+                    fontWeight: 600,
+                  }
+                : undefined
+            }
+          >
+            {name}
+          </button>
+        ))}
+      </div>
+
       <div className="w7-sunken flex w-full items-center justify-between rounded-[2px] p-2">
-        <Counter value={pad(MINES - flags)} />
+        <Counter value={pad(mines - flags)} />
         <button
           type="button"
-          onClick={reset}
+          onClick={() => reset()}
           aria-label="New game"
           className="w7-raised grid size-[27px] place-items-center rounded-[2px] text-[15px] leading-none active:shadow-none"
         >
@@ -165,7 +214,7 @@ export default function Minesweeper() {
 
       <div
         className="w7-sunken mt-3 grid rounded-[2px] p-[3px]"
-        style={{ gridTemplateColumns: `repeat(${COLS}, 24px)` }}
+        style={{ gridTemplateColumns: `repeat(${cols}, ${CELL}px)` }}
         onContextMenu={(e) => e.preventDefault()}
         onPointerDown={() => setPressed(true)}
         onPointerUp={() => setPressed(false)}
@@ -177,7 +226,7 @@ export default function Minesweeper() {
             <button
               key={i}
               type="button"
-              aria-label={`Square ${(i % COLS) + 1}, ${Math.floor(i / COLS) + 1}`}
+              aria-label={`Square ${(i % cols) + 1}, ${Math.floor(i / cols) + 1}`}
               onClick={() => open(i)}
               onContextMenu={(e) => {
                 e.preventDefault();

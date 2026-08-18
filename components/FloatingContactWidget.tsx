@@ -35,12 +35,17 @@ export default function FloatingContactWidget() {
   }, [isOpen]);
 
   useEffect(() => {
+    // The desktop is a machine of its own — it brings a taskbar to that corner
+    // and nothing from the site should be floating over it.
+    if (pathname.startsWith("/desktop")) {
+      setIsVisible(false);
+      return;
+    }
     if (pathname === "/") {
       const timer = setTimeout(() => setIsVisible(true), 2600);
       return () => clearTimeout(timer);
-    } else {
-      setIsVisible(true);
     }
+    setIsVisible(true);
   }, [pathname]);
 
   const scrollToBottom = () => {

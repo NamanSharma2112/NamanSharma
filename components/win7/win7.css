@@ -1,0 +1,394 @@
+/* Windows 7 — Aero.
+   Kept in one sheet rather than spread across utility classes because almost
+   all of it is layered gradients and insets that describe a single material,
+   and reading them together is the only way to keep that material consistent. */
+
+.win7 {
+  --w7-accent: #4ea1e0;
+  --w7-glass: rgba(158, 190, 220, 0.42);
+  --w7-glass-dark: rgba(24, 42, 62, 0.72);
+  --w7-edge: rgba(255, 255, 255, 0.55);
+  font-family: "Segoe UI", Frutiger, "Helvetica Neue", Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  /* The site sets white body text in dark mode, which this whole screen would
+     otherwise inherit — leaving any control that does not name its own colour
+     invisible on light chrome. Everything meant to be white says so itself. */
+  color: #16202b;
+}
+
+.win7 button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* ── the boot flag ──────────────────────────────────────────────────────── */
+
+/* Each pane flies in from its own corner, then the whole flag blooms. */
+@keyframes w7-pane-in {
+  0% {
+    opacity: 0;
+    transform: translate(var(--fx), var(--fy)) scale(0.2);
+    filter: blur(6px);
+  }
+  55% {
+    opacity: 1;
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes w7-flag-bloom {
+  0%,
+  55% {
+    filter: drop-shadow(0 0 6px rgba(120, 190, 255, 0.35));
+  }
+  75% {
+    filter: drop-shadow(0 0 26px rgba(150, 210, 255, 0.95));
+  }
+  100% {
+    filter: drop-shadow(0 0 14px rgba(120, 190, 255, 0.6));
+  }
+}
+
+@keyframes w7-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.w7-pane {
+  animation: w7-pane-in 1.5s cubic-bezier(0.16, 0.9, 0.3, 1) backwards;
+}
+
+.w7-flag {
+  animation: w7-flag-bloom 2.6s ease-out backwards;
+}
+
+.w7-boot-caption {
+  animation: w7-fade-up 0.9s ease-out 1.7s backwards;
+}
+
+/* The sweep of light that crosses the "Starting Windows" wordmark. */
+@keyframes w7-sheen {
+  0% {
+    background-position: -220% 0;
+  }
+  100% {
+    background-position: 320% 0;
+  }
+}
+
+.w7-sheen {
+  background-image: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.72) 42%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.72) 58%,
+    rgba(255, 255, 255, 0.72) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: w7-sheen 3.2s linear infinite;
+}
+
+/* ── window chrome ──────────────────────────────────────────────────────── */
+
+.w7-window {
+  border-radius: 8px 8px 3px 3px;
+  background: linear-gradient(
+    to bottom,
+    rgba(226, 238, 250, 0.86),
+    rgba(200, 220, 240, 0.8)
+  );
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 1px rgba(40, 80, 120, 0.45),
+    0 18px 46px rgba(0, 0, 0, 0.45),
+    0 3px 12px rgba(0, 0, 0, 0.3);
+}
+
+.w7-window.is-inactive {
+  background: linear-gradient(
+    to bottom,
+    rgba(222, 230, 238, 0.7),
+    rgba(206, 216, 228, 0.66)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 0 0 1px rgba(90, 110, 130, 0.4),
+    0 10px 26px rgba(0, 0, 0, 0.3);
+}
+
+.w7-titlebar {
+  height: 30px;
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.95),
+    0 0 3px rgba(255, 255, 255, 0.95);
+}
+
+/* Aero's caption buttons: a glossy capsule that lights up under the cursor. */
+.w7-caption-btn {
+  width: 29px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.62),
+    rgba(210, 226, 240, 0.42) 48%,
+    rgba(176, 200, 222, 0.5)
+  );
+  transition: background 120ms linear, box-shadow 120ms linear;
+}
+
+.w7-caption-btn:hover {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.9),
+    rgba(190, 226, 255, 0.75) 48%,
+    rgba(140, 200, 245, 0.85)
+  );
+}
+
+.w7-caption-btn.is-close {
+  width: 45px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 150, 140, 0.75),
+    rgba(220, 70, 55, 0.72) 48%,
+    rgba(180, 30, 24, 0.8)
+  );
+}
+
+.w7-caption-btn.is-close:hover {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 190, 180, 0.95),
+    rgba(240, 90, 70, 0.92) 48%,
+    rgba(200, 40, 30, 0.95)
+  );
+}
+
+/* ── taskbar ────────────────────────────────────────────────────────────── */
+
+.w7-taskbar {
+  background: linear-gradient(
+    to bottom,
+    rgba(35, 55, 78, 0.86),
+    rgba(16, 28, 44, 0.9) 46%,
+    rgba(10, 20, 34, 0.94)
+  );
+  backdrop-filter: blur(20px) saturate(1.35);
+  -webkit-backdrop-filter: blur(20px) saturate(1.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 2px 6px rgba(120, 190, 255, 0.16),
+    0 -1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.w7-task-btn {
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px transparent;
+  transition: background 140ms linear, box-shadow 140ms linear;
+}
+
+.w7-task-btn:hover {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.24),
+    rgba(255, 255, 255, 0.09)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 0 10px rgba(140, 200, 255, 0.3);
+}
+
+.w7-task-btn.is-open {
+  background: linear-gradient(
+    to bottom,
+    rgba(190, 225, 255, 0.3),
+    rgba(120, 180, 235, 0.18)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    inset 0 0 12px rgba(150, 210, 255, 0.3);
+}
+
+.w7-task-btn.is-active {
+  background: linear-gradient(
+    to bottom,
+    rgba(225, 242, 255, 0.5),
+    rgba(150, 200, 245, 0.32)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    inset 0 0 14px rgba(170, 220, 255, 0.5);
+}
+
+/* The Start orb: a lit glass sphere that brightens on approach. */
+.w7-orb {
+  background:
+    radial-gradient(
+      circle at 50% 34%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(180, 232, 255, 0.6) 24%,
+      rgba(40, 140, 220, 0.5) 52%,
+      rgba(10, 60, 120, 0.6) 74%
+    ),
+    radial-gradient(circle at 50% 50%, #2f8fd0, #0d3f74 70%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.45),
+    0 0 14px rgba(90, 190, 255, 0.55);
+  transition: box-shadow 160ms linear, filter 160ms linear;
+}
+
+.w7-orb:hover,
+.w7-orb.is-open {
+  filter: brightness(1.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.35),
+    0 0 24px rgba(130, 215, 255, 0.9);
+}
+
+/* ── start menu ─────────────────────────────────────────────────────────── */
+
+.w7-startmenu {
+  background: linear-gradient(
+    to bottom,
+    rgba(28, 52, 78, 0.9),
+    rgba(14, 30, 50, 0.94)
+  );
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  border-radius: 6px 6px 4px 4px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    0 22px 60px rgba(0, 0, 0, 0.6);
+}
+
+.w7-startmenu-left {
+  background: rgba(248, 251, 255, 0.94);
+}
+
+.w7-menu-item:hover,
+.w7-menu-item:focus-visible {
+  background: linear-gradient(
+    to bottom,
+    rgba(240, 249, 255, 0.95),
+    rgba(190, 225, 250, 0.95)
+  );
+  box-shadow: inset 0 0 0 1px rgba(120, 180, 230, 0.8);
+  outline: none;
+}
+
+.w7-menu-item-dark:hover,
+.w7-menu-item-dark:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  outline: none;
+}
+
+/* ── desktop ────────────────────────────────────────────────────────────── */
+
+.w7-desktop-icon > span:last-child {
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.95),
+    0 0 8px rgba(0, 0, 0, 0.7);
+}
+
+.w7-desktop-icon:hover .w7-icon-tile,
+.w7-desktop-icon:focus-visible .w7-icon-tile {
+  background: rgba(150, 200, 245, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(190, 225, 255, 0.7);
+  outline: none;
+}
+
+.w7-desktop-icon.is-selected .w7-icon-tile {
+  background: rgba(120, 180, 240, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(200, 230, 255, 0.85);
+}
+
+/* ── in-window surfaces ─────────────────────────────────────────────────── */
+
+.w7-sunken {
+  background: #fff;
+  box-shadow:
+    inset 1px 1px 0 rgba(0, 0, 0, 0.22),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.9),
+    inset 2px 2px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* Minesweeper's raised tiles use the original bevel rather than a border,
+   because a 2px bevel is what makes an unopened square read as pressable. */
+.w7-raised {
+  background: #c6c6c6;
+  box-shadow:
+    inset 2px 2px 0 rgba(255, 255, 255, 0.95),
+    inset -2px -2px 0 rgba(128, 128, 128, 0.95);
+}
+
+.w7-pressed {
+  background: #c0c0c0;
+  box-shadow: inset 1px 1px 0 rgba(128, 128, 128, 0.9);
+}
+
+.w7-btn {
+  background: linear-gradient(to bottom, #fdfdfd, #ecf3fa 46%, #dae6f2);
+  border-radius: 3px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 0 0 1px rgba(120, 150, 180, 0.8);
+  transition: background 120ms linear, box-shadow 120ms linear;
+}
+
+.w7-btn:hover {
+  background: linear-gradient(to bottom, #f4fbff, #dcefff 46%, #bfe0fa);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(80, 150, 210, 0.9),
+    0 0 8px rgba(140, 200, 245, 0.6);
+}
+
+.w7-btn:active {
+  background: linear-gradient(to bottom, #cfe4f6, #bcd8f0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w7-pane,
+  .w7-flag,
+  .w7-boot-caption,
+  .w7-sheen {
+    animation: none;
+  }
+  .w7-sheen {
+    color: #fff;
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+  }
+}

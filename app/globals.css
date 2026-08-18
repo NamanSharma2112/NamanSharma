@@ -21,7 +21,6 @@
     @apply font-sans;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow: hidden;
     height: 100%;
     width: 100%;
   }
@@ -30,10 +29,19 @@
     font-size: 14px;
     line-height: 20px;
     font-weight: 500;
-    overflow: hidden;
-    height: 100%;
+    min-height: 100%;
     width: 100%;
     overscroll-behavior: none;
+  }
+
+  /* The desktop is a screen, not a document — it pins itself to the viewport
+     and must not scroll. Everything else is a page and has to. This used to be
+     `overflow: hidden` on html and body outright, which locked the whole site
+     and left longer pages with their content simply cut off. */
+  html:has([data-fixed-screen]),
+  html:has([data-fixed-screen]) body {
+    overflow: hidden;
+    height: 100%;
   }
 
   ::selection {
@@ -245,5 +253,32 @@
 @media (prefers-reduced-motion: reduce) {
   .icon-roll {
     transition: none;
+  }
+}
+
+/* The page arriving once the intro lifts. Deliberately no forwards fill —
+   holding a transform or filter here would make this element the containing
+   block for any position: fixed descendant. `backwards` covers the delay
+   only, so the element is back on its plain style the moment it lands. */
+@keyframes landing-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+.landing-in {
+  animation: landing-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-in {
+    animation: none;
   }
 }

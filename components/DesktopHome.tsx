@@ -295,8 +295,10 @@ export default function DesktopHome() {
         onCloseAll={closeAllWindows}
       />
 
-      {/* Wallpaper */}
+      {/* Wallpaper. The marker tells the document to stop scrolling: this
+          route is a screen pinned to the viewport, not a page. */}
       <HomeBackdrop />
+      <div data-fixed-screen hidden />
       <RainGlass className="z-[1]" intensity={0.85} glass={false} />
       <DeskAccents />
 

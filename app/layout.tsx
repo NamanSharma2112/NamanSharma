@@ -36,7 +36,8 @@ export const metadata: Metadata = {
 import FloatingContactWidget from "@/components/FloatingContactWidget";
 import MinimalNav from "@/components/MinimalNav";
 import SiteAtmosphere from "@/components/SiteAtmosphere";
-import BootScreen from "@/components/BootScreen";
+import Boot from "@/components/Boot";
+import Landing from "@/components/Landing";
 import { CommandMenu } from "@/components/CommandMenu";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { DesktopProvider } from "@/components/DesktopState";
@@ -61,14 +62,17 @@ export default function RootLayout({
           <DesktopProvider>
             {/* Photo, rain and the neon cat, behind every page. Both of these
                 hide themselves on /desktop, which brings its own. */}
-            <SiteAtmosphere />
-            <MinimalNav />
-            <div className="relative z-10 flex-1">
-              {children}
-            </div>
-            {/* At the layout level so it plays once on entry rather than on
-                every client-side navigation. */}
-            <BootScreen />
+            {/* At the layout level so the intro plays once on entry rather
+                than on every client-side navigation. */}
+            <Boot>
+              <SiteAtmosphere />
+              <Landing delay={0.05}>
+                <MinimalNav />
+              </Landing>
+              <Landing delay={0.16} className="relative z-10 flex-1">
+                {children}
+              </Landing>
+            </Boot>
           </DesktopProvider>
           <FloatingContactWidget />
           <CommandMenu />

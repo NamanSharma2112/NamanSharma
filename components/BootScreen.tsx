@@ -31,29 +31,17 @@ const ROW = 42;
 /** Enough repeats that the reel never runs dry while the screen is up. */
 const ROWS = Array.from({ length: 6 }, () => NAMES).flat();
 
-export default function BootScreen({
-  /** Seconds before the screen lifts. */
-  duration = HOLD * NAMES.length + 0.5,
-  /** Show it only on the first load of a session rather than every load. */
-  oncePerSession = false,
-}: {
-  duration?: number;
-  oncePerSession?: boolean;
-}) {
-  const [visible, setVisible] = useState(true);
-  const [step, setStep] = useState(0);
+/** Seconds the intro holds before it lifts. */
+export const BOOT_DURATION = HOLD * NAMES.length + 0.5;
+/** Seconds the black sheet takes to clear once it starts lifting. */
+export const BOOT_FADE = 0.6;
 
-  useEffect(() => {
-    if (oncePerSession && sessionStorage.getItem("hasVisited") === "true") {
-      setVisible(false);
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      setVisible(false);
-      if (oncePerSession) sessionStorage.setItem("hasVisited", "true");
-    }, duration * 1000);
-    return () => window.clearTimeout(timer);
-  }, [duration, oncePerSession]);
+/**
+ * Whether it is on screen is decided upstream, by whoever also tells the page
+ * it may arrive — the two have to be the same moment.
+ */
+export default function BootScreen({ show }: { show: boolean }) {
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     const id = window.setInterval(() => setStep((s) => s + 1), HOLD * 1000);
@@ -62,12 +50,12 @@ export default function BootScreen({
 
   return (
     <AnimatePresence>
-      {visible && (
+      {show && (
         <motion.div
           key="boot"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+          transition={{ duration: BOOT_FADE, ease: "easeInOut" }}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black"
         >
           <motion.div

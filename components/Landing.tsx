@@ -41,7 +41,7 @@ export default function Landing({
   return (
     <div
       className={cn(className, done ? "landing-in" : "opacity-0")}
-      style={done ? { animationDelay: `${delay}s` } : undefined}
+      style={done && delay ? { animationDelay: `${delay}s` } : undefined}
     >
       {children}
     </div>

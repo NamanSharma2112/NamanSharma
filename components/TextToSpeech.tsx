@@ -4,6 +4,21 @@ import { useState, useEffect, useRef } from "react";
 import { Play, Pause, Square, Volume2 } from "lucide-react";
 import { playTap } from "@/lib/sounds";
 
+/**
+ * The four equaliser bars beside the play button.
+ *
+ * Set by hand rather than rolled with Math.random(): random heights are
+ * recomputed on every render, so the bars twitched each time anything else in
+ * the component changed state — and reading a random number during render is
+ * not something React is allowed to assume is stable.
+ */
+const BARS = [
+  { height: "55%", duration: "0.7s" },
+  { height: "90%", duration: "0.55s" },
+  { height: "70%", duration: "0.85s" },
+  { height: "45%", duration: "0.65s" },
+];
+
 export default function TextToSpeech({
   title,
   contentSections,
@@ -141,13 +156,13 @@ export default function TextToSpeech({
       
       {isPlaying && !isPaused && (
         <div className="flex items-end gap-0.5 h-3 ml-2">
-          {[1, 2, 3, 4].map((i) => (
-            <div 
+          {BARS.map((bar, i) => (
+            <div
               key={i}
               className={`w-1 rounded-full animate-pulse ${isDark ? "bg-amber-400/60" : "bg-blue-600/60"}`}
-              style={{ 
-                height: `${Math.random() * 60 + 40}%`,
-                animationDuration: `${Math.random() * 0.5 + 0.5}s`,
+              style={{
+                height: bar.height,
+                animationDuration: bar.duration,
                 animationDelay: `${i * 0.1}s`
               }}
             />

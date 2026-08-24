@@ -41,6 +41,9 @@ const INSPIRATIONS = [
   },
 ];
 
+/** Derived from the list itself, so the two cannot drift apart. */
+type Inspiration = (typeof INSPIRATIONS)[number];
+
 export default function InspirationPage() {
   return (
     <div className="pt-5 pb-28">
@@ -106,7 +109,7 @@ export default function InspirationPage() {
   );
 }
 
-function Icon({ item }: { item: any }) {
+function Icon({ item }: { item: Inspiration }) {
   return (
     <div className="relative w-10 h-10 shrink-0 rounded-full border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm flex items-center justify-center">
       <img 
@@ -118,7 +121,7 @@ function Icon({ item }: { item: any }) {
   );
 }
 
-function Content({ item }: { item: any }) {
+function Content({ item }: { item: Inspiration }) {
   return (
     <div className="flex flex-col justify-center">
       <span className="text-[15px] font-medium text-zinc-900 dark:text-zinc-100 tracking-tight transition-colors duration-300">

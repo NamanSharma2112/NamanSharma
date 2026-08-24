@@ -41,7 +41,10 @@ export default function MinimalNav() {
         onClick={openMenu}
         aria-label="Open menu"
         className={cn(
-          "group flex items-center gap-3 rounded-2xl border py-2 pl-2 pr-2.5 text-left transition-colors duration-200",
+          "group flex items-center gap-3 rounded-2xl border py-2 pl-2 pr-2.5 text-left",
+          // Gives way under the cursor, then settles — the whole pill scales,
+          // so the portrait and label come with it and it reads as one press.
+          "transition-[background-color,border-color,transform] duration-200 ease-[var(--ease-out)] active:scale-[0.97] motion-reduce:active:scale-100",
           "border-black/10 bg-white/70 shadow-lg backdrop-blur-xl hover:bg-white/85",
           "dark:border-white/10 dark:bg-[#1b1b1b]/85 dark:hover:bg-[#242424]/90"
         )}

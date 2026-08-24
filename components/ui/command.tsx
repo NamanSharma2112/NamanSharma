@@ -53,10 +53,16 @@ function CommandDialog({
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
       <DialogContent
+        // The open and close animations are plain CSS keyed off this
+        // attribute and Radix's own data-state. They were written as
+        // `data-[state=open]:cmk-animate-in`, which silently produced nothing:
+        // Tailwind can only build a variant of a utility it owns, and
+        // `cmk-animate-in` is a hand-written class. The panel had no
+        // animation at all.
+        data-command-dialog
         className={cn(
           // Centred, and carrying one edge rather than a border and a ring.
           "overflow-hidden rounded-xl! p-0 bg-white/95 dark:bg-[#111110]/95 backdrop-blur-xl shadow-2xl border-0 ring-1 ring-black/10 dark:ring-white/10",
-          "data-open:animate-none data-closed:animate-none data-[state=open]:cmk-animate-in data-[state=closed]:cmk-animate-out",
           className
         )}
         showCloseButton={showCloseButton}

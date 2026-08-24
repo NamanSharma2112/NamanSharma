@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { motion } from "motion/react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -181,29 +182,43 @@ export function CommandMenu() {
         <p className="px-3 pb-1.5 pt-1 text-[12px] font-medium text-zinc-500 dark:text-zinc-400">
           Theme
         </p>
+        {/* One indicator that travels between the three, rather than three
+            backgrounds crossfading — the movement is what says which way the
+            choice went. */}
         <div className="flex items-center gap-1.5">
-          {THEMES.map(({ value, label, Icon }) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => {
-                setTheme(value);
-                playTap();
-              }}
-              className={cn(
-                // Opening with ⌘K lands focus on the first button, so the ring
-                // it gets has to be part of the design rather than the UA's.
-                "flex flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-[13px] transition-colors",
-                "outline-none focus-visible:ring-1 focus-visible:ring-black/25 dark:focus-visible:ring-white/25",
-                theme === value
-                  ? "border-black/15 bg-black/5 text-zinc-900 dark:border-white/20 dark:bg-white/[0.07] dark:text-white"
-                  : "border-transparent text-zinc-500 hover:bg-black/5 dark:text-zinc-400 dark:hover:bg-white/5"
-              )}
-            >
-              <Icon className="size-[15px] shrink-0" />
-              {label}
-            </button>
-          ))}
+          {THEMES.map(({ value, label, Icon }) => {
+            const active = theme === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => {
+                  setTheme(value);
+                  playTap();
+                }}
+                className={cn(
+                  // Opening with ⌘K lands focus on the first button, so the
+                  // ring it gets has to be part of the design rather than the
+                  // UA's.
+                  "relative flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-[13px]",
+                  "outline-none transition-colors duration-150 focus-visible:ring-1 focus-visible:ring-black/25 dark:focus-visible:ring-white/25",
+                  active
+                    ? "text-zinc-900 dark:text-white"
+                    : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="theme-indicator"
+                    transition={{ type: "spring", duration: 0.35, bounce: 0.15 }}
+                    className="absolute inset-0 rounded-lg border border-black/15 bg-black/5 dark:border-white/20 dark:bg-white/[0.07]"
+                  />
+                )}
+                <Icon className="relative size-[15px] shrink-0" />
+                <span className="relative">{label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </CommandDialog>

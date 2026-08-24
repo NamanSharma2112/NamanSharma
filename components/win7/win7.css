@@ -107,6 +107,90 @@
   animation: w7-sheen 3.2s linear infinite;
 }
 
+/* ── opening ────────────────────────────────────────────────────────────────
+   A window and the Start menu are both opened deliberately, a handful of times
+   — the tier that earns a real animation. Nothing starts from scale(0): things
+   in the world do not appear out of nothing, they arrive slightly small. */
+
+@keyframes w7-window-open {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.w7-window {
+  animation: w7-window-open 180ms var(--ease-out) backwards;
+}
+
+/* Anchored to the orb it grows out of, rather than to its own middle. */
+@keyframes w7-menu-open {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
+.w7-startmenu {
+  transform-origin: bottom left;
+  animation: w7-menu-open 160ms var(--ease-out) backwards;
+}
+
+.w7-desktop-menu {
+  animation: w7-menu-open 120ms var(--ease-out) backwards;
+}
+
+@keyframes w7-snap-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.w7-snap-preview {
+  animation: w7-snap-in 90ms var(--ease-out) backwards;
+}
+
+/* Pressing anything gives way slightly under the cursor. */
+.w7-btn,
+.w7-caption-btn,
+.w7-task-btn,
+.w7-orb {
+  transition:
+    background 120ms ease,
+    box-shadow 120ms ease,
+    filter 160ms ease,
+    transform 100ms var(--ease-out);
+}
+
+.w7-btn:active,
+.w7-task-btn:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .w7-window,
+  .w7-startmenu,
+  .w7-desktop-menu {
+    animation-duration: 100ms;
+  }
+  @keyframes w7-window-open {
+    from {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  @keyframes w7-menu-open {
+    from {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  .w7-btn:active,
+  .w7-task-btn:active {
+    transform: none;
+  }
+}
+
 /* ── window chrome ──────────────────────────────────────────────────────── */
 
 .w7-window {

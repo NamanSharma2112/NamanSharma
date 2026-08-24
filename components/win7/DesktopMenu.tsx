@@ -46,10 +46,12 @@ export default function DesktopMenu({
       ref={ref}
       role="menu"
       aria-label="Desktop"
-      className="absolute z-[130] w-[176px] rounded-[3px] py-1"
+      className="w7-desktop-menu absolute z-[130] w-[176px] rounded-[3px] py-1"
       style={{
         left: x,
         top: y,
+        // It grows from the point that was clicked, not from its own middle.
+        transformOrigin: "top left",
         background: "rgba(248,251,255,0.97)",
         boxShadow:
           "inset 0 0 0 1px rgba(255,255,255,0.9), 0 0 0 1px rgba(90,120,150,0.6), 0 12px 30px rgba(0,0,0,0.45)",

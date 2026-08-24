@@ -260,7 +260,9 @@ export default function Win7() {
           });
         }}
       >
-        <div className="pointer-events-none grid w-[92px] grid-cols-1 gap-1 p-2">
+        {/* Seen once, right after the machine finishes starting — the one
+            place on this screen with a budget for a stagger. */}
+        <div className="landing-stagger pointer-events-none grid w-[92px] grid-cols-1 gap-1 p-2">
           {APPS.filter((a) => a.onDesktop).map((app) => {
             const Icon = app.icon;
             return (
@@ -293,7 +295,10 @@ export default function Win7() {
         {/* Where the window would land if let go now. */}
         {snapPreview && (
           <div
-            className="pointer-events-none absolute z-[90] rounded-[3px] transition-all duration-100"
+            // Fades in where it is rather than sliding between zones: the
+            // geometry is left/top/width/height, and transitioning those
+            // animates layout on every frame of a drag.
+            className="w7-snap-preview pointer-events-none absolute z-[90] rounded-[3px]"
             style={{
               left: snapPreview === "right" ? bounds.width / 2 : 0,
               top: 0,

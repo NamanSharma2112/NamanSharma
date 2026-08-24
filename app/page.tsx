@@ -17,13 +17,13 @@ const TWITTER = "https://x.com/NamanSharma2112";
 
 export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-[560px] px-6 pt-5 pb-28">
-      <Panel>
+    <main className="mx-auto flex w-full max-w-[560px] flex-col justify-center px-6 py-3 sm:py-5">
+      <Panel className="p-6 sm:p-7">
         <h1 className="text-[13.5px] font-medium text-zinc-900 dark:text-white">
           I&apos;m Naman Sharma.
         </h1>
 
-        <div className="mt-6 flex flex-col gap-4 text-[13.5px] leading-[1.75] text-zinc-700 dark:text-zinc-300">
+        <div className="mt-4 flex flex-col gap-3 text-[13px] sm:text-[13.5px] leading-[1.65] text-zinc-700 dark:text-zinc-300">
           <p>
             I&apos;m a Design Engineer who designs and builds whatever I can
             imagine or get inspiration from. Currently exploring modern web
@@ -100,10 +100,10 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center gap-2">
+        <div className="mt-5 flex flex-wrap items-center gap-2">
           <a
             href={`mailto:${EMAIL}`}
-            className="rounded-full bg-zinc-900 px-4 py-2 text-[13px] font-medium text-white dark:bg-white dark:text-black transition-opacity hover:opacity-85"
+            className="rounded-full bg-zinc-900 px-3.5 py-1.5 text-[12.5px] font-medium text-white transition-opacity hover:opacity-85 dark:bg-white dark:text-black"
           >
             email me
           </a>
@@ -111,15 +111,15 @@ export default function Home() {
             href={TWITTER}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full bg-black/10 px-4 py-2 text-[13px] font-medium text-zinc-900 transition-colors hover:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+            className="rounded-full bg-black/10 px-3.5 py-1.5 text-[12.5px] font-medium text-zinc-900 transition-colors hover:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
           >
             dm me on X
           </a>
         </div>
 
-        <SocialLinks className="mt-7 -ml-2" />
+        <SocialLinks className="mt-5 -ml-2" />
 
-        <p className="mt-7 text-[13px] text-zinc-600 dark:text-zinc-500">
+        <p className="mt-5 text-[12.5px] text-zinc-600 dark:text-zinc-500">
           Poke around the{" "}
           <a
             href="/desktop"
@@ -134,10 +134,11 @@ export default function Home() {
         </p>
 
         {/* Signed off at the bottom. It draws itself in on load. */}
-        <div className="mt-9 w-[140px] text-zinc-900/75 dark:text-white/75">
+        <div className="mt-6 w-[120px] text-zinc-900/75 dark:text-white/75">
           <Signature className="h-auto w-full overflow-visible" />
         </div>
       </Panel>
     </main>
   );
 }
+

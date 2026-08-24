@@ -9,6 +9,7 @@ import TableOfContents from "@/components/TableOfContents";
 import SelectionToolbar from "@/components/SelectionToolbar";
 import TextToSpeech from "@/components/TextToSpeech";
 import { getIllustration } from "@/components/BlogIllustrations";
+import { getRlsIllustration } from "@/components/RlsIllustrations";
 import Panel from "@/components/Panel";
 
 const FONT_OPTIONS = [
@@ -79,7 +80,7 @@ export default function BlogPostPage({
 
             <div className="mt-9 flex flex-col gap-8">
               {post.content.map((section) => {
-                const Illustration = getIllustration(section.id);
+                const Illustration = getIllustration(section.id) || getRlsIllustration(section.id);
                 return (
                   <section key={section.id} id={section.id} className="scroll-mt-24">
                     <h2 className="mb-2.5 text-[15px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">

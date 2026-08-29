@@ -167,24 +167,59 @@ export default function FloatingContactWidget() {
         )}
       </AnimatePresence>
 
+      {/* The overhead console: a call button that lights when pressed, the
+          way the crew-call switch above a seat does. */}
       <div className="fixed bottom-6 right-6 z-[100]">
-        <button
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="relative w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform focus:outline-none focus:ring-2 focus:ring-white/60 focus:ring-offset-2 focus:ring-offset-black"
-          aria-label="Open Chat"
-        >
-          {isOpen ? (
-            <X size={20} className="text-black" />
-          ) : (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square text-black">
-                <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 bg-black border-2 border-white rounded-full" />
-            </>
-          )}
-        </button>
+        <span className="call-console flex items-center gap-2 rounded-full p-1.5">
+          <button
+            onClick={() => setIsOpen((prev) => !prev)}
+            aria-label={isOpen ? "Close chat" : "Call the cabin"}
+            aria-pressed={isOpen}
+            className={`call-button relative grid size-10 place-items-center rounded-full ${
+              isOpen ? "is-lit" : ""
+            }`}
+          >
+            {isOpen ? (
+              <X size={17} className="text-zinc-900" />
+            ) : (
+              <>
+                <AttendantGlyph />
+                {/* The little service light, on until you have called. */}
+                <span className="call-dot absolute right-1 top-1 size-2 rounded-full" />
+              </>
+            )}
+          </button>
+        </span>
       </div>
     </>
+  );
+}
+
+/**
+ * The cabin-crew symbol: a figure with a tray, the one printed on the call
+ * button above every seat.
+ */
+function AttendantGlyph() {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden className="text-zinc-900">
+      <circle cx="11" cy="4.4" r="2.1" fill="currentColor" />
+      <path
+        d="M8.4 21.6v-5.2H7.2V11a2.6 2.6 0 0 1 2.6-2.6h2.4a2.6 2.6 0 0 1 2.6 2.6v.6l3.4-1.1"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M11.6 21.6v-5.2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
+      {/* The tray, held out. */}
+      <rect x="16.4" y="8.6" width="6" height="1.5" rx="0.75" fill="currentColor" />
+    </svg>
   );
 }

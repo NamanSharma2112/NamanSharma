@@ -1,16 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 
 /**
- * The route, read top to bottom: a plane at the head of a dashed track, and a
- * leg for each thing built.
+ * The route, read top to bottom: a plane that flies down a dashed track as you
+ * scroll, and a leg for each thing built.
+ *
+ * The track is one continuous line behind the rows rather than a segment per
+ * row, because the plane has to be able to sit anywhere along it. Its position
+ * is scroll progress through the section, smoothed by a spring so a trackpad
+ * flick reads as flight rather than teleporting.
  *
  * The legs wipe in as they reach the viewport and stay in — re-animating on
- * every scroll-by is an interface fighting its reader — and the track itself
- * is a repeating gradient rather than an SVG so it can be any height without
- * the dashes stretching.
+ * every scroll-by is an interface fighting its reader.
  */
 
 type Leg = {
@@ -60,41 +64,70 @@ const LEGS: Leg[] = [
   },
 ];
 
-export default function FlightPlan() {
-  return (
-    <section aria-label="Flight plan" className="relative mx-auto w-full max-w-[760px] px-6">
-      <div className="grid grid-cols-[72px_32px_minmax(0,1fr)] gap-y-10">
-        {/* Head of the track: the label, then the plane. */}
-        <div />
-        <div className="flex flex-col items-center">
-          <span className="mb-1.5 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">
-            Flight plan
-          </span>
-          <PlaneMark />
-          <span aria-hidden className="track mt-1 w-px flex-1" />
-        </div>
-        <div />
+/** Where the track sits: the label column, then half the track column. */
+const TRACK_X = "calc(1.5rem + 72px + 16px)";
 
-        {LegRows()}
+export default function FlightPlan() {
+  const section = useRef<HTMLElement>(null);
+
+  // Progress from the section arriving to it leaving, so the plane is already
+  // moving when the first leg lands and has landed by the last.
+  const { scrollYProgress } = useScroll({
+    target: section,
+    offset: ["start 0.75", "end 0.55"],
+  });
+  const flight = useSpring(scrollYProgress, {
+    stiffness: 90,
+    damping: 26,
+    mass: 0.6,
+  });
+  const top = useTransform(flight, [0, 1], ["0%", "100%"]);
+  // Banks a little into the descent, the way a plane does turning onto a leg.
+  const tilt = useTransform(flight, [0, 0.5, 1], [-4, 3, -2]);
+
+  return (
+    <section
+      ref={section}
+      aria-label="Flight plan"
+      className="relative mx-auto w-full max-w-[760px] px-6"
+    >
+      {/* One continuous track, behind everything, from the plane to the end. */}
+      <span
+        aria-hidden
+        className="track absolute top-8 bottom-6 w-px"
+        style={{ left: TRACK_X }}
+      />
+
+      <span
+        aria-hidden
+        className="absolute top-0 -translate-x-1/2 font-mono text-[9px] uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400"
+        style={{ left: TRACK_X }}
+      >
+        <span className="block -translate-x-1/2 whitespace-nowrap pl-8">Flight plan</span>
+      </span>
+
+      {/* The plane itself, riding the track. */}
+      <motion.span
+        aria-hidden
+        className="absolute z-10 -translate-x-1/2"
+        style={{ left: TRACK_X, top, rotate: tilt }}
+      >
+        <PlaneMark />
+      </motion.span>
+
+      <div className="grid grid-cols-[72px_32px_minmax(0,1fr)] gap-y-10 pt-8">
+        {LEGS.map((leg, i) => (
+          <LegRow key={leg.name} leg={leg} index={i + 1} />
+        ))}
       </div>
     </section>
   );
 }
 
-function LegRows() {
-  return LEGS.map((leg, i) => (
-    <LegRow
-      key={leg.name}
-      leg={leg}
-      index={i + 1}
-      last={i === LEGS.length - 1}
-    />
-  ));
-}
-
-function LegRow({ leg, index, last }: { leg: Leg; index: number; last: boolean }) {
+function LegRow({ leg, index }: { leg: Leg; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   // Fires once. Anything already on screen at load counts immediately.
   useEffect(() => {
@@ -126,53 +159,70 @@ function LegRow({ leg, index, last }: { leg: Leg; index: number; last: boolean }
         </p>
       </div>
 
-      {/* The track, with a stop on it. */}
-      <div className="flex flex-col items-center">
-        <span className="mt-[7px] block size-[9px] shrink-0 rounded-full border-2 border-zinc-400 bg-[var(--page-bg)] dark:border-zinc-600" />
-        {!last && <span aria-hidden className="track mt-1 w-px flex-1" />}
+      {/* The stop on the track. It lights up when its leg is under the cursor. */}
+      <div className="flex justify-center">
+        <span
+          className={`stop mt-[7px] block size-[9px] shrink-0 rounded-full border-2 ${
+            hovered
+              ? "scale-[1.45] border-blue-500 bg-blue-500/20 dark:border-blue-400"
+              : "border-zinc-400 bg-[var(--page-bg)] dark:border-zinc-600"
+          }`}
+        />
       </div>
 
       {/* The leg itself. */}
-      <div ref={ref} data-visible={visible} className="leg min-w-0">
-        <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-          <h3 className="text-[16px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">
-            {leg.name}
-          </h3>
-          {leg.current && (
-            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-blue-600 dark:text-blue-400">
-              Current
-            </span>
-          )}
-          {leg.href && (
-            <a
-              href={leg.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-400 transition-colors hover:text-zinc-700 dark:text-zinc-600 dark:hover:text-zinc-300"
-            >
-              Visit
-              <ArrowUpRight className="size-3 transition-transform duration-200 ease-[var(--ease-out)] group-hover:-translate-y-px group-hover:translate-x-px" />
-            </a>
+      <div
+        ref={ref}
+        data-visible={visible}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="leg group/leg min-w-0"
+      >
+        <div className="leg-body -mx-3 rounded-xl px-3 py-2">
+          <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+            <h3 className="text-[16px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">
+              {leg.name}
+            </h3>
+            {leg.current && (
+              <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-blue-600 dark:text-blue-400">
+                <span className="relative flex size-1.5">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-blue-400 opacity-70" />
+                  <span className="relative inline-flex size-1.5 rounded-full bg-blue-500" />
+                </span>
+                In flight
+              </span>
+            )}
+            {leg.href && (
+              <a
+                href={leg.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-400 transition-colors hover:text-zinc-700 dark:text-zinc-600 dark:hover:text-zinc-300"
+              >
+                Visit
+                <ArrowUpRight className="size-3 transition-transform duration-200 ease-[var(--ease-out)] group-hover:-translate-y-px group-hover:translate-x-px" />
+              </a>
+            )}
+          </div>
+
+          <p className="mt-0.5 text-[14px] text-zinc-700 dark:text-zinc-300">{leg.role}</p>
+          <p className="mt-2 max-w-[52ch] text-[13.5px] leading-[1.7] text-zinc-500 dark:text-zinc-400">
+            {leg.blurb}
+          </p>
+
+          {leg.stack && (
+            <ul className="mt-3 flex flex-wrap gap-1.5">
+              {leg.stack.map((tool) => (
+                <li
+                  key={tool}
+                  className="chip rounded-full border border-black/10 px-2 py-[3px] font-mono text-[10px] uppercase tracking-[0.12em] text-zinc-500 dark:border-white/10 dark:text-zinc-400"
+                >
+                  {tool}
+                </li>
+              ))}
+            </ul>
           )}
         </div>
-
-        <p className="mt-0.5 text-[14px] text-zinc-700 dark:text-zinc-300">{leg.role}</p>
-        <p className="mt-2 max-w-[52ch] text-[13.5px] leading-[1.7] text-zinc-500 dark:text-zinc-400">
-          {leg.blurb}
-        </p>
-
-        {leg.stack && (
-          <ul className="mt-3 flex flex-wrap gap-1.5">
-            {leg.stack.map((tool) => (
-              <li
-                key={tool}
-                className="rounded-full border border-black/10 px-2 py-[3px] font-mono text-[10px] uppercase tracking-[0.12em] text-zinc-500 dark:border-white/10 dark:text-zinc-400"
-              >
-                {tool}
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </>
   );
@@ -181,12 +231,12 @@ function LegRow({ leg, index, last }: { leg: Leg; index: number; last: boolean }
 function PlaneMark() {
   return (
     <svg
-      width="15"
-      height="15"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
       aria-hidden
-      className="text-blue-600 dark:text-blue-400"
+      className="text-blue-600 drop-shadow-[0_1px_3px_rgba(37,99,235,0.4)] dark:text-blue-400"
     >
       {/* Nose down, so it reads as flying along the track below it. */}
       <path d="M12 23l-1.6-4.2-6.6 2.3.5-2 5-4.1-1.4-3.7-4.4 1.6.3-1.7 4-3-1.3-3.6c-.2-.6.4-1.1.9-.8L12 6.4l4.1-2.6c.5-.3 1.1.2.9.8l-1.3 3.6 4 3 .3 1.7-4.4-1.6-1.4 3.7 5 4.1.5 2-6.6-2.3z" />

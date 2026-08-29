@@ -103,3 +103,109 @@ export function playToggle() {
   ring.start(upNow);
   ring.stop(upNow + 0.05);
 }
+
+/* ── the cabin ──────────────────────────────────────────────────────────────
+   Everything below is synthesised rather than loaded, so the whole cabin costs
+   no bytes and never waits on a file. Each of these only ever fires from a
+   real interaction, which is also what unlocks the audio context. */
+
+/** Filtered noise — the body of any sliding or rushing sound. */
+function noise(
+  ctx: AudioContext,
+  start: number,
+  duration: number,
+  {
+    gain = 0.08,
+    from = 900,
+    to = 500,
+    q = 1,
+    type = "bandpass" as BiquadFilterType,
+  } = {}
+) {
+  const frames = Math.max(1, Math.floor(ctx.sampleRate * duration));
+  const buffer = ctx.createBuffer(1, frames, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < frames; i++) data[i] = Math.random() * 2 - 1;
+
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = type;
+  filter.frequency.setValueAtTime(from, start);
+  filter.frequency.exponentialRampToValueAtTime(Math.max(40, to), start + duration);
+  filter.Q.value = q;
+
+  const envelope = ctx.createGain();
+  // Swells in and dies away, so a slide reads as a slide rather than a burst.
+  envelope.gain.setValueAtTime(0.0001, start);
+  envelope.gain.exponentialRampToValueAtTime(gain, start + duration * 0.28);
+  envelope.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+  source.connect(filter);
+  filter.connect(envelope);
+  envelope.connect(ctx.destination);
+  source.start(start);
+  source.stop(start + duration);
+}
+
+/** A short knock — the shade meeting the frame, or a card meeting a stop. */
+function knock(ctx: AudioContext, start: number, frequency = 180, gain = 0.16) {
+  const osc = ctx.createOscillator();
+  const env = ctx.createGain();
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(frequency, start);
+  osc.frequency.exponentialRampToValueAtTime(frequency * 0.45, start + 0.06);
+  env.gain.setValueAtTime(gain, start);
+  env.gain.exponentialRampToValueAtTime(0.0001, start + 0.08);
+  osc.connect(env);
+  env.connect(ctx.destination);
+  osc.start(start);
+  osc.stop(start + 0.09);
+}
+
+/** Pulling the shade down: a long plastic slide that lands on the sill. */
+export function playShadeClose() {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+  noise(ctx, now, 0.34, { gain: 0.05, from: 1400, to: 420, q: 0.8 });
+  knock(ctx, now + 0.33, 165, 0.14);
+}
+
+/** Letting it up: the same slide, running the other way, ending lighter. */
+export function playShadeOpen() {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+  noise(ctx, now, 0.3, { gain: 0.045, from: 520, to: 1500, q: 0.8 });
+  knock(ctx, now + 0.29, 240, 0.09);
+}
+
+/** A card dragged through a reader — grain, then the stop at the end. */
+export function playSwipe() {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+  noise(ctx, now, 0.22, { gain: 0.06, from: 2200, to: 700, q: 0.6 });
+  knock(ctx, now + 0.2, 210, 0.1);
+}
+
+/** The reader accepting: the two-tone chime every gate in the world makes. */
+export function playAccept() {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+  [
+    { at: now, hz: 880 },
+    { at: now + 0.13, hz: 1320 },
+  ].forEach(({ at, hz }) => {
+    const osc = ctx.createOscillator();
+    const env = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(hz, at);
+    env.gain.setValueAtTime(0.0001, at);
+    env.gain.exponentialRampToValueAtTime(0.13, at + 0.012);
+    env.gain.exponentialRampToValueAtTime(0.0001, at + 0.22);
+    osc.connect(env);
+    env.connect(ctx.destination);
+    osc.start(at);
+    osc.stop(at + 0.24);
+  });
+}

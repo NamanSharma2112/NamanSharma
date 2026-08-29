@@ -373,3 +373,87 @@
     animation-delay: 0ms;
   }
 }
+
+/* ── the cabin call button ──────────────────────────────────────────────────
+   The chat trigger, dressed as the crew-call switch above a seat: a recessed
+   console, a button that depresses, and a service light that goes out once
+   the call is placed. */
+.call-console {
+  background: linear-gradient(180deg, #f4f1ee 0%, #e2dcd6 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -2px 4px rgba(120, 108, 98, 0.28),
+    0 10px 24px rgba(60, 52, 46, 0.24);
+}
+
+.dark .call-console {
+  background: linear-gradient(180deg, #2f2c29 0%, #1e1c1a 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.6),
+    0 10px 24px rgba(0, 0, 0, 0.55);
+}
+
+.call-button {
+  background: linear-gradient(180deg, #ffffff 0%, #ece7e2 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 2px 4px rgba(90, 80, 72, 0.32);
+  transition:
+    transform 120ms var(--ease-out),
+    box-shadow 160ms var(--ease-out),
+    background 200ms ease;
+}
+
+.call-button:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #f6f2ee 100%);
+}
+
+/* Pressed: it sinks into the console rather than scaling away from it. */
+.call-button:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 4px rgba(90, 80, 72, 0.35),
+    0 1px 2px rgba(90, 80, 72, 0.25);
+}
+
+.call-button:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 0 2px rgba(37, 99, 235, 0.55);
+}
+
+.call-button.is-lit {
+  background: linear-gradient(180deg, #fff6d8 0%, #ffe7a3 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 0 14px rgba(251, 191, 36, 0.7),
+    0 2px 4px rgba(90, 80, 72, 0.3);
+}
+
+/* The service light: amber and breathing until the call is answered. */
+.call-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.9);
+  animation: call-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes call-pulse {
+  0%, 100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .call-dot {
+    animation: none;
+    opacity: 0.9;
+  }
+  .call-button:active {
+    transform: none;
+  }
+}

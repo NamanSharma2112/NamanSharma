@@ -1,0 +1,204 @@
+/* The cabin window and the flight plan below it.
+   Kept together because the porthole is one material described across half a
+   dozen layers, and reading them apart tells you nothing. */
+
+/* ── the window ─────────────────────────────────────────────────────────── */
+
+.porthole {
+  background: linear-gradient(160deg, #fbf9f7 0%, #ece7e2 46%, #d9d2cb 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.95),
+    inset 0 -3px 6px rgba(120, 108, 98, 0.28),
+    0 1px 1px rgba(255, 255, 255, 0.8),
+    0 22px 46px rgba(72, 62, 54, 0.16),
+    0 6px 14px rgba(72, 62, 54, 0.1);
+}
+
+/* The recess the pane sits in, so the bezel reads as thick. */
+.porthole::after {
+  content: "";
+  position: absolute;
+  inset: 26px;
+  border-radius: 46% / 40%;
+  box-shadow:
+    inset 0 3px 7px rgba(96, 86, 78, 0.32),
+    inset 0 -2px 3px rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+}
+
+:root[data-theme="dark"] .porthole,
+.dark .porthole {
+  background: linear-gradient(160deg, #35322f 0%, #26241f 48%, #1b1917 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.14),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.6),
+    0 22px 46px rgba(0, 0, 0, 0.5),
+    0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+.porthole-sky {
+  background: linear-gradient(
+    to bottom,
+    #6db3e8 0%,
+    #9ccef2 34%,
+    #cfe6f6 62%,
+    #eef4f7 100%
+  );
+  transition: opacity 600ms var(--ease-out);
+}
+
+/* Cloud tops, banked below the horizon the way they sit from a window seat. */
+.porthole-clouds {
+  background:
+    radial-gradient(60% 26% at 22% 78%, rgba(255, 255, 255, 0.95), transparent 70%),
+    radial-gradient(52% 22% at 68% 86%, rgba(255, 255, 255, 0.9), transparent 72%),
+    radial-gradient(70% 30% at 50% 100%, rgba(255, 255, 255, 1), transparent 68%),
+    radial-gradient(40% 16% at 80% 68%, rgba(255, 255, 255, 0.7), transparent 74%);
+  transition: opacity 600ms var(--ease-out);
+}
+
+/* Night: the sky behind the shade, revealed as it lifts on a dark page. */
+.porthole-stars {
+  opacity: 0;
+  background:
+    radial-gradient(1.5px 1.5px at 20% 22%, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1.2px 1.2px at 64% 14%, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(1.6px 1.6px at 42% 38%, rgba(255, 255, 255, 0.85), transparent),
+    radial-gradient(1.1px 1.1px at 78% 46%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1.4px 1.4px at 30% 58%, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 86% 26%, rgba(255, 255, 255, 0.6), transparent),
+    linear-gradient(to bottom, #0b1a33 0%, #112543 46%, #1b3557 100%);
+  transition: opacity 600ms var(--ease-out);
+}
+
+:root[data-theme="dark"] .porthole-sky,
+.dark .porthole-sky,
+:root[data-theme="dark"] .porthole-clouds,
+.dark .porthole-clouds {
+  opacity: 0;
+}
+
+:root[data-theme="dark"] .porthole-stars,
+.dark .porthole-stars {
+  opacity: 1;
+}
+
+.porthole-shade {
+  background: linear-gradient(
+    to bottom,
+    #d8d0c7 0%,
+    #e6ded4 8%,
+    #efe8df 70%,
+    #ded5cb 100%
+  );
+  box-shadow:
+    0 3px 6px rgba(80, 70, 62, 0.32),
+    inset 0 -2px 0 rgba(255, 255, 255, 0.65);
+}
+
+:root[data-theme="dark"] .porthole-shade,
+.dark .porthole-shade {
+  background: linear-gradient(
+    to bottom,
+    #201e1b 0%,
+    #2b2825 8%,
+    #35312c 70%,
+    #262320 100%
+  );
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.6),
+    inset 0 -2px 0 rgba(255, 255, 255, 0.12);
+}
+
+.porthole-pull {
+  background: rgba(120, 108, 98, 0.55);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+:root[data-theme="dark"] .porthole-pull,
+.dark .porthole-pull {
+  background: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* A single sweep of light across the glass. */
+.porthole-glare {
+  background: linear-gradient(
+    118deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.14) 24%,
+    transparent 46%
+  );
+}
+
+.porthole-tab {
+  color: #9a8f86;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  transition: color 160ms ease;
+}
+
+.porthole-tab:hover {
+  color: #6a615a;
+}
+
+.dark .porthole-tab {
+  color: #6f6862;
+}
+
+.dark .porthole-tab:hover {
+  color: #a9a19a;
+}
+
+/* ── the flight plan ────────────────────────────────────────────────────── */
+
+/* Each leg wipes up into place as it comes into view. clip-path is the one
+   non-transform property that is cheap enough for this, because it does not
+   trigger layout the way animating height would. */
+.leg {
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  transition:
+    clip-path 620ms var(--ease-in-out),
+    opacity 420ms var(--ease-out);
+}
+
+.leg[data-visible="true"] {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leg {
+    clip-path: none;
+    transition: opacity 220ms var(--ease-out);
+  }
+  .leg[data-visible="true"] {
+    clip-path: none;
+  }
+}
+
+/* ── the page it all sits on ────────────────────────────────────────────── */
+
+/* Warm paper rather than white, and a deep slate at night. Set on the landing
+   itself so the rest of the site keeps its own ground. */
+.landing {
+  --page-bg: #f6f3f1;
+  --rail-tick: #d8d0c8;
+  background: var(--page-bg);
+  transition: background-color 600ms var(--ease-out);
+}
+
+.dark .landing {
+  --page-bg: #100f0e;
+  --rail-tick: #2e2a27;
+}
+
+/* The dashed track the legs hang off. */
+.track {
+  min-height: 28px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--rail-tick) 0 4px,
+    transparent 4px 9px
+  );
+}

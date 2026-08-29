@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import HomeBackdrop from "@/components/HomeBackdrop";
 import RainGlass from "@/components/RainGlass";
+import { usesPhotoBackdrop } from "@/lib/routes";
 import NeonCat from "@/components/NeonCat";
 import NeonTorii from "@/components/NeonTorii";
 
@@ -29,9 +30,10 @@ export default function SiteAtmosphere() {
   // The photo stays dark whichever theme is on — only the sheets in front of
   // it change tone — so anything sitting directly on it stays light.
 
-  // The desktop brings its own wallpaper and rain, and the blog stays a
-  // plain black page to read on.
-  if (pathname.startsWith("/desktop") || pathname.startsWith("/blog")) return null;
+  // The desktop brings its own wallpaper and rain, the blog stays a plain
+  // black page to read on, and the landing is a window seat on warm paper —
+  // rain over any of them would be someone else's weather.
+  if (!usesPhotoBackdrop(pathname)) return null;
 
   return (
     <>

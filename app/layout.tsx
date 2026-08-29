@@ -37,6 +37,7 @@ import FloatingContactWidget from "@/components/FloatingContactWidget";
 import MinimalNav from "@/components/MinimalNav";
 import SiteAtmosphere from "@/components/SiteAtmosphere";
 import Boot from "@/components/Boot";
+import PhotoScope from "@/components/PhotoScope";
 import Landing from "@/components/Landing";
 import { CommandMenu } from "@/components/CommandMenu";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -56,7 +57,7 @@ export default function RootLayout({
       <body suppressHydrationWarning className="min-h-full flex flex-col bg-[#f5f5f5] dark:bg-[#111110] text-black dark:text-white transition-colors duration-300">
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           disableTransitionOnChange
         >
           <DesktopProvider>
@@ -66,12 +67,14 @@ export default function RootLayout({
                 than on every client-side navigation. */}
             <Boot>
               <SiteAtmosphere />
-              <Landing delay={0.05}>
-                <MinimalNav />
-              </Landing>
-              <Landing delay={0.16} className="relative z-10 flex-1">
-                {children}
-              </Landing>
+              <PhotoScope>
+                <Landing delay={0.05}>
+                  <MinimalNav />
+                </Landing>
+                <Landing delay={0.16} className="relative z-10 flex-1">
+                  {children}
+                </Landing>
+              </PhotoScope>
             </Boot>
           </DesktopProvider>
           <FloatingContactWidget />

@@ -23,8 +23,10 @@ export default function MinimalNav() {
   const pathname = usePathname();
   const [portrait, setPortrait] = useState(PORTRAIT);
 
-  // The desktop is its own world and brings its own menu bar and dock.
-  if (pathname.startsWith("/desktop")) return null;
+  // The desktop brings its own menu bar and dock, and the landing carries its
+  // own name slug in the corner — a second one floating over it would be the
+  // same information twice.
+  if (pathname.startsWith("/desktop") || pathname === "/") return null;
 
   const openMenu = () =>
     document.dispatchEvent(

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useMotionValueEvent, useSpring } from "motion/react";
 import { useTheme } from "next-themes";
+import { playShadeClose, playShadeOpen } from "@/lib/sounds";
 
 /**
  * The cabin window, and the site's light switch.
@@ -62,21 +63,22 @@ export default function PortholeWindow() {
     y.set(shut ? CLOSED : OPEN);
   }, [mounted, resolvedTheme, y]);
 
+  /** One place to land the shade, so the sound and the theme never disagree. */
+  const land = (shut: boolean) => {
+    y.set(shut ? CLOSED : OPEN);
+    setClosed(shut);
+    setTheme(shut ? "dark" : "light");
+    // Only when it actually moved — a shade let go where it started is silent.
+    if (shut !== closed) (shut ? playShadeClose : playShadeOpen)();
+  };
+
   const settle = () => {
     setDragging(false);
     // More than halfway down and it latches shut; short of that it rolls back.
-    const shut = latest.current > OPEN / 2;
-    y.set(shut ? CLOSED : OPEN);
-    setClosed(shut);
-    setTheme(shut ? "dark" : "light");
+    land(latest.current > OPEN / 2);
   };
 
-  const toggle = () => {
-    const shut = !closed;
-    y.set(shut ? CLOSED : OPEN);
-    setClosed(shut);
-    setTheme(shut ? "dark" : "light");
-  };
+  const toggle = () => land(!closed);
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -90,8 +92,11 @@ export default function PortholeWindow() {
           style={{ inset: INSET, borderRadius: SHAPE }}
         >
           <div className="porthole-sky absolute inset-0" />
-          <div className="porthole-clouds absolute inset-0" />
+          {/* Two banks at two speeds, plus the wing light out past them. */}
+          <div className="porthole-clouds absolute inset-y-0 left-0" />
+          <div className="porthole-clouds-near absolute inset-y-0 left-0" />
           <div className="porthole-stars absolute inset-0" />
+          <span className="porthole-beacon absolute bottom-[22%] right-[16%] size-[3px] rounded-full bg-red-400 shadow-[0_0_6px_2px_rgba(248,113,113,0.85)]" />
 
           {/* The shade. Dragged, or nudged with the tab below. */}
           <motion.div

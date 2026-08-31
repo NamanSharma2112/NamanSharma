@@ -1,0 +1,398 @@
+/* The seat back in front of you, and the screen set into it.
+   The machine inside is not styled from here — this is only the furniture. */
+
+.seat {
+  /* One place for the geometry, so the small-screen rules below only have to
+     restate the numbers and not the layout. */
+  --pad-x: 15px;
+  --pad-top: 11px;
+  --pad-bottom: 13px;
+  /* The upholstery you actually see around the unit. Most of the surround
+     belongs here rather than to the cabin: seven pixels of seat between a
+     black cabin and a black bezel reads as a border, not as furniture. */
+  --seat-pad: 19px;
+  --strip-top: 27px;
+  --strip-base: 37px;
+  --bezel: 7px;
+  --ink: #8d97a6;
+
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+  /* Warm and very dark: the cabin is lit by incandescent, the seat is not.
+     A neutral black here and the cool grey of the seat has nothing to sit
+     against. */
+  background: #100e0c;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* The cabin above and behind: one reading light spilling down over the seat,
+   and the rows falling away into the dark at the edges. */
+.seat::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      120% 70% at 50% -18%,
+      rgba(255, 236, 205, 0.16) 0%,
+      rgba(255, 236, 205, 0.05) 38%,
+      transparent 70%
+    ),
+    radial-gradient(140% 100% at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.72) 100%);
+  transition: opacity 500ms var(--ease-out);
+}
+
+/* Reading light off: the screen becomes the only thing lighting the row. */
+.seat.is-dimmed::before {
+  opacity: 0.25;
+}
+
+/* ── the seat back ──────────────────────────────────────────────────────── */
+
+.seat-back {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 22px 22px 9px 9px;
+  padding: var(--seat-pad) var(--seat-pad) 9px;
+  background:
+    /* The weave. Two passes crossing — at this scale a fabric is a texture
+       you notice only when it is missing, but it has to be visible enough to
+       do that job. */
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.03) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(0, 0, 0, 0.09) 0 1px,
+      transparent 1px 3px
+    ),
+    /* Lit from the cabin above, falling away below. Well clear of the black
+       around it, or the whole panel disappears into the bezel. */
+    linear-gradient(180deg, #4a535f 0%, #39414b 34%, #2b323a 68%, #1f242b 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -16px 30px rgba(0, 0, 0, 0.42),
+    0 24px 60px rgba(0, 0, 0, 0.7);
+  transition: filter 500ms var(--ease-out);
+}
+
+.seat.is-dimmed .seat-back {
+  filter: brightness(0.72);
+}
+
+/* The seam running around the panel, where a real one is stitched. */
+.seat-back::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 17px 17px 5px 5px;
+  pointer-events: none;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+/* The tray table's catch, below the screen. One small moulded detail is worth
+   more than any amount of texture for saying what this object is. */
+.seat-latch {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  flex-shrink: 0;
+  width: 74px;
+  height: 9px;
+  margin-top: 8px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #454e59 0%, #2b323a 62%, #222831 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+/* The slot you hook a finger into to turn it. */
+.seat-latch::after {
+  content: "";
+  position: absolute;
+  inset: 3px 22px;
+  border-radius: 2px;
+  background: #14181d;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* ── the unit ───────────────────────────────────────────────────────────── */
+
+.ife {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  border-radius: 11px;
+  padding: var(--bezel);
+  background: linear-gradient(180deg, #17191c 0%, #101215 52%, #0a0b0d 100%);
+  box-shadow:
+    /* Light from the cabin catching the top of the bezel, and the recess it
+       sits in cut into the seat back around it. */
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* ── the strip above the screen ─────────────────────────────────────────── */
+
+.ife-top,
+.ife-base {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 4px;
+  color: var(--ink);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ife-top {
+  height: var(--strip-top);
+}
+
+.ife-base {
+  height: var(--strip-base);
+}
+
+.ife-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd3de;
+  font-weight: 500;
+}
+
+.ife-route {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ife-flight {
+  color: #cbd3de;
+}
+
+.ife-seat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* A hairline between the two halves of a pair, the way a status bar does it. */
+.ife-rule {
+  width: 1px;
+  height: 9px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ── the screen ─────────────────────────────────────────────────────────── */
+
+.ife-pane {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #000;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Glass over the picture: one sweep from the corner and a soft darkening at
+   the edges. Kept to a few percent — this sits on top of a whole operating
+   system, and anything stronger is just a dirty screen. */
+.ife-glass {
+  position: absolute;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      126deg,
+      rgba(255, 255, 255, 0.055) 0%,
+      rgba(255, 255, 255, 0.018) 18%,
+      transparent 38%
+    ),
+    radial-gradient(120% 100% at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+/* ── ports and buttons ──────────────────────────────────────────────────── */
+
+.ife-ports {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+/* Recessed: dark inside, with the light catching the lower rim of the hole. */
+.ife-jack {
+  display: grid;
+  place-items: center;
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  background: #0c0d0f;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.9),
+    0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.ife-jack::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #000;
+  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.12);
+}
+
+.ife-usb {
+  width: 15px;
+  height: 7px;
+  border-radius: 1.5px;
+  background: #0c0d0f;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.9),
+    inset 0 -3px 0 rgba(255, 255, 255, 0.07),
+    0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.ife-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Real switches: enough travel to feel pressed, and a rim that lights when
+   you are on them. */
+.ife-key {
+  display: grid;
+  place-items: center;
+  width: 21px;
+  height: 21px;
+  border-radius: 5px;
+  color: var(--ink);
+  background: linear-gradient(180deg, #23262b 0%, #16181c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 1px 2px rgba(0, 0, 0, 0.6);
+  transition:
+    color 160ms var(--ease-out),
+    translate 110ms var(--ease-out),
+    box-shadow 160ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ife-key:hover {
+    color: #e6ebf2;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.ife-key:active {
+  translate: 0 1px;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.ife-key:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 0 2px rgba(96, 165, 250, 0.8);
+}
+
+/* Lit while the reading light is on, the way the button over a seat is. */
+.ife-key.is-lit {
+  color: #f8c76a;
+  background: linear-gradient(180deg, #2a2519 0%, #1b1710 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 10px rgba(245, 158, 11, 0.28),
+    0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* The level between the two volume keys. */
+.ife-level {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 11px;
+}
+
+.ife-bar {
+  width: 3px;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.13);
+  transition:
+    background-color 160ms var(--ease-out),
+    height 160ms var(--ease-out);
+}
+
+.ife-bar.is-on {
+  background: #6ee7b7;
+  box-shadow: 0 0 5px rgba(110, 231, 183, 0.5);
+}
+
+/* ── smaller screens ────────────────────────────────────────────────────── */
+
+/* The furniture gives up its room first: the machine inside is the point, and
+   a bezel that eats a phone screen is a worse joke than a thin one. */
+@media (max-width: 720px) {
+  .seat {
+    --pad-x: 5px;
+    --pad-top: 5px;
+    --pad-bottom: 6px;
+    --seat-pad: 8px;
+    --strip-top: 22px;
+    --strip-base: 30px;
+    --bezel: 5px;
+  }
+
+  .seat-back {
+    border-radius: 13px 13px 6px 6px;
+    padding: var(--seat-pad) var(--seat-pad) 5px;
+  }
+
+  .seat-back::after,
+  .seat-latch {
+    display: none;
+  }
+
+  .ife-route {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seat::before,
+  .seat-back,
+  .ife-key,
+  .ife-bar {
+    transition: none;
+  }
+}

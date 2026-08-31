@@ -519,3 +519,185 @@
     inset 0 0 0 1px rgba(245, 158, 11, 0.4),
     0 0 12px rgba(245, 158, 11, 0.28);
 }
+
+/* ── depth in the sky ───────────────────────────────────────────────────── */
+
+/* The far bank: high, thin, and barely moving. Distance is mostly speed —
+   three layers at three speeds is what stops the view reading as wallpaper. */
+.porthole-clouds-far {
+  width: 170%;
+  opacity: 0.5;
+  animation: cloud-drift 96s linear infinite;
+  background:
+    radial-gradient(34% 9% at 24% 40%, rgba(255, 255, 255, 0.75), transparent 74%),
+    radial-gradient(28% 7% at 62% 30%, rgba(255, 255, 255, 0.6), transparent 76%),
+    radial-gradient(40% 10% at 88% 48%, rgba(255, 255, 255, 0.55), transparent 72%);
+  transition: opacity 600ms var(--ease-out);
+}
+
+.dark .porthole-clouds-far {
+  opacity: 0;
+}
+
+/* ── birds ──────────────────────────────────────────────────────────────── */
+
+/* Two flocks on long, offset cycles: mostly nothing, then a few seconds of
+   birds. A short loop would turn them into a metronome, which is the fastest
+   way to make something stop reading as alive. */
+.bird-flock {
+  position: absolute;
+  left: 0;
+  display: block;
+  color: rgba(70, 82, 96, 0.75);
+  opacity: 0;
+  will-change: transform;
+}
+
+.bird-flock-a {
+  top: 26%;
+  animation: bird-cross-a 23s linear infinite;
+}
+
+.bird-flock-b {
+  top: 44%;
+  animation: bird-cross-b 37s linear infinite;
+}
+
+.dark .bird-flock {
+  color: rgba(190, 205, 225, 0.5);
+}
+
+.bird {
+  position: absolute;
+  width: 13px;
+  height: 6px;
+  /* Each bird flaps on its own clock, so the flock is never in lockstep. */
+  animation: flap 0.5s ease-in-out infinite;
+}
+
+/* Spread within the flock, and staggered wingbeats. */
+.bird-flock .bird:nth-child(1) { left: 0;    top: 0;   }
+.bird-flock .bird:nth-child(2) { left: 17px; top: 7px;  animation-delay: 0.12s; }
+.bird-flock .bird:nth-child(3) { left: 33px; top: -4px; animation-delay: 0.26s; }
+
+/* Wings only need two positions to read as flapping at this size. */
+@keyframes flap {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.45);
+  }
+}
+
+/* Across and slightly down, visible for only part of the cycle. */
+@keyframes bird-cross-a {
+  0% {
+    transform: translate(-14%, 0) scale(0.9);
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.85;
+  }
+  26% {
+    opacity: 0.85;
+  }
+  32% {
+    transform: translate(128%, 26px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(128%, 26px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes bird-cross-b {
+  0%, 44% {
+    transform: translate(126%, 14px) scale(0.7);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  68% {
+    opacity: 0.6;
+  }
+  74%, 100% {
+    transform: translate(-16%, -10px) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* ── the scatter ────────────────────────────────────────────────────────── */
+
+.scatter-word {
+  text-decoration-color: rgba(120, 108, 98, 0.55);
+  transition: color 200ms var(--ease-out), text-decoration-color 200ms var(--ease-out);
+}
+
+.scatter:hover .scatter-word,
+.scatter-word:focus-visible {
+  color: #18181b;
+  text-decoration-color: rgba(37, 99, 235, 0.8);
+}
+
+.dark .scatter:hover .scatter-word,
+.dark .scatter-word:focus-visible {
+  color: #fafafa;
+}
+
+/* Each mark is a little card, so the burst reads as objects and not clip art. */
+.scatter-mark {
+  background: rgba(255, 255, 255, 0.96);
+  color: #27272a;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 8px 18px rgba(70, 60, 54, 0.16),
+    0 1px 3px rgba(70, 60, 54, 0.12);
+}
+
+.dark .scatter-mark {
+  background: rgba(38, 36, 33, 0.97);
+  color: #e4e4e7;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.07) inset,
+    0 8px 18px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .porthole-clouds-far,
+  .bird-flock,
+  .bird {
+    animation: none;
+  }
+  .bird-flock {
+    opacity: 0;
+  }
+}
+
+/* The scrim behind a burst: the page fading out under the marks rather than a
+   panel appearing over it, so nothing gains a hard edge. */
+.scatter-scrim {
+  top: -170px;
+  width: 420px;
+  height: 230px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    var(--page-bg) 42%,
+    color-mix(in srgb, var(--page-bg) 70%, transparent) 68%,
+    transparent 100%
+  );
+}
+
+.scatter-caption {
+  color: #6b6259;
+  background: color-mix(in srgb, var(--page-bg) 88%, transparent);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.dark .scatter-caption {
+  color: #a6a09a;
+}

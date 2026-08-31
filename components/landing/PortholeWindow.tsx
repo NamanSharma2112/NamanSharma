@@ -128,10 +128,24 @@ export default function PortholeWindow() {
               oversized so sliding it never uncovers an edge. */}
           <motion.div className="absolute inset-[-7%]" style={{ x: viewX, y: viewY }}>
             <div className="porthole-sky absolute inset-0" />
-            {/* Two banks at two speeds, plus the wing light out past them. */}
+            {/* Three banks at three speeds, plus the wing light past them. */}
             <div className="porthole-clouds absolute inset-y-0 left-0" />
             <div className="porthole-clouds-near absolute inset-y-0 left-0" />
+            {/* Far bank, barely moving — the horizon does not race past. */}
+            <div className="porthole-clouds-far absolute inset-y-0 left-0" />
             <div className="porthole-stars absolute inset-0" />
+
+            {/* Birds, occasionally. Two flocks on long offset cycles so they
+                are a thing you happen to catch rather than a metronome. */}
+            <span className="bird-flock bird-flock-a" aria-hidden>
+              <Bird />
+              <Bird />
+              <Bird />
+            </span>
+            <span className="bird-flock bird-flock-b" aria-hidden>
+              <Bird />
+              <Bird />
+            </span>
             <span className="porthole-beacon absolute bottom-[26%] right-[20%] size-[3px] rounded-full bg-red-400 shadow-[0_0_6px_2px_rgba(248,113,113,0.85)]" />
           </motion.div>
 
@@ -194,6 +208,20 @@ function BeltGlyph() {
         strokeLinecap="round"
       />
       <rect x="8.5" y="13.5" width="7" height="6" rx="1.4" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+/** A bird, at the size one is from a window seat: a pair of strokes. */
+function Bird() {
+  return (
+    <svg className="bird" viewBox="0 0 24 10" fill="none" aria-hidden>
+      <path
+        d="M1 7c3.4 0 5-5.4 7-5.4S13.6 7 17 7"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

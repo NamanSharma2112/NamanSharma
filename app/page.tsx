@@ -7,6 +7,7 @@ import CoordinateRail from "@/components/landing/CoordinateRail";
 import MenuChip from "@/components/landing/MenuChip";
 import PortholeWindow from "@/components/landing/PortholeWindow";
 import FlightPlan from "@/components/landing/FlightPlan";
+import StackScatter from "@/components/landing/StackScatter";
 import "@/components/landing/landing.css";
 
 export const metadata: Metadata = {
@@ -42,8 +43,9 @@ export default function Home() {
         </h1>
 
         <p className="mt-3 max-w-[46ch] text-[15px] leading-[1.65] text-zinc-500 dark:text-zinc-400">
-          Designing and building whatever I can imagine, with an engineering
-          mindset — obsessing over the details and the why behind good products.
+          Designing and building whatever I can imagine with{" "}
+          <StackScatter>a stack I trust</StackScatter> — obsessing over the
+          details and the why behind good products.
         </p>
 
         <div className="mt-7 flex flex-wrap items-center justify-center gap-2">

@@ -26,6 +26,15 @@ const TWITTER = "https://x.com/NamanSharma2112";
  * the cabin window decides whether it is day or night outside, and the flight
  * plan below is the route that got here.
  */
+/** A paper plane, wings folded — the send glyph, not an airliner. */
+function PaperPlane({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className}>
+      <path d="M21.4 2.6a1 1 0 0 0-1.05-.23L2.9 9.2a1 1 0 0 0 .06 1.87l4.9 1.62 1.62 4.9a1 1 0 0 0 1.87.06l6.83-17.45a1 1 0 0 0-.78-1.6zM9.9 13.9l-.9-2.7 8.2-4.6z" />
+    </svg>
+  );
+}
+
 export default function Home() {
   return (
     <main className="landing relative min-h-screen">
@@ -49,11 +58,17 @@ export default function Home() {
         </p>
 
         <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
+          {/* The plane takes off out of the button and a fresh one slides in
+              behind it, so the label never has to shuffle sideways. */}
           <a
             href={`mailto:${EMAIL}`}
-            className="rounded-full bg-zinc-900 px-4 py-2 text-[13px] font-medium text-white transition-[opacity,transform] duration-200 ease-[var(--ease-out)] hover:opacity-85 active:scale-[0.97] motion-reduce:active:scale-100 dark:bg-zinc-100 dark:text-zinc-900"
+            className="send group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-zinc-900 px-4 py-2 text-[13px] font-medium text-white transition-[opacity,transform] duration-200 ease-[var(--ease-out)] hover:opacity-90 active:scale-[0.97] motion-reduce:active:scale-100 dark:bg-zinc-100 dark:text-zinc-900"
           >
             email me
+            <span className="relative block size-[13px]" aria-hidden>
+              <PaperPlane className="send-out absolute inset-0" />
+              <PaperPlane className="send-in absolute inset-0" />
+            </span>
           </a>
           <a
             href={TWITTER}

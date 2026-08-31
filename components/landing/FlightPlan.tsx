@@ -96,30 +96,37 @@ export default function FlightPlan() {
       aria-label="Flight plan"
       className="relative mx-auto w-full max-w-[760px] px-6"
     >
-      {/* One continuous track, behind everything, from the plane to the end. */}
-      <span
-        aria-hidden
-        className="track absolute top-8 bottom-6 w-px"
-        style={{ left: TRACK_X }}
-      />
-
       {/* Sits above where the plane starts, not on top of it. */}
       <span
         aria-hidden
-        className="absolute -top-5 -translate-x-1/2 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400"
+        className="absolute top-0 -translate-x-1/2 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400"
         style={{ left: TRACK_X }}
       >
         Flight plan
       </span>
 
-      {/* The plane itself, riding the track. */}
-      <motion.span
+      {/* Track and plane share one box, and the plane's travel is 0–100% of
+          it. Positioned separately they never agreed: the plane ran the whole
+          height of the section while the line only covered the rows, so it
+          started above the track, finished below it, and passed the stop dots
+          at the wrong moments. One box makes the two the same measurement. */}
+      <span
         aria-hidden
-        className="absolute z-10 -translate-x-1/2"
-        style={{ left: TRACK_X, top, rotate: tilt }}
+        className="pointer-events-none absolute bottom-6 top-8 z-10 block w-px -translate-x-1/2"
+        style={{ left: TRACK_X }}
       >
-        <PlaneMark />
-      </motion.span>
+        <span className="track absolute inset-0 block" />
+
+        {/* The plane itself, riding the track. Centred through motion rather
+            than a utility class so the offsets and the bank compose into one
+            transform instead of fighting over the element. */}
+        <motion.span
+          className="absolute left-1/2 block"
+          style={{ top, rotate: tilt, x: "-50%", y: "-50%" }}
+        >
+          <PlaneMark />
+        </motion.span>
+      </span>
 
       <div className="grid grid-cols-[72px_32px_minmax(0,1fr)] gap-y-10 pt-8">
         {LEGS.map((leg, i) => (

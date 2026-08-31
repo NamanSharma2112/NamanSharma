@@ -25,12 +25,7 @@ export default function CopyEmail({ email }: Props) {
 
   return (
     <span className="relative inline-block">
-      <button
-        type="button"
-        onClick={handleClick}
-        className="cursor-pointer bg-transparent p-0 align-baseline underline decoration-dotted underline-offset-2 transition-opacity duration-150 [@media(hover:hover)]:hover:opacity-70"
-        style={{ transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)" }}
-      >
+      <button type="button" onClick={handleClick} className="copy-email">
         {email}
       </button>
       <span

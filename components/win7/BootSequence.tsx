@@ -77,7 +77,7 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[200] bg-black text-white">
+    <div className="absolute inset-0 z-[200] bg-black text-white">
       {phase === "post" && (
         <pre className="h-full overflow-hidden p-8 font-mono text-[12.5px] leading-[1.55] text-[#c8c8c8]">
           {POST_LINES.join("\n")}

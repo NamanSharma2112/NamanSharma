@@ -48,8 +48,14 @@ export default function WindowFrame({
 }: {
   win: WindowInstance;
   active: boolean;
-  /** The area windows may sit in — the desktop, minus the taskbar. */
-  bounds: { width: number; height: number };
+  /**
+   * The area windows may sit in — the desktop, minus the taskbar — and where
+   * it starts in the viewport. A window's geometry is in desktop coordinates
+   * but pointer events arrive in client ones, and left/top is the difference.
+   * It is zero when the machine fills the window and is not on /desktop, where
+   * it sits inside a bezel.
+   */
+  bounds: { width: number; height: number; left: number; top: number };
   onFocus: () => void;
   onClose: () => void;
   onMinimise: () => void;
@@ -89,7 +95,7 @@ export default function WindowFrame({
       // under the cursor so it does not leap away from the hand holding it.
       const geometry: Geometry =
         win.snapped && win.restore
-          ? { ...win.restore, x: e.clientX - win.restore.w / 2, y: win.y }
+          ? { ...win.restore, x: e.clientX - bounds.left - win.restore.w / 2, y: win.y }
           : { x: win.x, y: win.y, w: win.w, h: win.h };
 
       drag.current = {
@@ -100,7 +106,7 @@ export default function WindowFrame({
       };
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     },
-    [onFocus, win.h, win.maximized, win.restore, win.snapped, win.w, win.x, win.y]
+    [bounds.left, onFocus, win.h, win.maximized, win.restore, win.snapped, win.w, win.x, win.y]
   );
 
   const onDrag = useCallback(
@@ -119,12 +125,17 @@ export default function WindowFrame({
 
       state.geometry = { ...state.geometry, x, y };
 
+      // Against the desktop's own edges, not the window's — otherwise inside
+      // a bezel the zones sit off in the surround where the cursor can never
+      // reach them, and snapping quietly stops working.
+      const px = e.clientX - bounds.left;
+      const py = e.clientY - bounds.top;
       const zone: SnapZone =
-        e.clientY <= SNAP_MARGIN
+        py <= SNAP_MARGIN
           ? "top"
-          : e.clientX <= SNAP_MARGIN
+          : px <= SNAP_MARGIN
             ? "left"
-            : e.clientX >= bounds.width - SNAP_MARGIN
+            : px >= bounds.width - SNAP_MARGIN
               ? "right"
               : null;
 
@@ -138,7 +149,7 @@ export default function WindowFrame({
       frame.style.width = `${state.geometry.w}px`;
       frame.style.height = `${state.geometry.h}px`;
     },
-    [bounds.height, bounds.width, onSnapPreview]
+    [bounds.height, bounds.left, bounds.top, bounds.width, onSnapPreview]
   );
 
   const endDrag = useCallback(

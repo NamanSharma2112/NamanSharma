@@ -324,6 +324,198 @@
   }
 }
 
+/* ── the social row ─────────────────────────────────────────────────────── */
+
+.social {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  color: #71717a;
+  transition:
+    color 200ms var(--ease-out),
+    scale 200ms var(--ease-out);
+}
+
+.dark .social {
+  color: #8b8b93;
+}
+
+/* The disc grows out from under the mark rather than switching on. Its own
+   element, so scaling it never touches the icon sitting on top. */
+.social-disc {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  scale: 0.55;
+  transition:
+    opacity 200ms var(--ease-out),
+    scale 260ms var(--ease-out);
+}
+
+.dark .social-disc {
+  background: rgba(255, 255, 255, 0.11);
+}
+
+/* Above the mark, and clear of it — the row is at the bottom of a block, so
+   there is room over it and none under. */
+.social-name {
+  position: absolute;
+  bottom: calc(100% - 4px);
+  left: 50%;
+  translate: -50% 3px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6b6259;
+  background: color-mix(in srgb, var(--page-bg, #f6f3f1) 88%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 180ms var(--ease-out),
+    translate 180ms var(--ease-out);
+}
+
+.dark .social-name {
+  color: #a6a09a;
+}
+
+/* Gated, like the roll above it: a tap fires hover with no matching leave, so
+   on a phone the disc would open and stay open. */
+@media (hover: hover) and (pointer: fine) {
+  .social:hover {
+    color: #18181b;
+  }
+
+  .dark .social:hover {
+    color: #fafafa;
+  }
+
+  .social:hover .social-disc,
+  .social:hover .social-name {
+    opacity: 1;
+  }
+
+  .social:hover .social-disc {
+    scale: 1;
+  }
+
+  .social:hover .social-name {
+    translate: -50% 0;
+  }
+}
+
+/* Focus gets the disc and the name too — the same affordance, reached by
+   keyboard. */
+.social:focus-visible {
+  outline: none;
+}
+
+.social:focus-visible .social-disc,
+.social:focus-visible .social-name {
+  opacity: 1;
+}
+
+.social:focus-visible .social-disc {
+  scale: 1;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.55);
+}
+
+.social:focus-visible .social-name {
+  translate: -50% 0;
+}
+
+.social:active {
+  scale: 0.92;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .social,
+  .social-disc,
+  .social-name {
+    transition: none;
+  }
+  .social:active {
+    scale: none;
+  }
+}
+
+/* ── the blog's ground ──────────────────────────────────────────────────── */
+
+/* Warm paper by day and near-black at night, following the site rather than
+   overriding it. Transitioned, so flipping the theme while reading a post is
+   a change of light rather than a cut. */
+.blog-ground {
+  background: #f5f4f2;
+  transition: background-color 300ms var(--ease-out);
+}
+
+.dark .blog-ground {
+  background: #0a0a0a;
+}
+
+/* ── the email address ──────────────────────────────────────────────────── */
+
+/* Reads as text until the cursor is on it, then commits: the rule under it
+   goes from a muted dot to blue and the address darkens. The same move as the
+   phrase in the bio, so the two inline affordances on the page behave alike
+   rather than each inventing their own hover. */
+.copy-email {
+  cursor: pointer;
+  padding: 0;
+  background: transparent;
+  vertical-align: baseline;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: rgba(120, 108, 98, 0.55);
+  text-underline-offset: 3px;
+  transition:
+    color 200ms var(--ease-out),
+    text-decoration-color 200ms var(--ease-out);
+}
+
+.dark .copy-email {
+  text-decoration-color: rgba(255, 255, 255, 0.32);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .copy-email:hover {
+    color: #18181b;
+    text-decoration-color: rgba(37, 99, 235, 0.85);
+  }
+
+  .dark .copy-email:hover {
+    color: #fafafa;
+    text-decoration-color: rgba(96, 165, 250, 0.9);
+  }
+}
+
+.copy-email:focus-visible {
+  outline: none;
+  color: #18181b;
+  text-decoration-color: rgba(37, 99, 235, 0.85);
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.45);
+}
+
+.dark .copy-email:focus-visible {
+  color: #fafafa;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy-email {
+    transition: none;
+  }
+}
+
 /* The page arriving once the intro lifts. Deliberately no forwards fill —
    holding a transform or filter here would make this element the containing
    block for any position: fixed descendant. `backwards` covers the delay

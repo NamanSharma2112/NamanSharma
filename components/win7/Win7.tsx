@@ -33,24 +33,46 @@ export default function Win7() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [startOpen, setStartOpen] = useState(false);
   const [selected, setSelected] = useState<AppId | null>(null);
-  const [bounds, setBounds] = useState({ width: 1280, height: 720 });
+  const [bounds, setBounds] = useState({ width: 1280, height: 720, left: 0, top: 0 });
   const [snapPreview, setSnapPreview] = useState<SnapZone>(null);
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
   const [wallpaper, setWallpaper] = useState(0);
 
   const topZ = useRef(10);
   const opened = useRef(0);
+  const root = useRef<HTMLDivElement>(null);
 
-  // The desktop is everything above the taskbar.
+  // The desktop is everything above the taskbar — of whatever box the machine
+  // has been put in, which is not the viewport any more: on /desktop it is set
+  // into the back of the seat in front, inside a bezel.
+  //
+  // The origin travels with the size because window geometry is kept in
+  // desktop coordinates while pointer events arrive in client ones, and the
+  // difference between the two is exactly this offset.
   useEffect(() => {
-    const measure = () =>
+    const node = root.current;
+    if (!node) return;
+
+    const measure = () => {
+      const r = node.getBoundingClientRect();
       setBounds({
-        width: window.innerWidth,
-        height: Math.max(240, window.innerHeight - TASKBAR_H),
+        width: Math.round(r.width),
+        height: Math.max(240, Math.round(r.height) - TASKBAR_H),
+        left: r.left,
+        top: r.top,
       });
+    };
+
     measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    // The box can move without resizing — the bezel's padding is relative, so
+    // a window resize shifts the origin even when the pane keeps its size.
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, []);
 
   const focus = useCallback((id: string) => {
@@ -208,47 +230,40 @@ export default function Win7() {
     { label: "Personalize", onSelect: () => open("paint") },
   ];
 
-  if (power === "booting") {
-    return (
-      <div className="win7 fixed inset-0 z-[100] overflow-hidden bg-black">
-        <div data-fixed-screen hidden />
-        <BootSequence onDone={() => setPower("on")} />
-      </div>
-    );
-  }
-
-  if (power === "off") {
-    return (
-      <div className="win7 fixed inset-0 z-[100] grid place-items-center bg-black text-center">
-        <div data-fixed-screen hidden />
-        <div>
-          <p className="text-[13px] text-white/55">
-            It is now safe to turn off your computer.
-          </p>
-          <button
-            type="button"
-            onClick={() => setPower("booting")}
-            className="w7-btn mt-4 px-4 py-1.5 text-[12px] text-[#16202b]"
-          >
-            Power on
-          </button>
-          <p className="mt-6 text-[11px] text-white/30">
-            <Link href="/" className="underline underline-offset-2 hover:text-white/60">
-              Back to the site
-            </Link>
-          </p>
-        </div>
-      </div>
-    );
-  }
-
+  // One root for all three power states, so the box being measured is never
+  // swapped out from under the observer watching it.
   return (
     <div
-      className="win7 fixed inset-0 z-[100] overflow-hidden"
-      style={{ background: WALLPAPERS[wallpaper] }}
+      ref={root}
+      className="win7 absolute inset-0 overflow-hidden"
+      style={{ background: power === "on" ? WALLPAPERS[wallpaper] : "#000" }}
     >
-      <div data-fixed-screen hidden />
+      {power === "booting" && <BootSequence onDone={() => setPower("on")} />}
 
+      {power === "off" && (
+        <div className="grid h-full place-items-center text-center">
+          <div>
+            <p className="text-[13px] text-white/55">
+              It is now safe to turn off your computer.
+            </p>
+            <button
+              type="button"
+              onClick={() => setPower("booting")}
+              className="w7-btn mt-4 px-4 py-1.5 text-[12px] text-[#16202b]"
+            >
+              Power on
+            </button>
+            <p className="mt-6 text-[11px] text-white/30">
+              <Link href="/" className="underline underline-offset-2 hover:text-white/60">
+                Back to the site
+              </Link>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {power === "on" && (
+        <>
       {/* Desktop */}
       <div
         className="absolute inset-x-0 top-0"
@@ -259,9 +274,12 @@ export default function Win7() {
         onContextMenu={(e) => {
           if (e.target !== e.currentTarget) return;
           e.preventDefault();
+          // Client coordinates into desktop ones: the menu is positioned
+          // inside this box, and on /desktop the box does not start at the
+          // corner of the window.
           setMenu({
-            x: Math.min(e.clientX, bounds.width - 190),
-            y: Math.min(e.clientY, bounds.height - 170),
+            x: Math.min(e.clientX - bounds.left, bounds.width - 190),
+            y: Math.min(e.clientY - bounds.top, bounds.height - 170),
           });
         }}
       >
@@ -365,6 +383,8 @@ export default function Win7() {
         onSelect={selectFromTaskbar}
         onShowDesktop={toggleShowDesktop}
       />
+        </>
+      )}
     </div>
   );
 }

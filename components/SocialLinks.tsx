@@ -7,6 +7,11 @@ import { cn } from "@/lib/utils";
  *
  * Two stacked copies inside a box the height of one, moved by exactly that
  * height — so the swap lands perfectly aligned however long the travel takes.
+ *
+ * Under the mark, a disc grows out from the centre rather than switching on,
+ * and the name appears above it. Four unlabelled glyphs in a row are a
+ * guessing game otherwise, and the native tooltip takes a second to arrive —
+ * by which time you have already clicked something.
  */
 
 const SIZE = 16;
@@ -59,20 +64,26 @@ export default function SocialLinks({ className }: { className?: string }) {
           key={label}
           href={href}
           aria-label={label}
-          title={label}
           target={href.startsWith("mailto:") ? undefined : "_blank"}
           rel="noopener noreferrer"
-          className="group flex size-9 items-center justify-center rounded-full text-zinc-500 transition-colors duration-200 hover:bg-black/5 hover:text-zinc-900 dark:hover:bg-white/10 dark:hover:text-white"
+          className="social group"
         >
+          <span className="social-disc" aria-hidden />
+
           {/* A window exactly one icon tall, so only one is ever in view. */}
           <span
-            className="block overflow-hidden"
+            className="social-icon block overflow-hidden"
             style={{ height: SIZE, width: SIZE }}
           >
             <span className="icon-roll block">
               <Icon className="block" style={{ width: SIZE, height: SIZE }} />
               <Icon className="block" style={{ width: SIZE, height: SIZE }} />
             </span>
+          </span>
+
+          {/* Not read out: the link already carries the same name. */}
+          <span className="social-name" aria-hidden>
+            {label}
           </span>
         </a>
       ))}

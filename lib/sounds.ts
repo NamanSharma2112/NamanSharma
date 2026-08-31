@@ -15,6 +15,67 @@ function getAudioContext(): AudioContext {
   return audioCtx;
 }
 
+/* ── the volume knob ────────────────────────────────────────────────────────
+   Every voice below goes through one gain node rather than straight at the
+   destination, so there is a single place to turn the cabin down. The seat's
+   volume rocker drives it; the setting is remembered per browser, because
+   having to turn it down again on every visit is worse than it being loud
+   once. */
+
+const VOLUME_KEY = "cabin-volume";
+const DEFAULT_VOLUME = 0.7;
+
+let master: GainNode | null = null;
+let volume: number | null = null;
+
+function currentVolume(): number {
+  if (volume === null) {
+    volume = DEFAULT_VOLUME;
+    try {
+      // Checked for null before parsing: Number(null) is 0, which is a
+      // perfectly valid volume, so folding the two together silently mutes
+      // the site for everyone who has never touched the rocker.
+      const stored = localStorage.getItem(VOLUME_KEY);
+      if (stored !== null) {
+        const parsed = Number(stored);
+        if (Number.isFinite(parsed) && parsed >= 0 && parsed <= 1) volume = parsed;
+      }
+    } catch {
+      // Storage blocked. The default stands.
+    }
+  }
+  return volume;
+}
+
+/** The one node everything connects to. */
+function out(ctx: AudioContext): GainNode {
+  // Rebuilt if the context was ever replaced — a node belongs to one context
+  // and connecting across them throws.
+  if (!master || master.context !== ctx) {
+    master = ctx.createGain();
+    master.gain.value = currentVolume();
+    master.connect(ctx.destination);
+  }
+  return master;
+}
+
+export function getVolume(): number {
+  return currentVolume();
+}
+
+/** 0 is muted, 1 is as built. Ramped, so a held rocker does not click. */
+export function setVolume(next: number) {
+  volume = Math.min(1, Math.max(0, next));
+  if (master) {
+    master.gain.setTargetAtTime(volume, master.context.currentTime, 0.015);
+  }
+  try {
+    localStorage.setItem(VOLUME_KEY, String(volume));
+  } catch {
+    // Storage blocked: it holds for this visit and no longer.
+  }
+}
+
 /**
  * Mechanical keyboard click (downstroke).
  * Sharp high-frequency transient + bottoming out thock.
@@ -32,7 +93,7 @@ export function playTap() {
   clickGain.gain.setValueAtTime(0.1, now);
   clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
   click.connect(clickGain);
-  clickGain.connect(ctx.destination);
+  clickGain.connect(out(ctx));
   click.start(now);
   click.stop(now + 0.03);
 
@@ -45,7 +106,7 @@ export function playTap() {
   thudGain.gain.setValueAtTime(0.3, now);
   thudGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
   thud.connect(thudGain);
-  thudGain.connect(ctx.destination);
+  thudGain.connect(out(ctx));
   thud.start(now);
   thud.stop(now + 0.06);
 
@@ -58,7 +119,7 @@ export function playTap() {
   ringGain.gain.setValueAtTime(0.04, now);
   ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
   ring.connect(ringGain);
-  ringGain.connect(ctx.destination);
+  ringGain.connect(out(ctx));
   ring.start(now);
   ring.stop(now + 0.06);
 }
@@ -86,7 +147,7 @@ export function playToggle() {
   clackGain.gain.setValueAtTime(0.06, upNow);
   clackGain.gain.exponentialRampToValueAtTime(0.001, upNow + 0.03);
   clack.connect(clackGain);
-  clackGain.connect(ctx.destination);
+  clackGain.connect(out(ctx));
   clack.start(upNow);
   clack.stop(upNow + 0.04);
   
@@ -99,7 +160,7 @@ export function playToggle() {
   ringGain.gain.setValueAtTime(0.03, upNow);
   ringGain.gain.exponentialRampToValueAtTime(0.001, upNow + 0.04);
   ring.connect(ringGain);
-  ringGain.connect(ctx.destination);
+  ringGain.connect(out(ctx));
   ring.start(upNow);
   ring.stop(upNow + 0.05);
 }
@@ -144,7 +205,7 @@ function noise(
 
   source.connect(filter);
   filter.connect(envelope);
-  envelope.connect(ctx.destination);
+  envelope.connect(out(ctx));
   source.start(start);
   source.stop(start + duration);
 }
@@ -159,7 +220,7 @@ function knock(ctx: AudioContext, start: number, frequency = 180, gain = 0.16) {
   env.gain.setValueAtTime(gain, start);
   env.gain.exponentialRampToValueAtTime(0.0001, start + 0.08);
   osc.connect(env);
-  env.connect(ctx.destination);
+  env.connect(out(ctx));
   osc.start(start);
   osc.stop(start + 0.09);
 }
@@ -204,7 +265,7 @@ export function playAccept() {
     env.gain.exponentialRampToValueAtTime(0.13, at + 0.012);
     env.gain.exponentialRampToValueAtTime(0.0001, at + 0.22);
     osc.connect(env);
-    env.connect(ctx.destination);
+    env.connect(out(ctx));
     osc.start(at);
     osc.stop(at + 0.24);
   });
@@ -224,7 +285,7 @@ export function playWindowOpen() {
   env.gain.exponentialRampToValueAtTime(0.05, now + 0.02);
   env.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
   osc.connect(env);
-  env.connect(ctx.destination);
+  env.connect(out(ctx));
   osc.start(now);
   osc.stop(now + 0.18);
 }
@@ -250,7 +311,7 @@ export function playMinimise() {
   env.gain.exponentialRampToValueAtTime(0.045, now + 0.015);
   env.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
   osc.connect(env);
-  env.connect(ctx.destination);
+  env.connect(out(ctx));
   osc.start(now);
   osc.stop(now + 0.18);
 }

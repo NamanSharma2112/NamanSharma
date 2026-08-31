@@ -1,7 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useMotionValueEvent } from "motion/react";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useMotionValueEvent,
+  useSpring,
+  useTransform,
+} from "motion/react";
 import { playAccept, playSwipe } from "@/lib/sounds";
 
 /**
@@ -13,8 +20,8 @@ import { playAccept, playSwipe } from "@/lib/sounds";
  * actually passed the head. Let go short of it and the card springs back to
  * the hand, which is the whole reason it is a drag and not a button.
  *
- * There is always a way past: a skip control, Escape, and it only ever runs
- * once per session.
+ * There is always a way past: a skip control, Escape, Enter, and it only ever
+ * runs once per session.
  */
 
 const SEEN = "boarded";
@@ -23,6 +30,8 @@ const SEEN = "boarded";
 const THROW = 190;
 /** Where the slot sits relative to the card's resting place. */
 const SLOT = 150;
+/** Close enough that the reader wakes up and shows where to put the card. */
+const ARMED = 60;
 
 type Phase = "ready" | "reading" | "accepted";
 
@@ -37,6 +46,7 @@ export default function BoardingPass({
 }) {
   const [phase, setPhase] = useState<Phase>("ready");
   const [hint, setHint] = useState(false);
+  const [armed, setArmed] = useState(false);
   /** Set by every way out — swiping, skipping, Escape — so all of them fade
       and unmount through the same path. Skipping used to call onDone without
       ever starting the exit, which left the gate mounted at full opacity with
@@ -56,6 +66,8 @@ export default function BoardingPass({
 
   useMotionValueEvent(y, "change", (value) => {
     travelled.current = value;
+    // The reader notices the card coming before it arrives.
+    setArmed(value > ARMED);
   });
 
   const leave = useCallback(() => {
@@ -79,11 +91,10 @@ export default function BoardingPass({
     window.setTimeout(() => {
       setPhase("accepted");
       playAccept();
-    }, 420);
-    window.setTimeout(leave, 900);
+    }, 460);
+    window.setTimeout(leave, 950);
   }, [leave, phase]);
 
-  // Escape skips, and a nudge after a while for anyone who has not spotted it.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") leave();
@@ -108,8 +119,8 @@ export default function BoardingPass({
     >
       {/* Locks the document while the gate is up, so nothing scrolls behind it
           and no scrollbar sits beside a full-screen panel. Dropped the moment
-          the card is accepted, so the page underneath is free before the sheet
-          has finished clearing. */}
+          the card is on its way, so the page underneath is free before the
+          sheet has finished clearing. */}
       {!leaving && <div data-fixed-screen hidden />}
 
       <div className="relative flex flex-col items-center">
@@ -127,39 +138,25 @@ export default function BoardingPass({
             phase === "ready"
               ? {}
               : {
-                  y: SLOT + 70,
+                  y: SLOT + 78,
                   opacity: 0,
-                  transition: { duration: 0.32, ease: [0.23, 1, 0.32, 1] },
+                  scale: 0.97,
+                  transition: { duration: 0.36, ease: [0.23, 1, 0.32, 1] },
                 }
           }
-          whileDrag={{ scale: 1.015, rotate: -0.6 }}
-          className="pass relative z-10 cursor-grab active:cursor-grabbing"
+          // Behind the reader on purpose: dragging the card down slides it in
+          // under the lip, which is what being inserted looks like. In front,
+          // it just covers the machine and hides everything it is doing.
+          className="relative z-0 cursor-grab active:cursor-grabbing"
           aria-hidden
         >
-          <Pass />
+          <TiltingPass />
         </motion.div>
 
-        {/* The reader, and the slot the card goes into. */}
-        <div className="reader relative mt-8 w-[300px] rounded-[10px] px-4 pb-4 pt-3 sm:w-[330px]">
-          <span className="reader-slot absolute inset-x-5 top-0 block h-[7px] -translate-y-1/2 rounded-full" />
-          <div className="mt-2 flex items-center gap-3">
-            <span className="reader-screen flex h-11 flex-1 items-center justify-center rounded-[4px] font-mono text-[15px] tracking-[0.3em]">
-              {phase === "accepted" ? "WELCOME" : phase === "reading" ? "READING" : "READY"}
-            </span>
-            <span
-              className={`size-3.5 rounded-full transition-colors duration-200 ${
-                phase === "accepted"
-                  ? "bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.9)]"
-                  : phase === "reading"
-                    ? "bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.9)]"
-                    : "bg-zinc-400/70"
-              }`}
-            />
-          </div>
-        </div>
+        <Reader phase={phase} armed={armed} />
       </div>
 
-      <p className="mt-7 text-center text-[13.5px] text-zinc-500">
+      <p className="mt-8 text-center text-[13.5px] text-zinc-500 dark:text-zinc-400">
         {phase === "accepted" ? "Boarding" : "Swipe the boarding pass to enter"}
       </p>
 
@@ -176,13 +173,173 @@ export default function BoardingPass({
       <button
         type="button"
         onClick={leave}
-        className="absolute bottom-8 right-8 text-[13px] text-zinc-400 transition-colors hover:text-zinc-700"
+        className="absolute bottom-8 right-8 text-[13px] text-zinc-400 transition-colors hover:text-zinc-700 dark:hover:text-zinc-200"
       >
         Skip
       </button>
     </motion.div>
   );
 }
+
+/* ── the card, given thickness ──────────────────────────────────────────── */
+
+/** How far the card leans, in degrees, at the far edge of its own surface. */
+const LEAN = 13;
+
+/**
+ * The pass, tilted by wherever the pointer is over it.
+ *
+ * Separate from the drag wrapper on purpose: one element cannot be both the
+ * thing being dragged along Y and the thing being rotated by a pointer without
+ * the two writing over each other's transform. The outer element moves, this
+ * one leans, and the light on its face follows the lean.
+ */
+function TiltingPass() {
+  const box = useRef<HTMLDivElement>(null);
+
+  const px = useMotionValue(0.5);
+  const py = useMotionValue(0.5);
+  // Springs, because this is a value the pointer drives and can reverse at any
+  // moment — a duration would keep animating to a target that has already moved.
+  const rx = useSpring(useTransform(py, [0, 1], [LEAN, -LEAN]), {
+    stiffness: 170,
+    damping: 18,
+    mass: 0.4,
+  });
+  const ry = useSpring(useTransform(px, [0, 1], [-LEAN, LEAN]), {
+    stiffness: 170,
+    damping: 18,
+    mass: 0.4,
+  });
+
+  // The highlight sits where the light would catch, opposite the lean.
+  const sheenX = useTransform(px, [0, 1], ["120%", "-20%"]);
+  const sheenY = useTransform(py, [0, 1], ["120%", "-20%"]);
+  const sheen = useMotionTemplate`radial-gradient(60% 120% at ${sheenX} ${sheenY}, rgba(255,255,255,0.75), rgba(255,255,255,0.16) 38%, transparent 68%)`;
+
+  const track = (e: React.PointerEvent) => {
+    const node = box.current;
+    if (!node) return;
+    const r = node.getBoundingClientRect();
+    px.set((e.clientX - r.left) / r.width);
+    py.set((e.clientY - r.top) / r.height);
+  };
+
+  const release = () => {
+    px.set(0.5);
+    py.set(0.5);
+  };
+
+  return (
+    <div
+      ref={box}
+      onPointerMove={track}
+      onPointerLeave={release}
+      style={{ perspective: 1100 }}
+      className="pass-stage"
+    >
+      <motion.div
+        style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
+        className="pass relative"
+      >
+        <Pass />
+
+        {/* The light on the face, following the lean. */}
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-[10px] mix-blend-overlay"
+          style={{ backgroundImage: sheen }}
+        />
+
+        {/* The card has an edge. Pushed back behind the face so the lean
+            reveals it rather than it floating alongside. */}
+        <span
+          aria-hidden
+          className="pass-edge pointer-events-none absolute inset-0 rounded-[10px]"
+          style={{ transform: "translateZ(-6px)" }}
+        />
+      </motion.div>
+    </div>
+  );
+}
+
+/* ── the reader ─────────────────────────────────────────────────────────── */
+
+function Reader({ phase, armed }: { phase: Phase; armed: boolean }) {
+  const reading = phase === "reading";
+  const accepted = phase === "accepted";
+
+  return (
+    <div className={`reader relative z-20 mt-9 w-[366px] sm:w-[456px] ${armed ? "is-armed" : ""}`}>
+      {/* The mouth: a lip above, the dark slot, and a throat behind it. */}
+      <div className="reader-mouth absolute inset-x-4 -top-[9px] h-[18px] rounded-[3px]">
+        <span className="reader-slot absolute inset-x-[6px] top-[6px] block h-[6px] rounded-full" />
+      </div>
+
+      <div className="px-4 pb-4 pt-6">
+        <div className="flex items-center gap-3">
+          {/* The display, with its dot grid and a beam that sweeps while it
+              reads — the one moment the machine is actually doing something. */}
+          <span className="reader-screen relative flex h-12 flex-1 items-center justify-center overflow-hidden rounded-[5px]">
+            <span className="reader-dots pointer-events-none absolute inset-0" />
+            {reading && <span className="reader-beam pointer-events-none absolute inset-y-0 w-1/3" />}
+            <span
+              className={`relative font-mono text-[15px] tracking-[0.32em] ${
+                accepted ? "text-emerald-300" : reading ? "text-amber-200" : "text-emerald-300/90"
+              }`}
+            >
+              {accepted ? "WELCOME" : reading ? "READING" : armed ? "INSERT" : "READY"}
+            </span>
+          </span>
+
+          {/* Status stack, the way a real reader wears its lights. */}
+          <span className="flex flex-col gap-1.5">
+            <Lamp on={!reading && !accepted} tone="idle" label="PWR" />
+            <Lamp on={reading} tone="busy" label="RD" />
+            <Lamp on={accepted} tone="ok" label="OK" />
+          </span>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between">
+          <span className="font-mono text-[8px] uppercase tracking-[0.22em] text-zinc-400 dark:text-zinc-500">
+            Northern Air · Gate A12
+          </span>
+          {/* Chevrons pointing the way the card should go. */}
+          <span className={`reader-arrows flex items-center gap-[3px] ${armed ? "is-live" : ""}`}>
+            {[0, 1, 2].map((i) => (
+              <span key={i} className="arrow block size-1.5 rotate-45 border-b border-r" />
+            ))}
+          </span>
+        </div>
+      </div>
+
+      {/* Feet, so it sits on something. */}
+      <span aria-hidden className="reader-foot absolute -bottom-1 left-8 h-2 w-12 rounded-b-[3px]" />
+      <span aria-hidden className="reader-foot absolute -bottom-1 right-8 h-2 w-12 rounded-b-[3px]" />
+    </div>
+  );
+}
+
+function Lamp({ on, tone, label }: { on: boolean; tone: "idle" | "busy" | "ok"; label: string }) {
+  const colour = on
+    ? tone === "ok"
+      ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.95)]"
+      : tone === "busy"
+        ? "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.95)]"
+        : "bg-sky-400 shadow-[0_0_7px_rgba(56,189,248,0.85)]"
+    : "bg-zinc-400/35";
+
+  return (
+    <span className="flex items-center gap-1.5">
+      <span className={`size-2 rounded-full transition-all duration-200 ${colour}`} />
+      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-zinc-400 dark:text-zinc-500">
+        {label}
+      </span>
+    </span>
+  );
+}
+
+/* ── the pass face ──────────────────────────────────────────────────────── */
 
 /** The pass itself — a stub, a spine, and a lot of small print. */
 function Pass() {
@@ -269,10 +426,7 @@ function Logo() {
   return (
     <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden className="text-blue-600">
       <rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor" opacity="0.14" />
-      <path
-        d="M12 5l6 12-6-3-6 3z"
-        fill="currentColor"
-      />
+      <path d="M12 5l6 12-6-3-6 3z" fill="currentColor" />
     </svg>
   );
 }

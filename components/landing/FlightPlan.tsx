@@ -98,12 +98,13 @@ export default function FlightPlan() {
         style={{ left: TRACK_X }}
       />
 
+      {/* Sits above where the plane starts, not on top of it. */}
       <span
         aria-hidden
-        className="absolute top-0 -translate-x-1/2 font-mono text-[9px] uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400"
+        className="absolute -top-5 -translate-x-1/2 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400"
         style={{ left: TRACK_X }}
       >
-        <span className="block -translate-x-1/2 whitespace-nowrap pl-8">Flight plan</span>
+        Flight plan
       </span>
 
       {/* The plane itself, riding the track. */}

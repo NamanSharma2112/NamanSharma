@@ -209,3 +209,48 @@ export function playAccept() {
     osc.stop(at + 0.24);
   });
 }
+
+/** A window opening: a short rising sweep that lands on a soft click. */
+export function playWindowOpen() {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+  noise(ctx, now, 0.16, { gain: 0.035, from: 400, to: 1600, q: 0.7 });
+  const osc = ctx.createOscillator();
+  const env = ctx.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(320, now);
+  osc.frequency.exponentialRampToValueAtTime(660, now + 0.12);
+  env.gain.setValueAtTime(0.0001, now);
+  env.gain.exponentialRampToValueAtTime(0.05, now + 0.02);
+  env.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+  osc.connect(env);
+  env.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.18);
+}
+
+/** Closing: the same shape upside down, ending in a small wooden knock. */
+export function playWindowClose() {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+  noise(ctx, now, 0.13, { gain: 0.03, from: 1500, to: 380, q: 0.7 });
+  knock(ctx, now + 0.1, 200, 0.09);
+}
+
+/** Folding away: a quick downward sweep, quieter than closing outright. */
+export function playMinimise() {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const env = ctx.createGain();
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(620, now);
+  osc.frequency.exponentialRampToValueAtTime(180, now + 0.14);
+  env.gain.setValueAtTime(0.0001, now);
+  env.gain.exponentialRampToValueAtTime(0.045, now + 0.015);
+  env.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+  osc.connect(env);
+  env.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.18);
+}

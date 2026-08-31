@@ -8,6 +8,7 @@ import StartMenu from "./StartMenu";
 import Taskbar from "./Taskbar";
 import WindowFrame from "./WindowFrame";
 import { APPS, getApp } from "./registry";
+import { playMinimise, playWindowClose, playWindowOpen } from "@/lib/sounds";
 import type { AppId, Geometry, SnapZone, WindowInstance } from "./types";
 import "./win7.css";
 
@@ -75,6 +76,7 @@ export default function Win7() {
       opened.current += 1;
 
       topZ.current += 1;
+      playWindowOpen();
       const id = `${appId}-${Date.now()}`;
       setWindows((list) => [
         ...list,
@@ -100,6 +102,7 @@ export default function Win7() {
   );
 
   const close = useCallback((id: string) => {
+    playWindowClose();
     setWindows((list) => list.filter((w) => w.id !== id));
     setActiveId((current) => (current === id ? null : current));
   }, []);
@@ -167,10 +170,12 @@ export default function Win7() {
       const win = windows.find((w) => w.id === id);
       if (!win) return;
       if (!win.minimized && activeId === id) {
+        playMinimise();
         update(id, { minimized: true });
         setActiveId(null);
         return;
       }
+      if (win.minimized) playWindowOpen();
       focus(id);
     },
     [activeId, focus, update, windows]
@@ -319,6 +324,7 @@ export default function Win7() {
             onFocus={() => focus(win.id)}
             onClose={() => close(win.id)}
             onMinimise={() => {
+              playMinimise();
               update(win.id, { minimized: true });
               setActiveId(null);
             }}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 
@@ -26,6 +27,8 @@ type Leg = {
   href?: string;
   current?: boolean;
   stack?: string[];
+  /** A shot of the thing, shown out in the margin on hover. */
+  shot?: { src: string; alt: string };
 };
 
 const LEGS: Leg[] = [
@@ -45,6 +48,7 @@ const LEGS: Leg[] = [
     blurb:
       "A component library for motion on the web — the pieces I kept rebuilding, packaged so they behave the same way every time.",
     href: "https://www.motionlib.me/",
+    shot: { src: "/motionkit-preview.png", alt: "MotionKit components" },
   },
   {
     route: "DATA>VIEW",
@@ -53,6 +57,7 @@ const LEGS: Leg[] = [
     blurb:
       "Churn analysis and analytics for subscription products, with the reporting surfaces designed and built end to end.",
     href: "https://www.churnrate.fun/",
+    shot: { src: "/churnrate-dashboard.png", alt: "ChurnRate dashboard" },
   },
   {
     route: "TODO>DONE",
@@ -179,7 +184,7 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
         onMouseLeave={() => setHovered(false)}
         className="leg group/leg min-w-0"
       >
-        <div className="leg-body -mx-3 rounded-xl px-3 py-2">
+        <div className="leg-body relative -mx-3 rounded-xl px-3 py-2">
           <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
             <h3 className="text-[16px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">
               {leg.name}
@@ -210,6 +215,34 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
           <p className="mt-2 max-w-[52ch] text-[13.5px] leading-[1.7] text-zinc-500 dark:text-zinc-400">
             {leg.blurb}
           </p>
+
+          {/* The shot flies out into the margin rather than over the text, so
+              it never covers what you are reading. Only where there is room:
+              below the wide breakpoint there is no margin and no hover. */}
+          {leg.shot && (
+            <motion.span
+              aria-hidden
+              // Explicit width: an absolutely positioned box at left:100% has
+              // no room left in its containing block, so shrink-to-fit
+              // collapses it to a sliver.
+              className="leg-shot pointer-events-none absolute left-full top-0 ml-8 hidden w-[210px] xl:block"
+              initial={false}
+              animate={
+                hovered
+                  ? { opacity: 1, x: 0, rotate: -3.5, scale: 1 }
+                  : { opacity: 0, x: -14, rotate: -6, scale: 0.94 }
+              }
+              transition={{ type: "spring", stiffness: 300, damping: 24, mass: 0.5 }}
+            >
+              <Image
+                src={leg.shot.src}
+                alt=""
+                width={210}
+                height={132}
+                className="h-[132px] w-[210px] rounded-lg object-cover"
+              />
+            </motion.span>
+          )}
 
           {leg.stack && (
             <ul className="mt-3 flex flex-wrap gap-1.5">

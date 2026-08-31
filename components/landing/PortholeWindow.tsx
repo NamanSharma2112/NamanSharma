@@ -146,8 +146,13 @@ export default function PortholeWindow() {
               <Bird />
               <Bird />
             </span>
-            <span className="porthole-beacon absolute bottom-[26%] right-[20%] size-[3px] rounded-full bg-red-400 shadow-[0_0_6px_2px_rgba(248,113,113,0.85)]" />
           </motion.div>
+
+          {/* Outside the parallax layer on purpose: the wing is bolted to the
+              aircraft, so the world slides behind it and it does not move when
+              you move your head at the glass. */}
+          <Wing />
+
 
           {/* The shade. Dragged, or nudged with the tab below. */}
           <motion.div
@@ -193,6 +198,98 @@ export default function PortholeWindow() {
           <span>Fasten seat belt</span>
         </span>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The starboard wing, from the seat behind it.
+ *
+ * This is the thing that decides which way the plane is going. The seat is on
+ * the right, so the nose is off to the left of the view: the wing enters low on
+ * the left — root nearest, and forward — then sweeps aft and up to a winglet on
+ * the right, which is where the eye lands and where the lights sit.
+ *
+ * Drawn rather than photographed, so it can be white in the sun and a
+ * silhouette at night without swapping an asset. preserveAspectRatio is off
+ * because the pane is a fixed size and the planform is composed against it
+ * directly rather than fitted to it.
+ */
+function Wing() {
+  return (
+    <div
+      className="wing pointer-events-none absolute inset-x-0 bottom-0 h-[46%]"
+      aria-hidden
+    >
+      <svg
+        viewBox="0 0 160 110"
+        preserveAspectRatio="none"
+        className="absolute inset-0 size-full"
+      >
+        <defs>
+          {/* Shaded across the chord rather than banded: a wing catches light
+              on the leading edge and falls off toward the trailing one, and
+              two flat fills for that read as two stacked slats. */}
+          <linearGradient
+            id="wing-face"
+            gradientUnits="userSpaceOnUse"
+            x1="46"
+            y1="34"
+            x2="46"
+            y2="108"
+          >
+            <stop offset="0" className="wing-s0" />
+            <stop offset="0.42" className="wing-s1" />
+            <stop offset="1" className="wing-s2" />
+          </linearGradient>
+          <linearGradient
+            id="wing-blade"
+            gradientUnits="userSpaceOnUse"
+            x1="108"
+            y1="36"
+            x2="134"
+            y2="10"
+          >
+            <stop offset="0" className="wing-b0" />
+            <stop offset="1" className="wing-b1" />
+          </linearGradient>
+        </defs>
+
+        {/* The upper surface: broad at the root, where you are sitting almost
+            on top of it, tapering away to the tip. */}
+        <path fill="url(#wing-face)" d="M-14 62 L112 26 L122 38 L-14 110 Z" />
+
+        {/* Sun on the leading edge — a line, not a band. */}
+        <path className="wing-lead" d="M-14 62 L112 26" />
+
+        {/* Panel seams running out along the span, and the spoiler line. */}
+        <path className="wing-line" d="M-14 76 L108 30" />
+        <path className="wing-line" d="M-14 90 L112 34" />
+
+        {/* Flap track fairings — the detail that says airliner rather than
+            paper dart. Both edges of this planform slope the same way, which
+            makes the chord run straight down it, so the fairings point down
+            too: blunt end on the wing, tapering to a point out past the
+            trailing edge. Drawn over the surface so each reads as a bulge on
+            it rather than a tab floating behind it. */}
+        <path className="wing-pod" d="M12 84 C8 92 9 100 15 107 C20 100 21 92 19 84 Z" />
+        <path className="wing-pod" d="M53 63 C50 69 50 76 55 84 C59 76 59 69 57 63 Z" />
+
+        {/* The winglet, and the face of it turned back toward the window. */}
+        <path fill="url(#wing-blade)" d="M112 26 L126 6 L133 15 L122 38 Z" />
+        <path className="wing-let-in" d="M112 26 L126 6 L128 9 L115 30 Z" />
+      </svg>
+
+      {/* Both lights live on the winglet, inside the wing, so they flex with
+          it instead of hovering beside it. Green forward, strobe aft. */}
+      <span
+        className="wing-nav absolute size-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{ left: "79.4%", top: "7.3%" }}
+      />
+      <span
+        className="porthole-beacon absolute size-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_8px_3px_rgba(255,255,255,0.9)]"
+        style={{ left: "83.1%", top: "14.5%" }}
+      />
     </div>
   );
 }

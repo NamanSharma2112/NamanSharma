@@ -2,30 +2,62 @@
 
 import { useEffect, useRef } from "react";
 
+/**
+ * The signature, written when you reach it.
+ *
+ * It used to draw on mount. It sits at the very bottom of a long page, so it
+ * had always finished before anyone scrolled far enough to see it — the
+ * animation ran to an empty room. It now waits for the viewport and writes
+ * itself once, in stroke order.
+ */
 export default function Signature({ className }: { className?: string } = {}) {
   const pathRefs = useRef<(SVGPathElement | null)[]>([]);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    const anims: Animation[] = [];
-    pathRefs.current.forEach((path, i) => {
-      if (!path) return;
-      const anim = path.animate(
-        [
-          { strokeDashoffset: 1, opacity: 0 },
-          { strokeDashoffset: 1, opacity: 1, offset: 0.03 },
-          { strokeDashoffset: 0, opacity: 1 },
-        ],
-        {
-          duration: 1800,
-          easing: "cubic-bezier(0.65, 0, 0.35, 1)",
-          fill: "forwards",
-          delay: 100 + i * 60,
-        }
-      );
-      anims.push(anim);
-    });
+    const node = svgRef.current;
+    if (!node) return;
 
-    return () => anims.forEach((a) => a.cancel());
+    const anims: Animation[] = [];
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const write = () => {
+      pathRefs.current.forEach((path, i) => {
+        if (!path) return;
+        const anim = path.animate(
+          [
+            { strokeDashoffset: 1, opacity: 0 },
+            { strokeDashoffset: 1, opacity: 1, offset: 0.03 },
+            { strokeDashoffset: 0, opacity: 1 },
+          ],
+          {
+            // Reduced motion still gets the signature, just not the writing.
+            duration: reduced ? 1 : 1800,
+            easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+            fill: "forwards",
+            delay: reduced ? 0 : 100 + i * 60,
+          }
+        );
+        anims.push(anim);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        write();
+        observer.disconnect();
+      },
+      // A little inside the edge, so it starts as it clears the fold rather
+      // than the instant its first pixel appears.
+      { rootMargin: "0px 0px -12% 0px" }
+    );
+    observer.observe(node);
+
+    return () => {
+      observer.disconnect();
+      anims.forEach((a) => a.cancel());
+    };
   }, []);
 
   const setRef = (i: number) => (el: SVGPathElement | null) => {
@@ -46,6 +78,7 @@ export default function Signature({ className }: { className?: string } = {}) {
 
   return (
     <svg
+      ref={svgRef}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 164.8 39.4"
       role="img"

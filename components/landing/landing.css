@@ -876,51 +876,52 @@
     0 14px 30px rgba(0, 0, 0, 0.55);
 }
 
-/* ── the send button ────────────────────────────────────────────────────── */
+/* ── the two buttons under the bio ──────────────────────────────────────── */
 
-/* One plane leaves up and to the right; a second arrives from below-left to
-   take its place, so the button never looks empty mid-hover. Two elements
-   rather than one animated round trip, because a round trip has to travel
-   back through the middle and that reads as a bounce. */
-.send-out,
-.send-in {
+/* The plane on the email button is animated in SendButton, one way only —
+   what is left here is the button under it. Both buttons lift a pixel under
+   the cursor and are pressed back down flat on click, so the click has
+   somewhere to go.
+
+   The transition names `translate` and `scale` rather than `transform`: these
+   are standalone properties now, and a transition on `transform` does not
+   cover them — the lift would snap. */
+.send {
   transition:
-    transform 320ms var(--ease-out),
-    opacity 320ms var(--ease-out);
-}
-
-.send-out {
-  transform: translate(0, 0);
-  opacity: 1;
-}
-
-.send-in {
-  transform: translate(-10px, 10px);
-  opacity: 0;
+    translate 200ms var(--ease-out),
+    scale 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out),
+    background-color 200ms var(--ease-out);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .send:hover .send-out {
-    transform: translate(14px, -14px);
-    opacity: 0;
+  .send:hover {
+    translate: 0 -1px;
   }
 
-  .send:hover .send-in {
-    transform: translate(0, 0);
-    opacity: 1;
+  /* Only the filled one casts — a shadow under a translucent pill reads as
+     grime rather than lift. */
+  .send-solid:hover {
+    box-shadow: 0 8px 20px rgba(24, 24, 27, 0.26);
+  }
+
+  .dark .send-solid:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
   }
 }
 
+.send:active {
+  translate: 0 0;
+  scale: 0.97;
+  box-shadow: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .send-out,
-  .send-in {
+  .send,
+  .send:hover,
+  .send:active {
     transition: none;
-  }
-  .send:hover .send-out {
-    transform: none;
-    opacity: 1;
-  }
-  .send:hover .send-in {
-    opacity: 0;
+    translate: none;
+    scale: none;
   }
 }

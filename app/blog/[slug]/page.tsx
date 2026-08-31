@@ -11,6 +11,7 @@ import TextToSpeech from "@/components/TextToSpeech";
 import { getIllustration } from "@/components/BlogIllustrations";
 import { getRlsIllustration } from "@/components/RlsIllustrations";
 import Panel from "@/components/Panel";
+import { useBlogTheme } from "@/components/BlogThemeProvider";
 
 const FONT_OPTIONS = [
   { label: "Sans", value: "var(--font-geist-sans), system-ui, sans-serif" },
@@ -26,6 +27,9 @@ export default function BlogPostPage({
   const { slug } = use(params);
   const post = ALL_POSTS.find((p) => p.slug === slug);
   const [fontIndex, setFontIndex] = useState(0);
+  // These three build their palettes in JS, so they need the theme as a value
+  // rather than as a class on an ancestor.
+  const { isDark } = useBlogTheme();
 
   if (!post) {
     notFound();
@@ -43,7 +47,7 @@ export default function BlogPostPage({
           enough to read comfortably. */}
       <TableOfContents
         items={tocItems}
-        isDark
+        isDark={isDark}
         fontOptions={FONT_OPTIONS}
         fontIndex={fontIndex}
         onFontChange={setFontIndex}
@@ -74,7 +78,7 @@ export default function BlogPostPage({
               <TextToSpeech
                 title={post.title}
                 contentSections={post.content}
-                isDark
+                isDark={isDark}
               />
             </header>
 
@@ -114,7 +118,7 @@ export default function BlogPostPage({
                       })}
                     </div>
 
-                    {Illustration && <Illustration isDark />}
+                    {Illustration && <Illustration isDark={isDark} />}
                   </section>
                 );
               })}

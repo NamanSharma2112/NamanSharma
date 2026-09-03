@@ -1,0 +1,380 @@
+/* Chalk drawings and the small ways they move.
+   Paired with Sketch.tsx (the filter) and the three illustrations that use it. */
+
+/* Pencil on paper by day, chalk on a board at night. Warm, not black — a hard
+   #000 line on the warm ground reads as clip-art, not as something drawn. */
+.sketch {
+  color: #4b453d;
+  overflow: visible;
+}
+
+.dark .sketch {
+  color: #d7d2c8;
+}
+
+.sketch .sk,
+.sketch .sk-soft {
+  stroke: currentColor;
+  fill: none;
+}
+
+/* A lighter weight for the marks that should sit behind — belly line, floor
+   shadow, the second whisker set. */
+.sketch .sk-soft {
+  opacity: 0.5;
+}
+
+.sketch .fill-ink {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* ── drawing on ─────────────────────────────────────────────────────────── */
+
+/* pathLength is 1 on every drawn path, so one length covers them all. */
+.sketch .sk,
+.sketch .sk-soft {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.sketch[data-drawn] .sk,
+.sketch[data-drawn] .sk-soft {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 760ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 55ms);
+}
+
+/* Fills and glows cannot be drawn on, so they arrive just after the line that
+   carries them. */
+.sketch .sk-fill {
+  opacity: 0;
+}
+
+.sketch[data-drawn] .sk-fill {
+  opacity: 1;
+  transition: opacity 420ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 55ms + 180ms);
+}
+
+/* ── the pieces that move ───────────────────────────────────────────────────
+   Every animated part pivots in its own coordinates rather than the SVG's, or
+   an ear would rotate about the top-left of the whole picture. */
+.sketch .pivot {
+  transform-box: fill-box;
+}
+
+/* ── the reclining cat ──────────────────────────────────────────────────── */
+
+/* The slow rise and fall of a sleeping thing. Belly-up, so it pivots low. */
+.cat-body {
+  transform-box: fill-box;
+  transform-origin: 50% 92%;
+  animation: cat-breathe 4.6s ease-in-out infinite;
+}
+
+@keyframes cat-breathe {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.035) translateY(-0.4px);
+  }
+}
+
+/* Ears sit at their own bases; the far one twitches when you come near. */
+.cat-ear-l,
+.cat-ear-r {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+/* The tail sways on its own long clock, and snaps once on hover. */
+.cat-tail {
+  transform-box: fill-box;
+  transform-origin: 8% 60%;
+  animation: cat-tail-sway 5.5s ease-in-out infinite;
+}
+
+@keyframes cat-tail-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+}
+
+/* Eyes: shut and smiling until you lean in, then they crack open. Both are
+   always in the DOM so the swap is a cross-fade, not a reflow. */
+.cat-eye-open {
+  opacity: 0;
+  transition: opacity 220ms var(--ease-out);
+}
+
+.cat-eye-closed {
+  opacity: 1;
+  transition: opacity 220ms var(--ease-out);
+}
+
+/* The Zzz drifting up — the one thing that says asleep at a glance. */
+.cat-zzz {
+  transform-box: fill-box;
+  opacity: 0;
+  animation: cat-zzz 4.2s ease-in-out infinite;
+}
+
+.cat-zzz-2 {
+  animation-delay: 0.5s;
+}
+.cat-zzz-3 {
+  animation-delay: 1s;
+}
+
+@keyframes cat-zzz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 2px) scale(0.7);
+  }
+  30% {
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0;
+    transform: translate(3px, -9px) scale(1);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sketch-cat:hover .cat-ear-r {
+    animation: cat-ear-twitch 0.62s var(--ease-out);
+  }
+  .sketch-cat:hover .cat-tail {
+    animation: cat-tail-flick 0.9s var(--ease-out);
+  }
+  .sketch-cat:hover .cat-eye-open,
+  .sketch-lap:hover .cat-eye-open,
+  .desk-col:has(.desk-link:hover) .cat-eye-open {
+    opacity: 1;
+  }
+  .sketch-cat:hover .cat-eye-closed,
+  .sketch-lap:hover .cat-eye-closed,
+  .desk-col:has(.desk-link:hover) .cat-eye-closed {
+    opacity: 0;
+  }
+  /* Woken, it stops dreaming. */
+  .sketch-cat:hover .cat-zzz {
+    opacity: 0;
+    animation: none;
+  }
+}
+
+@keyframes cat-ear-twitch {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  35% {
+    transform: rotate(-11deg);
+  }
+  65% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes cat-tail-flick {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-16deg);
+  }
+  55% {
+    transform: rotate(9deg);
+  }
+  80% {
+    transform: rotate(-3deg);
+  }
+}
+
+/* ── the cat at the laptop ──────────────────────────────────────────────── */
+
+/* The screen's light, always breathing a little, brighter when watched. */
+.lap-screen {
+  fill: currentColor;
+  opacity: 0.14;
+  animation: lap-flicker 3.4s ease-in-out infinite;
+}
+
+@keyframes lap-flicker {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.lap-ear-l,
+.lap-ear-r {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.lap-tail {
+  transform-box: fill-box;
+  transform-origin: 100% 50%;
+  animation: cat-tail-sway 4.8s ease-in-out infinite;
+}
+
+/* The paws rest on the keys; on hover they take turns pressing them. */
+.lap-paw-l,
+.lap-paw-r {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sketch-lap:hover .lap-screen {
+    opacity: 0.32;
+    animation: none;
+  }
+  .sketch-lap:hover .lap-paw-l {
+    animation: lap-tap 0.34s var(--ease-out) infinite;
+  }
+  .sketch-lap:hover .lap-paw-r {
+    animation: lap-tap 0.34s var(--ease-out) 0.17s infinite;
+  }
+  .sketch-lap:hover .lap-ear-l {
+    animation: cat-ear-twitch 0.62s var(--ease-out);
+  }
+  .sketch-lap:hover .lap-tail {
+    animation: cat-tail-flick 0.9s var(--ease-out);
+  }
+}
+
+@keyframes lap-tap {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1.4px);
+  }
+}
+
+/* Hovering the link down to the desktop wakes the cat that sits on it, so the
+   two read as one thing. Same reactions as hovering the cat directly. */
+@media (hover: hover) and (pointer: fine) {
+  .desk-col:has(.desk-link:hover) .lap-screen {
+    opacity: 0.32;
+    animation: none;
+  }
+  .desk-col:has(.desk-link:hover) .lap-paw-l {
+    animation: lap-tap 0.34s var(--ease-out) infinite;
+  }
+  .desk-col:has(.desk-link:hover) .lap-paw-r {
+    animation: lap-tap 0.34s var(--ease-out) 0.17s infinite;
+  }
+  .desk-col:has(.desk-link:hover) .lap-ear-l {
+    animation: cat-ear-twitch 0.62s var(--ease-out);
+  }
+  .desk-col:has(.desk-link:hover) .lap-tail {
+    animation: cat-tail-flick 0.9s var(--ease-out);
+  }
+}
+
+/* ── the paper plane ────────────────────────────────────────────────────── */
+
+.sketch-plane {
+  transform-box: fill-box;
+}
+
+.plane-body {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: plane-bob 5s ease-in-out infinite;
+}
+
+@keyframes plane-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-1.5deg);
+  }
+}
+
+/* The contrail is the flight-plan's dashed line again: it does not draw on, it
+   flows, the dashes running back toward the plane. */
+.plane-trail {
+  stroke: currentColor;
+  fill: none;
+  opacity: 0.55;
+  stroke-dasharray: 1.6 5;
+  animation: plane-trail 1.3s linear infinite;
+}
+
+@keyframes plane-trail {
+  to {
+    stroke-dashoffset: -6.6;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sketch-plane:hover .plane-body {
+    animation: plane-dart 0.7s var(--ease-out);
+  }
+}
+
+@keyframes plane-dart {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  35% {
+    transform: translate(7px, -5px) rotate(-6deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+/* ── quiet, when asked ──────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .sketch .sk,
+  .sketch .sk-soft {
+    stroke-dashoffset: 0;
+  }
+  .sketch .sk-fill {
+    opacity: 1;
+  }
+  .sketch[data-drawn] .sk,
+  .sketch[data-drawn] .sk-soft,
+  .sketch[data-drawn] .sk-fill {
+    transition: none;
+  }
+  .cat-body,
+  .cat-tail,
+  .cat-zzz,
+  .lap-screen,
+  .lap-tail,
+  .plane-body,
+  .plane-trail {
+    animation: none;
+  }
+  .cat-zzz {
+    opacity: 0;
+  }
+  .lap-screen {
+    opacity: 0.16;
+  }
+}

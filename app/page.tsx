@@ -7,7 +7,10 @@ import CoordinateRail from "@/components/landing/CoordinateRail";
 import MenuChip from "@/components/landing/MenuChip";
 import PortholeWindow from "@/components/landing/PortholeWindow";
 import FlightPlan from "@/components/landing/FlightPlan";
+import LaptopCat from "@/components/landing/LaptopCat";
+import PlaneDoodle from "@/components/landing/PlaneDoodle";
 import SendButton from "@/components/landing/SendButton";
+import SleepingCat from "@/components/landing/SleepingCat";
 import StackScatter from "@/components/landing/StackScatter";
 import "@/components/landing/landing.css";
 
@@ -36,7 +39,12 @@ export default function Home() {
       </div>
 
       {/* The window, and what it is a window onto. */}
-      <div className="landing-stagger mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-10 text-center sm:pt-14">
+      <div className="landing-stagger relative mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-10 text-center sm:pt-14">
+        {/* A seatmate asleep in the margin, and a paper plane off the other
+            wing. Only where the column has margins to spare. */}
+        <SleepingCat className="absolute right-full top-[176px] mr-2 hidden w-[184px] xl:block" />
+        <PlaneDoodle className="absolute left-full top-[150px] ml-2 hidden w-[150px] xl:block" />
+
         <PortholeWindow />
 
         <h1 className="mt-14 text-[19px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-[21px]">
@@ -72,8 +80,12 @@ export default function Home() {
 
       {/* Landing card. */}
       <div className="mx-auto mt-20 w-full max-w-[760px] px-6 pb-24">
-        <div className="flex flex-col items-start gap-6 border-t border-black/10 pt-8 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
+        <div className="desk-col flex flex-col items-start gap-6 border-t border-black/10 pt-8 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
           <div>
+            {/* The machine's mascot, sitting on the link down to it: hover the
+                link and it looks up from its screen. */}
+            <LaptopCat className="mb-3 w-[118px]" />
+
             <p className="text-[13.5px] leading-[1.75] text-zinc-600 dark:text-zinc-400">
               Open to design engineering roles and freelance collaborations.
               <br />
@@ -84,7 +96,7 @@ export default function Home() {
               Or poke around the{" "}
               <a
                 href="/desktop"
-                className="group inline-flex items-center gap-1.5 align-middle text-zinc-900 dark:text-zinc-100"
+                className="desk-link group inline-flex items-center gap-1.5 align-middle text-zinc-900 dark:text-zinc-100"
               >
                 <CpuIcon className="transition-transform duration-300 ease-[var(--ease-out)] group-hover:-translate-y-0.5" />
                 <span className="underline decoration-zinc-400 underline-offset-[3px] transition-colors group-hover:decoration-zinc-900 dark:decoration-zinc-600 dark:group-hover:decoration-zinc-100">

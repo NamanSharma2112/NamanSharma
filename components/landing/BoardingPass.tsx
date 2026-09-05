@@ -270,52 +270,95 @@ function Reader({ phase, armed }: { phase: Phase; armed: boolean }) {
   const accepted = phase === "accepted";
 
   return (
-    <div className={`reader relative z-20 mt-9 w-[366px] sm:w-[456px] ${armed ? "is-armed" : ""}`}>
-      {/* The mouth: a lip above, the dark slot, and a throat behind it. */}
-      <div className="reader-mouth absolute inset-x-4 -top-[9px] h-[18px] rounded-[3px]">
-        <span className="reader-slot absolute inset-x-[6px] top-[6px] block h-[6px] rounded-full" />
+    <div
+      className={`reader relative z-20 mt-11 w-[378px] sm:w-[468px] ${
+        armed ? "is-armed" : ""
+      } ${reading ? "is-reading" : ""} ${accepted ? "is-accepted" : ""}`}
+    >
+      {/* The shadow it throws on the floor — grounds the machine so it sits in
+          the scene rather than floating on it. */}
+      <span aria-hidden className="reader-shadow" />
+
+      {/* The insertion bay, raised proud of the face: a chrome channel with the
+          dark slot in it, and the throat the card disappears into. */}
+      <div className="reader-hood">
+        <span className="reader-lip" aria-hidden />
+        <span className="reader-slot" aria-hidden>
+          <span className="reader-slot-glow" aria-hidden />
+        </span>
+        <span className="reader-guide left" aria-hidden />
+        <span className="reader-guide right" aria-hidden />
       </div>
 
-      <div className="px-4 pb-4 pt-6">
-        <div className="flex items-center gap-3">
-          {/* The display, with its dot grid and a beam that sweeps while it
-              reads — the one moment the machine is actually doing something. */}
-          <span className="reader-screen relative flex h-12 flex-1 items-center justify-center overflow-hidden rounded-[5px]">
-            <span className="reader-dots pointer-events-none absolute inset-0" />
-            {reading && <span className="reader-beam pointer-events-none absolute inset-y-0 w-1/3" />}
-            <span
-              className={`relative font-mono text-[15px] tracking-[0.32em] ${
-                accepted ? "text-emerald-300" : reading ? "text-amber-200" : "text-emerald-300/90"
-              }`}
-            >
-              {accepted ? "WELCOME" : reading ? "READING" : armed ? "INSERT" : "READY"}
-            </span>
+      <div className="relative flex items-stretch gap-3 px-4 pt-[26px]">
+        {/* The display: dot matrix over a scanline, a sweep while it reads, and
+            a meter that fills, then a tick when it clears. */}
+        <span className="reader-screen relative flex flex-1 flex-col items-center justify-center gap-1.5 overflow-hidden">
+          <span className="reader-dots pointer-events-none absolute inset-0" />
+          <span className="reader-scan pointer-events-none absolute inset-x-0 h-[2px]" />
+          {reading && <span className="reader-beam pointer-events-none absolute inset-y-0 w-1/3" />}
+
+          <span
+            className={`relative font-mono text-[15px] tracking-[0.3em] transition-colors ${
+              accepted
+                ? "text-emerald-300"
+                : reading
+                  ? "text-amber-200"
+                  : armed
+                    ? "text-emerald-200"
+                    : "text-emerald-300/85"
+            }`}
+          >
+            {accepted ? "WELCOME" : reading ? "READING" : armed ? "INSERT" : "READY"}
           </span>
 
-          {/* Status stack, the way a real reader wears its lights. */}
-          <span className="flex flex-col gap-1.5">
-            <Lamp on={!reading && !accepted} tone="idle" label="PWR" />
-            <Lamp on={reading} tone="busy" label="RD" />
-            <Lamp on={accepted} tone="ok" label="OK" />
+          {/* The meter reads out the state under the word: a run of cells that
+              fills as it reads, a full green bar once it clears. */}
+          <span className="reader-meter relative flex gap-[3px]" aria-hidden>
+            {Array.from({ length: 9 }).map((_, i) => (
+              <span
+                key={i}
+                className="reader-cell block h-[3px] w-[9px] rounded-[1px]"
+                style={{ transitionDelay: `${i * 45}ms` }}
+              />
+            ))}
           </span>
-        </div>
+        </span>
 
-        <div className="mt-3 flex items-center justify-between">
-          <span className="font-mono text-[8px] uppercase tracking-[0.22em] text-zinc-400 dark:text-zinc-500">
-            Northern Air · Gate A12
+        {/* The LED tower, recessed into its own well. */}
+        <span className="reader-tower flex flex-col justify-center gap-2">
+          <Lamp on={!reading && !accepted} tone="idle" label="PWR" />
+          <Lamp on={reading} tone="busy" label="RD" />
+          <Lamp on={accepted} tone="ok" label="OK" />
+        </span>
+      </div>
+
+      {/* The plate below: the gate stencil, the contactless pad, and the
+          chevrons that chase once a card is close. */}
+      <div className="relative flex items-center justify-between px-4 pb-3 pt-2.5">
+        <span className="flex items-center gap-2">
+          <span className="reader-grille" aria-hidden />
+          <span className="font-mono text-[8px] uppercase leading-[1.4] tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
+            Northern Air
+            <br />
+            Gate A12
           </span>
-          {/* Chevrons pointing the way the card should go. */}
+        </span>
+
+        <span className="flex items-center gap-3">
+          <Contactless />
           <span className={`reader-arrows flex items-center gap-[3px] ${armed ? "is-live" : ""}`}>
             {[0, 1, 2].map((i) => (
               <span key={i} className="arrow block size-1.5 rotate-45 border-b border-r" />
             ))}
           </span>
-        </div>
+        </span>
       </div>
 
-      {/* Feet, so it sits on something. */}
-      <span aria-hidden className="reader-foot absolute -bottom-1 left-8 h-2 w-12 rounded-b-[3px]" />
-      <span aria-hidden className="reader-foot absolute -bottom-1 right-8 h-2 w-12 rounded-b-[3px]" />
+      {/* The plinth it stands on, and the two feet under that. */}
+      <span aria-hidden className="reader-base" />
+      <span aria-hidden className="reader-foot left" />
+      <span aria-hidden className="reader-foot right" />
     </div>
   );
 }
@@ -323,136 +366,233 @@ function Reader({ phase, armed }: { phase: Phase; armed: boolean }) {
 function Lamp({ on, tone, label }: { on: boolean; tone: "idle" | "busy" | "ok"; label: string }) {
   const colour = on
     ? tone === "ok"
-      ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.95)]"
+      ? "bg-emerald-400 shadow-[0_0_9px_2px_rgba(52,211,153,0.9)]"
       : tone === "busy"
-        ? "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.95)]"
-        : "bg-sky-400 shadow-[0_0_7px_rgba(56,189,248,0.85)]"
-    : "bg-zinc-400/35";
+        ? "bg-amber-400 shadow-[0_0_9px_2px_rgba(251,191,36,0.9)]"
+        : "bg-sky-400 shadow-[0_0_8px_1px_rgba(56,189,248,0.8)]"
+    : "reader-lamp-off";
 
   return (
     <span className="flex items-center gap-1.5">
-      <span className={`size-2 rounded-full transition-all duration-200 ${colour}`} />
-      <span className="font-mono text-[7px] uppercase tracking-[0.14em] text-zinc-400 dark:text-zinc-500">
+      <span className={`size-[7px] rounded-full transition-all duration-200 ${colour}`} />
+      <span className="font-mono text-[7px] uppercase tracking-[0.12em] text-zinc-400 dark:text-zinc-500">
         {label}
       </span>
     </span>
   );
 }
 
+/** The contactless pad — the tap target every modern reader wears. */
+function Contactless() {
+  return (
+    <span className="reader-nfc" aria-hidden>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+        <path d="M8.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        <path d="M11.5 6a8.2 8.2 0 0 1 0 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        <path d="M14.5 4a11 11 0 0 1 0 16" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+    </span>
+  );
+}
+
 /* ── the pass face ──────────────────────────────────────────────────────── */
 
-/** The pass itself — a stub, a spine, and a lot of small print. */
+/** A small tracked label, the kind every field on a ticket wears. */
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="block font-mono text-[6.5px] uppercase tracking-[0.18em] text-zinc-400">
+      {children}
+    </span>
+  );
+}
+
+/** The pass itself — a branded spine, a lot of small print, and a tear-off. */
 function Pass() {
   return (
-    <div className="pass-card flex w-[330px] overflow-hidden rounded-[10px] sm:w-[420px]">
-      <div className="flex-1 p-3.5">
-        <div className="flex items-center justify-between">
+    <div className="pass-card relative flex w-[340px] overflow-hidden rounded-[10px] sm:w-[434px]">
+      {/* A guilloché wash under everything, the way security print sits under
+          the text on a real ticket. */}
+      <span className="pass-wash pointer-events-none absolute inset-0" aria-hidden />
+
+      {/* main pane */}
+      <div className="relative flex-1">
+        {/* The airline's band across the top. */}
+        <div className="pass-band flex items-center justify-between px-3.5 py-[6px]">
           <span className="flex items-center gap-1.5">
             <Logo />
-            <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-zinc-500">
+            <span className="font-mono text-[8px] font-medium uppercase tracking-[0.24em] text-white/95">
               Northern Air
             </span>
           </span>
-          <span className="font-mono text-[7px] uppercase tracking-[0.16em] text-zinc-400">
-            Boarding pass
+          <span className="font-mono text-[7px] uppercase tracking-[0.2em] text-white/65">
+            Boarding Pass
           </span>
         </div>
 
-        <div className="mt-3 flex items-end justify-between">
-          <span>
-            <span className="block font-mono text-[7px] uppercase tracking-[0.18em] text-zinc-400">
-              Passenger
-            </span>
-            <span className="block font-mono text-[15px] tracking-[0.08em] text-zinc-900">
-              NAMAN SHARMA
-            </span>
-          </span>
-          <span className="text-right">
-            <span className="block font-mono text-[7px] uppercase tracking-[0.18em] text-zinc-400">
-              Flight
-            </span>
-            <span className="block font-mono text-[11px] text-zinc-700">NS 2112</span>
-          </span>
-        </div>
-
-        <div className="mt-3 flex items-center gap-3">
-          <span className="font-mono text-[22px] tracking-[0.06em] text-zinc-900">JAL</span>
-          <span className="flex-1 border-t border-dashed border-zinc-300" />
-          <PlaneGlyph />
-          <span className="flex-1 border-t border-dashed border-zinc-300" />
-          <span className="font-mono text-[22px] tracking-[0.06em] text-zinc-900">WEB</span>
-        </div>
-
-        <div className="mt-3 grid grid-cols-4 gap-2">
-          {[
-            ["Gate", "A12"],
-            ["Boards", "09:41"],
-            ["Seat", "18A"],
-            ["Class", "DSGN"],
-          ].map(([label, value]) => (
-            <span key={label}>
-              <span className="block font-mono text-[7px] uppercase tracking-[0.16em] text-zinc-400">
-                {label}
+        <div className="relative px-3.5 pb-3 pt-2.5">
+          <div className="flex items-end justify-between">
+            <span>
+              <FieldLabel>Passenger</FieldLabel>
+              <span className="block font-mono text-[15px] leading-tight tracking-[0.06em] text-zinc-900">
+                NAMAN SHARMA
               </span>
-              <span className="block font-mono text-[11px] text-zinc-800">{value}</span>
             </span>
-          ))}
-        </div>
+            <span className="text-right">
+              <FieldLabel>Flight</FieldLabel>
+              <span className="block font-mono text-[12px] text-zinc-800">NS 2112</span>
+            </span>
+          </div>
 
-        <Barcode className="mt-3" />
+          {/* The route, with the cities spelled out under the codes. */}
+          <div className="mt-3 flex items-center gap-2.5">
+            <span className="shrink-0 text-center">
+              <span className="block font-mono text-[23px] leading-none tracking-[0.03em] text-zinc-900">
+                JAL
+              </span>
+              <span className="mt-0.5 block font-mono text-[6.5px] uppercase tracking-[0.12em] text-zinc-400">
+                Jalandhar
+              </span>
+            </span>
+            <span className="flex flex-1 items-center gap-1.5">
+              <span className="pass-route-line h-px flex-1" />
+              <PlaneGlyph />
+              <span className="pass-route-line h-px flex-1" />
+            </span>
+            <span className="shrink-0 text-center">
+              <span className="block font-mono text-[23px] leading-none tracking-[0.03em] text-zinc-900">
+                WEB
+              </span>
+              <span className="mt-0.5 block font-mono text-[6.5px] uppercase tracking-[0.12em] text-zinc-400">
+                The Internet
+              </span>
+            </span>
+          </div>
+
+          <div className="mt-3 grid grid-cols-4 gap-2">
+            {[
+              ["Gate", "A12"],
+              ["Boards", "09:41"],
+              ["Seat", "18A"],
+              ["Class", "DSGN"],
+            ].map(([label, value]) => (
+              <span key={label}>
+                <FieldLabel>{label}</FieldLabel>
+                <span className="block font-mono text-[11px] text-zinc-800">{value}</span>
+              </span>
+            ))}
+          </div>
+
+          <p className="mt-2 font-mono text-[7px] uppercase tracking-[0.16em] text-zinc-400">
+            Zone 2 · Group B · Seq 042
+          </p>
+
+          <div className="mt-2.5">
+            <Barcode />
+            <span className="mt-1 block font-mono text-[7px] tracking-[0.28em] text-zinc-400">
+              NS2112 18A 0042 JALWEB
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* The tear-off stub. */}
-      <div className="pass-stub flex w-[92px] shrink-0 flex-col justify-between p-3">
-        <span>
-          <span className="block font-mono text-[7px] uppercase tracking-[0.16em] text-zinc-400">
-            Seat
-          </span>
-          <span className="block font-mono text-[15px] text-zinc-900">18A</span>
+      <div className="pass-stub relative flex w-[100px] shrink-0 flex-col items-center gap-2 px-2.5 py-3 text-center">
+        <span className="font-mono text-[6px] uppercase tracking-[0.2em] text-zinc-400">
+          Boarding Pass
         </span>
         <span>
-          <span className="block font-mono text-[7px] uppercase tracking-[0.16em] text-zinc-400">
-            Gate
-          </span>
-          <span className="block font-mono text-[13px] text-zinc-800">A12</span>
+          <FieldLabel>Seat</FieldLabel>
+          <span className="block font-mono text-[18px] leading-none text-zinc-900">18A</span>
         </span>
-        <Barcode compact />
+        <span className="grid w-full grid-cols-2 gap-x-1 gap-y-1.5">
+          <span className="text-left">
+            <FieldLabel>Flight</FieldLabel>
+            <span className="block font-mono text-[9px] text-zinc-800">NS2112</span>
+          </span>
+          <span className="text-left">
+            <FieldLabel>Gate</FieldLabel>
+            <span className="block font-mono text-[9px] text-zinc-800">A12</span>
+          </span>
+        </span>
+        <Qr />
       </div>
+
+      {/* The perforation, and the two notches punched where it meets the edge. */}
+      <span className="pass-perf pointer-events-none absolute inset-y-2" aria-hidden />
+      <span className="pass-notch pass-notch-top pointer-events-none absolute" aria-hidden />
+      <span className="pass-notch pass-notch-bottom pointer-events-none absolute" aria-hidden />
     </div>
   );
 }
 
 function Logo() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden className="text-blue-600">
-      <rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor" opacity="0.14" />
-      <path d="M12 5l6 12-6-3-6 3z" fill="currentColor" />
+    <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden className="text-white">
+      <rect x="2" y="2" width="20" height="20" rx="5" fill="currentColor" opacity="0.22" />
+      <path d="M12 4.5l6.5 13-6.5-3.2-6.5 3.2z" fill="currentColor" />
     </svg>
   );
 }
 
 function PlaneGlyph() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden className="text-blue-600">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden className="text-indigo-500">
       <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
     </svg>
   );
 }
 
 /** Deterministic bar widths — random ones would reshuffle on every render. */
-const BARS = [3, 1, 2, 1, 1, 3, 2, 1, 2, 3, 1, 1, 2, 2, 1, 3, 1, 2, 1, 1, 2, 3, 1, 2, 2, 1, 1, 3];
+const BARS = [3, 1, 2, 1, 1, 3, 2, 1, 2, 3, 1, 1, 2, 2, 1, 3, 1, 2, 1, 1, 2, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 3];
 
-function Barcode({ compact, className }: { compact?: boolean; className?: string }) {
-  const bars = compact ? BARS.slice(0, 14) : BARS;
+function Barcode({ className }: { className?: string }) {
   return (
-    <span className={`flex items-end gap-[2px] ${compact ? "h-6" : "h-7"} ${className ?? ""}`}>
-      {bars.map((w, i) => (
+    <span className={`flex h-8 items-stretch gap-[2px] ${className ?? ""}`}>
+      {BARS.map((w, i) => (
         <span
           key={i}
-          className="block h-full bg-zinc-800"
-          style={{ width: w, opacity: i % 3 === 0 ? 0.85 : 0.6 }}
+          className="block h-full bg-zinc-900"
+          style={{ width: w, opacity: i % 3 === 0 ? 0.9 : 0.62 }}
         />
       ))}
     </span>
+  );
+}
+
+/** A QR-ish square for the stub — three finder eyes and a fixed scatter of
+    modules, laid out the same way every render so it never flickers. */
+function Qr() {
+  const N = 11;
+  const cell = 4;
+  const on = (x: number, y: number) => {
+    // The three corner eyes.
+    const eye = (ox: number, oy: number) => {
+      const dx = x - ox;
+      const dy = y - oy;
+      if (dx < 0 || dx > 2 || dy < 0 || dy > 2) return null;
+      return dx === 0 || dx === 2 || dy === 0 || dy === 2 || (dx === 1 && dy === 1);
+    };
+    const e = eye(0, 0) ?? eye(N - 3, 0) ?? eye(0, N - 3);
+    if (e !== null) return e;
+    // A stable, evenly-mixed field for everything else.
+    return ((x * 5 + y * 3 + x * y) % 7) < 3;
+  };
+
+  const rects = [];
+  for (let y = 0; y < N; y++) {
+    for (let x = 0; x < N; x++) {
+      if (on(x, y)) rects.push(<rect key={`${x}-${y}`} x={x * cell} y={y * cell} width={cell} height={cell} />);
+    }
+  }
+  return (
+    <svg
+      width={N * cell}
+      height={N * cell}
+      viewBox={`0 0 ${N * cell} ${N * cell}`}
+      aria-hidden
+      className="fill-zinc-900"
+    >
+      {rects}
+    </svg>
   );
 }

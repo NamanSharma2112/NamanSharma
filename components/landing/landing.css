@@ -461,24 +461,78 @@
   will-change: transform;
 }
 
+/* A white paper ticket in both themes — the one thing on this page that does
+   not change tone, because a boarding pass is printed, not lit. */
 .pass-card {
-  background:
-    repeating-linear-gradient(
-      -55deg,
-      rgba(99, 102, 241, 0.05) 0 1px,
-      transparent 1px 7px
-    ),
-    linear-gradient(180deg, #ffffff 0%, #fbfaf9 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfaf8 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 22px 44px rgba(70, 60, 54, 0.2),
+    0 24px 46px rgba(70, 60, 54, 0.22),
     0 6px 14px rgba(70, 60, 54, 0.14);
 }
 
-/* The perforation between the pass and its stub. */
+/* The security wash: two fine hatches crossing and a soft rosette, the print
+   that sits under the text on a real ticket and is the first thing a scan of a
+   fake one gets wrong. */
+.pass-wash {
+  background-image:
+    repeating-linear-gradient(-55deg, rgba(79, 70, 229, 0.05) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(55deg, rgba(79, 70, 229, 0.035) 0 1px, transparent 1px 9px),
+    radial-gradient(130% 90% at 15% 120%, rgba(99, 102, 241, 0.07), transparent 60%);
+}
+
+/* The airline's band across the head of the pass. */
+.pass-band {
+  background: linear-gradient(100deg, #4f46e5 0%, #6366f1 55%, #4338ca 100%);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.14);
+}
+
+/* The dotted rule the route rides on. */
+.pass-route-line {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(120, 108, 98, 0.5) 0 4px,
+    transparent 4px 8px
+  );
+}
+
 .pass-stub {
-  border-left: 1px dashed rgba(120, 108, 98, 0.4);
-  background: linear-gradient(180deg, #fdfcfb 0%, #f4f1ee 100%);
+  background: linear-gradient(180deg, #fbf9f7 0%, #f2eee9 100%);
+}
+
+/* The perforation, and the notches punched where it meets the card's edges.
+   The notches are discs the colour of the gate behind, half of each clipped
+   away by the card's overflow — so what shows is a bite taken out of the edge. */
+.pass-perf {
+  right: 100px;
+  width: 2px;
+  transform: translateX(1px);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(120, 108, 98, 0.55) 0 2px,
+    transparent 2px 6px
+  );
+}
+
+.pass-notch {
+  right: 100px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  transform: translateX(50%);
+  background: #f7f2f0;
+}
+
+.pass-notch-top {
+  top: -6px;
+}
+
+.pass-notch-bottom {
+  bottom: -6px;
+}
+
+.dark .pass-notch {
+  background: #100f0e;
 }
 
 /* The card's thickness: a slab sitting a few pixels behind the face, darker
@@ -491,70 +545,284 @@
 /* ── the reader ─────────────────────────────────────────────────────────── */
 
 .reader {
-  border-radius: 12px;
-  background:
-    linear-gradient(180deg, #fdfdfc 0%, #efeae6 42%, #ddd6cf 100%);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f7f4f0 0%, #e9e3dd 46%, #d6cec6 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.98),
-    inset 0 -3px 6px rgba(120, 108, 98, 0.3),
-    inset 2px 0 4px rgba(255, 255, 255, 0.6),
-    0 18px 36px rgba(70, 60, 54, 0.22),
-    0 4px 10px rgba(70, 60, 54, 0.14);
+    inset 0 -4px 8px rgba(120, 108, 98, 0.28),
+    inset 3px 0 5px rgba(255, 255, 255, 0.5),
+    inset -3px 0 6px rgba(120, 108, 98, 0.16),
+    0 22px 44px rgba(70, 60, 54, 0.24),
+    0 6px 14px rgba(70, 60, 54, 0.16);
 }
 
 .dark .reader {
-  background: linear-gradient(180deg, #3a3733 0%, #292622 42%, #1b1917 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.65),
-    0 18px 36px rgba(0, 0, 0, 0.55),
-    0 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-/* The raised lip the card goes over, and the dark throat inside it. */
-.reader-mouth {
-  background: linear-gradient(180deg, #ffffff 0%, #e6e0da 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    0 2px 5px rgba(70, 60, 54, 0.22);
-}
-
-.dark .reader-mouth {
-  background: linear-gradient(180deg, #45413c 0%, #2a2724 100%);
+  background: linear-gradient(180deg, #3c3833 0%, #29251f 46%, #1a1714 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 2px 5px rgba(0, 0, 0, 0.6);
+    inset 0 -4px 8px rgba(0, 0, 0, 0.65),
+    inset 3px 0 5px rgba(255, 255, 255, 0.06),
+    inset -3px 0 6px rgba(0, 0, 0, 0.5),
+    0 22px 44px rgba(0, 0, 0, 0.55),
+    0 6px 14px rgba(0, 0, 0, 0.4);
 }
 
-.reader-slot {
-  background: linear-gradient(180deg, #14120f 0%, #3b3630 100%);
+/* The floor shadow, so the machine stands on something. */
+.reader-shadow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -16px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(50% 100% at 50% 0%, rgba(70, 60, 54, 0.3), transparent 72%);
+  filter: blur(3px);
+  z-index: -1;
+}
+
+.dark .reader-shadow {
+  background: radial-gradient(50% 100% at 50% 0%, rgba(0, 0, 0, 0.6), transparent 72%);
+}
+
+/* The insertion bay, raised proud of the face. */
+.reader-hood {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: -11px;
+  height: 22px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, #e7e1db 55%, #d2cac2 100%);
   box-shadow:
-    inset 0 2px 5px rgba(0, 0, 0, 0.95),
-    0 1px 0 rgba(255, 255, 255, 0.9);
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 3px 8px rgba(70, 60, 54, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.dark .reader-hood {
+  background: linear-gradient(180deg, #4c473f 0%, #302c27 55%, #211d1a 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 3px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* A chrome line catching the light along the front of the bay. */
+.reader-lip {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 5px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+}
+
+/* Feed guides at the ends of the slot. */
+.reader-guide {
+  position: absolute;
+  top: 8px;
+  width: 4px;
+  height: 8px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #c9c1b9, #9a9089);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.reader-guide.left {
+  left: 11px;
+}
+
+.reader-guide.right {
+  right: 11px;
+}
+
+.dark .reader-guide {
+  background: linear-gradient(180deg, #3a352f, #211e1b);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* The dark slot in the bay, and the light that wakes inside it. */
+.reader-slot {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 8px;
+  height: 7px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0a0908 0%, #2a2622 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.85);
   transition: box-shadow 260ms var(--ease-out);
 }
 
-/* Armed: the slot lights from inside as the card comes down to it. */
-.reader.is-armed .reader-slot {
+.dark .reader-slot {
   box-shadow:
-    inset 0 2px 5px rgba(0, 0, 0, 0.95),
-    0 1px 0 rgba(255, 255, 255, 0.9),
-    0 0 12px 1px rgba(52, 211, 153, 0.65);
+    inset 0 2px 4px rgba(0, 0, 0, 0.95),
+    0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.reader-screen {
-  background: linear-gradient(180deg, #0f1113 0%, #191c1f 100%);
+.reader-slot-glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(180deg, rgba(52, 211, 153, 0), rgba(52, 211, 153, 0.6));
+  transition: opacity 260ms var(--ease-out);
+}
+
+/* Armed: the slot lights from inside as the card comes down to it. */
+.reader.is-armed .reader-slot-glow {
+  opacity: 1;
+}
+
+.reader.is-armed .reader-slot {
   box-shadow:
-    inset 0 2px 7px rgba(0, 0, 0, 0.9),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 2px 4px rgba(0, 0, 0, 0.9),
+    0 0 14px 1px rgba(52, 211, 153, 0.7),
+    0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+/* The display: a black glass panel sunk into the face. */
+.reader-screen {
+  border-radius: 6px;
+  min-height: 60px;
+  background: radial-gradient(120% 150% at 50% 0%, #12181b 0%, #0c1013 58%, #070a0b 100%);
+  box-shadow:
+    inset 0 2px 9px rgba(0, 0, 0, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
     0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
 .dark .reader-screen {
   box-shadow:
-    inset 0 2px 7px rgba(0, 0, 0, 0.9),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 2px 9px rgba(0, 0, 0, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
     0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* A scanline creeping down the glass, the tell of a live display. */
+.reader-scan {
+  top: 0;
+  background: linear-gradient(90deg, transparent, rgba(110, 231, 183, 0.22), transparent);
+  animation: reader-scanline 3.4s linear infinite;
+}
+
+@keyframes reader-scanline {
+  0% {
+    transform: translateY(2px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(56px);
+    opacity: 0;
+  }
+}
+
+/* The meter under the word: idle green wells that run amber as it reads, then
+   settle green when it clears. The fill is staggered per cell from an inline
+   delay, so it sweeps left to right rather than snapping on together. */
+.reader-cell {
+  background: rgba(52, 211, 153, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.16);
+  transition:
+    background-color 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+
+.reader.is-reading .reader-cell {
+  background: rgba(251, 191, 36, 0.9);
+  box-shadow: 0 0 5px rgba(251, 191, 36, 0.6);
+}
+
+.reader.is-accepted .reader-cell {
+  background: rgba(52, 211, 153, 0.92);
+  box-shadow: 0 0 5px rgba(52, 211, 153, 0.6);
+}
+
+/* The LED tower, sunk into its own well. */
+.reader-tower {
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(70, 60, 54, 0.07), rgba(70, 60, 54, 0.02));
+  box-shadow:
+    inset 0 1px 2px rgba(70, 60, 54, 0.25),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.dark .reader-tower {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.18));
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.reader-lamp-off {
+  background: rgba(120, 108, 98, 0.3);
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.4);
+}
+
+.dark .reader-lamp-off {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* The speaker grille and the contactless pad on the plate. */
+.reader-grille {
+  width: 22px;
+  height: 15px;
+  border-radius: 3px;
+  background-image: radial-gradient(rgba(120, 108, 98, 0.55) 0.7px, transparent 0.9px);
+  background-size: 4px 4px;
+  box-shadow: inset 0 1px 2px rgba(70, 60, 54, 0.22);
+}
+
+.dark .reader-grille {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.22) 0.7px, transparent 0.9px);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.reader-nfc {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 20px;
+  border-radius: 6px;
+  color: rgba(99, 102, 241, 0.85);
+  background: linear-gradient(180deg, #ffffff, #ece7e2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(70, 60, 54, 0.25);
+}
+
+.dark .reader-nfc {
+  color: rgba(129, 140, 248, 0.9);
+  background: linear-gradient(180deg, #3a352f, #28241f);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* The plinth the machine stands on. */
+.reader-base {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 14px;
+  border-radius: 0 0 16px 16px;
+  background: linear-gradient(180deg, rgba(120, 108, 98, 0), rgba(120, 108, 98, 0.18));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.dark .reader-base {
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* The dot grid every one of these displays has, sitting over the glyphs. */
@@ -621,17 +889,36 @@
 }
 
 .reader-foot {
+  position: absolute;
+  bottom: -4px;
+  width: 46px;
+  height: 6px;
+  border-radius: 0 0 4px 4px;
   background: linear-gradient(180deg, #cfc7bf, #a99f96);
+  box-shadow: 0 2px 3px rgba(70, 60, 54, 0.3);
+}
+
+.reader-foot.left {
+  left: 30px;
+}
+
+.reader-foot.right {
+  right: 30px;
 }
 
 .dark .reader-foot {
   background: linear-gradient(180deg, #221f1c, #151311);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .reader-beam,
+  .reader-scan,
   .reader-arrows.is-live .arrow {
     animation: none;
+  }
+  .reader-scan {
+    opacity: 0;
   }
 }
 

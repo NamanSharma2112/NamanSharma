@@ -9,6 +9,8 @@ import PortholeWindow from "@/components/landing/PortholeWindow";
 import FlightPlan from "@/components/landing/FlightPlan";
 import LaptopCat from "@/components/landing/LaptopCat";
 import PlaneDoodle from "@/components/landing/PlaneDoodle";
+import RoleFlipper from "@/components/landing/RoleFlipper";
+import RouteBanner from "@/components/landing/RouteBanner";
 import SendButton from "@/components/landing/SendButton";
 import SleepingCat from "@/components/landing/SleepingCat";
 import StackScatter from "@/components/landing/StackScatter";
@@ -47,8 +49,13 @@ export default function Home() {
 
         <PortholeWindow />
 
+        {/* The role cycles; the rest of the line stays put. */}
         <h1 className="mt-14 text-[19px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-[21px]">
-          Design Engineer &amp; Creative Technologist
+          <RoleFlipper />
+          {/* Explicit: an inline-flex box eats the whitespace next to it, and
+              the line renders as "Engineer& Creative" without this. */}
+          {" "}
+          &amp; Creative Technologist
         </h1>
 
         <p className="mt-3 max-w-[46ch] text-[15px] leading-[1.65] text-zinc-500 dark:text-zinc-400">
@@ -74,7 +81,10 @@ export default function Home() {
         <SocialLinks className="mt-5 justify-center" />
       </div>
 
-      <div className="mt-20 sm:mt-24">
+      {/* Bridges the hero and the route below it, instead of a bare gap. */}
+      <RouteBanner className="mx-auto mt-16 w-full max-w-[1100px] px-6 sm:mt-20" />
+
+      <div className="mt-6 sm:mt-8">
         <FlightPlan />
       </div>
 

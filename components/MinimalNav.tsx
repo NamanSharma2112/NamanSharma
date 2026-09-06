@@ -13,9 +13,13 @@ import { cn } from "@/lib/utils";
  * same as pressing ⌘K.
  */
 
-/** Drop an illustrated portrait at this path and it takes over. */
-const PORTRAIT = "/avatar-illustration.png";
-const PORTRAIT_FALLBACK = "/avatar2.png";
+/**
+ * The photo that ships. Drop an illustrated portrait at PORTRAIT_UPGRADE and
+ * it takes over — but the default is a file that actually exists, so the nav
+ * never fires a 404 through next/image and falls back on every load.
+ */
+const PORTRAIT = "/avatar2.png";
+const PORTRAIT_FALLBACK = "/avatar.png";
 
 const STATUS = "Available for work";
 

@@ -11,6 +11,7 @@ import TextToSpeech from "@/components/TextToSpeech";
 import { getIllustration } from "@/components/BlogIllustrations";
 import { getRlsIllustration } from "@/components/RlsIllustrations";
 import Panel from "@/components/Panel";
+import SiteFooter from "@/components/SiteFooter";
 import { useBlogTheme } from "@/components/BlogThemeProvider";
 
 const FONT_OPTIONS = [
@@ -126,6 +127,8 @@ export default function BlogPostPage({
           </article>
         </Panel>
       </div>
+
+      <SiteFooter />
 
       {/* Select text to share or copy it. */}
       <SelectionToolbar slug={slug} />

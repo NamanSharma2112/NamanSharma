@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
+import { motion, useMotionValue, useSpring } from "motion/react";
 
 /**
  * The signature, written when you reach it.
@@ -64,8 +65,28 @@ export default function Signature({ className }: { className?: string } = {}) {
     pathRefs.current[i] = el;
   };
 
+  const gid = `sig-${useId().replace(/:/g, "")}`;
+
+  // In viewBox units, not pixels, because that is the space the gradient is
+  // measured in. Parked off to the left at rest, which leaves every stroke on
+  // the gradient's outer stop — plain ink — until the cursor arrives.
+  const REST = -160;
+  const gx = useSpring(useMotionValue(REST), { stiffness: 140, damping: 22, mass: 0.5 });
+  const gy = useSpring(useMotionValue(20), { stiffness: 140, damping: 22, mass: 0.5 });
+
+  const track = (e: React.PointerEvent<SVGSVGElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    gx.set(((e.clientX - r.left) / r.width) * 164.8);
+    gy.set(((e.clientY - r.top) / r.height) * 39.4);
+  };
+
   const shared = {
-    stroke: "currentColor",
+    // Not a flat colour: a gradient whose centre follows the cursor, so the
+    // ink lights up where you are and stays plain everywhere else. Painting
+    // the existing strokes this way leaves the writing animation untouched —
+    // a second, glowing copy of the paths would have to be drawn in step too.
+    stroke: `url(#${gid})`,
     strokeWidth: 1.2,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
@@ -84,7 +105,16 @@ export default function Signature({ className }: { className?: string } = {}) {
       role="img"
       aria-label="Naman Sharma's signature"
       className={className || "mb-3 h-[36px] w-auto shrink-0 overflow-visible text-black dark:text-white"}
+      onPointerMove={track}
+      onPointerLeave={() => gx.set(REST)}
     >
+      <defs>
+        <motion.radialGradient id={gid} gradientUnits="userSpaceOnUse" cx={gx} cy={gy} r={34}>
+          <stop offset="0" stopColor="#3b82f6" />
+          <stop offset="1" stopColor="currentColor" />
+        </motion.radialGradient>
+      </defs>
+
       <path ref={setRef(0)} {...shared} d="m28.3 6.8c0.2-2 0.2-1.8 0.8-1.8 0.5-0.1 0.4 0.3 0.2 2-0.3 2.1-3.3 15.7-5.7 22.1-1.5 3.9-3.1 7.7-5.5 7.7-1.1 0-3.1-1.9-3.9-6.3-1.1-8-0.8-20-1.5-22.2-0.4-1.4-1-0.5-1.9 1.9-1.4 3.9-5.1 17.6-5.7 21.7l4.4-15.7c0.2-0.7 1.1-1.1 0.9 0-1.7 6.5-4.6 15.3-5.8 20.6-0.2 0.6-0.6 1.2-1.1 1-0.2-0.2 0.3-2.7 0.6-4.3 1-4.8 3.4-15.2 5-20.2 1.1-2.6 2.1-6.3 3.3-6.6 1-0.2 1.5 0.9 1.7 2.3 0.5 2.9 0.3 11.9 1 19.5 0.3 3.8 1.9 7.3 3 7.3 1.4 0.1 3.8-4.1 5.9-11 1.5-4.7 4-14.1 4.3-18z" />
       <path ref={setRef(1)} {...shared} d="m40 22.4c-1.5 2.4-4.9 7.3-6.6 7.3-2.4 0.2-1.1-5-0.7-6.4-0.7 0.9-3 4.2-3.9 5.4-0.5 0.6-1.7 1.6-2 0.6-0.2-2 0.8-4.9 2.8-7.6 1.8-2.8 4.1-4.3 4.4-1.1 0.3-0.5 1.3-0.8 1.1 0.1-0.4 0.9-2.9 7.2-1.7 8 1.1 0.4 4.7-5.2 6-6.7 0.3-0.3 0.8 0 0.6 0.4zm-7.1-0.4c0.2-4.3-2-1.2-3.3 0.9-1.1 1.8-1.9 4.5-1.8 5.6l5.1-6.5z" />
       <path ref={setRef(2)} {...shared} d="m55.8 23.9c-1.3 1.7-2.8 3.4-4.8 3.2-1.8-0.3-1.6-4.4-1.3-7-0.1-1.3-4.2 4.9-6 6.9-2.3 1.6-1.7-1.5-0.7-5-0.4 0.7-3.3 5.8-3.7 6.9-0.1 0.5-1.4 1-1.4 0.2 0.1-3.4 1.4-8 3.1-10.5 0.4-0.8 1.2-0.1 0.7 0.8-1.2 1.3-2.5 6.1-2.6 8.2l2.6-4.7c0.6-1 2.3-3.8 2.6-2.3l-1.4 5.8c1.4-0.9 5-7.5 7-7.8 1.9-0.1-0.8 7.3 1.3 7.6 1 0.2 2.7-1.8 3.9-3.2 0.6-0.5 1.1 0.3 0.7 0.9z" />

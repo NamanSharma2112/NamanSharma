@@ -18,6 +18,7 @@ import {
   Briefcase,
   PenTool,
   Lightbulb,
+  FlaskConical,
   MonitorCog,
   Sun,
   Moon,
@@ -52,6 +53,7 @@ const SECTIONS = [
   { label: "Work", href: "/work", Icon: Briefcase },
   { label: "Writing", href: "/blog", Icon: PenTool },
   { label: "Inspiration", href: "/inspiration", Icon: Lightbulb },
+  { label: "Lab", href: "/lab", Icon: FlaskConical },
   { label: "Desktop", href: "/desktop", Icon: MonitorCog },
 ];
 

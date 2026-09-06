@@ -1,12 +1,10 @@
 /**
  * Which routes sit on the photo backdrop.
  *
- * The photo is held dark in both themes, so anything in front of it has to be
- * styled for a dark ground whichever theme is set — a light panel over it is
- * a pale smear you cannot read. The landing brings its own paper, the desktop
- * its own wallpaper, and the blog its own black page.
+ * None, now: the site was two worlds — a warm-paper home and a dark rainy-city
+ * photo under every other page — and the brief was one consistent, premium
+ * look. Everything sits on the same paper (light) / charcoal (dark) ground the
+ * body paints, so this is retired to `false`. Kept as a single switch rather
+ * than deleted, in case the photo is ever wanted back on a route.
  */
-export const usesPhotoBackdrop = (pathname: string) =>
-  pathname !== "/" &&
-  !pathname.startsWith("/desktop") &&
-  !pathname.startsWith("/blog");
+export const usesPhotoBackdrop = (_pathname: string) => false;

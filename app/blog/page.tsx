@@ -28,8 +28,14 @@ export default function BlogIndexPage() {
               href={`/blog/${post.slug}`}
               className="group -mx-3 rounded-xl px-3 py-3.5 outline-none transition-colors hover:bg-black/[0.04] focus-visible:bg-black/[0.04] dark:hover:bg-white/[0.05] dark:focus-visible:bg-white/[0.05]"
             >
-              <div className="flex items-baseline gap-4">
-                <span className="shrink-0 text-[12.5px] tabular-nums text-zinc-500 dark:text-zinc-500">
+              {/* The date is a fixed column, not shrink-to-fit: sized to the
+                  widest month it can ever hold ("September 2026" measures
+                  104px), every title starts on the same edge. Left to its own
+                  width the second column began wherever each date happened to
+                  end, so the titles sat 18px apart from each other.
+                  Stacked below sm, where a 112px gutter would squeeze them. */}
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
+                <span className="shrink-0 text-[12.5px] tabular-nums text-zinc-500 dark:text-zinc-500 sm:w-28">
                   {post.date}
                 </span>
 

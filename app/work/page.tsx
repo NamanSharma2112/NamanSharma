@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import HighlightList from "@/components/HighlightList";
 import Panel from "@/components/Panel";
+import PageHeader from "@/components/PageHeader";
+import SiteFooter from "@/components/SiteFooter";
 import { PROJECTS } from "@/lib/projects";
 
 export const metadata: Metadata = {
@@ -10,18 +12,17 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <main className="mx-auto w-full max-w-[560px] px-6 pt-5 pb-28">
-      <Panel>
-        <h1 className="text-[13.5px] font-medium text-zinc-900 dark:text-white">Work.</h1>
-
-        <p className="mt-6 text-[13.5px] leading-[1.75] text-zinc-700 dark:text-zinc-300">
+    <>
+      <main className="mx-auto w-full max-w-[640px] px-6 pt-8">
+        <PageHeader kicker="Work" title="Selected work">
           Passion projects and client work. Hover a title to see it.
-        </p>
+        </PageHeader>
 
-        <div className="mt-8">
+        <Panel>
           <HighlightList title="Highlights" items={PROJECTS} />
-        </div>
-      </Panel>
-    </main>
+        </Panel>
+      </main>
+      <SiteFooter />
+    </>
   );
 }

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { ALL_POSTS } from "@/lib/blog-data";
 import Panel from "@/components/Panel";
+import PageHeader from "@/components/PageHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 /**
  * The index, on the same sheet the rest of the site writes on — one column,
@@ -11,18 +13,15 @@ import Panel from "@/components/Panel";
  */
 export default function BlogIndexPage() {
   return (
-    <main className="mx-auto w-full max-w-[560px] px-6 pt-5 pb-28">
-      <Panel>
-        <h1 className="text-[13.5px] font-medium text-zinc-900 dark:text-white">
-          Writing.
-        </h1>
-
-        <p className="mt-6 text-[13.5px] leading-[1.75] text-zinc-700 dark:text-zinc-300">
+    <>
+      <main className="mx-auto w-full max-w-[640px] px-6 pt-8">
+        <PageHeader kicker="Writing" title="Notes & essays">
           Thoughts on design engineering, micro-interactions, and building
           interfaces that feel alive.
-        </p>
+        </PageHeader>
 
-        <div className="mt-8 flex flex-col">
+        <Panel>
+          <div className="flex flex-col">
           {ALL_POSTS.map((post) => (
             <Link
               key={post.slug}
@@ -50,8 +49,10 @@ export default function BlogIndexPage() {
               </div>
             </Link>
           ))}
-        </div>
-      </Panel>
-    </main>
+          </div>
+        </Panel>
+      </main>
+      <SiteFooter />
+    </>
   );
 }

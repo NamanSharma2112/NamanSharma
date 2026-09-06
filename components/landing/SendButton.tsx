@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, arc, motion, useReducedMotion } from "motion/react";
 
 /**
  * The email button, and the plane on it.
@@ -23,6 +23,13 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 /** The site's standard decelerate. Nothing here eases in. */
 const EASE = [0.23, 1, 0.32, 1] as const;
+
+/**
+ * A thrown plane does not travel in a straight line — it lobs. `arc` bends the
+ * x/y pair over a curve instead of interpolating them independently, so the
+ * launch rises as it leaves and the replacement swings up into place.
+ */
+const LOB = arc({ strength: 0.6, direction: "ccw" });
 
 export default function SendButton({
   email,
@@ -56,7 +63,7 @@ export default function SendButton({
             initial={{ opacity: 0, x: -9, y: 9 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
             exit={{ opacity: 0, x: 16, y: -16 }}
-            transition={{ duration: 0.36, ease: EASE }}
+            transition={{ duration: 0.36, ease: EASE, path: LOB }}
           >
             <PaperPlane className="size-full" />
           </motion.span>

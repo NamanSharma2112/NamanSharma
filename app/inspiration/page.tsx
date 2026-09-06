@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "motion/react";
 import Panel from "@/components/Panel";
 import PageHeader from "@/components/PageHeader";
@@ -92,13 +93,22 @@ export default function InspirationPage() {
 }
 
 function Favicon({ item }: { item: Inspiration }) {
+  const [failed, setFailed] = useState(false);
   return (
-    <div className="relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-zinc-900">
-      <img
-        src={item.icon}
-        alt=""
-        className="size-full object-cover transition-transform duration-[400ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-110"
-      />
+    <div className="relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-white text-[15px] font-medium text-zinc-500 shadow-sm dark:border-white/10 dark:bg-zinc-900 dark:text-zinc-400">
+      {/* The favicon comes from a third party; if it ever fails to load, the
+          site should not show a broken square — it settles to the first
+          letter, which reads as a considered monogram rather than an error. */}
+      {failed ? (
+        <span aria-hidden>{item.name.charAt(0)}</span>
+      ) : (
+        <img
+          src={item.icon}
+          alt=""
+          onError={() => setFailed(true)}
+          className="size-full object-cover transition-transform duration-[400ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-110"
+        />
+      )}
     </div>
   );
 }

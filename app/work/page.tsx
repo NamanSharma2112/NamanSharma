@@ -3,6 +3,7 @@ import HighlightList from "@/components/HighlightList";
 import Panel from "@/components/Panel";
 import PageHeader from "@/components/PageHeader";
 import SiteFooter from "@/components/SiteFooter";
+import { ConvergingLines } from "@/components/lab/LabBits";
 import { PROJECTS } from "@/lib/projects";
 
 export const metadata: Metadata = {
@@ -17,6 +18,10 @@ export default function WorkPage() {
         <PageHeader kicker="Work" title="Selected work">
           Passion projects and client work. Hover a title to see it.
         </PageHeader>
+
+        {/* Routes running into one node — the projects as a route map, which is
+            the same idea the flight plan on the home page is built on. */}
+        <ConvergingLines className="pointer-events-none relative -mt-1 mb-5 h-[120px] w-full overflow-hidden opacity-70" />
 
         <Panel>
           <HighlightList title="Highlights" items={PROJECTS} />

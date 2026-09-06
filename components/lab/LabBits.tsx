@@ -71,9 +71,14 @@ const SEG = 0.12;
  * runs along it. Animating `strokeDashoffset` with a dash the length of the
  * segment is what makes the dash travel the path instead of the line growing.
  */
-export function ConvergingLines() {
+export function ConvergingLines({
+  /** Swappable so the same graphic can sit on a page without the lab's frame. */
+  className = "lab-stage relative h-[260px] w-full overflow-hidden rounded-xl",
+}: {
+  className?: string;
+} = {}) {
   return (
-    <div className="lab-stage relative h-[260px] w-full overflow-hidden rounded-xl">
+    <div className={className}>
       <svg viewBox="0 0 734 240" fill="none" className="absolute inset-0 h-full w-full">
         {LINES.map((d) => (
           <g key={d}>

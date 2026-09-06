@@ -10,6 +10,7 @@ import FlightPlan from "@/components/landing/FlightPlan";
 import LaptopCat from "@/components/landing/LaptopCat";
 import PlaneDoodle from "@/components/landing/PlaneDoodle";
 import RoleFlipper from "@/components/landing/RoleFlipper";
+import RouteBanner from "@/components/landing/RouteBanner";
 import SendButton from "@/components/landing/SendButton";
 import SleepingCat from "@/components/landing/SleepingCat";
 import TechPills from "@/components/landing/TechPills";
@@ -82,7 +83,10 @@ export default function Home() {
         <SocialLinks className="mt-5 justify-center" />
       </div>
 
-      <div className="mt-20 sm:mt-24">
+      {/* Bridges the hero and the route below it, instead of a bare gap. */}
+      <RouteBanner className="mx-auto mt-16 w-full max-w-[1100px] px-6 sm:mt-20" />
+
+      <div className="mt-6 sm:mt-8">
         <FlightPlan />
       </div>
 

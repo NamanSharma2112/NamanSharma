@@ -12,7 +12,7 @@ import PlaneDoodle from "@/components/landing/PlaneDoodle";
 import RoleFlipper from "@/components/landing/RoleFlipper";
 import SendButton from "@/components/landing/SendButton";
 import SleepingCat from "@/components/landing/SleepingCat";
-import StackScatter from "@/components/landing/StackScatter";
+import TechPills from "@/components/landing/TechPills";
 import "@/components/landing/landing.css";
 
 export const metadata: Metadata = {
@@ -58,10 +58,12 @@ export default function Home() {
         </h1>
 
         <p className="mt-3 max-w-[46ch] text-[15px] leading-[1.65] text-zinc-500 dark:text-zinc-400">
-          Designing and building whatever I can imagine with{" "}
-          <StackScatter>a stack I trust</StackScatter> — obsessing over the
-          details and the why behind good products.
+          Designing and building whatever I can imagine with a stack I trust —
+          obsessing over the details and the why behind good products.
         </p>
+
+        {/* The stack itself, tucked into a pile until you point at one. */}
+        <TechPills className="mt-5" />
 
         <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
           {/* Every hover launches the plane it is showing and settles a fresh

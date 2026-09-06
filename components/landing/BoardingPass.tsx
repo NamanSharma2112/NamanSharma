@@ -185,6 +185,8 @@ export default function BoardingPass({
 
 /** How far the card leans, in degrees, at the far edge of its own surface. */
 const LEAN = 13;
+/** How far it travels toward the cursor with the lean, in px. */
+const SHIFT = 9;
 
 /**
  * The pass, tilted by wherever the pointer is over it.
@@ -201,16 +203,15 @@ function TiltingPass() {
   const py = useMotionValue(0.5);
   // Springs, because this is a value the pointer drives and can reverse at any
   // moment — a duration would keep animating to a target that has already moved.
-  const rx = useSpring(useTransform(py, [0, 1], [LEAN, -LEAN]), {
-    stiffness: 170,
-    damping: 18,
-    mass: 0.4,
-  });
-  const ry = useSpring(useTransform(px, [0, 1], [-LEAN, LEAN]), {
-    stiffness: 170,
-    damping: 18,
-    mass: 0.4,
-  });
+  const spring = { stiffness: 170, damping: 18, mass: 0.4 };
+  const rx = useSpring(useTransform(py, [0, 1], [LEAN, -LEAN]), spring);
+  const ry = useSpring(useTransform(px, [0, 1], [-LEAN, LEAN]), spring);
+
+  // The card also shifts a little toward the cursor. Leaning alone reads as a
+  // picture on a hinge; a few pixels of travel with it is what makes it feel
+  // like an object being handled.
+  const tx = useSpring(useTransform(px, [0, 1], [-SHIFT, SHIFT]), spring);
+  const ty = useSpring(useTransform(py, [0, 1], [SHIFT, -SHIFT]), spring);
 
   // The highlight sits where the light would catch, opposite the lean.
   const sheenX = useTransform(px, [0, 1], ["120%", "-20%"]);
@@ -239,7 +240,13 @@ function TiltingPass() {
       className="pass-stage"
     >
       <motion.div
-        style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
+        style={{
+          rotateX: rx,
+          rotateY: ry,
+          x: tx,
+          y: ty,
+          transformStyle: "preserve-3d",
+        }}
         className="pass relative"
       >
         <Pass />

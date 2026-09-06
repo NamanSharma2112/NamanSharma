@@ -1163,6 +1163,48 @@
     0 14px 30px rgba(0, 0, 0, 0.55);
 }
 
+/* ── the stack pills ────────────────────────────────────────────────────── */
+
+/* Each mark is its own chip so the pile reads as separate objects overlapping,
+   not one bar cut into sections. The ring is what separates a pill from the
+   one it is tucked behind. */
+.tech-pill {
+  background: #ffffff;
+  color: #52525b;
+  box-shadow:
+    0 0 0 1px rgba(70, 60, 54, 0.1),
+    0 1px 2px rgba(70, 60, 54, 0.08);
+  transition: box-shadow 200ms var(--ease-out);
+}
+
+.dark .tech-pill {
+  background: #1d1c1a;
+  color: #d4d4d8;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tech-pill:hover {
+    box-shadow:
+      0 0 0 1px rgba(70, 60, 54, 0.16),
+      0 6px 14px rgba(70, 60, 54, 0.14);
+  }
+
+  .dark .tech-pill:hover {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.18),
+      0 6px 14px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.tech-pill:focus-visible {
+  box-shadow:
+    0 0 0 2px rgba(37, 99, 235, 0.7),
+    0 6px 14px rgba(70, 60, 54, 0.14);
+}
+
 /* ── the two buttons under the bio ──────────────────────────────────────── */
 
 /* The plane on the email button is animated in SendButton, one way only —

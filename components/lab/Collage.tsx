@@ -20,28 +20,56 @@ import {
  * on someone else's CDN is a wall of broken boxes the day it moves.
  */
 
+/* Fanned left to right with the vertical offsets alternating, so no card's
+   caption lands underneath its neighbour. They still overlap — it is a pile —
+   but each one keeps its own name legible. */
 const CARDS = [
-  { title: "MotionKit", src: "/motionkit-preview.png", at: "left-[4%] top-[12%] rotate-[-6deg]" },
-  { title: "ChurnRate", src: "/churnrate-dashboard.png", at: "left-[26%] top-[34%] rotate-[4deg]" },
-  { title: "Studio", src: "/isometric-studio.png", at: "left-[48%] top-[8%] rotate-[7deg]" },
-  { title: "Desk", src: "/desk-hero.png", at: "left-[62%] top-[38%] rotate-[-4deg]" },
-  { title: "Analysis", src: "/churnrate-analysis.png", at: "left-[18%] top-[2%] rotate-[9deg]" },
+  { title: "MotionKit", src: "/motionkit-preview.png", at: "left-[1%] top-[19%] rotate-[-7deg]" },
+  { title: "Analysis", src: "/churnrate-analysis.png", at: "left-[21%] top-[2%] rotate-[4deg]" },
+  { title: "ChurnRate", src: "/churnrate-dashboard.png", at: "left-[40%] top-[25%] rotate-[-3deg]" },
+  { title: "Studio", src: "/isometric-studio.png", at: "left-[58%] top-[5%] rotate-[6deg]" },
+  { title: "Desk", src: "/desk-hero.png", at: "left-[76%] top-[27%] rotate-[-5deg]" },
 ];
 
-export default function Collage() {
+export default function Collage({
+  /** Swappable so the pile can sit on the page's own paper, without the lab's
+      framed stage around it. */
+  className = "lab-stage relative h-[360px] w-full overflow-hidden rounded-xl [perspective:1600px]",
+  caption = "Drag them",
+  /** The card's own chrome. The lab and the landing page carry their styles in
+      different sheets, and a card with neither is a bare screenshot floating on
+      the paper with no edge and no shadow. */
+  cardClass = "lab-card",
+}: {
+  className?: string;
+  caption?: string;
+  cardClass?: string;
+} = {}) {
   return (
-    <div className="lab-stage relative h-[360px] w-full overflow-hidden rounded-xl [perspective:1600px]">
+    <div className={className}>
       {CARDS.map((c) => (
-        <Card key={c.title} {...c} />
+        <Card key={c.title} {...c} cardClass={cardClass} />
       ))}
-      <p className="pointer-events-none absolute bottom-3 left-0 right-0 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400 dark:text-zinc-500">
-        Drag them
-      </p>
+      {caption && (
+        <p className="pointer-events-none absolute bottom-3 left-0 right-0 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400 dark:text-zinc-500">
+          {caption}
+        </p>
+      )}
     </div>
   );
 }
 
-function Card({ title, src, at }: { title: string; src: string; at: string }) {
+function Card({
+  title,
+  src,
+  at,
+  cardClass,
+}: {
+  title: string;
+  src: string;
+  at: string;
+  cardClass: string;
+}) {
   const box = useRef<HTMLDivElement>(null);
   const controls = useAnimationControls();
   const [bounds, setBounds] = useState({ top: 0, left: 0, right: 0, bottom: 0 });
@@ -91,7 +119,7 @@ function Card({ title, src, at }: { title: string; src: string; at: string }) {
         my.set(0);
       }}
       onDragEnd={() => controls.start({ rotate: 0, transition: { type: "spring", ...spring } })}
-      className={`lab-card absolute w-44 cursor-grab rounded-lg p-1.5 active:cursor-grabbing ${at}`}
+      className={`${cardClass} absolute w-44 cursor-grab rounded-lg p-1.5 active:cursor-grabbing ${at}`}
     >
       <img
         src={src}

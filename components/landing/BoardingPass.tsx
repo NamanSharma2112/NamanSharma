@@ -124,34 +124,39 @@ export default function BoardingPass({
       {!leaving && <div data-fixed-screen hidden />}
 
       <div className="relative flex flex-col items-center">
-        <motion.div
-          drag={phase === "ready" ? "y" : false}
-          dragConstraints={{ top: 0, bottom: SLOT + 60 }}
-          dragElastic={0.05}
-          dragMomentum={false}
-          onDragEnd={() => {
-            if (travelled.current > THROW) accept();
-            else y.set(0);
-          }}
-          style={{ y }}
-          animate={
-            phase === "ready"
-              ? {}
-              : {
-                  y: SLOT + 78,
-                  opacity: 0,
-                  scale: 0.97,
-                  transition: { duration: 0.36, ease: [0.23, 1, 0.32, 1] },
-                }
-          }
-          // Behind the reader on purpose: dragging the card down slides it in
-          // under the lip, which is what being inserted looks like. In front,
-          // it just covers the machine and hides everything it is doing.
-          className="relative z-0 cursor-grab active:cursor-grabbing"
-          aria-hidden
-        >
-          <TiltingPass />
-        </motion.div>
+        {/* Where the card is swallowed: it is clipped at the slot line, so it
+            goes in and stays in. Without it the card travels further than the
+            machine is tall and comes back out the underside. */}
+        <div className="pass-throat">
+          <motion.div
+            drag={phase === "ready" ? "y" : false}
+            dragConstraints={{ top: 0, bottom: SLOT + 60 }}
+            dragElastic={0.05}
+            dragMomentum={false}
+            onDragEnd={() => {
+              if (travelled.current > THROW) accept();
+              else y.set(0);
+            }}
+            style={{ y }}
+            animate={
+              phase === "ready"
+                ? {}
+                : {
+                    y: SLOT + 78,
+                    opacity: 0,
+                    scale: 0.97,
+                    transition: { duration: 0.36, ease: [0.23, 1, 0.32, 1] },
+                  }
+            }
+            // Behind the reader on purpose: dragging the card down slides it in
+            // under the lip, which is what being inserted looks like. In front,
+            // it just covers the machine and hides everything it is doing.
+            className="relative z-0 cursor-grab active:cursor-grabbing"
+            aria-hidden
+          >
+            <TiltingPass />
+          </motion.div>
+        </div>
 
         <Reader phase={phase} armed={armed} />
       </div>
@@ -272,133 +277,70 @@ function TiltingPass() {
 
 /* ── the reader ─────────────────────────────────────────────────────────── */
 
+/**
+ * The reader: a slim graphite slab, not a machine covered in parts.
+ *
+ * The earlier one was a wide beige box wearing a speaker grille, a lamp tower,
+ * a contactless pad, chevrons and feet — every airport-reader cliché at once,
+ * which is exactly why it read as assembled from parts rather than designed.
+ * This is the opposite: one dark bar, a lit slot along the top edge, and a
+ * single line of readout. Everything it needs to say, it says in that line.
+ */
 function Reader({ phase, armed }: { phase: Phase; armed: boolean }) {
   const reading = phase === "reading";
   const accepted = phase === "accepted";
 
   return (
     <div
-      className={`reader relative z-20 mt-11 w-[378px] sm:w-[468px] ${
+      // Exactly the card's width: a slot narrower than the thing going into it
+      // reads as a bar lying on top of the card rather than a machine taking
+      // it, and the card's edges hang out either side on the way down.
+      // No top margin: the gap above it is the throat's bottom padding, so the
+      // clip edge and the slot are the same line.
+      className={`reader relative z-20 w-[340px] sm:w-[434px] ${
         armed ? "is-armed" : ""
       } ${reading ? "is-reading" : ""} ${accepted ? "is-accepted" : ""}`}
     >
-      {/* The shadow it throws on the floor — grounds the machine so it sits in
-          the scene rather than floating on it. */}
       <span aria-hidden className="reader-shadow" />
 
-      {/* The insertion bay, raised proud of the face: a chrome channel with the
-          dark slot in it, and the throat the card disappears into. */}
-      <div className="reader-hood">
-        <span className="reader-lip" aria-hidden />
-        <span className="reader-slot" aria-hidden>
-          <span className="reader-slot-glow" aria-hidden />
-        </span>
-        <span className="reader-guide left" aria-hidden />
-        <span className="reader-guide right" aria-hidden />
-      </div>
-
-      <div className="relative flex items-stretch gap-3 px-4 pt-[26px]">
-        {/* The display: dot matrix over a scanline, a sweep while it reads, and
-            a meter that fills, then a tick when it clears. */}
-        <span className="reader-screen relative flex flex-1 flex-col items-center justify-center gap-1.5 overflow-hidden">
-          <span className="reader-dots pointer-events-none absolute inset-0" />
-          <span className="reader-scan pointer-events-none absolute inset-x-0 h-[2px]" />
-          {reading && <span className="reader-beam pointer-events-none absolute inset-y-0 w-1/3" />}
-
-          <span
-            className={`relative font-mono text-[15px] tracking-[0.3em] transition-colors ${
-              accepted
-                ? "text-emerald-300"
-                : reading
-                  ? "text-amber-200"
-                  : armed
-                    ? "text-emerald-200"
-                    : "text-emerald-300/85"
-            }`}
-          >
-            {accepted ? "WELCOME" : reading ? "READING" : armed ? "INSERT" : "READY"}
-          </span>
-
-          {/* The meter reads out the state under the word: a run of cells that
-              fills as it reads, a full green bar once it clears. */}
-          <span className="reader-meter relative flex gap-[3px]" aria-hidden>
-            {Array.from({ length: 9 }).map((_, i) => (
-              <span
-                key={i}
-                className="reader-cell block h-[3px] w-[9px] rounded-[1px]"
-                style={{ transitionDelay: `${i * 45}ms` }}
-              />
-            ))}
-          </span>
-        </span>
-
-        {/* The LED tower, recessed into its own well. */}
-        <span className="reader-tower flex flex-col justify-center gap-2">
-          <Lamp on={!reading && !accepted} tone="idle" label="PWR" />
-          <Lamp on={reading} tone="busy" label="RD" />
-          <Lamp on={accepted} tone="ok" label="OK" />
-        </span>
-      </div>
-
-      {/* The plate below: the gate stencil, the contactless pad, and the
-          chevrons that chase once a card is close. */}
-      <div className="relative flex items-center justify-between px-4 pb-3 pt-2.5">
-        <span className="flex items-center gap-2">
-          <span className="reader-grille" aria-hidden />
-          <span className="font-mono text-[8px] uppercase leading-[1.4] tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
-            Northern Air
-            <br />
-            Gate A12
-          </span>
-        </span>
-
-        <span className="flex items-center gap-3">
-          <Contactless />
-          <span className={`reader-arrows flex items-center gap-[3px] ${armed ? "is-live" : ""}`}>
-            {[0, 1, 2].map((i) => (
-              <span key={i} className="arrow block size-1.5 rotate-45 border-b border-r" />
-            ))}
-          </span>
-        </span>
-      </div>
-
-      {/* The plinth it stands on, and the two feet under that. */}
-      <span aria-hidden className="reader-base" />
-      <span aria-hidden className="reader-foot left" />
-      <span aria-hidden className="reader-foot right" />
-    </div>
-  );
-}
-
-function Lamp({ on, tone, label }: { on: boolean; tone: "idle" | "busy" | "ok"; label: string }) {
-  const colour = on
-    ? tone === "ok"
-      ? "bg-emerald-400 shadow-[0_0_9px_2px_rgba(52,211,153,0.9)]"
-      : tone === "busy"
-        ? "bg-amber-400 shadow-[0_0_9px_2px_rgba(251,191,36,0.9)]"
-        : "bg-sky-400 shadow-[0_0_8px_1px_rgba(56,189,248,0.8)]"
-    : "reader-lamp-off";
-
-  return (
-    <span className="flex items-center gap-1.5">
-      <span className={`size-[7px] rounded-full transition-all duration-200 ${colour}`} />
-      <span className="font-mono text-[7px] uppercase tracking-[0.12em] text-zinc-400 dark:text-zinc-500">
-        {label}
+      {/* The slot is the whole top edge — a seam of light the card goes into,
+          rather than a bay bolted onto the front. */}
+      <span className="reader-slot" aria-hidden>
+        <span className="reader-slot-glow" aria-hidden />
       </span>
-    </span>
-  );
-}
 
-/** The contactless pad — the tap target every modern reader wears. */
-function Contactless() {
-  return (
-    <span className="reader-nfc" aria-hidden>
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-        <path d="M8.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-        <path d="M11.5 6a8.2 8.2 0 0 1 0 12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-        <path d="M14.5 4a11 11 0 0 1 0 16" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-      </svg>
-    </span>
+      <div className="relative flex items-center gap-2.5 px-3.5 py-3">
+        {/* One status light, doing the job the tower of three used to. */}
+        <span className="reader-dot" aria-hidden />
+
+        <span
+          className={`reader-read flex-1 font-mono text-[11px] uppercase tracking-[0.26em] transition-colors ${
+            accepted
+              ? "text-emerald-300"
+              : reading
+                ? "text-amber-200"
+                : "text-zinc-400"
+          }`}
+        >
+          {accepted
+            ? "Welcome"
+            : reading
+              ? "Reading"
+              : armed
+                ? "Insert"
+                : "Ready"}
+        </span>
+
+        <span className="font-mono text-[9px] tracking-[0.18em] text-zinc-600">
+          A12
+        </span>
+      </div>
+
+      {/* A hairline that fills while it reads and holds green once it clears. */}
+      <span className="reader-bar" aria-hidden>
+        <span className="reader-bar-fill" />
+      </span>
+    </div>
   );
 }
 
@@ -419,7 +361,10 @@ function Pass() {
     <div className="pass-card relative flex w-[340px] overflow-hidden rounded-[10px] sm:w-[434px]">
       {/* A guilloché wash under everything, the way security print sits under
           the text on a real ticket. */}
-      <span className="pass-wash pointer-events-none absolute inset-0" aria-hidden />
+      <span
+        className="pass-wash pointer-events-none absolute inset-0"
+        aria-hidden
+      />
 
       {/* main pane */}
       <div className="relative flex-1">
@@ -446,7 +391,9 @@ function Pass() {
             </span>
             <span className="text-right">
               <FieldLabel>Flight</FieldLabel>
-              <span className="block font-mono text-[12px] text-zinc-800">NS 2112</span>
+              <span className="block font-mono text-[12px] text-zinc-800">
+                NS 2112
+              </span>
             </span>
           </div>
 
@@ -484,7 +431,9 @@ function Pass() {
             ].map(([label, value]) => (
               <span key={label}>
                 <FieldLabel>{label}</FieldLabel>
-                <span className="block font-mono text-[11px] text-zinc-800">{value}</span>
+                <span className="block font-mono text-[11px] text-zinc-800">
+                  {value}
+                </span>
               </span>
             ))}
           </div>
@@ -509,33 +458,62 @@ function Pass() {
         </span>
         <span>
           <FieldLabel>Seat</FieldLabel>
-          <span className="block font-mono text-[18px] leading-none text-zinc-900">18A</span>
+          <span className="block font-mono text-[18px] leading-none text-zinc-900">
+            18A
+          </span>
         </span>
         <span className="grid w-full grid-cols-2 gap-x-1 gap-y-1.5">
           <span className="text-left">
             <FieldLabel>Flight</FieldLabel>
-            <span className="block font-mono text-[9px] text-zinc-800">NS2112</span>
+            <span className="block font-mono text-[9px] text-zinc-800">
+              NS2112
+            </span>
           </span>
           <span className="text-left">
             <FieldLabel>Gate</FieldLabel>
-            <span className="block font-mono text-[9px] text-zinc-800">A12</span>
+            <span className="block font-mono text-[9px] text-zinc-800">
+              A12
+            </span>
           </span>
         </span>
         <Qr />
       </div>
 
       {/* The perforation, and the two notches punched where it meets the edge. */}
-      <span className="pass-perf pointer-events-none absolute inset-y-2" aria-hidden />
-      <span className="pass-notch pass-notch-top pointer-events-none absolute" aria-hidden />
-      <span className="pass-notch pass-notch-bottom pointer-events-none absolute" aria-hidden />
+      <span
+        className="pass-perf pointer-events-none absolute inset-y-2"
+        aria-hidden
+      />
+      <span
+        className="pass-notch pass-notch-top pointer-events-none absolute"
+        aria-hidden
+      />
+      <span
+        className="pass-notch pass-notch-bottom pointer-events-none absolute"
+        aria-hidden
+      />
     </div>
   );
 }
 
 function Logo() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden className="text-white">
-      <rect x="2" y="2" width="20" height="20" rx="5" fill="currentColor" opacity="0.22" />
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="text-white"
+    >
+      <rect
+        x="2"
+        y="2"
+        width="20"
+        height="20"
+        rx="5"
+        fill="currentColor"
+        opacity="0.22"
+      />
       <path d="M12 4.5l6.5 13-6.5-3.2-6.5 3.2z" fill="currentColor" />
     </svg>
   );
@@ -543,14 +521,24 @@ function Logo() {
 
 function PlaneGlyph() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden className="text-indigo-500">
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+      className="text-indigo-500"
+    >
       <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
     </svg>
   );
 }
 
 /** Deterministic bar widths — random ones would reshuffle on every render. */
-const BARS = [3, 1, 2, 1, 1, 3, 2, 1, 2, 3, 1, 1, 2, 2, 1, 3, 1, 2, 1, 1, 2, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 3];
+const BARS = [
+  3, 1, 2, 1, 1, 3, 2, 1, 2, 3, 1, 1, 2, 2, 1, 3, 1, 2, 1, 1, 2, 3, 1, 2, 2, 1,
+  1, 3, 1, 2, 1, 3,
+];
 
 function Barcode({ className }: { className?: string }) {
   return (
@@ -577,18 +565,29 @@ function Qr() {
       const dx = x - ox;
       const dy = y - oy;
       if (dx < 0 || dx > 2 || dy < 0 || dy > 2) return null;
-      return dx === 0 || dx === 2 || dy === 0 || dy === 2 || (dx === 1 && dy === 1);
+      return (
+        dx === 0 || dx === 2 || dy === 0 || dy === 2 || (dx === 1 && dy === 1)
+      );
     };
     const e = eye(0, 0) ?? eye(N - 3, 0) ?? eye(0, N - 3);
     if (e !== null) return e;
     // A stable, evenly-mixed field for everything else.
-    return ((x * 5 + y * 3 + x * y) % 7) < 3;
+    return (x * 5 + y * 3 + x * y) % 7 < 3;
   };
 
   const rects = [];
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < N; x++) {
-      if (on(x, y)) rects.push(<rect key={`${x}-${y}`} x={x * cell} y={y * cell} width={cell} height={cell} />);
+      if (on(x, y))
+        rects.push(
+          <rect
+            key={`${x}-${y}`}
+            x={x * cell}
+            y={y * cell}
+            width={cell}
+            height={cell}
+          />,
+        );
     }
   }
   return (

@@ -8,12 +8,11 @@ import MenuChip from "@/components/landing/MenuChip";
 import PortholeWindow from "@/components/landing/PortholeWindow";
 import FlightPlan from "@/components/landing/FlightPlan";
 import LaptopCat from "@/components/landing/LaptopCat";
-import PlaneDoodle from "@/components/landing/PlaneDoodle";
 import RoleFlipper from "@/components/landing/RoleFlipper";
 import RouteBanner from "@/components/landing/RouteBanner";
 import SendButton from "@/components/landing/SendButton";
-import SleepingCat from "@/components/landing/SleepingCat";
 import StackScatter from "@/components/landing/StackScatter";
+import Collage from "@/components/lab/Collage";
 import "@/components/landing/landing.css";
 
 export const metadata: Metadata = {
@@ -42,11 +41,6 @@ export default function Home() {
 
       {/* The window, and what it is a window onto. */}
       <div className="landing-stagger relative mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-10 text-center sm:pt-14">
-        {/* A seatmate asleep in the margin, and a paper plane off the other
-            wing. Only where the column has margins to spare. */}
-        <SleepingCat className="absolute right-full top-[176px] mr-2 hidden w-[184px] xl:block" />
-        <PlaneDoodle className="absolute left-full top-[150px] ml-2 hidden w-[150px] xl:block" />
-
         <PortholeWindow />
 
         {/* The role cycles; the rest of the line stays put. */}
@@ -87,6 +81,22 @@ export default function Home() {
       <div className="mt-6 sm:mt-8">
         <FlightPlan />
       </div>
+
+      {/* Shots from the projects above, in a pile you can pick up and throw.
+          No framed stage — they sit straight on the page's paper, so it reads
+          as things left on a desk rather than a widget embedded in the page. */}
+      <section className="mx-auto mt-16 w-full max-w-[760px] px-6 sm:mt-20" aria-label="Project shots">
+        {/* Says it is draggable in the heading rather than adding a second
+            line of caption under the pile to say the same thing. */}
+        <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
+          Odds and ends · drag them
+        </p>
+        <Collage
+          className="relative h-[300px] w-full [perspective:1600px]"
+          caption=""
+          cardClass="shot-card"
+        />
+      </section>
 
       {/* Landing card. */}
       <div className="mx-auto mt-20 w-full max-w-[760px] px-6 pb-24">

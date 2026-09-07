@@ -241,11 +241,17 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
               }
               transition={{ type: "spring", stiffness: 300, damping: 24, mass: 0.5 }}
             >
+              {/* Eager on purpose. These sit at left:100% of the column, which
+                  puts the outer ones past the right edge of the viewport — so
+                  they never intersect it, lazy loading never fires, and the
+                  hover it is the payoff for opens an empty box. Four thumbnails
+                  under 30KB each is the cheaper trade. */}
               <Image
                 src={leg.shot.src}
                 alt=""
                 width={210}
                 height={132}
+                loading="eager"
                 className="h-[132px] w-[210px] rounded-lg object-cover"
               />
             </motion.span>

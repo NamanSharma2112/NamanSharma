@@ -26,6 +26,9 @@ const ROLES = [
 /** Long enough to read the title and forget it is going to change. */
 const HOLD = 4000;
 
+/** The one that sizes the slot, so the line never reflows. */
+const LONGEST = ROLES.reduce((a, b) => (b.length > a.length ? b : a));
+
 export default function RoleFlipper() {
   const [i, setI] = useState(0);
   const still = useReducedMotion();
@@ -39,31 +42,29 @@ export default function RoleFlipper() {
   if (still) return <>{ROLES[0]}</>;
 
   return (
-    <motion.span
-      layout
-      className="relative inline-flex overflow-hidden whitespace-nowrap align-bottom"
-    >
-      <AnimatePresence mode="popLayout" initial={false}>
+    <span className="relative inline-flex justify-center overflow-hidden whitespace-nowrap align-bottom">
+      {/* Holds the slot open at the width of the longest role. Without it the
+          box resizes with each word and the rest of the line — "& Creative
+          Technologist" — slides sideways every four seconds. Invisible but
+          still laid out, so it sets the width and the line height. */}
+      <span aria-hidden className="invisible">
+        {LONGEST}
+      </span>
+
+      <AnimatePresence initial={false}>
         <motion.span
           key={i}
           initial={{ y: "-70%", filter: "blur(8px)", opacity: 0 }}
-          animate={{
-            y: 0,
-            filter: "blur(0px)",
-            opacity: 1,
-            x: [0, -1.5, 1.5, 0],
-          }}
+          animate={{ y: 0, filter: "blur(0px)", opacity: 1 }}
           exit={{ y: "70%", filter: "blur(8px)", opacity: 0 }}
-          transition={{
-            duration: 0.5,
-            ease: [0.23, 1, 0.32, 1],
-            x: { duration: 0.4, delay: 0.45 },
-          }}
-          className="inline-block whitespace-nowrap"
+          transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+          // Absolute, so the outgoing and incoming words overlap inside the
+          // reserved slot instead of taking turns changing its size.
+          className="absolute inset-0 flex items-center justify-center whitespace-nowrap"
         >
           {ROLES[i]}
         </motion.span>
       </AnimatePresence>
-    </motion.span>
+    </span>
   );
 }

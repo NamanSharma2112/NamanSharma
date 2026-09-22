@@ -7,6 +7,7 @@ import CoordinateRail from "@/components/landing/CoordinateRail";
 import MenuChip from "@/components/landing/MenuChip";
 import FlightPlan from "@/components/landing/FlightPlan";
 import LightRays from "@/components/landing/LightRays";
+import PerspectiveBook from "@/components/landing/PerspectiveBook";
 import LaptopCat from "@/components/landing/LaptopCat";
 import RoleFlipper from "@/components/landing/RoleFlipper";
 import RouteBanner from "@/components/landing/RouteBanner";
@@ -106,8 +107,17 @@ export default function Home() {
         />
       </section>
 
+      {/* Left on the desk next to the pile, not presented: offset to one side
+          rather than centred, and it does nothing until you touch it. */}
+      <section
+        className="relative z-10 mx-auto mt-10 w-full max-w-[760px] px-6"
+        aria-label="Notebook"
+      >
+        <PerspectiveBook className="ml-1 sm:ml-8" />
+      </section>
+
       {/* Landing card. */}
-      <div className="relative z-10 mx-auto mt-20 w-full max-w-[760px] px-6 pb-24">
+      <div className="relative z-10 mx-auto mt-16 w-full max-w-[760px] px-6 pb-24">
         <div className="desk-col flex flex-col items-start gap-6 border-t border-black/10 pt-8 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
           <div>
             {/* The machine's mascot, sitting on the link down to it: hover the

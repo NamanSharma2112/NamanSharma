@@ -29,6 +29,163 @@
   }
 }
 
+/* ── the notebook ───────────────────────────────────────────────────────── */
+
+/* 150px a page, so the whole thing is 300px — the size of something actually
+   put down on a desk, not a widget the width of the column. */
+.book-stage {
+  perspective: 1400px;
+  width: 300px;
+  height: 196px;
+}
+
+.book {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  /* Laid down rather than facing you: tipped back and turned a few degrees,
+     the way a notebook ends up when you put it down. */
+  transform: rotateX(34deg) rotateZ(-7deg);
+}
+
+/* The sheaf of pages under each half, so the open book has thickness. */
+.book-block {
+  position: absolute;
+  top: 2px;
+  width: 150px;
+  height: calc(100% - 4px);
+  background: linear-gradient(180deg, #f3efe9 0%, #e6e0d7 100%);
+  box-shadow: 0 10px 22px -10px rgba(70, 60, 54, 0.5);
+}
+
+.book-block-l {
+  left: 0;
+  border-radius: 3px 1px 1px 3px;
+}
+
+.book-block-r {
+  left: 150px;
+  border-radius: 1px 3px 3px 1px;
+}
+
+.dark .book-block {
+  background: linear-gradient(180deg, #24211e 0%, #191715 100%);
+  box-shadow: 0 10px 22px -10px rgba(0, 0, 0, 0.85);
+}
+
+/* One leaf, hinged on the spine. */
+.book-leaf {
+  position: absolute;
+  left: 150px;
+  top: 0;
+  width: 150px;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+}
+
+.book-face {
+  position: absolute;
+  inset: 0;
+  padding: 14px 13px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: linear-gradient(170deg, #fffefc 0%, #f7f3ed 100%);
+  box-shadow: inset 0 0 0 1px rgba(70, 60, 54, 0.07);
+}
+
+.dark .book-face {
+  background: linear-gradient(170deg, #201e1b 0%, #191715 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+.book-face-front {
+  border-radius: 1px 3px 3px 1px;
+}
+
+/* Pre-rotated, so once the leaf has turned this face is the right way round
+   and sits on the left of the spread. */
+.book-face-back {
+  transform: rotateY(180deg);
+  border-radius: 3px 1px 1px 3px;
+}
+
+.book-face-title {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #a8a29e;
+}
+
+.book-face-body {
+  margin-top: 7px;
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: #57534e;
+}
+
+.dark .book-face-body {
+  color: #b5aea6;
+}
+
+/* The ruled line near the foot, so a page with two lines on it still reads as
+   a page rather than a blank card. */
+.book-rule {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 16px;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(120, 108, 98, 0.22) 0 3px,
+    transparent 3px 7px
+  );
+}
+
+/* Half the book each, sitting above the leaves so a click always lands. */
+.book-hit {
+  position: absolute;
+  top: 0;
+  width: 150px;
+  height: 100%;
+  z-index: 40;
+  cursor: pointer;
+  background: transparent;
+}
+
+.book-hit:disabled {
+  cursor: default;
+}
+
+.book-hit-l {
+  left: 0;
+}
+
+.book-hit-r {
+  left: 150px;
+}
+
+.book-hit:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+.book-caption {
+  margin-top: 10px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a8a29e;
+}
+
+.dark .book-caption {
+  color: #78716c;
+}
+
 /* ── light on the paper ─────────────────────────────────────────────────── */
 
 /* Three raked beams across the top of the page. The mask is what keeps it from

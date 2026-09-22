@@ -225,22 +225,6 @@ function knock(ctx: AudioContext, start: number, frequency = 180, gain = 0.16) {
   osc.stop(start + 0.09);
 }
 
-/** Pulling the shade down: a long plastic slide that lands on the sill. */
-export function playShadeClose() {
-  const ctx = getAudioContext();
-  const now = ctx.currentTime;
-  noise(ctx, now, 0.34, { gain: 0.05, from: 1400, to: 420, q: 0.8 });
-  knock(ctx, now + 0.33, 165, 0.14);
-}
-
-/** Letting it up: the same slide, running the other way, ending lighter. */
-export function playShadeOpen() {
-  const ctx = getAudioContext();
-  const now = ctx.currentTime;
-  noise(ctx, now, 0.3, { gain: 0.045, from: 520, to: 1500, q: 0.8 });
-  knock(ctx, now + 0.29, 240, 0.09);
-}
-
 /** A card dragged through a reader — grain, then the stop at the end. */
 export function playSwipe() {
   const ctx = getAudioContext();

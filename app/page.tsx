@@ -5,7 +5,6 @@ import CpuIcon from "@/components/CpuIcon";
 import SocialLinks from "@/components/SocialLinks";
 import CoordinateRail from "@/components/landing/CoordinateRail";
 import MenuChip from "@/components/landing/MenuChip";
-import PortholeWindow from "@/components/landing/PortholeWindow";
 import FlightPlan from "@/components/landing/FlightPlan";
 import LaptopCat from "@/components/landing/LaptopCat";
 import RoleFlipper from "@/components/landing/RoleFlipper";
@@ -27,9 +26,9 @@ const TWITTER = "https://x.com/NamanSharma2112";
 /**
  * A window seat.
  *
- * The whole page is one flight: the slug in the corner says where the seat is,
- * the cabin window decides whether it is day or night outside, and the flight
- * plan below is the route that got here.
+ * The whole page is one flight: the slug in the corner says where the seat is
+ * and the flight plan below is the route that got here. Day or night is set
+ * from the command menu now that the cabin window has gone.
  */
 export default function Home() {
   return (
@@ -39,16 +38,19 @@ export default function Home() {
         <MenuChip />
       </div>
 
-      {/* The window, and what it is a window onto. */}
-      <div className="landing-stagger relative mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-10 text-center sm:pt-14">
-        <PortholeWindow />
-
-        {/* The role cycles; the rest of the line stays put. */}
-        <h1 className="mt-14 text-[19px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-[21px]">
+      {/* The hero opens the page directly now. The top padding carries the air
+          the window used to occupy, rather than leaving the heading with a
+          56px top margin that was only ever the gap under it. */}
+      <div className="landing-stagger relative mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-24 text-center sm:pt-32">
+        {/* The role cycles on its own line. It has to hold a slot the width of
+            the longest title so the heading never reflows, and on one shared
+            line that reserved space showed as a gap before the ampersand —
+            "Design Engineer      & Creative Technologist". Given its own line
+            the slack falls either side of a centred word, where it is just
+            margin. */}
+        <h1 className="text-[19px] font-medium leading-[1.4] tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-[21px]">
           <RoleFlipper />
-          {/* Explicit: an inline-flex box eats the whitespace next to it, and
-              the line renders as "Engineer& Creative" without this. */}
-          {" "}
+          <br />
           &amp; Creative Technologist
         </h1>
 
@@ -75,10 +77,12 @@ export default function Home() {
         <SocialLinks className="mt-5 justify-center" />
       </div>
 
-      {/* Bridges the hero and the route below it, instead of a bare gap. */}
-      <RouteBanner className="mx-auto mt-16 w-full max-w-[1100px] px-6 sm:mt-20" />
+      {/* Bridges the hero and the route below it, instead of a bare gap. Closer
+          than it was: without the window above, the hero is 300px shorter and
+          the old spacing left the arc stranded in the middle of a void. */}
+      <RouteBanner className="mx-auto mt-10 w-full max-w-[1100px] px-6 sm:mt-14" />
 
-      <div className="mt-6 sm:mt-8">
+      <div className="mt-2 sm:mt-4">
         <FlightPlan />
       </div>
 

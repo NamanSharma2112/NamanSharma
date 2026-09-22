@@ -55,8 +55,8 @@
   top: 2px;
   width: 150px;
   height: calc(100% - 4px);
-  background: linear-gradient(180deg, #f3efe9 0%, #e6e0d7 100%);
-  box-shadow: 0 10px 22px -10px rgba(70, 60, 54, 0.5);
+  background: linear-gradient(180deg, #ededed 0%, #dcdcdc 100%);
+  box-shadow: 0 10px 22px -10px rgba(0, 0, 0, 0.32);
 }
 
 .book-block-l {
@@ -70,7 +70,7 @@
 }
 
 .dark .book-block {
-  background: linear-gradient(180deg, #24211e 0%, #191715 100%);
+  background: linear-gradient(180deg, #1f1f1f 0%, #141414 100%);
   box-shadow: 0 10px 22px -10px rgba(0, 0, 0, 0.85);
 }
 
@@ -91,12 +91,12 @@
   padding: 14px 13px;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  background: linear-gradient(170deg, #fffefc 0%, #f7f3ed 100%);
-  box-shadow: inset 0 0 0 1px rgba(70, 60, 54, 0.07);
+  background: linear-gradient(170deg, #ffffff 0%, #f3f3f3 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.07);
 }
 
 .dark .book-face {
-  background: linear-gradient(170deg, #201e1b 0%, #191715 100%);
+  background: linear-gradient(170deg, #1c1c1c 0%, #141414 100%);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
@@ -116,18 +116,14 @@
   font-size: 8.5px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #a8a29e;
+  color: var(--fg-muted);
 }
 
 .book-face-body {
   margin-top: 7px;
   font-size: 10.5px;
   line-height: 1.55;
-  color: #57534e;
-}
-
-.dark .book-face-body {
-  color: #b5aea6;
+  color: var(--fg-body);
 }
 
 /* The ruled line near the foot, so a page with two lines on it still reads as
@@ -140,7 +136,7 @@
   height: 1px;
   background: repeating-linear-gradient(
     90deg,
-    rgba(120, 108, 98, 0.22) 0 3px,
+    rgba(0, 0, 0, 0.16) 0 3px,
     transparent 3px 7px
   );
 }
@@ -179,11 +175,7 @@
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #a8a29e;
-}
-
-.dark .book-caption {
-  color: #78716c;
+  color: var(--fg-muted);
 }
 
 /* ── light on the paper ─────────────────────────────────────────────────── */
@@ -213,7 +205,7 @@
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 253, 250, 0.55) 45%,
+    rgba(255, 255, 255, 0.55) 45%,
     rgba(255, 255, 255, 0) 100%
   );
 }
@@ -242,15 +234,11 @@
   animation: ray-drift 30s var(--ease-in-out) infinite -17s;
 }
 
-/* Moonlight rather than sun: cool, and much weaker, because a bright beam on a
-   near-black page is a smear instead of a light. */
-.dark .ray {
-  background: linear-gradient(
-    180deg,
-    rgba(186, 205, 255, 0.16) 0%,
-    rgba(186, 205, 255, 0.08) 45%,
-    rgba(186, 205, 255, 0) 100%
-  );
+/* Off at night. Sun falling on paper is a real thing to draw; the same beams
+   on a near-black screen are a blue smear in the corner, and there is nothing
+   they add that is worth that. */
+.dark .light-rays {
+  display: none;
 }
 
 /* Translate only — the rotation lives on the `rotate` property, which composes
@@ -273,18 +261,13 @@
 
 /* ── the page it all sits on ────────────────────────────────────────────── */
 
-/* Warm paper rather than white, and a deep slate at night. Set on the landing
-   itself so the rest of the site keeps its own ground. */
+/* The landing reads its ground off the site tokens, which already flip with
+   the theme — so there is no dark override here to keep in step with this one. */
 .landing {
-  --page-bg: #f6f3f1;
-  --rail-tick: #d8d0c8;
+  --page-bg: var(--bg);
+  --rail-tick: var(--line);
   background: var(--page-bg);
   transition: background-color 600ms var(--ease-out);
-}
-
-.dark .landing {
-  --page-bg: #100f0e;
-  --rail-tick: #2e2a27;
 }
 
 /* The dashed track the legs hang off. */
@@ -300,11 +283,7 @@
 /* ── the gate ───────────────────────────────────────────────────────────── */
 
 .gate {
-  background: #f7f2f0;
-}
-
-.dark .gate {
-  background: #100f0e;
+  background: var(--bg);
 }
 
 /* The card is a solid object in a scene, so the stage owns the perspective and
@@ -324,8 +303,8 @@
   background: linear-gradient(180deg, #ffffff 0%, #fbfaf8 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 24px 46px rgba(70, 60, 54, 0.22),
-    0 6px 14px rgba(70, 60, 54, 0.14);
+    0 24px 46px rgba(0, 0, 0, 0.172),
+    0 6px 14px rgba(0, 0, 0, 0.109);
 }
 
 /* The security wash: two fine hatches crossing and a soft rosette, the print
@@ -371,13 +350,16 @@
   );
 }
 
+/* Discs the colour of the page behind, half of each clipped away by the card's
+   overflow — so what shows is a bite out of the edge. It has to be exactly the
+   page or the disc shows as a disc. */
 .pass-notch {
   right: 100px;
   width: 12px;
   height: 12px;
   border-radius: 999px;
   transform: translateX(50%);
-  background: #f7f2f0;
+  background: var(--bg);
 }
 
 .pass-notch-top {
@@ -388,15 +370,11 @@
   bottom: -6px;
 }
 
-.dark .pass-notch {
-  background: #100f0e;
-}
-
 /* The card's thickness: a slab sitting a few pixels behind the face, darker
    at the bottom the way a real edge catches less light. */
 .pass-edge {
   background: linear-gradient(180deg, #e8e2dc 0%, #cec5bd 62%, #b7ada4 100%);
-  box-shadow: 0 18px 30px rgba(70, 60, 54, 0.24);
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.187);
 }
 
 /* ── the pile of shots ──────────────────────────────────────────────────── */
@@ -408,12 +386,12 @@
 .shot-card {
   background: #ffffff;
   box-shadow:
-    0 0 0 1px rgba(70, 60, 54, 0.09),
-    0 10px 24px -10px rgba(70, 60, 54, 0.35);
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 10px 24px -10px rgba(0, 0, 0, 0.18);
 }
 
 .dark .shot-card {
-  background: #1c1b19;
+  background: var(--surface);
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.09),
     0 10px 24px -10px rgba(0, 0, 0, 0.8);
@@ -448,7 +426,7 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
     inset 0 -1px 0 rgba(0, 0, 0, 0.6),
-    0 18px 34px -12px rgba(30, 26, 22, 0.55);
+    0 18px 34px -12px rgba(0, 0, 0, 0.45);
 }
 
 .dark .reader {
@@ -465,7 +443,7 @@
   bottom: -10px;
   height: 18px;
   border-radius: 50%;
-  background: radial-gradient(50% 100% at 50% 0%, rgba(40, 34, 30, 0.3), transparent 70%);
+  background: radial-gradient(50% 100% at 50% 0%, rgba(0, 0, 0, 0.26), transparent 70%);
   filter: blur(3px);
   z-index: -1;
 }
@@ -582,7 +560,7 @@
 /* ── the scatter ────────────────────────────────────────────────────────── */
 
 .scatter-word {
-  text-decoration-color: rgba(120, 108, 98, 0.55);
+  text-decoration-color: rgba(0, 0, 0, 0.385);
   transition: color 200ms var(--ease-out), text-decoration-color 200ms var(--ease-out);
 }
 
@@ -603,8 +581,8 @@
   color: #27272a;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
-    0 8px 18px rgba(70, 60, 54, 0.16),
-    0 1px 3px rgba(70, 60, 54, 0.12);
+    0 8px 18px rgba(0, 0, 0, 0.125),
+    0 1px 3px rgba(0, 0, 0, 0.094);
 }
 
 .dark .scatter-mark {
@@ -645,9 +623,9 @@
    than a panel: a light border and a soft drop, nothing else. */
 .leg-shot img {
   box-shadow:
-    0 0 0 1px rgba(70, 60, 54, 0.12),
-    0 14px 30px rgba(70, 60, 54, 0.18),
-    0 3px 8px rgba(70, 60, 54, 0.12);
+    0 0 0 1px rgba(0, 0, 0, 0.094),
+    0 14px 30px rgba(0, 0, 0, 0.14),
+    0 3px 8px rgba(0, 0, 0, 0.094);
 }
 
 .dark .leg-shot img {

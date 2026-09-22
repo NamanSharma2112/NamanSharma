@@ -22,7 +22,7 @@ export default function PageHeader({
 }) {
   return (
     <header className="mb-7">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-400 dark:text-zinc-500">
+      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--fg-muted)]">
         {kicker}
       </p>
       {/* Held back a beat so it lands after the kicker rather than with it. */}
@@ -30,10 +30,10 @@ export default function PageHeader({
         as="h1"
         text={title}
         delay={0.08}
-        className="mt-2 block text-[23px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100"
+        className="mt-2 block text-[25px] font-semibold tracking-[-0.021em] text-[var(--fg)]"
       />
       {children && (
-        <p className="mt-3 max-w-[54ch] text-[14px] leading-[1.7] text-zinc-500 dark:text-zinc-400">
+        <p className="mt-3 max-w-[54ch] text-[14px] leading-[1.7] text-[var(--fg-body)]">
           {children}
         </p>
       )}

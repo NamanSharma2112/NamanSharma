@@ -10,7 +10,6 @@ import LightRays from "@/components/landing/LightRays";
 import PerspectiveBook from "@/components/landing/PerspectiveBook";
 import LaptopCat from "@/components/landing/LaptopCat";
 import RoleFlipper from "@/components/landing/RoleFlipper";
-import RouteBanner from "@/components/landing/RouteBanner";
 import SendButton from "@/components/landing/SendButton";
 import StackScatter from "@/components/landing/StackScatter";
 import Collage from "@/components/lab/Collage";
@@ -51,7 +50,7 @@ export default function Home() {
         {/* Back on one line. The flipper's slot is measured per title now, so
             the ampersand sits right after the word instead of after a space
             reserved for the longest role. */}
-        <h1 className="text-[19px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-[21px]">
+        <h1 className="text-[20px] font-semibold tracking-[-0.021em] text-[var(--fg)] sm:text-[23px]">
           <RoleFlipper />
           {/* Explicit: an inline-flex box eats the whitespace next to it, and
               the line renders as "Engineer& Creative" without this. */}
@@ -59,7 +58,7 @@ export default function Home() {
           &amp; Creative Technologist
         </h1>
 
-        <p className="mt-3 max-w-[46ch] text-[15px] leading-[1.65] text-zinc-500 dark:text-zinc-400">
+        <p className="mt-3.5 max-w-[46ch] text-[15px] leading-[1.65] text-[var(--fg-body)]">
           Designing and building whatever I can imagine with{" "}
           <StackScatter>a stack I trust</StackScatter> — obsessing over the
           details and the why behind good products.
@@ -82,12 +81,11 @@ export default function Home() {
         <SocialLinks className="mt-5 justify-center" />
       </div>
 
-      {/* Bridges the hero and the route below it, instead of a bare gap. Closer
-          than it was: without the window above, the hero is 300px shorter and
-          the old spacing left the arc stranded in the middle of a void. */}
-      <RouteBanner className="relative z-10 mx-auto mt-10 w-full max-w-[1100px] px-6 sm:mt-14" />
-
-      <div className="relative z-10 mt-2 sm:mt-4">
+      {/* The hero runs straight into the route. There used to be a marquee of
+          type on an arc bridging them, which was the busiest thing on a page
+          that is meant to be quiet — and it was bridging a gap the hero no
+          longer leaves. */}
+      <div className="relative z-10 mt-20 sm:mt-24">
         <FlightPlan />
       </div>
 

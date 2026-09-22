@@ -21,7 +21,14 @@ const IntroDone = createContext(false);
 /** True once the intro has lifted and the page is free to arrive. */
 export const useIntroDone = () => useContext(IntroDone);
 
-/** Set once the gate has been passed, so it is a welcome and not a toll. */
+/**
+ * Set once you have been let in, by whichever door. One intro a session: the
+ * gate on the front page or the reel on any other, never both and never twice.
+ *
+ * Without this the reel ran on every hard load of an inner page — four and a
+ * half seconds of a sheet the same colour as the page, which reads as a page
+ * that failed to load rather than as an entrance.
+ */
 const SEEN = "boarded";
 
 type Intro = "gate" | "reel" | "none";
@@ -40,23 +47,36 @@ export default function Boot({ children }: { children: React.ReactNode }) {
       setDone(true);
       return;
     }
-    if (pathname === "/") {
-      let boarded = false;
-      try {
-        boarded = sessionStorage.getItem(SEEN) === "true";
-      } catch {
-        // Storage blocked: treat it as a first visit.
-      }
-      setIntro(boarded ? "none" : "gate");
-      setDone(boarded);
+    let boarded = false;
+    try {
+      boarded = sessionStorage.getItem(SEEN) === "true";
+    } catch {
+      // Storage blocked: treat it as a first visit.
+    }
+
+    if (boarded) {
+      setIntro("none");
+      setDone(true);
       return;
     }
-    setIntro("reel");
+
+    // The front door is the gate; any other way in gets the reel.
+    setIntro(pathname === "/" ? "gate" : "reel");
+    setDone(false);
   }, [pathname]);
 
   useEffect(() => {
     if (intro !== "reel") return;
-    const timer = window.setTimeout(() => setDone(true), BOOT_DURATION * 1000);
+    const timer = window.setTimeout(() => {
+      setDone(true);
+      // Marked here rather than on unmount: the reel is the whole welcome when
+      // you arrive on an inner page, so having watched it counts as boarded.
+      try {
+        sessionStorage.setItem(SEEN, "true");
+      } catch {
+        // Storage blocked: the reel runs again next navigation. Harmless.
+      }
+    }, BOOT_DURATION * 1000);
     return () => window.clearTimeout(timer);
   }, [intro]);
 

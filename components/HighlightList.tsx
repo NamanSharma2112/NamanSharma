@@ -87,6 +87,7 @@ const ENTER = {
 
 export default function HighlightList({ title, items }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
   const [activeCards, setActiveCards] = useState<Card[] | null>(null);
   const [from, setFrom] = useState<keyof typeof ENTER>("bottom");
 
@@ -95,32 +96,60 @@ export default function HighlightList({ title, items }: Props) {
   const cardX = useSpring(0, springConfig);
   const cardY = useSpring(0, springConfig);
 
-  const onEnter = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, cards?: Card[]) => {
-      const container = containerRef.current;
-      if (!container) return;
-      const containerRect = container.getBoundingClientRect();
-      
-      if (cards && cards.length > 0) {
-        setFrom(getDirection(e, e.currentTarget));
-        setActiveCards(cards);
-        cardX.set(e.clientX - containerRect.left);
-        cardY.set(e.clientY - containerRect.top);
+  /**
+   * Where the preview sits, in container coordinates.
+   *
+   * The card is drawn a full height above the pointer, which is what puts it
+   * above-right of the row you are on. On the first row that lifts it clean out
+   * of the list and onto the page heading — so the Y is floored at the card's
+   * own lifted height, and the top rows hold it flush with the top of the list
+   * instead of pushing it off.
+   */
+  const place = useCallback(
+    (clientX: number, clientY: number, container: HTMLDivElement, snap = false) => {
+      const rect = container.getBoundingClientRect();
+      // Falls back to the card's design height for the very first frame, when
+      // the preview has not mounted and cannot be measured yet.
+      const lift = (previewRef.current?.offsetHeight ?? 170) * 1.1;
+      const x = clientX - rect.left;
+      const y = Math.max(clientY - rect.top, lift);
+      // On the first hover the springs are still resting at 0, which draws the
+      // card a full lift above the top of the list — on the page heading — and
+      // then slides it down into place. Jumping puts it where it belongs on the
+      // frame it appears, and only later moves are sprung.
+      if (snap) {
+        cardX.jump(x);
+        cardY.jump(y);
       } else {
-        setActiveCards(null);
+        cardX.set(x);
+        cardY.set(y);
       }
     },
     [cardX, cardY]
   );
 
+  const onEnter = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, cards?: Card[]) => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      if (cards && cards.length > 0) {
+        setFrom(getDirection(e, e.currentTarget));
+        setActiveCards(cards);
+        place(e.clientX, e.clientY, container, true);
+      } else {
+        setActiveCards(null);
+      }
+    },
+    [place]
+  );
+
   const onMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!activeCards || !containerRef.current) return;
-      const containerRect = containerRef.current.getBoundingClientRect();
-      cardX.set(e.clientX - containerRect.left);
-      cardY.set(e.clientY - containerRect.top);
+      place(e.clientX, e.clientY, containerRef.current);
     },
-    [activeCards, cardX, cardY]
+    [activeCards, place]
   );
 
   const onLeave = useCallback(() => {
@@ -147,8 +176,13 @@ export default function HighlightList({ title, items }: Props) {
               className="pointer-events-none absolute left-0 top-0 z-50"
               style={{ x: cardX, y: cardY }}
             >
-              {/* Offset so card appears above-right of cursor */}
-              <div className="relative" style={{ transform: "translate(20px, -110%)" }}>
+              {/* Above-right of the cursor. The lift is what `place` floors
+                  the Y against, so the two have to stay in step. */}
+              <div
+                ref={previewRef}
+                className="relative"
+                style={{ transform: "translate(20px, -110%)" }}
+              >
                 <motion.div
                   initial={{ opacity: 0, scale: 0.85, ...ENTER[from] }}
                   animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}

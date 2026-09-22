@@ -42,15 +42,14 @@ export default function Home() {
           the window used to occupy, rather than leaving the heading with a
           56px top margin that was only ever the gap under it. */}
       <div className="landing-stagger relative mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-24 text-center sm:pt-32">
-        {/* The role cycles on its own line. It has to hold a slot the width of
-            the longest title so the heading never reflows, and on one shared
-            line that reserved space showed as a gap before the ampersand —
-            "Design Engineer      & Creative Technologist". Given its own line
-            the slack falls either side of a centred word, where it is just
-            margin. */}
-        <h1 className="text-[19px] font-medium leading-[1.4] tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-[21px]">
+        {/* Back on one line. The flipper's slot is measured per title now, so
+            the ampersand sits right after the word instead of after a space
+            reserved for the longest role. */}
+        <h1 className="text-[19px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-[21px]">
           <RoleFlipper />
-          <br />
+          {/* Explicit: an inline-flex box eats the whitespace next to it, and
+              the line renders as "Engineer& Creative" without this. */}
+          {" "}
           &amp; Creative Technologist
         </h1>
 

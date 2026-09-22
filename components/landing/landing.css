@@ -29,6 +29,91 @@
   }
 }
 
+/* ── light on the paper ─────────────────────────────────────────────────── */
+
+/* Three raked beams across the top of the page. The mask is what keeps it from
+   reading as three shapes: the rays fade out before they reach the hero, so
+   what is left is a lit corner rather than an object. */
+.light-rays {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 760px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 42%, transparent 96%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 42%, transparent 96%);
+}
+
+.ray {
+  position: absolute;
+  top: -55%;
+  height: 170%;
+  transform-origin: top center;
+  /* Wide enough that no edge of the gradient is ever visible — an edge is what
+     makes a light look like a polygon. */
+  filter: blur(46px);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 253, 250, 0.55) 45%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.ray-a {
+  left: 4%;
+  width: 190px;
+  opacity: 0.85;
+  rotate: 16deg;
+  animation: ray-drift 26s var(--ease-in-out) infinite;
+}
+
+.ray-b {
+  left: 22%;
+  width: 120px;
+  opacity: 0.6;
+  rotate: 13deg;
+  animation: ray-drift 34s var(--ease-in-out) infinite -9s;
+}
+
+.ray-c {
+  left: 41%;
+  width: 240px;
+  opacity: 0.45;
+  rotate: 19deg;
+  animation: ray-drift 30s var(--ease-in-out) infinite -17s;
+}
+
+/* Moonlight rather than sun: cool, and much weaker, because a bright beam on a
+   near-black page is a smear instead of a light. */
+.dark .ray {
+  background: linear-gradient(
+    180deg,
+    rgba(186, 205, 255, 0.16) 0%,
+    rgba(186, 205, 255, 0.08) 45%,
+    rgba(186, 205, 255, 0) 100%
+  );
+}
+
+/* Translate only — the rotation lives on the `rotate` property, which composes
+   with `transform` rather than being overwritten by it. */
+@keyframes ray-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(38px, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ray {
+    animation: none;
+  }
+}
+
 /* ── the page it all sits on ────────────────────────────────────────────── */
 
 /* Warm paper rather than white, and a deep slate at night. Set on the landing

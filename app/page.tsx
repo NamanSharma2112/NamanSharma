@@ -6,6 +6,7 @@ import SocialLinks from "@/components/SocialLinks";
 import CoordinateRail from "@/components/landing/CoordinateRail";
 import MenuChip from "@/components/landing/MenuChip";
 import FlightPlan from "@/components/landing/FlightPlan";
+import LightRays from "@/components/landing/LightRays";
 import LaptopCat from "@/components/landing/LaptopCat";
 import RoleFlipper from "@/components/landing/RoleFlipper";
 import RouteBanner from "@/components/landing/RouteBanner";
@@ -33,7 +34,11 @@ const TWITTER = "https://x.com/NamanSharma2112";
 export default function Home() {
   return (
     <main className="landing relative min-h-screen">
-      <div className="mx-auto flex w-full max-w-[1180px] items-start justify-between gap-6 px-6 pt-6 sm:px-10">
+      {/* Behind everything. The bands below carry z-10 because the rays are a
+          positioned layer at z-0, and in-flow content paints under one. */}
+      <LightRays />
+
+      <div className="relative z-10 mx-auto flex w-full max-w-[1180px] items-start justify-between gap-6 px-6 pt-6 sm:px-10">
         <CoordinateRail />
         <MenuChip />
       </div>
@@ -41,7 +46,7 @@ export default function Home() {
       {/* The hero opens the page directly now. The top padding carries the air
           the window used to occupy, rather than leaving the heading with a
           56px top margin that was only ever the gap under it. */}
-      <div className="landing-stagger relative mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-24 text-center sm:pt-32">
+      <div className="landing-stagger relative z-10 mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-24 text-center sm:pt-32">
         {/* Back on one line. The flipper's slot is measured per title now, so
             the ampersand sits right after the word instead of after a space
             reserved for the longest role. */}
@@ -79,16 +84,16 @@ export default function Home() {
       {/* Bridges the hero and the route below it, instead of a bare gap. Closer
           than it was: without the window above, the hero is 300px shorter and
           the old spacing left the arc stranded in the middle of a void. */}
-      <RouteBanner className="mx-auto mt-10 w-full max-w-[1100px] px-6 sm:mt-14" />
+      <RouteBanner className="relative z-10 mx-auto mt-10 w-full max-w-[1100px] px-6 sm:mt-14" />
 
-      <div className="mt-2 sm:mt-4">
+      <div className="relative z-10 mt-2 sm:mt-4">
         <FlightPlan />
       </div>
 
       {/* Shots from the projects above, in a pile you can pick up and throw.
           No framed stage — they sit straight on the page's paper, so it reads
           as things left on a desk rather than a widget embedded in the page. */}
-      <section className="mx-auto mt-16 w-full max-w-[760px] px-6 sm:mt-20" aria-label="Project shots">
+      <section className="relative z-10 mx-auto mt-16 w-full max-w-[760px] px-6 sm:mt-20" aria-label="Project shots">
         {/* Says it is draggable in the heading rather than adding a second
             line of caption under the pile to say the same thing. */}
         <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
@@ -102,7 +107,7 @@ export default function Home() {
       </section>
 
       {/* Landing card. */}
-      <div className="mx-auto mt-20 w-full max-w-[760px] px-6 pb-24">
+      <div className="relative z-10 mx-auto mt-20 w-full max-w-[760px] px-6 pb-24">
         <div className="desk-col flex flex-col items-start gap-6 border-t border-black/10 pt-8 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
           <div>
             {/* The machine's mascot, sitting on the link down to it: hover the

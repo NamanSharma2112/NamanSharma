@@ -54,7 +54,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body suppressHydrationWarning className="min-h-full flex flex-col bg-[#f6f3f1] dark:bg-[#100f0e] text-black dark:text-white transition-colors duration-300">
+      {/* One ground for the whole site, read off the tokens in globals.css
+          rather than hardcoded per theme here. Never pure black on white or
+          pure white on black — the foreground token is an off-white at night,
+          which is what stops long text buzzing. */}
+      <body suppressHydrationWarning className="flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

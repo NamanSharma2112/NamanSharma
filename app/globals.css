@@ -175,6 +175,32 @@
 :root {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* ── the palette ──────────────────────────────────────────────────────────
+     Neutral, not warm. The page used to be printed paper (#f6f3f1) with a warm
+     grey ramp to match; this is a true grey, which is what makes the dark side
+     read as a screen rather than a dim room.
+
+     These are the Tailwind `neutral` steps, which is what components.json has
+     always said the base colour is — so the zinc utilities scattered through
+     the components sit on it without fighting it. One place to change. */
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --line: #e5e5e5;
+  --fg: #0a0a0a;
+  --fg-body: #525252;
+  --fg-muted: #a3a3a3;
+}
+
+.dark {
+  --bg: #0f0f0f;
+  --surface: #171717;
+  --line: #262626;
+  /* Off-white, never #fff: pure white on near-black is what makes long text
+     buzz, and it is the one thing the reference is most careful about. */
+  --fg: #ededed;
+  --fg-body: #a1a1a1;
+  --fg-muted: #737373;
 }
 
 /* ── The ⌘K panel ───────────────────────────────────────────────────────────
@@ -376,7 +402,7 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #6b6259;
-  background: color-mix(in srgb, var(--page-bg, #f6f3f1) 88%, transparent);
+  background: color-mix(in srgb, var(--page-bg, var(--bg)) 88%, transparent);
   opacity: 0;
   pointer-events: none;
   transition:

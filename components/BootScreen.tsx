@@ -33,7 +33,7 @@ const ROWS = Array.from({ length: 6 }, () => NAMES).flat();
 
 /** Seconds the intro holds before it lifts. */
 export const BOOT_DURATION = HOLD * NAMES.length + 0.5;
-/** Seconds the black sheet takes to clear once it starts lifting. */
+/** Seconds the sheet takes to clear once it starts lifting. */
 export const BOOT_FADE = 0.6;
 
 /**
@@ -56,7 +56,7 @@ export default function BootScreen({ show }: { show: boolean }) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: BOOT_FADE, ease: "easeInOut" }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--bg)]"
         >
           <motion.div
             initial={{ opacity: 0 }}
@@ -86,7 +86,7 @@ export default function BootScreen({ show }: { show: boolean }) {
                   <motion.div
                     key={i}
                     lang={name.lang}
-                    className="flex items-center justify-center whitespace-nowrap text-[17px] font-medium text-white"
+                    className="flex items-center justify-center whitespace-nowrap text-[17px] font-medium text-[var(--fg)]"
                     style={{ height: ROW }}
                     // Start where they belong rather than animating in from
                     // the defaults on mount.

@@ -592,8 +592,8 @@
   }
 }
 
-/* ── the cabin call button ──────────────────────────────────────────────────
-   The chat trigger, dressed as the crew-call switch above a seat: a recessed
+/* ── the chat button ────────────────────────────────────────────────────────
+   A recessed
    console, a button that depresses, and a service light that goes out once
    the call is placed. */
 .call-console {

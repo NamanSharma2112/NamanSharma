@@ -3,17 +3,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import BootScreen, { BOOT_DURATION } from "@/components/BootScreen";
-import BoardingPass from "@/components/landing/BoardingPass";
 
 /**
  * Owns the one moment the whole entrance hangs off: when the intro lifts.
  *
- * Which intro that is depends on where you came in. The front door is a gate
- * with a boarding pass to swipe; every other page turns the name over on a
- * reel; the desktop starts a machine up and needs neither.
- *
- * Everything waiting behind whichever one it is reads from the same flag, so
- * the page starts arriving as the intro clears rather than after it.
+ * One intro a session — the name turning over on a reel — and none at all on
+ * the desktop, which starts a machine of its own. Everything waiting behind it
+ * reads from the same flag, so the page begins arriving as the intro clears
+ * rather than after it.
  */
 
 const IntroDone = createContext(false);
@@ -22,16 +19,13 @@ const IntroDone = createContext(false);
 export const useIntroDone = () => useContext(IntroDone);
 
 /**
- * Set once you have been let in, by whichever door. One intro a session: the
- * gate on the front page or the reel on any other, never both and never twice.
- *
- * Without this the reel ran on every hard load of an inner page — four and a
- * half seconds of a sheet the same colour as the page, which reads as a page
- * that failed to load rather than as an entrance.
+ * Set once the intro has run. Without it the reel played on every hard load —
+ * four and a half seconds of a sheet the same colour as the page, which reads
+ * as a page that failed to load rather than as an entrance.
  */
-const SEEN = "boarded";
+const SEEN = "introduced";
 
-type Intro = "gate" | "reel" | "none";
+type Intro = "reel" | "none";
 
 export default function Boot({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -60,13 +54,27 @@ export default function Boot({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // The front door is the gate; any other way in gets the reel.
-    setIntro(pathname === "/" ? "gate" : "reel");
+    setIntro("reel");
     setDone(false);
   }, [pathname]);
 
   useEffect(() => {
     if (intro !== "reel") return;
+
+    const finish = () => {
+      setDone(true);
+      try {
+        sessionStorage.setItem(SEEN, "true");
+      } catch {
+        // Storage blocked: the intro runs again next navigation. Harmless.
+      }
+    };
+
+    // The screen says you can skip it, so you can. Any key, or a click.
+    const skip = () => finish();
+    window.addEventListener("keydown", skip);
+    window.addEventListener("pointerdown", skip);
+
     const timer = window.setTimeout(() => {
       setDone(true);
       // Marked here rather than on unmount: the reel is the whole welcome when
@@ -77,19 +85,18 @@ export default function Boot({ children }: { children: React.ReactNode }) {
         // Storage blocked: the reel runs again next navigation. Harmless.
       }
     }, BOOT_DURATION * 1000);
-    return () => window.clearTimeout(timer);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("keydown", skip);
+      window.removeEventListener("pointerdown", skip);
+    };
   }, [intro]);
 
   return (
     <IntroDone.Provider value={done}>
       {children}
       {intro === "reel" && <BootScreen show={!done} />}
-      {intro === "gate" && (
-        <BoardingPass
-          onDone={() => setDone(true)}
-          onExited={() => setIntro("none")}
-        />
-      )}
     </IntroDone.Provider>
   );
 }

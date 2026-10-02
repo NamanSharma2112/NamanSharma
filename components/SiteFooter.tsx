@@ -19,7 +19,7 @@ export default function SiteFooter() {
             Naman Sharma
           </Link>
           <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400 dark:text-zinc-500">
-            Seat 18A · Design Engineer
+            Design Engineer
           </p>
         </div>
         <SocialLinks />

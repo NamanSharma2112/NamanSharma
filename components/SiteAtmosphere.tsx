@@ -31,7 +31,7 @@ export default function SiteAtmosphere() {
   // it change tone — so anything sitting directly on it stays light.
 
   // The desktop brings its own wallpaper and rain, the blog stays a plain
-  // black page to read on, and the landing is a window seat on warm paper —
+  // black page to read on, and the landing has a ground of its own —
   // rain over any of them would be someone else's weather.
   if (!usesPhotoBackdrop(pathname)) return null;
 

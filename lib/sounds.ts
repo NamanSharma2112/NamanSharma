@@ -17,12 +17,12 @@ function getAudioContext(): AudioContext {
 
 /* ── the volume knob ────────────────────────────────────────────────────────
    Every voice below goes through one gain node rather than straight at the
-   destination, so there is a single place to turn the cabin down. The seat's
+   destination, so there is a single place to turn everything down. The
    volume rocker drives it; the setting is remembered per browser, because
    having to turn it down again on every visit is worse than it being loud
    once. */
 
-const VOLUME_KEY = "cabin-volume";
+const VOLUME_KEY = "volume";
 const DEFAULT_VOLUME = 0.7;
 
 let master: GainNode | null = null;

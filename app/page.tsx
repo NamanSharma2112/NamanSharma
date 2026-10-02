@@ -5,7 +5,7 @@ import CpuIcon from "@/components/CpuIcon";
 import SocialLinks from "@/components/SocialLinks";
 import MenuChip from "@/components/landing/MenuChip";
 import TopBar from "@/components/landing/TopBar";
-import FlightPlan from "@/components/landing/FlightPlan";
+import Projects from "@/components/landing/Projects";
 import LightRays from "@/components/landing/LightRays";
 import LaptopShowcase from "@/components/landing/LaptopShowcase";
 import Letter from "@/components/landing/Letter";
@@ -25,11 +25,7 @@ const EMAIL = "namansharmans03@gmail.com";
 const TWITTER = "https://x.com/NamanSharma2112";
 
 /**
- * A window seat.
- *
- * The whole page is one flight: the slug in the corner says where the seat is
- * and the flight plan below is the route that got here. Day or night is set
- * from the command menu now that the cabin window has gone.
+ * The front page: a note, the work, and a few things to pick up.
  */
 export default function Home() {
   return (
@@ -60,8 +56,6 @@ export default function Home() {
         <Letter />
 
         <div className="mt-10 flex flex-wrap items-center gap-2">
-          {/* Every hover launches the plane it is showing and settles a fresh
-              one in behind it. */}
           <SendButton email={EMAIL}>email me</SendButton>
           <a
             href={TWITTER}
@@ -81,7 +75,7 @@ export default function Home() {
           that is meant to be quiet — and it was bridging a gap the hero no
           longer leaves. */}
       <div className="relative z-10 mt-20 sm:mt-24">
-        <FlightPlan />
+        <Projects />
       </div>
 
       {/* Shots from the projects above, in a pile you can pick up and throw.

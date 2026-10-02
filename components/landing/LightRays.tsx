@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Sun through the cabin window, after the window itself has gone.
+ * Light raked across the top of the page.
  *
  * Three soft beams raked across the top of the page, heavily blurred and
  * barely there — on warm paper they read as light falling on it rather than as

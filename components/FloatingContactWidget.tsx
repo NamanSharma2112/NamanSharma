@@ -167,13 +167,12 @@ export default function FloatingContactWidget() {
         )}
       </AnimatePresence>
 
-      {/* The overhead console: a call button that lights when pressed, the
-          way the crew-call switch above a seat does. */}
+      {/* A round button that lights while the panel is open. */}
       <div className="fixed bottom-6 right-6 z-[100]">
         <span className="call-console flex items-center gap-2 rounded-full p-1.5">
           <button
             onClick={() => setIsOpen((prev) => !prev)}
-            aria-label={isOpen ? "Close chat" : "Call the cabin"}
+            aria-label={isOpen ? "Close chat" : "Send a message"}
             aria-pressed={isOpen}
             className={`call-button relative grid size-10 place-items-center rounded-full ${
               isOpen ? "is-lit" : ""
@@ -183,8 +182,8 @@ export default function FloatingContactWidget() {
               <X size={17} className="text-zinc-900" />
             ) : (
               <>
-                <AttendantGlyph />
-                {/* The little service light, on until you have called. */}
+                <MessageGlyph />
+                {/* Unread-style dot, on until the panel has been opened. */}
                 <span className="call-dot absolute right-1 top-1 size-2 rounded-full" />
               </>
             )}
@@ -195,31 +194,22 @@ export default function FloatingContactWidget() {
   );
 }
 
-/**
- * The cabin-crew symbol: a figure with a tray, the one printed on the call
- * button above every seat.
- */
-function AttendantGlyph() {
+/** A speech bubble — it opens a message box, and says so. */
+function MessageGlyph() {
   return (
-    <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden className="text-zinc-900">
-      <circle cx="11" cy="4.4" r="2.1" fill="currentColor" />
-      <path
-        d="M8.4 21.6v-5.2H7.2V11a2.6 2.6 0 0 1 2.6-2.6h2.4a2.6 2.6 0 0 1 2.6 2.6v.6l3.4-1.1"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M11.6 21.6v-5.2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-      />
-      {/* The tray, held out. */}
-      <rect x="16.4" y="8.6" width="6" height="1.5" rx="0.75" fill="currentColor" />
+    <svg
+      width="19"
+      height="19"
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="text-zinc-900"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M20.5 11.6a7.6 7.6 0 0 1-8.2 7.6 8.6 8.6 0 0 1-2.6-.4L4.5 20.5l1.4-4.3a7.3 7.3 0 0 1-1.4-4.3 7.6 7.6 0 0 1 8-7.6 7.6 7.6 0 0 1 8 7.3Z" />
     </svg>
   );
 }

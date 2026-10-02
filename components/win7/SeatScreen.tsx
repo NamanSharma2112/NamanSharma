@@ -5,16 +5,17 @@ import { getVolume, playTap, playToggle, setVolume } from "@/lib/sounds";
 import "./seat.css";
 
 /**
- * The seat back in front of you, with the screen set into it.
+ * The frame the machine sits in: a bezel, a clock, and the controls along
+ * the bottom edge.
  *
- * The machine on the screen is untouched — it does not know it is in a seat,
+ * The machine on the screen is untouched — it does not know what it is in,
  * and nothing here reaches into it. What this adds is the furniture around it:
  * the recess it sits in, the strip along the top that every one of these has,
  * and the ports and switches along the bottom.
  *
  * The switches are real. A dead button on a fake fascia is worse than no
  * button — the rocker drives the volume everything on the site plays at, and
- * the light turns the cabin down around the screen.
+ * the light turns the room down around the screen.
  */
 
 /** Notches on the rocker. Five is enough to aim at and few enough to hold. */
@@ -66,26 +67,12 @@ export default function SeatScreen({ children }: { children: React.ReactNode }) 
 
       <div className="seat-back">
         <div className="ife">
+          {/* A thin strip with the clock in it, and nothing else. It used to
+              carry an airline, a flight number and a seat; the machine does not
+              need a story around it. */}
           <div className="ife-top">
-            <span className="ife-brand">
-              <Fin />
-              NS Air
-            </span>
-
-            <span className="ife-route">
-              <span className="ife-flight">NS 2112</span>
-              <span className="ife-rule" />
-              DEL
-              <Hop />
-              BOM
-            </span>
-
-            <span className="ife-seat">
-              18A
-              <span className="ife-rule" />
-              {/* Empty until mounted: the server has no clock of yours. */}
-              <span className="tabular-nums">{clock || "--:--"}</span>
-            </span>
+            <span className="ife-brand">Desktop</span>
+            <span className="ife-seat tabular-nums">{clock || "--:--"}</span>
           </div>
 
           {/* The screen. The machine fills this box and measures it, rather
@@ -168,36 +155,7 @@ export default function SeatScreen({ children }: { children: React.ReactNode }) 
    All drawn at 24 and scaled down, so they line up with the rest of the
    site's icons rather than each carrying its own grid. */
 
-/** A tail fin — the airline's mark, at the size a logo goes on a fascia. */
-function Fin() {
-  return (
-    <svg width="9" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M15.5 2.2 8.8 21.8h3.9l1.5-4.6h6.2L15.5 2.2zM15 13.6l1.3-4 1.4 4H15zM3 21.8h4.2l1.3-3.8H4.3L3 21.8z" />
-    </svg>
-  );
-}
 
-/** The hop between two airport codes. */
-function Hop() {
-  return (
-    <svg width="13" height="9" viewBox="0 0 26 12" fill="none" aria-hidden>
-      <path
-        d="M1 9c4.5 0 7.6-6 12-6 3.6 0 6.5 2.2 8.6 4.4"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M18.4 7.6h3.4V4.2"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        transform="rotate(38 20.1 5.9)"
-      />
-    </svg>
-  );
-}
 
 function Minus() {
   return <span className="block h-[1.5px] w-[9px] rounded-full bg-current" />;

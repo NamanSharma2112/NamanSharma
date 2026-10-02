@@ -1,38 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { SIGNATURE_PATHS, SIGNATURE_VIEWBOX } from "@/components/signature-paths";
 
 /**
- * The intro: the name on a reel, turning through the four scripts it gets
- * written in. Whichever is centred is sharp; the ones above and below sit
- * blurred and dimmed, the way a picker reads.
+ * The intro: the name, written.
  *
- * Everything moves on the same 0.3s curve — the strip, the blur, the fade and
- * the scale — so a name arriving and the two beside it settling read as one
- * movement rather than several.
+ * Each stroke is drawn by running its own dash offset to zero, staggered in
+ * the order a pen would make them — so it reads as a hand moving rather than
+ * ten shapes fading up together.
+ *
+ * The sheet is the page's own ground, not black. The page it lifts off is
+ * near-white, and a black sheet clearing to a white page is a flash in the
+ * face on every visit.
  */
 
-const NAMES = [
-  { lang: "en", text: "Naman Sharma" },
-  { lang: "ja", text: "ナマン・シャルマ" },
-  { lang: "hi", text: "नमन शर्मा" },
-  { lang: "pa", text: "ਨਮਨ ਸ਼ਰਮਾ" },
-];
-
-/** Seconds a name holds before the reel moves on. */
-const HOLD = 0.72;
-/** Seconds every part of a change takes. */
-const SHIFT = 0.3;
-/** Gentle out-curve — quick to leave, slow to land. */
-const EASE = [0.22, 1, 0.36, 1] as const;
-const ROW = 42;
-
-/** Enough repeats that the reel never runs dry while the screen is up. */
-const ROWS = Array.from({ length: 6 }, () => NAMES).flat();
+/** How long one stroke takes to write. */
+const DRAW = 1500;
+/** Between the start of one stroke and the next. */
+const STAGGER = 55;
+/** Before the first stroke moves at all. */
+const LEAD = 120;
+/** The beat the finished name is held for before the sheet lifts. */
+const HOLD = 360;
 
 /** Seconds the intro holds before it lifts. */
-export const BOOT_DURATION = HOLD * NAMES.length + 0.5;
+export const BOOT_DURATION =
+  (LEAD + STAGGER * (SIGNATURE_PATHS.length - 1) + DRAW + HOLD) / 1000;
 /** Seconds the sheet takes to clear once it starts lifting. */
 export const BOOT_FADE = 0.6;
 
@@ -41,11 +36,35 @@ export const BOOT_FADE = 0.6;
  * it may arrive — the two have to be the same moment.
  */
 export default function BootScreen({ show }: { show: boolean }) {
-  const [step, setStep] = useState(0);
+  const strokes = useRef<(SVGPathElement | null)[]>([]);
 
   useEffect(() => {
-    const id = window.setInterval(() => setStep((s) => s + 1), HOLD * 1000);
-    return () => window.clearInterval(id);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const anims: Animation[] = [];
+
+    strokes.current.forEach((path, i) => {
+      if (!path) return;
+      anims.push(
+        path.animate(
+          [
+            { strokeDashoffset: 1, opacity: 0 },
+            { strokeDashoffset: 1, opacity: 1, offset: 0.04 },
+            { strokeDashoffset: 0, opacity: 1 },
+          ],
+          {
+            // Reduced motion still gets the name, just not the writing.
+            duration: reduced ? 1 : DRAW,
+            // Steady through the middle: a pen does not ease into every
+            // stroke, and an ease-in-out per stroke reads as ten animations.
+            easing: "cubic-bezier(0.58, 0, 0.4, 1)",
+            fill: "forwards",
+            delay: reduced ? 0 : LEAD + i * STAGGER,
+          },
+        ),
+      );
+    });
+
+    return () => anims.forEach((a) => a.cancel());
   }, []);
 
   return (
@@ -56,54 +75,40 @@ export default function BootScreen({ show }: { show: boolean }) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: BOOT_FADE, ease: "easeInOut" }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--bg)]"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-7 bg-[var(--bg)]"
         >
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="relative overflow-hidden"
-            style={{
-              height: ROW * 3,
-              width: 300,
-              // Softens the ends so names arrive and leave rather than being
-              // clipped off.
-              maskImage:
-                "linear-gradient(to bottom, transparent, black 24%, black 76%, transparent)",
-              WebkitMaskImage:
-                "linear-gradient(to bottom, transparent, black 24%, black 76%, transparent)",
-            }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox={SIGNATURE_VIEWBOX}
+            role="img"
+            aria-label="Naman Sharma"
+            className="h-[64px] w-auto overflow-visible text-[var(--fg)] sm:h-[86px]"
           >
-            <motion.div
-              animate={{ y: -(step - 1) * ROW }}
-              transition={{ duration: SHIFT, ease: EASE }}
-            >
-              {ROWS.map((name, i) => {
-                const offset = i - step;
-                const centred = offset === 0;
-                const near = Math.abs(offset) === 1;
-                return (
-                  <motion.div
-                    key={i}
-                    lang={name.lang}
-                    className="flex items-center justify-center whitespace-nowrap text-[17px] font-medium text-[var(--fg)]"
-                    style={{ height: ROW }}
-                    // Start where they belong rather than animating in from
-                    // the defaults on mount.
-                    initial={false}
-                    animate={{
-                      opacity: centred ? 1 : near ? 0.35 : 0,
-                      filter: centred ? "blur(0px)" : "blur(3.5px)",
-                      scale: centred ? 1 : 0.9,
-                    }}
-                    transition={{ duration: SHIFT, ease: EASE }}
-                  >
-                    {name.text}
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </motion.div>
+            {SIGNATURE_PATHS.map((d, i) => (
+              <path
+                key={i}
+                ref={(el) => {
+                  strokes.current[i] = el;
+                }}
+                d={d}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                // pathLength normalises every stroke to 1 whatever its real
+                // length, so one dash array works for all ten.
+                pathLength={1}
+                strokeDasharray="1 1"
+                strokeDashoffset={1}
+                opacity={0}
+              />
+            ))}
+          </svg>
+
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--fg-muted)]">
+            press any key to skip
+          </p>
         </motion.div>
       )}
     </AnimatePresence>

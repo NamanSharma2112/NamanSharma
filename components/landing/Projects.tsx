@@ -7,7 +7,7 @@ import { ArrowUpRight } from "lucide-react";
 
 /**
  * The route, read top to bottom: a plane that flies down a dashed track as you
- * scroll, and a leg for each thing built.
+ * scroll, and a row for each thing built.
  *
  * The track is one continuous line behind the rows rather than a segment per
  * row, because the plane has to be able to sit anywhere along it. Its position
@@ -18,9 +18,9 @@ import { ArrowUpRight } from "lucide-react";
  * every scroll-by is an interface fighting its reader.
  */
 
-type Leg = {
-  /** The little route code above the leg number. */
-  route: string;
+type Project = {
+  /** What kind of thing it is, above the number. */
+  kind: string;
   name: string;
   role: string;
   blurb: string;
@@ -31,9 +31,9 @@ type Leg = {
   shot?: { src: string; alt: string };
 };
 
-const LEGS: Leg[] = [
+const PROJECTS: Project[] = [
   {
-    route: "IN>AIR",
+    kind: "Ongoing",
     name: "Passion projects",
     role: "Design Engineer",
     blurb:
@@ -42,7 +42,7 @@ const LEGS: Leg[] = [
     stack: ["React", "Next.js", "TypeScript", "Tailwind", "Motion"],
   },
   {
-    route: "IDEA>SHIP",
+    kind: "Library",
     name: "MotionKit",
     role: "Animation library",
     blurb:
@@ -51,7 +51,7 @@ const LEGS: Leg[] = [
     shot: { src: "/motionkit-preview.png", alt: "MotionKit components" },
   },
   {
-    route: "DATA>VIEW",
+    kind: "Dashboard",
     name: "ChurnRate",
     role: "SaaS dashboard",
     blurb:
@@ -60,7 +60,7 @@ const LEGS: Leg[] = [
     shot: { src: "/churnrate-dashboard.png", alt: "ChurnRate dashboard" },
   },
   {
-    route: "TODO>DONE",
+    kind: "App",
     name: "Task Management",
     role: "Productivity tool",
     blurb:
@@ -72,7 +72,7 @@ const LEGS: Leg[] = [
 /** Where the track sits: the label column, then half the track column. */
 const TRACK_X = "calc(1.5rem + 72px + 16px)";
 
-export default function FlightPlan() {
+export default function Projects() {
   const section = useRef<HTMLElement>(null);
 
   // Progress from the section arriving to it leaving, so the plane is already
@@ -87,29 +87,25 @@ export default function FlightPlan() {
     mass: 0.6,
   });
   const top = useTransform(flight, [0, 1], ["0%", "100%"]);
-  // Banks a little into the descent, the way a plane does turning onto a leg.
-  const tilt = useTransform(flight, [0, 0.5, 1], [-4, 3, -2]);
+  // Banks a little into the descent, the way a plane does turning onto a item.
 
   return (
     <section
       ref={section}
-      aria-label="Flight plan"
+      aria-label="Selected work"
       className="relative mx-auto w-full max-w-[760px] px-6"
     >
-      {/* Sits above where the plane starts, not on top of it. */}
+      {/* Sits above where the track starts, not on top of it. */}
       <span
         aria-hidden
         className="absolute top-0 -translate-x-1/2 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400"
         style={{ left: TRACK_X }}
       >
-        Flight plan
+        Selected work
       </span>
 
-      {/* Track and plane share one box, and the plane's travel is 0–100% of
-          it. Positioned separately they never agreed: the plane ran the whole
-          height of the section while the line only covered the rows, so it
-          started above the track, finished below it, and passed the stop dots
-          at the wrong moments. One box makes the two the same measurement. */}
+      {/* The track and the mark that rides it share one box, so the mark
+          travels exactly the line's length rather than the section's. */}
       <span
         aria-hidden
         className="pointer-events-none absolute bottom-6 top-8 z-10 block w-px -translate-x-1/2"
@@ -117,27 +113,26 @@ export default function FlightPlan() {
       >
         <span className="track absolute inset-0 block" />
 
-        {/* The plane itself, riding the track. Centred through motion rather
-            than a utility class so the offsets and the bank compose into one
-            transform instead of fighting over the element. */}
+        {/* Centred through motion rather than a utility class, so the offsets
+            compose into one transform instead of fighting over the element. */}
         <motion.span
           className="absolute left-1/2 block"
-          style={{ top, rotate: tilt, x: "-50%", y: "-50%" }}
+          style={{ top, x: "-50%", y: "-50%" }}
         >
-          <PlaneMark />
+          <TrackMark />
         </motion.span>
       </span>
 
       <div className="grid grid-cols-[72px_32px_minmax(0,1fr)] gap-y-10 pt-8">
-        {LEGS.map((leg, i) => (
-          <LegRow key={leg.name} leg={leg} index={i + 1} />
+        {PROJECTS.map((item, i) => (
+          <Row key={item.name} item={item} index={i + 1} />
         ))}
       </div>
     </section>
   );
 }
 
-function LegRow({ leg, index }: { leg: Leg; index: number }) {
+function Row({ item, index }: { item: Project; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -160,19 +155,19 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
 
   return (
     <>
-      {/* Route code and leg marker, out in the margin. */}
+      {/* Kind and number, out in the margin. */}
       <div className="pt-[3px] text-right">
         <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-zinc-400 dark:text-zinc-600">
-          {leg.route}
+          {item.kind}
         </p>
         {/* A waypoint number rather than a date: these are things built, and
             putting years on them would mean inventing them. */}
         <p className="font-mono text-[13px] tracking-[0.1em] text-zinc-500 tabular-nums dark:text-zinc-400">
-          LEG {String(index).padStart(2, "0")}
+          {String(index).padStart(2, "0")}
         </p>
       </div>
 
-      {/* The stop on the track. It lights up when its leg is under the cursor. */}
+      {/* The stop on the track. It lights up when its row is under the cursor. */}
       <div className="flex justify-center">
         <span
           className={`stop mt-[7px] block size-[9px] shrink-0 rounded-full border-2 ${
@@ -183,7 +178,7 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
         />
       </div>
 
-      {/* The leg itself. */}
+      {/* The row itself. */}
       <div
         ref={ref}
         data-visible={visible}
@@ -194,20 +189,20 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
         <div className="leg-body relative -mx-3 rounded-xl px-3 py-2">
           <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
             <h3 className="text-[16px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">
-              {leg.name}
+              {item.name}
             </h3>
-            {leg.current && (
+            {item.current && (
               <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-blue-600 dark:text-blue-400">
                 <span className="relative flex size-1.5">
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-blue-400 opacity-70" />
                   <span className="relative inline-flex size-1.5 rounded-full bg-blue-500" />
                 </span>
-                In flight
+                Now
               </span>
             )}
-            {leg.href && (
+            {item.href && (
               <a
-                href={leg.href}
+                href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-400 transition-colors hover:text-zinc-700 dark:text-zinc-600 dark:hover:text-zinc-300"
@@ -218,15 +213,15 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
             )}
           </div>
 
-          <p className="mt-0.5 text-[14px] text-zinc-700 dark:text-zinc-300">{leg.role}</p>
+          <p className="mt-0.5 text-[14px] text-zinc-700 dark:text-zinc-300">{item.role}</p>
           <p className="mt-2 max-w-[52ch] text-[13.5px] leading-[1.7] text-zinc-500 dark:text-zinc-400">
-            {leg.blurb}
+            {item.blurb}
           </p>
 
           {/* The shot flies out into the margin rather than over the text, so
               it never covers what you are reading. Only where there is room:
               below the wide breakpoint there is no margin and no hover. */}
-          {leg.shot && (
+          {item.shot && (
             <motion.span
               aria-hidden
               // Explicit width: an absolutely positioned box at left:100% has
@@ -247,7 +242,7 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
                   hover it is the payoff for opens an empty box. Four thumbnails
                   under 30KB each is the cheaper trade. */}
               <Image
-                src={leg.shot.src}
+                src={item.shot.src}
                 alt=""
                 width={210}
                 height={132}
@@ -257,9 +252,9 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
             </motion.span>
           )}
 
-          {leg.stack && (
+          {item.stack && (
             <ul className="mt-3 flex flex-wrap gap-1.5">
-              {leg.stack.map((tool) => (
+              {item.stack.map((tool) => (
                 <li
                   key={tool}
                   className="chip rounded-full border border-black/10 px-2 py-[3px] font-mono text-[10px] uppercase tracking-[0.12em] text-zinc-500 dark:border-white/10 dark:text-zinc-400"
@@ -275,18 +270,9 @@ function LegRow({ leg, index }: { leg: Leg; index: number }) {
   );
 }
 
-function PlaneMark() {
+/** What rides the track: a lit dot marking how far down the list you are. */
+function TrackMark() {
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden
-      className="text-blue-600 drop-shadow-[0_1px_3px_rgba(37,99,235,0.4)] dark:text-blue-400"
-    >
-      {/* Nose down, so it reads as flying along the track below it. */}
-      <path d="M12 23l-1.6-4.2-6.6 2.3.5-2 5-4.1-1.4-3.7-4.4 1.6.3-1.7 4-3-1.3-3.6c-.2-.6.4-1.1.9-.8L12 6.4l4.1-2.6c.5-.3 1.1.2.9.8l-1.3 3.6 4 3 .3 1.7-4.4-1.6-1.4 3.7 5 4.1.5 2-6.6-2.3z" />
-    </svg>
+    <span className="track-mark" aria-hidden />
   );
 }

@@ -1,9 +1,9 @@
-/* The landing page's own material: the flight plan, the gate and its reader,
-   the pile of shots, and the two buttons under the bio. */
+/* The landing page's own material: the work list, the pile of shots, the
+   notebook, the machine, and the two buttons under the bio. */
 
-/* ── the flight plan ────────────────────────────────────────────────────── */
+/* ── the work list ──────────────────────────────────────────────────────── */
 
-/* Each leg wipes up into place as it comes into view. clip-path is the one
+/* Each row wipes up into place as it comes into view. clip-path is the one
    non-transform property that is cheap enough for this, because it does not
    trigger layout the way animating height would. */
 .leg {
@@ -12,6 +12,16 @@
   transition:
     clip-path 620ms var(--ease-in-out),
     opacity 420ms var(--ease-out);
+}
+
+/* What rides the track, in place of the aircraft that used to. */
+.track-mark {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #4f6ef5;
+  box-shadow: 0 0 0 4px rgba(79, 110, 245, 0.16);
 }
 
 .leg[data-visible="true"] {
@@ -24,8 +34,544 @@
     clip-path: none;
     transition: opacity 220ms var(--ease-out);
   }
-  .leg[data-visible="true"] {
+  /* What rides the track, in place of the aircraft that used to. */
+.track-mark {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #4f6ef5;
+  box-shadow: 0 0 0 4px rgba(79, 110, 245, 0.16);
+}
+
+.leg[data-visible="true"] {
     clip-path: none;
+  }
+}
+
+/* ── the machine ────────────────────────────────────────────────────────── */
+
+.mac-stage {
+  perspective: 1800px;
+  width: 100%;
+}
+
+.mac-label {
+  display: block;
+  margin-bottom: 26px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+a.mac-label {
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 200ms var(--ease-out);
+}
+
+a.mac-label:hover {
+  text-decoration-color: var(--fg-muted);
+}
+
+.mac {
+  transform-style: preserve-3d;
+  /* drop-shadow, not box-shadow: the machine is two boxes of different widths,
+     and a shadow per box draws a seam where they meet. */
+  filter: drop-shadow(0 34px 44px rgba(0, 0, 0, 0.19))
+    drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
+}
+
+/* Space black in both themes. It is a photographed object, not a surface of
+   the page, so it does not invert when the page does. */
+.mac-lid {
+  position: relative;
+  padding: 11px 11px 22px;
+  border-radius: 21px;
+  /* Space black. The reference machine is nearly black with a sheen along the
+     top edge, not the mid grey this was — against a near-white page a grey
+     bezel reads as plastic. */
+  background: linear-gradient(177deg, #2e2e33 0%, #17171a 9%, #121214 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.055),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.11),
+    0 0 0 1px rgba(0, 0, 0, 0.42);
+}
+
+.mac-cam {
+  position: absolute;
+  top: 4.5px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: #43434a;
+}
+
+/* No fixed aspect: the lid takes the shape of what is on the screen. A 16:10
+   box with `cover` crops whatever does not happen to be 16:10, and it cropped
+   this one through the middle of its content. */
+.mac-screen {
+  overflow: hidden;
+  position: relative;
+  border-radius: 6px;
+  background: #0a0a0b;
+  line-height: 0;
+}
+
+/* A screen is never perfectly matte. One soft sweep across the top corner,
+   barely there — enough that the glass reads as glass. */
+.mac-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    142deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.02) 22%,
+    transparent 46%
+  );
+}
+
+.mac-screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The deck, seen edge-on: a touch wider than the lid, lit along its top edge
+   where it catches the light, and rounded only at the feet. */
+.mac-base {
+  position: relative;
+  width: 108.5%;
+  height: 26px;
+  margin-left: -4.25%;
+  border-radius: 3px 3px 15px 15px;
+  background: linear-gradient(
+    180deg,
+    #55555c 0%,
+    #2c2c31 7%,
+    #1d1d21 48%,
+    #0e0e10 100%
+  );
+}
+
+/* The notch you put a thumb in to open it. */
+.mac-lip {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 11%;
+  height: 7px;
+  translate: -50% 0;
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #0b0b0d 0%, #1a1a1e 100%);
+}
+
+/* ── the bar at the top ─────────────────────────────────────────────────── */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.topbar-slot {
+  position: relative;
+}
+
+.topbar-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: var(--fg-body);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition:
+    color 200ms var(--ease-out),
+    background-color 200ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .topbar-item:hover {
+    color: var(--fg);
+  }
+}
+
+.topbar-item.is-open {
+  color: var(--fg);
+}
+
+.topbar-item:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Underlined the way the reference marks the date — a hairline, not a link. */
+.topbar-date {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.topbar-hand {
+  width: 13px;
+  height: 13px;
+  stroke: #e0675a;
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.topbar-glyph {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.topbar-glyph.is-sun {
+  stroke: #c88a3a;
+}
+
+.topbar-glyph.is-moon {
+  stroke: #8b93c4;
+}
+
+/* Both panels hang under the bar, centred on the thing that opened them. */
+.topbar-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 70;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 20px 46px -14px rgba(0, 0, 0, 0.3),
+    0 4px 10px -4px rgba(0, 0, 0, 0.1);
+}
+
+.dark .topbar-panel {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 20px 46px -14px rgba(0, 0, 0, 0.85);
+}
+
+.topbar-panel.is-clock {
+  width: 176px;
+  padding: 16px 14px 18px;
+  text-align: center;
+}
+
+.clock-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.clock-face {
+  width: 112px;
+  height: 112px;
+  margin: 12px auto 10px;
+}
+
+.clock-rim {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.2;
+}
+
+.clock-hands line {
+  stroke: var(--fg);
+  stroke-linecap: round;
+}
+
+.clock-second {
+  stroke: #e0675a;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.clock-pin {
+  fill: #e0675a;
+}
+
+.clock-digits {
+  font-size: 27px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-meridiem {
+  margin-top: 1px;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--fg-muted);
+}
+
+/* ── appearance ─────────────────────────────────────────────────────────── */
+
+.topbar-panel.is-light {
+  width: 268px;
+  padding: 16px 14px 14px;
+  text-align: left;
+}
+
+.appear-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.appear-note {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+.appear-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.appear-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 9px;
+  border-radius: 11px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .appear-row:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  .dark .appear-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.appear-row.is-on {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dark .appear-row.is-on {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.appear-row:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 1px;
+}
+
+.appear-icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  color: var(--fg-body);
+}
+
+.appear-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.appear-row-title {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.appear-row-note {
+  display: block;
+  margin-top: 1px;
+  font-size: 11.5px;
+  color: var(--fg-muted);
+}
+
+.appear-check {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--fg);
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── the letter ─────────────────────────────────────────────────────────── */
+
+/* A column of prose, set like something written to you rather than a hero. The
+   measure is deliberately short — around 60 characters — because the whole
+   effect depends on the eye falling down the page rather than across it. */
+.letter {
+  max-width: 34rem;
+  font-size: 17px;
+  line-height: 1.78;
+  color: var(--fg);
+  letter-spacing: -0.003em;
+}
+
+.letter > p + p {
+  margin-top: 1.9em;
+}
+
+/* The one voice change in the page: a serif italic for the aside, so the
+   sentence it sits in audibly drops a register. */
+.letter em {
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 1.04em;
+  letter-spacing: 0;
+}
+
+/* ── words with something behind them ───────────────────────────────────── */
+
+.anno {
+  position: relative;
+  display: inline-block;
+  /* The depth the card leans into. On the word rather than the card, because
+     perspective has to be on the parent of the thing being rotated. */
+  perspective: 900px;
+}
+
+/* The affordance, and the only one: a mark in front of the word. Sized in `em`
+   so it tracks the text rather than drifting out of step at another size. */
+.anno-mark {
+  display: inline-block;
+  width: 0.26em;
+  height: 0.95em;
+  margin-right: 0.26em;
+  border-radius: 1px;
+  vertical-align: -0.1em;
+  background: #c9cbe8;
+  transition: background-color 220ms var(--ease-out);
+}
+
+.dark .anno-mark {
+  background: #4a4b6b;
+}
+
+.anno-word {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  padding: 0.08em 0.26em;
+  margin: 0 -0.26em;
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 220ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .anno:hover .anno-word {
+    background: rgba(0, 0, 0, 0.06);
+  }
+  .dark .anno:hover .anno-word {
+    background: rgba(255, 255, 255, 0.09);
+  }
+  .anno:hover .anno-mark {
+    background: #a9ace0;
+  }
+}
+
+.anno-word:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* The card. Centred over the word and lifted clear of the line, with the tail
+   bridging the gap so the two read as one object. */
+.anno-card {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  translate: -50% 0;
+  margin-bottom: 14px;
+  width: 210px;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.anno-card.is-wide {
+  width: 268px;
+}
+
+.anno-card-inner {
+  display: block;
+  transform-style: preserve-3d;
+  overflow: hidden;
+  padding: 10px;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 18px 40px -12px rgba(0, 0, 0, 0.3),
+    0 4px 10px -4px rgba(0, 0, 0, 0.12);
+}
+
+.dark .anno-card-inner {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 18px 40px -12px rgba(0, 0, 0, 0.8);
+}
+
+.anno-card-inner img {
+  display: block;
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* The pointer, as a rotated square with the card's own corner radius — a CSS
+   triangle cannot carry the shadow or the rounded tip, and the difference is
+   the whole reason this reads as drawn rather than assembled. */
+.anno-tail {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  translate: -50% 0;
+  rotate: 45deg;
+  border-radius: 0 0 4px 0;
+  background: var(--surface);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dark .anno-tail {
+  box-shadow: 2px 2px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* On a phone the card is wider than the gap beside the word it hangs off, so
+   it is pinned to the column instead of centred on the word and left to run
+   off the screen. */
+@media (max-width: 520px) {
+  .anno-card,
+  .anno-card.is-wide {
+    width: min(70vw, 210px);
   }
 }
 
@@ -280,103 +826,6 @@
   );
 }
 
-/* ── the gate ───────────────────────────────────────────────────────────── */
-
-.gate {
-  background: var(--bg);
-}
-
-/* The card is a solid object in a scene, so the stage owns the perspective and
-   the card leans inside it. Both need preserve-3d or the edge behind the face
-   flattens onto it and the whole thing reads as a sticker. */
-.pass-stage {
-  transform-style: preserve-3d;
-}
-
-.pass {
-  will-change: transform;
-}
-
-/* A white paper ticket in both themes — the one thing on this page that does
-   not change tone, because a boarding pass is printed, not lit. */
-.pass-card {
-  background: linear-gradient(180deg, #ffffff 0%, #fbfaf8 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 24px 46px rgba(0, 0, 0, 0.172),
-    0 6px 14px rgba(0, 0, 0, 0.109);
-}
-
-/* The security wash: two fine hatches crossing and a soft rosette, the print
-   that sits under the text on a real ticket and is the first thing a scan of a
-   fake one gets wrong. */
-.pass-wash {
-  background-image:
-    repeating-linear-gradient(-55deg, rgba(79, 70, 229, 0.05) 0 1px, transparent 1px 8px),
-    repeating-linear-gradient(55deg, rgba(79, 70, 229, 0.035) 0 1px, transparent 1px 9px),
-    radial-gradient(130% 90% at 15% 120%, rgba(99, 102, 241, 0.07), transparent 60%);
-}
-
-/* The airline's band across the head of the pass. */
-.pass-band {
-  background: linear-gradient(100deg, #4f46e5 0%, #6366f1 55%, #4338ca 100%);
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.14);
-}
-
-/* The dotted rule the route rides on. */
-.pass-route-line {
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgba(120, 108, 98, 0.5) 0 4px,
-    transparent 4px 8px
-  );
-}
-
-.pass-stub {
-  background: linear-gradient(180deg, #fbf9f7 0%, #f2eee9 100%);
-}
-
-/* The perforation, and the notches punched where it meets the card's edges.
-   The notches are discs the colour of the gate behind, half of each clipped
-   away by the card's overflow — so what shows is a bite taken out of the edge. */
-.pass-perf {
-  right: 100px;
-  width: 2px;
-  transform: translateX(1px);
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(120, 108, 98, 0.55) 0 2px,
-    transparent 2px 6px
-  );
-}
-
-/* Discs the colour of the page behind, half of each clipped away by the card's
-   overflow — so what shows is a bite out of the edge. It has to be exactly the
-   page or the disc shows as a disc. */
-.pass-notch {
-  right: 100px;
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  transform: translateX(50%);
-  background: var(--bg);
-}
-
-.pass-notch-top {
-  top: -6px;
-}
-
-.pass-notch-bottom {
-  bottom: -6px;
-}
-
-/* The card's thickness: a slab sitting a few pixels behind the face, darker
-   at the bottom the way a real edge catches less light. */
-.pass-edge {
-  background: linear-gradient(180deg, #e8e2dc 0%, #cec5bd 62%, #b7ada4 100%);
-  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.187);
-}
-
 /* ── the pile of shots ──────────────────────────────────────────────────── */
 
 /* The same chrome the lab gives its cards, carried here so the landing page
@@ -395,166 +844,6 @@
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.09),
     0 10px 24px -10px rgba(0, 0, 0, 0.8);
-}
-
-/* ── the slot the card goes into ────────────────────────────────────────── */
-
-/* Clips the card at the slot line, which is where a card actually stops being
-   visible when you feed it into a reader. The card travels 228px and the
-   machine is 44px tall, so without this it slides behind the face and comes
-   straight back out the underside.
-
-   The bottom padding is the resting gap between card and machine, so the clip
-   edge lands exactly on the slot; the other three sides bleed out far enough
-   that the card's lean and its shadow are not cut off. */
-.pass-throat {
-  overflow: hidden;
-  padding: 90px 90px 40px;
-  margin: -90px -90px 0;
-}
-
-/* ── the reader ─────────────────────────────────────────────────────────── */
-
-/* A slim graphite slab rather than a machine covered in parts. The previous
-   one wore a speaker grille, a lamp tower, a contactless pad, chevrons and
-   feet at once, which is what made it read as assembled instead of designed.
-   Dark in both themes on purpose: it is the one machine in the scene, and the
-   only dark object, so the eye goes straight to it. */
-.reader {
-  border-radius: 10px;
-  background: linear-gradient(180deg, #2c2d31 0%, #202125 52%, #17171a 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.6),
-    0 18px 34px -12px rgba(0, 0, 0, 0.45);
-}
-
-.dark .reader {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.7),
-    0 18px 34px -12px rgba(0, 0, 0, 0.8);
-}
-
-.reader-shadow {
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: -10px;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(50% 100% at 50% 0%, rgba(0, 0, 0, 0.26), transparent 70%);
-  filter: blur(3px);
-  z-index: -1;
-}
-
-.dark .reader-shadow {
-  background: radial-gradient(50% 100% at 50% 0%, rgba(0, 0, 0, 0.7), transparent 70%);
-}
-
-/* The slot is the top edge itself — a seam of light the card goes into. */
-.reader-slot {
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  top: -3px;
-  height: 6px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: #0a0a0b;
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.95),
-    0 1px 0 rgba(255, 255, 255, 0.12);
-  transition: box-shadow 260ms var(--ease-out);
-}
-
-.reader-slot-glow {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  background: linear-gradient(90deg, transparent, rgba(52, 211, 153, 0.9), transparent);
-  transition: opacity 260ms var(--ease-out);
-}
-
-.reader.is-armed .reader-slot-glow {
-  opacity: 1;
-}
-
-.reader.is-armed .reader-slot {
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.9),
-    0 0 14px 1px rgba(52, 211, 153, 0.55),
-    0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-/* One status light, doing the job the tower of three used to. */
-.reader-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.22);
-  transition:
-    background-color 220ms var(--ease-out),
-    box-shadow 220ms var(--ease-out);
-}
-
-.reader.is-armed .reader-dot {
-  background: #34d399;
-  box-shadow: 0 0 8px 1px rgba(52, 211, 153, 0.7);
-}
-
-.reader.is-reading .reader-dot {
-  background: #fbbf24;
-  box-shadow: 0 0 8px 1px rgba(251, 191, 36, 0.7);
-}
-
-.reader.is-accepted .reader-dot {
-  background: #34d399;
-  box-shadow: 0 0 9px 2px rgba(52, 211, 153, 0.8);
-}
-
-.reader-read {
-  transition: color 220ms var(--ease-out);
-}
-
-/* A hairline that fills as it reads and holds green once it clears. */
-.reader-bar {
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 6px;
-  height: 1.5px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.reader-bar-fill {
-  display: block;
-  height: 100%;
-  width: 0;
-  border-radius: 999px;
-  background: #fbbf24;
-  box-shadow: 0 0 6px rgba(251, 191, 36, 0.7);
-  transition:
-    width 460ms var(--ease-out),
-    background-color 220ms var(--ease-out);
-}
-
-.reader.is-reading .reader-bar-fill {
-  width: 100%;
-}
-
-.reader.is-accepted .reader-bar-fill {
-  width: 100%;
-  background: #34d399;
-  box-shadow: 0 0 6px rgba(52, 211, 153, 0.7);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reader-bar-fill {
-    transition: none;
-  }
 }
 
 /* ── the scatter ────────────────────────────────────────────────────────── */

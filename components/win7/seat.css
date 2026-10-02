@@ -1,4 +1,4 @@
-/* The seat back in front of you, and the screen set into it.
+/* The surround the machine sits in: a dark desk, a panel, and the bezel.
    The machine inside is not styled from here — this is only the furniture. */
 
 .seat {
@@ -7,9 +7,9 @@
   --pad-x: 15px;
   --pad-top: 11px;
   --pad-bottom: 13px;
-  /* The upholstery you actually see around the unit. Most of the surround
-     belongs here rather than to the cabin: seven pixels of seat between a
-     black cabin and a black bezel reads as a border, not as furniture. */
+  /* The panel you actually see around the unit. Most of the surround belongs
+     here rather than to the room behind: seven pixels of panel between a black
+     room and a black bezel reads as a border, not as an object. */
   --seat-pad: 19px;
   --strip-top: 27px;
   --strip-base: 37px;
@@ -21,15 +21,13 @@
   z-index: 100;
   overflow: hidden;
   padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
-  /* Warm and very dark: the cabin is lit by incandescent, the seat is not.
-     A neutral black here and the cool grey of the seat has nothing to sit
-     against. */
-  background: #100e0c;
+  /* Neutral and very dark, matching the site's own ground rather than the warm
+     black this used to be. */
+  background: #0c0c0d;
   font-family: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-/* The cabin above and behind: one reading light spilling down over the seat,
-   and the rows falling away into the dark at the edges. */
+/* The room behind: one soft light from above, falling away at the edges. */
 .seat::before {
   content: "";
   position: absolute;
@@ -61,7 +59,7 @@
   border-radius: 22px 22px 9px 9px;
   padding: var(--seat-pad) var(--seat-pad) 9px;
   background:
-    /* The weave. Two passes crossing — at this scale a fabric is a texture
+    /* The grain. Two passes crossing — at this scale a surface is a texture
        you notice only when it is missing, but it has to be visible enough to
        do that job. */
     repeating-linear-gradient(
@@ -88,7 +86,7 @@
   filter: brightness(0.72);
 }
 
-/* The seam running around the panel, where a real one is stitched. */
+/* The seam running around the panel. */
 .seat-back::after {
   content: "";
   position: absolute;
@@ -98,8 +96,8 @@
   border: 1px dashed rgba(255, 255, 255, 0.08);
 }
 
-/* The tray table's catch, below the screen. One small moulded detail is worth
-   more than any amount of texture for saying what this object is. */
+/* A moulded catch below the screen. One small detail of this kind says more
+   about what the object is than any amount of texture. */
 .seat-latch {
   position: relative;
   z-index: 1;
@@ -178,16 +176,6 @@
   gap: 6px;
   color: #cbd3de;
   font-weight: 500;
-}
-
-.ife-route {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.ife-flight {
-  color: #cbd3de;
 }
 
 .ife-seat {
@@ -383,10 +371,7 @@
     display: none;
   }
 
-  .ife-route {
-    display: none;
   }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .seat::before,

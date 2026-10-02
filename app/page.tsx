@@ -3,15 +3,15 @@ import CopyEmail from "@/components/CopyEmail";
 import Signature from "@/components/Signature";
 import CpuIcon from "@/components/CpuIcon";
 import SocialLinks from "@/components/SocialLinks";
-import CoordinateRail from "@/components/landing/CoordinateRail";
 import MenuChip from "@/components/landing/MenuChip";
-import FlightPlan from "@/components/landing/FlightPlan";
+import TopBar from "@/components/landing/TopBar";
+import Projects from "@/components/landing/Projects";
 import LightRays from "@/components/landing/LightRays";
+import LaptopShowcase from "@/components/landing/LaptopShowcase";
+import Letter from "@/components/landing/Letter";
 import PerspectiveBook from "@/components/landing/PerspectiveBook";
 import LaptopCat from "@/components/landing/LaptopCat";
-import RoleFlipper from "@/components/landing/RoleFlipper";
 import SendButton from "@/components/landing/SendButton";
-import StackScatter from "@/components/landing/StackScatter";
 import Collage from "@/components/lab/Collage";
 import "@/components/landing/landing.css";
 
@@ -25,11 +25,7 @@ const EMAIL = "namansharmans03@gmail.com";
 const TWITTER = "https://x.com/NamanSharma2112";
 
 /**
- * A window seat.
- *
- * The whole page is one flight: the slug in the corner says where the seat is
- * and the flight plan below is the route that got here. Day or night is set
- * from the command menu now that the cabin window has gone.
+ * The front page: a note, the work, and a few things to pick up.
  */
 export default function Home() {
   return (
@@ -38,35 +34,28 @@ export default function Home() {
           positioned layer at z-0, and in-flow content paints under one. */}
       <LightRays />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[1180px] items-start justify-between gap-6 px-6 pt-6 sm:px-10">
-        <CoordinateRail />
-        <MenuChip />
+      {/* The date and the light the page is in, both as panels hanging off a
+          word. The coordinate rail used to carry the time here; the clock says
+          it better, so the rail went with it. */}
+      {/* z-50, not z-10: `position: relative` with a z-index makes this a
+          stacking context, so the panels inside it can never out-paint a later
+          sibling however high their own z-index is. The letter was covering the
+          appearance menu and eating its clicks. */}
+      <div className="relative z-50 mx-auto grid w-full max-w-[1180px] grid-cols-[1fr_auto_1fr] items-center gap-6 px-6 pt-6 sm:px-10">
+        <span aria-hidden />
+        <TopBar />
+        <div className="flex justify-end">
+          <MenuChip />
+        </div>
       </div>
 
-      {/* The hero opens the page directly now. The top padding carries the air
-          the window used to occupy, rather than leaving the heading with a
-          56px top margin that was only ever the gap under it. */}
-      <div className="landing-stagger relative z-10 mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-24 text-center sm:pt-32">
-        {/* Back on one line. The flipper's slot is measured per title now, so
-            the ampersand sits right after the word instead of after a space
-            reserved for the longest role. */}
-        <h1 className="text-[20px] font-semibold tracking-[-0.021em] text-[var(--fg)] sm:text-[23px]">
-          <RoleFlipper />
-          {/* Explicit: an inline-flex box eats the whitespace next to it, and
-              the line renders as "Engineer& Creative" without this. */}
-          {" "}
-          &amp; Creative Technologist
-        </h1>
+      {/* Opens as a note rather than a hero: a short measure, left aligned,
+          with the handful of marked words carrying what used to be spread
+          across a heading, a strapline and a stack list. */}
+      <div className="landing-stagger relative z-10 mx-auto flex w-full max-w-[760px] flex-col px-6 pt-24 sm:pt-32">
+        <Letter />
 
-        <p className="mt-3.5 max-w-[46ch] text-[15px] leading-[1.65] text-[var(--fg-body)]">
-          Designing and building whatever I can imagine with{" "}
-          <StackScatter>a stack I trust</StackScatter> — obsessing over the
-          details and the why behind good products.
-        </p>
-
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
-          {/* Every hover launches the plane it is showing and settles a fresh
-              one in behind it. */}
+        <div className="mt-10 flex flex-wrap items-center gap-2">
           <SendButton email={EMAIL}>email me</SendButton>
           <a
             href={TWITTER}
@@ -78,7 +67,7 @@ export default function Home() {
           </a>
         </div>
 
-        <SocialLinks className="mt-5 justify-center" />
+        <SocialLinks className="mt-5" />
       </div>
 
       {/* The hero runs straight into the route. There used to be a marquee of
@@ -86,7 +75,7 @@ export default function Home() {
           that is meant to be quiet — and it was bridging a gap the hero no
           longer leaves. */}
       <div className="relative z-10 mt-20 sm:mt-24">
-        <FlightPlan />
+        <Projects />
       </div>
 
       {/* Shots from the projects above, in a pile you can pick up and throw.
@@ -99,7 +88,11 @@ export default function Home() {
           Odds and ends · drag them
         </p>
         <Collage
-          className="relative h-[300px] w-full [perspective:1600px]"
+          // overflow-hidden: the cards are placed at percentage offsets and are
+          // 176px wide, so on a phone the right-hand ones hang past the stage
+          // and the whole page scrolls sideways. It also keeps a thrown card
+          // from being flung off the page.
+          className="relative h-[300px] w-full overflow-hidden [perspective:1600px]"
           caption=""
           cardClass="shot-card"
         />
@@ -112,6 +105,19 @@ export default function Home() {
         aria-label="Notebook"
       >
         <PerspectiveBook className="ml-1 sm:ml-8" />
+      </section>
+
+      {/* A project on a machine, straightening up as you scroll to it. */}
+      <section
+        className="relative z-10 mx-auto mt-24 w-full max-w-[940px] px-6 sm:mt-32"
+        aria-label="MotionKit"
+      >
+        <LaptopShowcase
+          src="/motionkit-preview.png"
+          alt="MotionKit, an animation library"
+          label="MotionKit"
+          href="https://www.motionlib.me/"
+        />
       </section>
 
       {/* Landing card. */}

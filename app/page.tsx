@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Monogram from "@/components/home/Monogram";
 import Status from "@/components/home/Status";
+import { SIGNATURE_PATHS, SIGNATURE_VIEWBOX } from "@/components/signature-paths";
 import "@/components/home/home.css";
 
 export const metadata: Metadata = {
@@ -28,9 +28,19 @@ export default function Home() {
     <main className="home">
       <div className="home-col">
         <div className="home-strip">
-          <span className="home-mark">
-            <Monogram />
-          </span>
+          {/* The signature, small and still. Not a logo — it is the same hand
+              the intro writes, which is a thing of his rather than a mark
+              invented for the corner. */}
+          <svg
+            className="home-sig"
+            viewBox={SIGNATURE_VIEWBOX}
+            role="img"
+            aria-label="Naman Sharma"
+          >
+            {SIGNATURE_PATHS.map((d, i) => (
+              <path key={i} d={d} />
+            ))}
+          </svg>
           <Status />
         </div>
 

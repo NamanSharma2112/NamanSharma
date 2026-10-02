@@ -29,20 +29,39 @@
 
 /* ── the strip across the top ───────────────────────────────────────────── */
 
+/* The reference's topbar, measured: the column's own width, 80px tall, the
+   mark and the status pushed to its two ends, and a slot centred on the bar
+   itself rather than between them — so whatever sits in the middle stays put
+   however wide the two ends get. */
 .home-strip {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding-top: 40px;
-  padding-bottom: 64px;
+  height: 80px;
+  margin-top: 24px;
+  margin-bottom: 48px;
 }
 
-.home-mark {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--fg);
+.home-strip-centre {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+}
+
+/* The signature in the corner, at the size a letterhead would set it. */
+.home-sig {
+  height: 21px;
+  width: auto;
+  overflow: visible;
+  fill: none;
+  stroke: var(--fg);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.88;
 }
 
 /* ── the name ───────────────────────────────────────────────────────────── */
@@ -332,44 +351,6 @@
   fill: none; stroke: var(--fg); stroke-width: 2.3;
   stroke-linecap: round; stroke-linejoin: round;
 }
-
-/* ── the monogram ───────────────────────────────────────────────────────── */
-
-.mono {
-  display: inline-block;
-  perspective: 420px;
-  cursor: grab;
-  touch-action: none;
-  border-radius: 5px;
-}
-
-.mono:active { cursor: grabbing; }
-.mono:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
-
-.mono-spin {
-  position: relative;
-  display: block;
-  width: 30px;
-  height: 26px;
-  transform-style: preserve-3d;
-}
-
-.mono-face {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  border-radius: 5px;
-  background: var(--fg);
-  color: var(--bg);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.mono-face.is-back { transform: rotateY(180deg); }
 
 /* The serif italic in the prose, which is the one voice change on the page. */
 .home-prose em {

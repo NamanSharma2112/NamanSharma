@@ -1,159 +1,203 @@
 import type { Metadata } from "next";
-import CopyEmail from "@/components/CopyEmail";
-import Signature from "@/components/Signature";
-import CpuIcon from "@/components/CpuIcon";
-import SocialLinks from "@/components/SocialLinks";
-import MenuChip from "@/components/landing/MenuChip";
-import TopBar from "@/components/landing/TopBar";
-import Projects from "@/components/landing/Projects";
-import LightRays from "@/components/landing/LightRays";
-import LaptopShowcase from "@/components/landing/LaptopShowcase";
-import Letter from "@/components/landing/Letter";
-import PerspectiveBook from "@/components/landing/PerspectiveBook";
-import LaptopCat from "@/components/landing/LaptopCat";
-import SendButton from "@/components/landing/SendButton";
-import Collage from "@/components/lab/Collage";
-import "@/components/landing/landing.css";
+import Link from "next/link";
+import Player, { type Track } from "@/components/home/Player";
+import Status from "@/components/home/Status";
+import { SIGNATURE_PATHS, SIGNATURE_VIEWBOX } from "@/components/signature-paths";
+import "@/components/home/home.css";
 
 export const metadata: Metadata = {
   title: "Naman Sharma",
   description:
-    "Naman Sharma is a Design Engineer building modern web experiences.",
+    "Naman Sharma is a design engineer building modern web experiences.",
 };
 
 const EMAIL = "namansharmans03@gmail.com";
-const TWITTER = "https://x.com/NamanSharma2112";
 
 /**
- * The front page: a note, the work, and a few things to pick up.
+ * The track in the topbar's pill, or null for no pill at all.
+ *
+ * To turn it on: drop the file in public/music/ and fill this in. It plays a
+ * real file rather than reporting what a service claims is playing, so what it
+ * shows is always true and it needs no key, no server route and nothing that
+ * can go down.
+ *
+ *   const TRACK: Track | null = {
+ *     src: "/music/your-track.mp3",
+ *     title: "Track name",
+ *     artist: "Artist",
+ *     art: "/music/cover.jpg",   // optional; a record is drawn without it
+ *   };
+ */
+const TRACK: Track | null = null;
+
+/**
+ * The front page.
+ *
+ * One column, one screen of prose, and a list under it — the whole page is
+ * shorter than a single section of what it replaces. The links live in the
+ * sentences rather than in a nav, because on a page this size a nav is a second
+ * list of the same things.
+ *
+ * Everything on it is written for it. Nothing here is a reused block from the
+ * version before.
  */
 export default function Home() {
   return (
-    <main className="landing relative min-h-screen">
-      {/* Behind everything. The bands below carry z-10 because the rays are a
-          positioned layer at z-0, and in-flow content paints under one. */}
-      <LightRays />
-
-      {/* The date and the light the page is in, both as panels hanging off a
-          word. The coordinate rail used to carry the time here; the clock says
-          it better, so the rail went with it. */}
-      {/* z-50, not z-10: `position: relative` with a z-index makes this a
-          stacking context, so the panels inside it can never out-paint a later
-          sibling however high their own z-index is. The letter was covering the
-          appearance menu and eating its clicks. */}
-      <div className="relative z-50 mx-auto grid w-full max-w-[1180px] grid-cols-[1fr_auto_1fr] items-center gap-6 px-6 pt-6 sm:px-10">
-        <span aria-hidden />
-        <TopBar />
-        <div className="flex justify-end">
-          <MenuChip />
-        </div>
-      </div>
-
-      {/* Opens as a note rather than a hero: a short measure, left aligned,
-          with the handful of marked words carrying what used to be spread
-          across a heading, a strapline and a stack list. */}
-      <div className="landing-stagger relative z-10 mx-auto flex w-full max-w-[760px] flex-col px-6 pt-24 sm:pt-32">
-        <Letter />
-
-        <div className="mt-10 flex flex-wrap items-center gap-2">
-          <SendButton email={EMAIL}>email me</SendButton>
-          <a
-            href={TWITTER}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="send rounded-full bg-black/[0.06] px-4 py-2 text-[13px] font-medium text-zinc-900 hover:bg-black/[0.1] dark:bg-white/10 dark:text-zinc-100 dark:hover:bg-white/[0.16]"
+    <main className="home">
+      <div className="home-col">
+        <div className="home-strip">
+          {/* The signature, small and still. Not a logo — it is the same hand
+              the intro writes, which is a thing of his rather than a mark
+              invented for the corner. */}
+          <svg
+            className="home-sig"
+            viewBox={SIGNATURE_VIEWBOX}
+            role="img"
+            aria-label="Naman Sharma"
           >
-            dm me on X
-          </a>
+            {SIGNATURE_PATHS.map((d, i) => (
+              <path key={i} d={d} />
+            ))}
+          </svg>
+          {/* Centred on the bar. Renders nothing until the file exists, so
+              the slot is simply empty until a track is dropped in. */}
+          <span className="home-strip-centre">
+            <Player track={TRACK} />
+          </span>
+
+          <Status />
         </div>
 
-        <SocialLinks className="mt-5" />
-      </div>
+        <h1 className="home-name">Naman Sharma</h1>
 
-      {/* The hero runs straight into the route. There used to be a marquee of
-          type on an arc bridging them, which was the busiest thing on a page
-          that is meant to be quiet — and it was bridging a gap the hero no
-          longer leaves. */}
-      <div className="relative z-10 mt-20 sm:mt-24">
-        <Projects />
-      </div>
+        <div className="home-prose">
+          <p>
+            I&rsquo;m a design engineer. I build for the web, and I care about
+            how an interface <em>feels</em> — the easing curve, the hairline,
+            the way a thing behaves when you interrupt it halfway.
+          </p>
 
-      {/* Shots from the projects above, in a pile you can pick up and throw.
-          No framed stage — they sit straight on the page's paper, so it reads
-          as things left on a desk rather than a widget embedded in the page. */}
-      <section className="relative z-10 mx-auto mt-16 w-full max-w-[760px] px-6 sm:mt-20" aria-label="Project shots">
-        {/* Says it is draggable in the heading rather than adding a second
-            line of caption under the pile to say the same thing. */}
-        <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
-          Odds and ends · drag them
-        </p>
-        <Collage
-          // overflow-hidden: the cards are placed at percentage offsets and are
-          // 176px wide, so on a phone the right-hand ones hang past the stage
-          // and the whole page scrolls sideways. It also keeps a thrown card
-          // from being flung off the page.
-          className="relative h-[300px] w-full overflow-hidden [perspective:1600px]"
-          caption=""
-          cardClass="shot-card"
-        />
-      </section>
+          <p>
+            Most of what I make starts as a passion project.{" "}
+            <a href="https://www.motionlib.me/" target="_blank" rel="noopener noreferrer">
+              MotionKit
+            </a>{" "}
+            is the motion code I kept rebuilding, packaged so it behaves the
+            same way every time.{" "}
+            <a href="https://www.churnrate.fun/" target="_blank" rel="noopener noreferrer">
+              ChurnRate
+            </a>{" "}
+            is a dashboard for subscription products, designed and built end to
+            end.
+          </p>
 
-      {/* Left on the desk next to the pile, not presented: offset to one side
-          rather than centred, and it does nothing until you touch it. */}
-      <section
-        className="relative z-10 mx-auto mt-10 w-full max-w-[760px] px-6"
-        aria-label="Notebook"
-      >
-        <PerspectiveBook className="ml-1 sm:ml-8" />
-      </section>
+          <p>
+            I also rebuilt a whole{" "}
+            <Link href="/desktop">desktop</Link> in the browser — it boots, it
+            has a menu bar and a dock, and the windows drag and resize.
+          </p>
+        </div>
 
-      {/* A project on a machine, straightening up as you scroll to it. */}
-      <section
-        className="relative z-10 mx-auto mt-24 w-full max-w-[940px] px-6 sm:mt-32"
-        aria-label="MotionKit"
-      >
-        <LaptopShowcase
-          src="/motionkit-preview.png"
-          alt="MotionKit, an animation library"
-          label="MotionKit"
-          href="https://www.motionlib.me/"
-        />
-      </section>
+        <nav className="home-jump" aria-label="Elsewhere">
+          <Link className="home-link" href="/work">
+            Work
+          </Link>
+          <Link className="home-link" href="/blog">
+            Writing
+          </Link>
+          <Link className="home-link" href="/inspiration">
+            Inspiration
+          </Link>
+          <Link className="home-link" href="/lab">
+            Lab
+          </Link>
+          <a className="home-link" href={`mailto:${EMAIL}`}>
+            Connect
+          </a>
+        </nav>
 
-      {/* Landing card. */}
-      <div className="relative z-10 mx-auto mt-16 w-full max-w-[760px] px-6 pb-24">
-        <div className="desk-col flex flex-col items-start gap-6 border-t border-black/10 pt-8 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            {/* The machine's mascot, sitting on the link down to it: hover the
-                link and it looks up from its screen. */}
-            <LaptopCat className="mb-3 w-[118px]" />
+        <section className="home-section" aria-label="Selected work">
+          <p className="home-section-label">Selected work</p>
 
-            <p className="text-[13.5px] leading-[1.75] text-zinc-600 dark:text-zinc-400">
-              Open to design engineering roles and freelance collaborations.
-              <br />
-              Reach me at <CopyEmail email={EMAIL} />
-            </p>
-
-            <p className="mt-4 text-[13px] text-zinc-500 dark:text-zinc-500">
-              Or poke around the{" "}
+          <div className="home-list">
+            {WORK.map((w) => (
               <a
-                href="/desktop"
-                className="desk-link group inline-flex items-center gap-1.5 align-middle text-zinc-900 dark:text-zinc-100"
+                key={w.name}
+                className="home-item"
+                href={w.href}
+                target={w.href.startsWith("http") ? "_blank" : undefined}
+                rel={w.href.startsWith("http") ? "noopener noreferrer" : undefined}
               >
-                <CpuIcon className="transition-transform duration-300 ease-[var(--ease-out)] group-hover:-translate-y-0.5" />
-                <span className="underline decoration-zinc-400 underline-offset-[3px] transition-colors group-hover:decoration-zinc-900 dark:decoration-zinc-600 dark:group-hover:decoration-zinc-100">
-                  desktop
+                <p className="home-item-role">{w.role}</p>
+                <p className="home-item-name">{w.name}</p>
+                <p className="home-item-note">{w.note}</p>
+                <span className="home-item-go">
+                  {w.cta}
+                  <Arrow />
                 </span>
               </a>
-              .
-            </p>
+            ))}
           </div>
+        </section>
 
-          <div className="w-[140px] shrink-0 text-zinc-900/70 dark:text-zinc-100/70">
-            <Signature className="h-auto w-full overflow-visible" />
-          </div>
-        </div>
+        <footer className="home-foot">
+          <p>
+            Open to design engineering roles and freelance work —{" "}
+            <a className="home-link" href={`mailto:${EMAIL}`}>
+              {EMAIL}
+            </a>
+          </p>
+        </footer>
       </div>
     </main>
+  );
+}
+
+const WORK = [
+  {
+    role: "Animation library",
+    name: "MotionKit",
+    note: "The motion pieces I kept rebuilding, packaged so they behave the same way every time.",
+    href: "https://www.motionlib.me/",
+    cta: "Open it",
+  },
+  {
+    role: "SaaS dashboard",
+    name: "ChurnRate",
+    note: "Churn analysis and analytics for subscription products, designed and built end to end.",
+    href: "https://www.churnrate.fun/",
+    cta: "Open it",
+  },
+  {
+    role: "Productivity tool",
+    name: "Task Management",
+    note: "A full-stack task app — boards, state and the whole workflow, built to stay quick as the list grows.",
+    href: "https://taskmangementapplication-production.up.railway.app",
+    cta: "Open it",
+  },
+  {
+    role: "A machine in the browser",
+    name: "Desktop",
+    note: "Boot screen, menu bar, dock, draggable windows, and the games that came with it.",
+    href: "/desktop",
+    cta: "Boot it",
+  },
+];
+
+function Arrow() {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5" />
+    </svg>
   );
 }

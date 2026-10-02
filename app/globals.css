@@ -177,30 +177,29 @@
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
   /* ── the palette ──────────────────────────────────────────────────────────
-     Neutral, not warm. The page used to be printed paper (#f6f3f1) with a warm
-     grey ramp to match; this is a true grey, which is what makes the dark side
-     read as a screen rather than a dim room.
+     Not a neutral grey. The ground is an off-white with a trace of green in it
+     and the ink is a deep green-black, which is what keeps a near-white page
+     from reading as a blank browser window: there is a temperature to it, and
+     every grey on the page is mixed from the same hue rather than from black.
 
-     These are the Tailwind `neutral` steps, which is what components.json has
-     always said the base colour is — so the zinc utilities scattered through
-     the components sit on it without fighting it. One place to change. */
-  --bg: #fafafa;
+     Taken from the reference, measured: bg rgb(252,253,251), ink rgb(24,59,43),
+     secondary rgb(86,99,89). */
+  --bg: #fcfdfb;
   --surface: #ffffff;
-  --line: #e5e5e5;
-  --fg: #0a0a0a;
-  --fg-body: #525252;
-  --fg-muted: #a3a3a3;
+  --line: #e4e8e3;
+  --fg: #183b2b;
+  --fg-body: #566359;
+  --fg-muted: #8a968c;
 }
 
 .dark {
-  --bg: #0f0f0f;
-  --surface: #171717;
-  --line: #262626;
-  /* Off-white, never #fff: pure white on near-black is what makes long text
-     buzz, and it is the one thing the reference is most careful about. */
-  --fg: #ededed;
-  --fg-body: #a1a1a1;
-  --fg-muted: #737373;
+  --bg: #0f1310;
+  --surface: #161b17;
+  --line: #242b26;
+  /* Off-white with the same green in it, never #fff. */
+  --fg: #e6ece7;
+  --fg-body: #9aa89d;
+  --fg-muted: #6d7a71;
 }
 
 /* ── The ⌘K panel ───────────────────────────────────────────────────────────

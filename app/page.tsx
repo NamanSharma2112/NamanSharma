@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Player, { type Track } from "@/components/home/Player";
 import Status from "@/components/home/Status";
 import { SIGNATURE_PATHS, SIGNATURE_VIEWBOX } from "@/components/signature-paths";
 import "@/components/home/home.css";
@@ -11,6 +12,23 @@ export const metadata: Metadata = {
 };
 
 const EMAIL = "namansharmans03@gmail.com";
+
+/**
+ * The track in the topbar's pill, or null for no pill at all.
+ *
+ * To turn it on: drop the file in public/music/ and fill this in. It plays a
+ * real file rather than reporting what a service claims is playing, so what it
+ * shows is always true and it needs no key, no server route and nothing that
+ * can go down.
+ *
+ *   const TRACK: Track | null = {
+ *     src: "/music/your-track.mp3",
+ *     title: "Track name",
+ *     artist: "Artist",
+ *     art: "/music/cover.jpg",   // optional; a record is drawn without it
+ *   };
+ */
+const TRACK: Track | null = null;
 
 /**
  * The front page.
@@ -41,6 +59,12 @@ export default function Home() {
               <path key={i} d={d} />
             ))}
           </svg>
+          {/* Centred on the bar. Renders nothing until the file exists, so
+              the slot is simply empty until a track is dropped in. */}
+          <span className="home-strip-centre">
+            <Player track={TRACK} />
+          </span>
+
           <Status />
         </div>
 

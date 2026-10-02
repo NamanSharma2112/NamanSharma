@@ -358,3 +358,118 @@
   font-style: italic;
   font-size: 1.05em;
 }
+
+/* ── the player pill ────────────────────────────────────────────────────── */
+
+.pl-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 4px 0 4px;
+  border-radius: 16px;
+  background: #0e0e10;
+  color: #f4f4f5;
+  cursor: pointer;
+  overflow: hidden;
+  /* Width is the one thing that animates: closed it is just the art and the
+     button, and it opens to make room for the title. */
+  max-width: 76px;
+  transition: max-width 420ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pl-pill:hover {
+    max-width: 320px;
+  }
+}
+
+.pl-pill:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+.pl-art {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #26262b;
+}
+
+.pl-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A record, for when there is no art: two rings and a hole. */
+.pl-disc {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, #0e0e10 0 3px, transparent 3px),
+    repeating-radial-gradient(circle at 50% 50%, #3a3a42 0 1px, #26262b 1px 3px);
+}
+
+/* Turns while it plays, and stops where it is rather than snapping back. */
+.pl-art.is-spinning {
+  animation: pl-spin 4.5s linear infinite;
+}
+
+@keyframes pl-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pl-art.is-spinning { animation: none; }
+  .pl-pill { transition: none; }
+}
+
+.pl-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 260ms var(--ease-out);
+}
+
+.pl-pill:hover .pl-title { opacity: 0.92; }
+
+.pl-btn {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+}
+
+.pl-btn svg {
+  width: 12px;
+  height: 12px;
+  fill: #f4f4f5;
+}
+
+.pl-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.pl-bar-fill {
+  display: block;
+  height: 100%;
+  background: #f4f4f5;
+  transform-origin: left center;
+}

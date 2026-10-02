@@ -1,0 +1,379 @@
+/* The front page.
+   A narrow column of prose on a warm off-white, with a status strip above it
+   and a list of work below — the reference's restraint, at its measurements:
+   16/30 body, a serif name at 24, and links underlined in the running text
+   rather than coloured. */
+
+.home {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* One column, held at a comfortable measure and nudged right of centre the way
+   the reference does, so the page reads as a sheet of paper rather than as a
+   centred layout. */
+.home-col {
+  width: 100%;
+  max-width: 672px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (min-width: 1100px) {
+  .home-col {
+    margin-left: max(24px, calc(50% - 336px + 56px));
+    margin-right: auto;
+  }
+}
+
+/* ── the strip across the top ───────────────────────────────────────────── */
+
+.home-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 40px;
+  padding-bottom: 64px;
+}
+
+.home-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fg);
+}
+
+/* ── the name ───────────────────────────────────────────────────────────── */
+
+.home-name {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: var(--fg);
+}
+
+/* ── the prose ──────────────────────────────────────────────────────────── */
+
+.home-prose {
+  margin-top: 26px;
+  font-size: 16px;
+  line-height: 1.88;
+  letter-spacing: -0.006em;
+  color: var(--fg-body);
+}
+
+.home-prose p + p {
+  margin-top: 22px;
+}
+
+/* Links in running text are underlined and the colour of the ink, not blue.
+   The underline is the affordance; a second signal would be noise. */
+.home-prose a,
+.home-link {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--fg) 32%, transparent);
+  transition: text-decoration-color 180ms var(--ease-out);
+}
+
+.home-prose a:hover,
+.home-link:hover {
+  text-decoration-color: var(--fg);
+}
+
+/* ── the row of section links ───────────────────────────────────────────── */
+
+.home-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin-top: 34px;
+  font-size: 16px;
+}
+
+/* ── a list of work, in the second reference's shape ────────────────────── */
+
+.home-section {
+  padding-top: 72px;
+}
+
+.home-section-label {
+  font-size: 13px;
+  color: var(--fg-muted);
+  letter-spacing: 0.002em;
+}
+
+.home-list {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-item {
+  display: block;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.home-item:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.home-item-role {
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+.home-item-name {
+  margin-top: 3px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.home-item-note {
+  margin-top: 5px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--fg-body);
+}
+
+/* The arrow only commits to moving once the row is hovered, and it moves a
+   little less than you expect — the restraint is what keeps a list of five
+   from feeling like five animations. */
+.home-item-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.home-item-go svg {
+  transition: transform 260ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-item:hover .home-item-go svg {
+    transform: translateX(3px);
+  }
+}
+
+/* ── a bordered card, for the things that are not a list ────────────────── */
+
+.home-card {
+  padding: 18px 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--surface);
+}
+
+.home-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.home-card-note {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--fg-body);
+}
+
+.home-foot {
+  padding: 72px 0 56px;
+  font-size: 14px;
+  color: var(--fg-muted);
+}
+
+/* ── the status strip ───────────────────────────────────────────────────── */
+
+.st {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.st-slot {
+  position: relative;
+}
+
+.st-date {
+  font-size: 13.5px;
+  color: var(--fg-body);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+}
+
+.st-date:hover {
+  color: var(--fg);
+  border-color: var(--fg-muted);
+}
+
+.st-tick {
+  width: 12px;
+  height: 12px;
+  stroke: #c2574a;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+}
+
+.st-glyph-btn {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--fg-body);
+  transition: background-color 180ms var(--ease-out);
+}
+
+.st-glyph-btn:hover {
+  background: color-mix(in srgb, var(--fg) 7%, transparent);
+}
+
+.st-glyph {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.st-glyph.is-sun { stroke: #b7873c; }
+.st-glyph.is-moon { stroke: #7f8fa6; }
+
+.st-date:focus-visible,
+.st-glyph-btn:focus-visible,
+.st-row:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+/* Both panels hang under the strip, pinned to its right edge so neither can
+   run off the side of a narrow window. */
+.st-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 70;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 18px 44px -16px rgba(16, 32, 24, 0.3);
+}
+
+.st-clock {
+  width: 168px;
+  padding: 15px 13px 17px;
+  text-align: center;
+}
+
+.st-clock-date { font-size: 12.5px; font-weight: 500; color: var(--fg); }
+
+.st-face { width: 104px; height: 104px; margin: 11px auto 9px; }
+.st-rim { fill: none; stroke: var(--line); stroke-width: 1.2; }
+.st-hands line { stroke: var(--fg); stroke-linecap: round; }
+.st-second { stroke: #c2574a; stroke-width: 1.4; stroke-linecap: round; }
+.st-pin { fill: #c2574a; }
+
+.st-clock-time {
+  font-size: 25px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.st-clock-ampm { margin-top: 1px; font-size: 10px; letter-spacing: 0.1em; color: var(--fg-muted); }
+
+.st-light { width: 262px; padding: 15px 13px 13px; }
+.st-light-title { font-size: 14px; font-weight: 600; color: var(--fg); }
+.st-light-note { margin-top: 3px; font-size: 12px; line-height: 1.5; color: var(--fg-muted); }
+.st-light-list { margin-top: 11px; display: flex; flex-direction: column; gap: 2px; }
+
+.st-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 9px;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 170ms var(--ease-out);
+}
+
+.st-row:hover { background: color-mix(in srgb, var(--fg) 5%, transparent); }
+.st-row.is-on { background: color-mix(in srgb, var(--fg) 7%, transparent); }
+
+.st-row-icon { display: grid; place-items: center; width: 20px; color: var(--fg-body); }
+.st-row-text { flex: 1; min-width: 0; }
+.st-row-title { display: block; font-size: 13.5px; font-weight: 500; color: var(--fg); }
+.st-row-note { display: block; margin-top: 1px; font-size: 11.5px; color: var(--fg-muted); }
+
+.st-check {
+  width: 15px; height: 15px; flex-shrink: 0;
+  fill: none; stroke: var(--fg); stroke-width: 2.3;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ── the monogram ───────────────────────────────────────────────────────── */
+
+.mono {
+  display: inline-block;
+  perspective: 420px;
+  cursor: grab;
+  touch-action: none;
+  border-radius: 5px;
+}
+
+.mono:active { cursor: grabbing; }
+.mono:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+.mono-spin {
+  position: relative;
+  display: block;
+  width: 30px;
+  height: 26px;
+  transform-style: preserve-3d;
+}
+
+.mono-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  background: var(--fg);
+  color: var(--bg);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.mono-face.is-back { transform: rotateY(180deg); }
+
+/* The serif italic in the prose, which is the one voice change on the page. */
+.home-prose em {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-style: italic;
+  font-size: 1.05em;
+}

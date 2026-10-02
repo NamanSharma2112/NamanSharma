@@ -29,6 +29,109 @@
   }
 }
 
+/* ── the machine ────────────────────────────────────────────────────────── */
+
+.mac-stage {
+  perspective: 1800px;
+  width: 100%;
+}
+
+.mac-label {
+  display: block;
+  margin-bottom: 26px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+a.mac-label {
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 200ms var(--ease-out);
+}
+
+a.mac-label:hover {
+  text-decoration-color: var(--fg-muted);
+}
+
+.mac {
+  transform-style: preserve-3d;
+  /* drop-shadow, not box-shadow: the machine is two boxes of different widths,
+     and a shadow per box draws a seam where they meet. */
+  filter: drop-shadow(0 26px 34px rgba(0, 0, 0, 0.17))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.09));
+}
+
+/* Space black in both themes. It is a photographed object, not a surface of
+   the page, so it does not invert when the page does. */
+.mac-lid {
+  position: relative;
+  padding: 12px 12px 15px;
+  border-radius: 17px;
+  background: linear-gradient(176deg, #313134 0%, #232326 46%, #1a1a1c 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+
+.mac-cam {
+  position: absolute;
+  top: 4.5px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: #43434a;
+}
+
+/* No fixed aspect: the lid takes the shape of what is on the screen. A 16:10
+   box with `cover` crops whatever does not happen to be 16:10, and it cropped
+   this one through the middle of its content. */
+.mac-screen {
+  overflow: hidden;
+  border-radius: 5px;
+  background: #0a0a0b;
+  line-height: 0;
+}
+
+.mac-screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The deck, seen edge-on: a touch wider than the lid, lit along its top edge
+   where it catches the light, and rounded only at the feet. */
+.mac-base {
+  position: relative;
+  width: 106%;
+  height: 18px;
+  margin-left: -3%;
+  border-radius: 2px 2px 11px 11px;
+  background: linear-gradient(
+    180deg,
+    #46464a 0%,
+    #313134 18%,
+    #252528 62%,
+    #141416 100%
+  );
+}
+
+/* The notch you put a thumb in to open it. */
+.mac-lip {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 12%;
+  height: 5px;
+  translate: -50% 0;
+  border-radius: 0 0 7px 7px;
+  background: linear-gradient(180deg, #121214 0%, #1e1e21 100%);
+}
+
 /* ── the bar at the top ─────────────────────────────────────────────────── */
 
 .topbar {
@@ -416,40 +519,6 @@
 
 .dark .anno-tail {
   box-shadow: 2px 2px 0 rgba(255, 255, 255, 0.08);
-}
-
-/* The place card, in the same mono the coordinate rail uses. */
-.anno-place {
-  display: block;
-  padding: 16px 14px 14px;
-  text-align: center;
-}
-
-.anno-place-pin {
-  display: block;
-  width: 9px;
-  height: 9px;
-  margin: 0 auto 10px;
-  border-radius: 999px;
-  background: #6366f1;
-  box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.16);
-}
-
-.anno-place-name {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--fg);
-}
-
-.anno-place-coords {
-  display: block;
-  margin-top: 7px;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 10px;
-  line-height: 1.6;
-  letter-spacing: 0.1em;
-  color: var(--fg-muted);
 }
 
 /* On a phone the card is wider than the gap beside the word it hangs off, so

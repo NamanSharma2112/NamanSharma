@@ -7,6 +7,7 @@ import MenuChip from "@/components/landing/MenuChip";
 import TopBar from "@/components/landing/TopBar";
 import FlightPlan from "@/components/landing/FlightPlan";
 import LightRays from "@/components/landing/LightRays";
+import LaptopShowcase from "@/components/landing/LaptopShowcase";
 import Letter from "@/components/landing/Letter";
 import PerspectiveBook from "@/components/landing/PerspectiveBook";
 import LaptopCat from "@/components/landing/LaptopCat";
@@ -106,6 +107,19 @@ export default function Home() {
         aria-label="Notebook"
       >
         <PerspectiveBook className="ml-1 sm:ml-8" />
+      </section>
+
+      {/* A project on a machine, straightening up as you scroll to it. */}
+      <section
+        className="relative z-10 mx-auto mt-24 w-full max-w-[940px] px-6 sm:mt-32"
+        aria-label="MotionKit"
+      >
+        <LaptopShowcase
+          src="/motionkit-preview.png"
+          alt="MotionKit, an animation library"
+          label="MotionKit"
+          href="https://www.motionlib.me/"
+        />
       </section>
 
       {/* Landing card. */}

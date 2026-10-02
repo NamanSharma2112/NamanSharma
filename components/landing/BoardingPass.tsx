@@ -401,10 +401,10 @@ function Pass() {
           <div className="mt-3 flex items-center gap-2.5">
             <span className="shrink-0 text-center">
               <span className="block font-mono text-[23px] leading-none tracking-[0.03em] text-zinc-900">
-                JAL
+                DSK
               </span>
               <span className="mt-0.5 block font-mono text-[6.5px] uppercase tracking-[0.12em] text-zinc-400">
-                Jalandhar
+                The Desk
               </span>
             </span>
             <span className="flex flex-1 items-center gap-1.5">
@@ -445,7 +445,7 @@ function Pass() {
           <div className="mt-2.5">
             <Barcode />
             <span className="mt-1 block font-mono text-[7px] tracking-[0.28em] text-zinc-400">
-              NS2112 18A 0042 JALWEB
+              NS2112 18A 0042 DSKWEB
             </span>
           </div>
         </div>

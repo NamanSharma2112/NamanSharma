@@ -9,22 +9,6 @@ import Annotated from "@/components/landing/Annotated";
  * what is behind those is the reward for noticing it.
  */
 
-/** The map pin, in the site's own language: the rail in the corner says the
-    same thing, so the card does not introduce a second way of giving a place. */
-function Place() {
-  return (
-    <span className="anno-place">
-      <span className="anno-place-pin" aria-hidden />
-      <span className="anno-place-name">Jalandhar</span>
-      <span className="anno-place-coords">
-        31.3260° N
-        <br />
-        75.5762° E
-      </span>
-    </span>
-  );
-}
-
 function Shot({ src, alt }: { src: string; alt: string }) {
   // Plain img, not next/image: it is 210px wide inside a card that only exists
   // while hovered, and the optimizer's lazy pass does not fire for something
@@ -42,14 +26,9 @@ export default function Letter() {
         <Annotated card={<Shot src="/avatar2.png" alt="Naman Sharma" />}>
           Naman
         </Annotated>
-        , and I&rsquo;m from{" "}
-        <Annotated card={<Place />}>Jalandhar</Annotated>, India.
-      </p>
-
-      <p>
-        I&rsquo;m a design engineer. I sit in the space between design and
-        engineering, and I care about how an interface{" "}
-        <em>feels</em> — not only whether it works.
+        , a design engineer. I sit in the space between design and engineering,
+        and I care about how an interface <em>feels</em> — not only whether it
+        works.
       </p>
 
       <p>

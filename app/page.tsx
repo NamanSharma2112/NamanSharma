@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import CopyEmail from "@/components/CopyEmail";
 import Signature from "@/components/Signature";
-import CpuIcon from "@/components/CpuIcon";
 import SocialLinks from "@/components/SocialLinks";
-import MenuChip from "@/components/landing/MenuChip";
-import TopBar from "@/components/landing/TopBar";
+import BlurReveal from "@/components/BlurReveal";
+import SectionNav from "@/components/site/SectionNav";
+import Section from "@/components/site/Section";
+import { SECTIONS } from "@/components/site/sections";
 import Projects from "@/components/landing/Projects";
-import LightRays from "@/components/landing/LightRays";
 import LaptopShowcase from "@/components/landing/LaptopShowcase";
-import Letter from "@/components/landing/Letter";
-import PerspectiveBook from "@/components/landing/PerspectiveBook";
 import LaptopCat from "@/components/landing/LaptopCat";
+import Letter from "@/components/landing/Letter";
+import LightRays from "@/components/landing/LightRays";
+import PerspectiveBook from "@/components/landing/PerspectiveBook";
 import SendButton from "@/components/landing/SendButton";
+import TopBar from "@/components/landing/TopBar";
 import Collage from "@/components/lab/Collage";
 import "@/components/landing/landing.css";
+import "@/components/site/site.css";
 
 export const metadata: Metadata = {
   title: "Naman Sharma",
@@ -25,135 +29,188 @@ const EMAIL = "namansharmans03@gmail.com";
 const TWITTER = "https://x.com/NamanSharma2112";
 
 /**
- * The front page: a note, the work, and a few things to pick up.
+ * The front page, as a run of numbered sections under a bar that becomes an
+ * index of them.
+ *
+ * The hero is not numbered — it is the thing you are introduced by, not a part
+ * of the page you navigate to — and the bar carries its name and links until
+ * the hero leaves, at which point it has a page to index and shows it.
  */
 export default function Home() {
+  const [work, craft, machine, writing, about, contact] = SECTIONS;
+
   return (
     <main className="landing relative min-h-screen">
-      {/* Behind everything. The bands below carry z-10 because the rays are a
-          positioned layer at z-0, and in-flow content paints under one. */}
       <LightRays />
+      <SectionNav email={EMAIL} />
 
-      {/* The date and the light the page is in, both as panels hanging off a
-          word. The coordinate rail used to carry the time here; the clock says
-          it better, so the rail went with it. */}
-      {/* z-50, not z-10: `position: relative` with a z-index makes this a
-          stacking context, so the panels inside it can never out-paint a later
-          sibling however high their own z-index is. The letter was covering the
-          appearance menu and eating its clicks. */}
-      <div className="relative z-50 mx-auto grid w-full max-w-[1180px] grid-cols-[1fr_auto_1fr] items-center gap-6 px-6 pt-6 sm:px-10">
-        <span aria-hidden />
-        <TopBar />
-        <div className="flex justify-end">
-          <MenuChip />
+      {/* ── the hero ─────────────────────────────────────────────────────── */}
+      <div id="hero" className="site-hero relative z-10">
+        <div>
+          <BlurReveal
+            as="h1"
+            text="Design engineer building things that feel right."
+            className="site-h1"
+          />
+
+          <p className="site-hero-blurb">
+            I sit in the space between design and engineering — obsessing over
+            motion, interaction, and the details that decide whether an
+            interface feels considered or merely finished.
+          </p>
+
+          <div className="site-hero-actions">
+            <SendButton email={EMAIL}>email me</SendButton>
+            <a
+              href={TWITTER}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="send rounded-full bg-black/[0.06] px-4 py-2 text-[13px] font-medium text-zinc-900 hover:bg-black/[0.1] dark:bg-white/10 dark:text-zinc-100 dark:hover:bg-white/[0.16]"
+            >
+              dm me on X
+            </a>
+          </div>
+
+          <SocialLinks className="mt-6" />
+        </div>
+
+        {/* The machine, as the thing the hero is a window onto. */}
+        <div className="hidden lg:block">
+          <LaptopShowcase
+            src="/motionkit-preview.png"
+            alt="MotionKit, an animation library"
+            label="MotionKit"
+            href="https://www.motionlib.me/"
+          />
         </div>
       </div>
 
-      {/* Opens as a note rather than a hero: a short measure, left aligned,
-          with the handful of marked words carrying what used to be spread
-          across a heading, a strapline and a stack list. */}
-      <div className="landing-stagger relative z-10 mx-auto flex w-full max-w-[760px] flex-col px-6 pt-24 sm:pt-32">
-        <Letter />
+      {/* ── 01 work ──────────────────────────────────────────────────────── */}
+      <Section def={work} index={0} wide>
+        <Projects />
+      </Section>
 
-        <div className="mt-10 flex flex-wrap items-center gap-2">
-          <SendButton email={EMAIL}>email me</SendButton>
-          <a
-            href={TWITTER}
-            target="_blank"
-            rel="noopener noreferrer"
+      {/* ── 02 craft ─────────────────────────────────────────────────────── */}
+      <Section def={craft} index={1} wide>
+        <div className="site-trio">
+          {CRAFT.map((c) => (
+            <div key={c.title} className="site-trio-item">
+              <span className="site-trio-icon" aria-hidden>
+                {c.icon}
+              </span>
+              <p className="site-trio-title">{c.title}</p>
+              <p className="site-trio-note">{c.note}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Shots from the work above, in a pile you can pick up and throw. */}
+        <div className="mt-16">
+          <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--fg-muted)]">
+            Odds and ends · drag them
+          </p>
+          <Collage
+            className="relative mx-auto h-[300px] w-full max-w-[760px] overflow-hidden [perspective:1600px]"
+            caption=""
+            cardClass="shot-card"
+          />
+        </div>
+      </Section>
+
+      {/* ── 03 machine ───────────────────────────────────────────────────── */}
+      <Section def={machine} index={2} wide>
+        <div className="mx-auto max-w-[940px]">
+          <LaptopShowcase
+            src="/churnrate-dashboard.png"
+            alt="ChurnRate, a SaaS dashboard"
+            label="Open the desktop"
+            href="/desktop"
+          />
+        </div>
+      </Section>
+
+      {/* ── 04 writing ───────────────────────────────────────────────────── */}
+      <Section def={writing} index={3}>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/blog"
             className="send rounded-full bg-black/[0.06] px-4 py-2 text-[13px] font-medium text-zinc-900 hover:bg-black/[0.1] dark:bg-white/10 dark:text-zinc-100 dark:hover:bg-white/[0.16]"
           >
-            dm me on X
-          </a>
+            Read the writing
+          </Link>
+          <Link
+            href="/inspiration"
+            className="send rounded-full bg-black/[0.06] px-4 py-2 text-[13px] font-medium text-zinc-900 hover:bg-black/[0.1] dark:bg-white/10 dark:text-zinc-100 dark:hover:bg-white/[0.16]"
+          >
+            People I look up to
+          </Link>
         </div>
 
-        <SocialLinks className="mt-5" />
-      </div>
+        {/* Left on the desk beside the writing, not presented. */}
+        <div className="mt-14">
+          <PerspectiveBook className="ml-1 sm:ml-8" />
+        </div>
+      </Section>
 
-      {/* The hero runs straight into the route. There used to be a marquee of
-          type on an arc bridging them, which was the busiest thing on a page
-          that is meant to be quiet — and it was bridging a gap the hero no
-          longer leaves. */}
-      <div className="relative z-10 mt-20 sm:mt-24">
-        <Projects />
-      </div>
+      {/* ── 05 about ─────────────────────────────────────────────────────── */}
+      <Section def={about} index={4}>
+        <Letter />
+      </Section>
 
-      {/* Shots from the projects above, in a pile you can pick up and throw.
-          No framed stage — they sit straight on the page's paper, so it reads
-          as things left on a desk rather than a widget embedded in the page. */}
-      <section className="relative z-10 mx-auto mt-16 w-full max-w-[760px] px-6 sm:mt-20" aria-label="Project shots">
-        {/* Says it is draggable in the heading rather than adding a second
-            line of caption under the pile to say the same thing. */}
-        <p className="mb-2 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500">
-          Odds and ends · drag them
-        </p>
-        <Collage
-          // overflow-hidden: the cards are placed at percentage offsets and are
-          // 176px wide, so on a phone the right-hand ones hang past the stage
-          // and the whole page scrolls sideways. It also keeps a thrown card
-          // from being flung off the page.
-          className="relative h-[300px] w-full overflow-hidden [perspective:1600px]"
-          caption=""
-          cardClass="shot-card"
-        />
-      </section>
-
-      {/* Left on the desk next to the pile, not presented: offset to one side
-          rather than centred, and it does nothing until you touch it. */}
-      <section
-        className="relative z-10 mx-auto mt-10 w-full max-w-[760px] px-6"
-        aria-label="Notebook"
-      >
-        <PerspectiveBook className="ml-1 sm:ml-8" />
-      </section>
-
-      {/* A project on a machine, straightening up as you scroll to it. */}
-      <section
-        className="relative z-10 mx-auto mt-24 w-full max-w-[940px] px-6 sm:mt-32"
-        aria-label="MotionKit"
-      >
-        <LaptopShowcase
-          src="/motionkit-preview.png"
-          alt="MotionKit, an animation library"
-          label="MotionKit"
-          href="https://www.motionlib.me/"
-        />
-      </section>
-
-      {/* Landing card. */}
-      <div className="relative z-10 mx-auto mt-16 w-full max-w-[760px] px-6 pb-24">
-        <div className="desk-col flex flex-col items-start gap-6 border-t border-black/10 pt-8 dark:border-white/10 sm:flex-row sm:items-end sm:justify-between">
+      {/* ── 06 contact ───────────────────────────────────────────────────── */}
+      <Section def={contact} index={5}>
+        <div className="flex flex-col items-start gap-8 border-t border-[var(--line)] pt-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            {/* The machine's mascot, sitting on the link down to it: hover the
-                link and it looks up from its screen. */}
             <LaptopCat className="mb-3 w-[118px]" />
 
-            <p className="text-[13.5px] leading-[1.75] text-zinc-600 dark:text-zinc-400">
-              Open to design engineering roles and freelance collaborations.
-              <br />
+            <p className="text-[13.5px] leading-[1.75] text-[var(--fg-body)]">
               Reach me at <CopyEmail email={EMAIL} />
-            </p>
-
-            <p className="mt-4 text-[13px] text-zinc-500 dark:text-zinc-500">
-              Or poke around the{" "}
-              <a
-                href="/desktop"
-                className="desk-link group inline-flex items-center gap-1.5 align-middle text-zinc-900 dark:text-zinc-100"
-              >
-                <CpuIcon className="transition-transform duration-300 ease-[var(--ease-out)] group-hover:-translate-y-0.5" />
-                <span className="underline decoration-zinc-400 underline-offset-[3px] transition-colors group-hover:decoration-zinc-900 dark:decoration-zinc-600 dark:group-hover:decoration-zinc-100">
-                  desktop
-                </span>
-              </a>
-              .
             </p>
           </div>
 
-          <div className="w-[140px] shrink-0 text-zinc-900/70 dark:text-zinc-100/70">
+          <div className="w-[140px] shrink-0 text-[var(--fg)] opacity-70">
             <Signature className="h-auto w-full overflow-visible" />
           </div>
         </div>
+      </Section>
+
+      {/* The clock and the light the page is in, out of the way at the foot. */}
+      <div className="relative z-10 mx-auto flex w-full max-w-[1440px] justify-center px-8 pb-16">
+        <TopBar />
       </div>
     </main>
   );
 }
+
+/** What the craft section lists. Short enough to read in a glance each. */
+const CRAFT = [
+  {
+    title: "Motion",
+    note: "Springs for anything a pointer drives, and nothing that cannot be interrupted.",
+    icon: (
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+        <path d="M3 17c4 0 5-10 9-10s5 10 9 10" />
+      </svg>
+    ),
+  },
+  {
+    title: "Interaction",
+    note: "Hover, focus and touch treated as three ways in, not one with fallbacks.",
+    icon: (
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7 4v9.5L5.2 12a2 2 0 0 0-2.8 2.8l4.3 5.1A4 4 0 0 0 9.8 21H15a4 4 0 0 0 4-4v-4.5a1.7 1.7 0 0 0-3.4 0" />
+        <path d="M15.6 12.5V11a1.7 1.7 0 0 0-3.4 0v1.5M12.2 11V9.5a1.7 1.7 0 0 0-3.4 0" />
+      </svg>
+    ),
+  },
+  {
+    title: "Detail",
+    note: "The hairline, the easing curve, the one pixel — the part nobody names.",
+    icon: (
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.9-3.9M11 8v6M8 11h6" />
+      </svg>
+    ),
+  },
+];

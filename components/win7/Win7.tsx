@@ -5,7 +5,8 @@ import Link from "next/link";
 import BootSequence from "./BootSequence";
 import DesktopMenu, { type DesktopMenuItem } from "./DesktopMenu";
 import StartMenu from "./StartMenu";
-import Taskbar from "./Taskbar";
+import Dock, { frontAppTitle } from "./Dock";
+import MenuBar from "./MenuBar";
 import WindowFrame from "./WindowFrame";
 import { APPS, getApp } from "./registry";
 import { playMinimise, playWindowClose, playWindowOpen } from "@/lib/sounds";
@@ -310,7 +311,7 @@ export default function Win7() {
         </div>
 
         <p className="pointer-events-none absolute bottom-3 right-4 text-right text-[11px] leading-[1.5] text-white/45">
-          Windows 7 · Portfolio Edition
+          macOS · Portfolio Edition
           <br />
           Double-click to open · right-click the wallpaper
         </p>
@@ -375,13 +376,13 @@ export default function Win7() {
         />
       )}
 
-      <Taskbar
+      <MenuBar appTitle={frontAppTitle(windows, activeId)} />
+
+      <Dock
         windows={windows}
         activeId={activeId}
-        startOpen={startOpen}
-        onToggleStart={() => setStartOpen((v) => !v)}
         onSelect={selectFromTaskbar}
-        onShowDesktop={toggleShowDesktop}
+        onLaunch={(appId) => open(appId as Parameters<typeof open>[0])}
       />
         </>
       )}
@@ -389,9 +390,13 @@ export default function Win7() {
   );
 }
 
-/** Aero's wallpapers, near enough — a lit horizon, a dusk, and a green field. */
+/**
+ * Wallpapers in the shape macOS has used since Big Sur: a wash of two or three
+ * close hues with the light coming from one corner, rather than Aero's lit
+ * horizon sitting on the dock.
+ */
 const WALLPAPERS = [
-  "radial-gradient(ellipse 120% 80% at 50% 108%, #6fc2f0 0%, #2b7cc0 26%, #14487e 52%, #0a2846 78%, #061726 100%)",
-  "radial-gradient(ellipse 130% 90% at 50% 104%, #ffb066 0%, #e06b4f 22%, #8c3f63 48%, #3b2350 76%, #140f28 100%)",
-  "radial-gradient(ellipse 120% 85% at 50% 106%, #a8e063 0%, #56ab2f 24%, #2b7a3f 50%, #14512f 76%, #0a2a1c 100%)",
+  "radial-gradient(ellipse 110% 85% at 22% 8%, #6f7ce0 0%, #5b55c8 22%, #3f3597 48%, #241d5e 74%, #110d30 100%)",
+  "radial-gradient(ellipse 120% 90% at 78% 14%, #ff9a6b 0%, #e8617f 24%, #9b3f90 50%, #4a2470 76%, #1b1038 100%)",
+  "radial-gradient(ellipse 115% 88% at 50% 6%, #4ec5c1 0%, #2d8fae 24%, #1f5d8c 50%, #163a62 76%, #0b1c33 100%)",
 ];

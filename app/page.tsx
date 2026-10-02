@@ -94,7 +94,11 @@ export default function Home() {
           Odds and ends · drag them
         </p>
         <Collage
-          className="relative h-[300px] w-full [perspective:1600px]"
+          // overflow-hidden: the cards are placed at percentage offsets and are
+          // 176px wide, so on a phone the right-hand ones hang past the stage
+          // and the whole page scrolls sideways. It also keeps a thrown card
+          // from being flung off the page.
+          className="relative h-[300px] w-full overflow-hidden [perspective:1600px]"
           caption=""
           cardClass="shot-card"
         />

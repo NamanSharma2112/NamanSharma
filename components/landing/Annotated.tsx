@@ -1,7 +1,14 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useId, useRef, useState, type ReactNode } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "motion/react";
 
 /**
  * A word in a sentence that has something behind it.
@@ -31,13 +38,30 @@ export default function Annotated({
   const [open, setOpen] = useState(false);
   const still = useReducedMotion();
   const id = `anno-${useId().replace(/:/g, "")}`;
+  const word = useRef<HTMLButtonElement>(null);
+
+  // Where the pointer is across the word, -1 to 1. The card leans toward it,
+  // which is what gives it a front and a back rather than being a flat panel
+  // that happens to have a shadow.
+  const px = useMotionValue(0);
+  const spring = { stiffness: 260, damping: 20, mass: 0.5 };
+  const rotateY = useSpring(useTransform(px, [-1, 1], [-13, 13]), spring);
+  const rotateX = useSpring(useTransform(px, [-1, 1], [5, -5]), spring);
+
+  const track = (e: React.PointerEvent) => {
+    const r = word.current?.getBoundingClientRect();
+    if (!r) return;
+    px.set(((e.clientX - r.left) / r.width) * 2 - 1);
+  };
 
   return (
     <span className="anno">
       <span className="anno-mark" aria-hidden />
       <button
+        ref={word}
         type="button"
         className="anno-word"
+        onPointerMove={track}
         aria-describedby={open ? id : undefined}
         aria-expanded={open}
         onMouseEnter={() => setOpen(true)}
@@ -60,10 +84,18 @@ export default function Annotated({
             className={`anno-card ${wide ? "is-wide" : ""}`}
             // Out of the bottom of the card, which is the edge the pointer is
             // on — so it grows from the word rather than from its own middle.
-            style={{ transformOrigin: "bottom center" }}
-            initial={still ? { opacity: 0 } : { opacity: 0, scale: 0.88, y: 10 }}
+            // The two rotations are springs the pointer drives; everything else
+            // is the entrance.
+            style={
+              still
+                ? { transformOrigin: "bottom center" }
+                : { transformOrigin: "bottom center", rotateX, rotateY }
+            }
+            initial={
+              still ? { opacity: 0 } : { opacity: 0, scale: 0.86, y: 14, rotateX: -16 }
+            }
             animate={still ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
-            exit={still ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 6 }}
+            exit={still ? { opacity: 0 } : { opacity: 0, scale: 0.93, y: 8 }}
             transition={
               still
                 ? { duration: 0.12 }

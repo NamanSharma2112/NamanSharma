@@ -8,7 +8,7 @@ const README = `readme.txt
 
 Thanks for turning the machine on.
 
-This is a Windows 7 desktop rebuilt in React — the boot screen, the
+This is a macOS desktop rebuilt in React — the boot screen, the
 Aero glass, the taskbar, the Start menu and the windows are all
 drawn rather than screenshotted. The games underneath are real:
 Minesweeper lays its board after your first click so you can never

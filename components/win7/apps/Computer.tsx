@@ -40,7 +40,7 @@ export default function Computer() {
           <p className="text-[13px] font-semibold text-[#123a5e]">
             View basic information about your computer
           </p>
-          <p className="text-[11px] text-[#4a6076]">Windows 7 · Portfolio Edition</p>
+          <p className="text-[11px] text-[#4a6076]">macOS · Portfolio Edition</p>
         </div>
       </div>
 

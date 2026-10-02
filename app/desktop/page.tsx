@@ -5,7 +5,7 @@ import Win7 from "@/components/win7/Win7";
 export const metadata: Metadata = {
   title: "Desktop | Naman Sharma",
   description:
-    "A Windows 7 machine rebuilt in the browser, on the seat-back screen in front of you — boot screen, Aero glass, and the games that came with it.",
+    "A Mac rebuilt in the browser, on the seat-back screen in front of you — the boot, the menu bar, the dock, and the games that came with it.",
 };
 
 /**

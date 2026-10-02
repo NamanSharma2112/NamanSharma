@@ -60,20 +60,24 @@ a.mac-label:hover {
   transform-style: preserve-3d;
   /* drop-shadow, not box-shadow: the machine is two boxes of different widths,
      and a shadow per box draws a seam where they meet. */
-  filter: drop-shadow(0 26px 34px rgba(0, 0, 0, 0.17))
-    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.09));
+  filter: drop-shadow(0 34px 44px rgba(0, 0, 0, 0.19))
+    drop-shadow(0 6px 12px rgba(0, 0, 0, 0.1));
 }
 
 /* Space black in both themes. It is a photographed object, not a surface of
    the page, so it does not invert when the page does. */
 .mac-lid {
   position: relative;
-  padding: 12px 12px 15px;
-  border-radius: 17px;
-  background: linear-gradient(176deg, #313134 0%, #232326 46%, #1a1a1c 100%);
+  padding: 11px 11px 22px;
+  border-radius: 21px;
+  /* Space black. The reference machine is nearly black with a sheen along the
+     top edge, not the mid grey this was — against a near-white page a grey
+     bezel reads as plastic. */
+  background: linear-gradient(177deg, #2e2e33 0%, #17171a 9%, #121214 100%);
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.055),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.11),
+    0 0 0 1px rgba(0, 0, 0, 0.42);
 }
 
 .mac-cam {
@@ -92,9 +96,25 @@ a.mac-label:hover {
    this one through the middle of its content. */
 .mac-screen {
   overflow: hidden;
-  border-radius: 5px;
+  position: relative;
+  border-radius: 6px;
   background: #0a0a0b;
   line-height: 0;
+}
+
+/* A screen is never perfectly matte. One soft sweep across the top corner,
+   barely there — enough that the glass reads as glass. */
+.mac-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    142deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.02) 22%,
+    transparent 46%
+  );
 }
 
 .mac-screen img {
@@ -107,16 +127,16 @@ a.mac-label:hover {
    where it catches the light, and rounded only at the feet. */
 .mac-base {
   position: relative;
-  width: 106%;
-  height: 18px;
-  margin-left: -3%;
-  border-radius: 2px 2px 11px 11px;
+  width: 108.5%;
+  height: 26px;
+  margin-left: -4.25%;
+  border-radius: 3px 3px 15px 15px;
   background: linear-gradient(
     180deg,
-    #46464a 0%,
-    #313134 18%,
-    #252528 62%,
-    #141416 100%
+    #55555c 0%,
+    #2c2c31 7%,
+    #1d1d21 48%,
+    #0e0e10 100%
   );
 }
 
@@ -125,11 +145,11 @@ a.mac-label:hover {
   position: absolute;
   top: 0;
   left: 50%;
-  width: 12%;
-  height: 5px;
+  width: 11%;
+  height: 7px;
   translate: -50% 0;
-  border-radius: 0 0 7px 7px;
-  background: linear-gradient(180deg, #121214 0%, #1e1e21 100%);
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #0b0b0d 0%, #1a1a1e 100%);
 }
 
 /* ── the bar at the top ─────────────────────────────────────────────────── */
@@ -412,6 +432,9 @@ a.mac-label:hover {
 .anno {
   position: relative;
   display: inline-block;
+  /* The depth the card leans into. On the word rather than the card, because
+     perspective has to be on the parent of the thing being rotated. */
+  perspective: 900px;
 }
 
 /* The affordance, and the only one: a mark in front of the word. Sized in `em`
@@ -479,6 +502,7 @@ a.mac-label:hover {
 
 .anno-card-inner {
   display: block;
+  transform-style: preserve-3d;
   overflow: hidden;
   padding: 10px;
   border-radius: 20px;

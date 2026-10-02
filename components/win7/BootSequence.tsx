@@ -86,41 +86,24 @@ export default function BootSequence({ onDone }: { onDone: () => void }) {
       )}
 
       {phase === "starting" && (
-        <div className="flex h-full flex-col items-center justify-center gap-12">
-          {/* The flag, tilted just enough to read as an object rather than a
-              grid of squares. */}
-          <div
-            className="w7-flag grid gap-[7px]"
-            style={{
-              gridTemplateColumns: "58px 58px",
-              transform: "perspective(420px) rotateX(14deg) rotateZ(-7deg)",
-            }}
-          >
-            {PANES.map((pane) => (
-              <span
-                key={pane.color}
-                className="w7-pane block h-[58px] rounded-[5px]"
-                style={
-                  {
-                    "--fx": pane.from.split(",")[0],
-                    "--fy": pane.from.split(",")[1].trim(),
-                    animationDelay: `${pane.delay}s`,
-                    background: `linear-gradient(150deg, ${pane.color}, ${pane.color} 55%, rgba(255,255,255,0.55))`,
-                    boxShadow: `inset 0 0 14px rgba(255,255,255,0.45), 0 0 22px ${pane.color}66`,
-                  } as React.CSSProperties
-                }
-              />
-            ))}
-          </div>
+        <div className="flex h-full flex-col items-center justify-center gap-10">
+          {/* The apple, then a bar that fills. The whole Mac boot is these two
+              things on black, and the restraint is the point — anything more
+              and it stops being a boot screen. */}
+          <svg viewBox="0 0 16 16" className="mac-boot-apple" aria-hidden>
+            <path
+              fill="currentColor"
+              d="M11.03 8.47c-.02-1.72 1.4-2.54 1.47-2.58-.8-1.17-2.05-1.33-2.5-1.35-1.06-.11-2.07.62-2.61.62-.54 0-1.37-.6-2.25-.59-1.16.02-2.23.67-2.82 1.71-1.2 2.09-.31 5.18.86 6.87.58.83 1.26 1.75 2.16 1.72.87-.04 1.2-.56 2.25-.56s1.35.56 2.27.54c.94-.02 1.53-.84 2.1-1.67.66-.96.93-1.88.95-1.93-.02-.01-1.82-.7-1.84-2.78ZM9.33 3.42c.48-.58.8-1.38.71-2.18-.69.03-1.52.46-2.01 1.03-.44.51-.82 1.33-.72 2.11.77.06 1.55-.39 2.02-.96Z"
+            />
+          </svg>
 
-          <div className="w7-boot-caption flex flex-col items-center gap-2">
-            <p className="w7-sheen text-[19px] font-light tracking-wide">
-              Starting Windows
-            </p>
-            <p className="text-[11px] font-light tracking-wide text-white/35">
-              press any key to skip
-            </p>
-          </div>
+          <span className="mac-boot-bar" aria-hidden>
+            <span className="mac-boot-fill" />
+          </span>
+
+          <p className="text-[11px] font-light tracking-wide text-white/35">
+            press any key to skip
+          </p>
         </div>
       )}
 

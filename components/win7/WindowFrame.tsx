@@ -266,7 +266,7 @@ export default function WindowFrame({
       role="dialog"
       aria-label={win.title}
       onPointerDown={onFocus}
-      className={`w7-window absolute flex flex-col overflow-hidden ${
+      className={`mac-window absolute flex flex-col overflow-hidden ${
         active ? "" : "is-inactive"
       }`}
       style={{ ...geometry, zIndex: win.z }}
@@ -277,57 +277,56 @@ export default function WindowFrame({
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
         onDoubleClick={onToggleMaximise}
-        className="w7-titlebar flex shrink-0 items-center gap-2 px-2"
+        className="mac-titlebar flex shrink-0 items-center gap-2 px-3"
         style={{ cursor: win.maximized ? "default" : "move" }}
       >
-        <span className="grid size-4 shrink-0 place-items-center">{win.icon}</span>
-        <span
-          className={`truncate text-[12px] ${
-            active ? "text-[#0b2136]" : "text-[#41525f]"
-          }`}
-        >
-          {win.title}
-        </span>
-
-        <span className="ml-auto flex shrink-0 items-center gap-[2px]">
+        {/* Traffic lights. They only show their glyphs while the pointer is
+            over the group, which is the detail that stops them reading as
+            three coloured dots. */}
+        <span className="mac-lights flex shrink-0 items-center gap-[8px]">
+          <button
+            type="button"
+            data-caption
+            onClick={onClose}
+            aria-label="Close"
+            className="mac-light is-close"
+          >
+            <svg viewBox="0 0 10 10" aria-hidden>
+              <path d="M3.1 3.1l3.8 3.8M6.9 3.1L3.1 6.9" />
+            </svg>
+          </button>
           <button
             type="button"
             data-caption
             onClick={onMinimise}
             aria-label="Minimise"
-            className="w7-caption-btn"
+            className="mac-light is-min"
           >
-            <span className="mt-[6px] block h-[2px] w-[9px] bg-[#0b2136]" />
+            <svg viewBox="0 0 10 10" aria-hidden>
+              <path d="M2.6 5h4.8" />
+            </svg>
           </button>
           <button
             type="button"
             data-caption
             onClick={onToggleMaximise}
             aria-label={win.maximized ? "Restore" : "Maximise"}
-            className="w7-caption-btn"
+            className="mac-light is-zoom"
           >
-            <span className="block size-[9px] border-[1.5px] border-t-[3px] border-[#0b2136]" />
-          </button>
-          <button
-            type="button"
-            data-caption
-            onClick={onClose}
-            aria-label="Close"
-            className="w7-caption-btn is-close"
-          >
-            <svg width="11" height="11" viewBox="0 0 11 11" aria-hidden>
-              <path
-                d="M1 1l9 9M10 1l-9 9"
-                stroke="#fff"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
+            <svg viewBox="0 0 10 10" aria-hidden>
+              <path d="M3.4 6.6V3.4h3.2M6.6 3.4 3.4 6.6" />
             </svg>
           </button>
         </span>
+
+        {/* Centred in the bar itself, not after the lights — a title that
+            starts where the buttons end is a Windows title. */}
+        <span className="mac-title truncate">{win.title}</span>
+
+        <span className="mac-lights-balance shrink-0" aria-hidden />
       </div>
 
-      <div className="min-h-0 flex-1 overflow-hidden bg-[#f0f4f8]">
+      <div className="min-h-0 flex-1 overflow-hidden bg-[#f7f7f8]">
         <WindowSize.Provider value={sizing}>{children}</WindowSize.Provider>
       </div>
 

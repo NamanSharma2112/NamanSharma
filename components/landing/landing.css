@@ -29,6 +29,439 @@
   }
 }
 
+/* ── the bar at the top ─────────────────────────────────────────────────── */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.topbar-slot {
+  position: relative;
+}
+
+.topbar-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: var(--fg-body);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition:
+    color 200ms var(--ease-out),
+    background-color 200ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .topbar-item:hover {
+    color: var(--fg);
+  }
+}
+
+.topbar-item.is-open {
+  color: var(--fg);
+}
+
+.topbar-item:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Underlined the way the reference marks the date — a hairline, not a link. */
+.topbar-date {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.topbar-hand {
+  width: 13px;
+  height: 13px;
+  stroke: #e0675a;
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.topbar-glyph {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.topbar-glyph.is-sun {
+  stroke: #c88a3a;
+}
+
+.topbar-glyph.is-moon {
+  stroke: #8b93c4;
+}
+
+/* Both panels hang under the bar, centred on the thing that opened them. */
+.topbar-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 70;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 20px 46px -14px rgba(0, 0, 0, 0.3),
+    0 4px 10px -4px rgba(0, 0, 0, 0.1);
+}
+
+.dark .topbar-panel {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 20px 46px -14px rgba(0, 0, 0, 0.85);
+}
+
+.topbar-panel.is-clock {
+  width: 176px;
+  padding: 16px 14px 18px;
+  text-align: center;
+}
+
+.clock-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.clock-face {
+  width: 112px;
+  height: 112px;
+  margin: 12px auto 10px;
+}
+
+.clock-rim {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.2;
+}
+
+.clock-hands line {
+  stroke: var(--fg);
+  stroke-linecap: round;
+}
+
+.clock-second {
+  stroke: #e0675a;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.clock-pin {
+  fill: #e0675a;
+}
+
+.clock-digits {
+  font-size: 27px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-meridiem {
+  margin-top: 1px;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--fg-muted);
+}
+
+/* ── appearance ─────────────────────────────────────────────────────────── */
+
+.topbar-panel.is-light {
+  width: 268px;
+  padding: 16px 14px 14px;
+  text-align: left;
+}
+
+.appear-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.appear-note {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+.appear-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.appear-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 9px;
+  border-radius: 11px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .appear-row:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  .dark .appear-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.appear-row.is-on {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dark .appear-row.is-on {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.appear-row:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 1px;
+}
+
+.appear-icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  color: var(--fg-body);
+}
+
+.appear-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.appear-row-title {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.appear-row-note {
+  display: block;
+  margin-top: 1px;
+  font-size: 11.5px;
+  color: var(--fg-muted);
+}
+
+.appear-check {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--fg);
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── the letter ─────────────────────────────────────────────────────────── */
+
+/* A column of prose, set like something written to you rather than a hero. The
+   measure is deliberately short — around 60 characters — because the whole
+   effect depends on the eye falling down the page rather than across it. */
+.letter {
+  max-width: 34rem;
+  font-size: 17px;
+  line-height: 1.78;
+  color: var(--fg);
+  letter-spacing: -0.003em;
+}
+
+.letter > p + p {
+  margin-top: 1.9em;
+}
+
+/* The one voice change in the page: a serif italic for the aside, so the
+   sentence it sits in audibly drops a register. */
+.letter em {
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 1.04em;
+  letter-spacing: 0;
+}
+
+/* ── words with something behind them ───────────────────────────────────── */
+
+.anno {
+  position: relative;
+  display: inline-block;
+}
+
+/* The affordance, and the only one: a mark in front of the word. Sized in `em`
+   so it tracks the text rather than drifting out of step at another size. */
+.anno-mark {
+  display: inline-block;
+  width: 0.26em;
+  height: 0.95em;
+  margin-right: 0.26em;
+  border-radius: 1px;
+  vertical-align: -0.1em;
+  background: #c9cbe8;
+  transition: background-color 220ms var(--ease-out);
+}
+
+.dark .anno-mark {
+  background: #4a4b6b;
+}
+
+.anno-word {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  padding: 0.08em 0.26em;
+  margin: 0 -0.26em;
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 220ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .anno:hover .anno-word {
+    background: rgba(0, 0, 0, 0.06);
+  }
+  .dark .anno:hover .anno-word {
+    background: rgba(255, 255, 255, 0.09);
+  }
+  .anno:hover .anno-mark {
+    background: #a9ace0;
+  }
+}
+
+.anno-word:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* The card. Centred over the word and lifted clear of the line, with the tail
+   bridging the gap so the two read as one object. */
+.anno-card {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  translate: -50% 0;
+  margin-bottom: 14px;
+  width: 210px;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.anno-card.is-wide {
+  width: 268px;
+}
+
+.anno-card-inner {
+  display: block;
+  overflow: hidden;
+  padding: 10px;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 18px 40px -12px rgba(0, 0, 0, 0.3),
+    0 4px 10px -4px rgba(0, 0, 0, 0.12);
+}
+
+.dark .anno-card-inner {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 18px 40px -12px rgba(0, 0, 0, 0.8);
+}
+
+.anno-card-inner img {
+  display: block;
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* The pointer, as a rotated square with the card's own corner radius — a CSS
+   triangle cannot carry the shadow or the rounded tip, and the difference is
+   the whole reason this reads as drawn rather than assembled. */
+.anno-tail {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  translate: -50% 0;
+  rotate: 45deg;
+  border-radius: 0 0 4px 0;
+  background: var(--surface);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dark .anno-tail {
+  box-shadow: 2px 2px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* The place card, in the same mono the coordinate rail uses. */
+.anno-place {
+  display: block;
+  padding: 16px 14px 14px;
+  text-align: center;
+}
+
+.anno-place-pin {
+  display: block;
+  width: 9px;
+  height: 9px;
+  margin: 0 auto 10px;
+  border-radius: 999px;
+  background: #6366f1;
+  box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.16);
+}
+
+.anno-place-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.anno-place-coords {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: 0.1em;
+  color: var(--fg-muted);
+}
+
+/* On a phone the card is wider than the gap beside the word it hangs off, so
+   it is pinned to the column instead of centred on the word and left to run
+   off the screen. */
+@media (max-width: 520px) {
+  .anno-card,
+  .anno-card.is-wide {
+    width: min(70vw, 210px);
+  }
+}
+
 /* ── the notebook ───────────────────────────────────────────────────────── */
 
 /* 150px a page, so the whole thing is 300px — the size of something actually

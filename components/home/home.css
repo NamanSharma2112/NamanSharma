@@ -544,3 +544,49 @@
   font-size: 12.5px;
   color: var(--fg-muted);
 }
+
+/* ── the name, as particles ─────────────────────────────────────────────── */
+
+/* The canvas needs a box, and the component centres the glyphs inside it — so
+   a full-width box put the name 191px right of the prose under it.
+
+   Measured: the ink is 235px wide. The box is that plus 80px of scatter room
+   each side, pulled back by the same 80px, which lands the first glyph exactly
+   on the column's left edge. The height is the 44px glyph plus the room the
+   particles fly into, and the overflow is what stops them reaching the
+   signature above. */
+.home-name.is-particles {
+  width: 395px;
+  max-width: 100%;
+  height: 92px;
+  margin-left: -80px;
+}
+
+/* ── the chat arriving ──────────────────────────────────────────────────── */
+
+.home-bubble {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+[data-in] .home-bubble {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 460ms var(--ease-out),
+    transform 460ms var(--ease-out);
+  /* 70ms apart: far enough to read as one arriving after another, close enough
+     that five of them are still one gesture. */
+  transition-delay: calc(var(--i) * 70ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-bubble {
+    opacity: 1;
+    transform: none;
+  }
+  [data-in] .home-bubble {
+    transition: none;
+    transition-delay: 0ms;
+  }
+}

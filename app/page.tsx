@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Player, { type Track } from "@/components/home/Player";
 import { HalftoneDots } from "@/components/ui/halftone-dots";
-import {
-  Conversation,
-  ConversationBubble,
-  ConversationContent,
-} from "@/components/ui/conversation";
 import Nav from "@/components/home/Nav";
+import ParticleName from "@/components/home/ParticleName";
+import Chat from "@/components/home/Chat";
 import Status from "@/components/home/Status";
 import { SIGNATURE_PATHS, SIGNATURE_VIEWBOX } from "@/components/signature-paths";
 import "@/components/home/home.css";
@@ -103,7 +100,7 @@ export default function Home() {
           />
         </div>
 
-        <h1 className="home-name">Naman Sharma</h1>
+        <ParticleName text="Naman Sharma" />
 
         <div className="home-prose">
           <p>
@@ -165,17 +162,7 @@ export default function Home() {
           {/* The questions are the ones that actually get asked, and the
               answers are his. Nothing here is attributed to anyone — it is a
               contact section laid out as an exchange, not a testimonial. */}
-          <Conversation className="home-chat">
-            {TALK.map((t, i) => (
-              <ConversationBubble
-                key={i}
-                variant={t.from === "them" ? "muted" : "default"}
-                align={t.from === "them" ? "start" : "end"}
-              >
-                <ConversationContent>{t.text}</ConversationContent>
-              </ConversationBubble>
-            ))}
-          </Conversation>
+          <Chat lines={TALK} />
 
           <p className="home-chat-foot">
             Email is the fastest way —{" "}

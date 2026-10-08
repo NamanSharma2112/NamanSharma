@@ -17,7 +17,7 @@ import ParticleText from "@/components/reactbits/ParticleText";
  */
 
 const INK = {
-  light: { color: "#183b2b", highlight: "#4f8f6c" },
+  light: { color: "#000000", highlight: "#4a4a4a" },
   dark: { color: "#e6ece7", highlight: "#7fb398" },
 };
 

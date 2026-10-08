@@ -62,23 +62,27 @@ export default function Home() {
     <main className="home">
       <div className="home-col">
         <div className="home-strip">
-          {/* The signature, small and still. Not a logo — it is the same hand
-              the intro writes, which is a thing of his rather than a mark
-              invented for the corner. */}
-          <svg
-            className="home-sig"
-            viewBox={SIGNATURE_VIEWBOX}
-            role="img"
-            aria-label="Naman Sharma"
-          >
-            {SIGNATURE_PATHS.map((d, i) => (
-              <path key={i} d={d} />
-            ))}
-          </svg>
-          {/* Centred on the bar. Renders nothing until the file exists, so
-              the slot is simply empty until a track is dropped in. */}
-          <span className="home-strip-centre">
+          {/* Left: the signature, and the player beside it. The player used to
+              be centred on the bar, which is where the nav now is — two things
+              absolutely centred on the same strip would sit on top of each
+              other the moment a track was configured. */}
+          <span className="home-strip-left">
+            <svg
+              className="home-sig"
+              viewBox={SIGNATURE_VIEWBOX}
+              role="img"
+              aria-label="Naman Sharma"
+            >
+              {SIGNATURE_PATHS.map((d, i) => (
+                <path key={i} d={d} />
+              ))}
+            </svg>
             <Player track={TRACK} />
+          </span>
+
+          {/* The nav, at the top. */}
+          <span className="home-strip-centre">
+            <Nav />
           </span>
 
           <Status />
@@ -94,7 +98,8 @@ export default function Home() {
         <div className="home-portrait">
           <HalftoneDots
             src="/me/portrait-cut.png"
-            accent="#183b2b"
+            cell={4}
+            accent="#000000"
             displace
             className="home-portrait-dots"
           />
@@ -129,8 +134,6 @@ export default function Home() {
             has a menu bar and a dock, and the windows drag and resize.
           </p>
         </div>
-
-        <Nav />
 
         <section className="home-section" aria-label="Selected work">
           <p className="home-section-label">Selected work</p>

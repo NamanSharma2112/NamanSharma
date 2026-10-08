@@ -44,11 +44,35 @@
   margin-bottom: 48px;
 }
 
+.home-strip-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .home-strip-centre {
   position: absolute;
   left: 50%;
   top: 50%;
   translate: -50% -50%;
+}
+
+/* At the top now, so it loses the margin it had when it sat under the prose. */
+.home-nav {
+  margin-top: 0;
+}
+
+/* The strip is only as wide as the reading column, and three groups do not fit
+   across a phone. The nav keeps its place; the signature and the clock are the
+   two that can go. */
+@media (max-width: 720px) {
+  .home-strip-centre {
+    position: static;
+    translate: none;
+  }
+  .home-strip {
+    justify-content: space-between;
+  }
 }
 
 /* The signature in the corner, at the size a letterhead would set it. */
@@ -479,7 +503,7 @@
 /* Square, and left-aligned on the column so its edge lines up with the name
    and the prose under it. */
 .home-portrait {
-  width: 300px;
+  width: 340px;
   max-width: 100%;
   aspect-ratio: 1;
   /* No nudge. The component paints 72px outside its own box so dots can burst

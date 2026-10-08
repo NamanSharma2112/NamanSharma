@@ -154,6 +154,9 @@ const ParticleText = ({
       pointer.smoothY += (pointer.y - pointer.smoothY) * 0.18;
 
       let complete = true;
+      // How far the furthest particle still has to travel this frame. Nothing
+      // moving means nothing to draw next frame either.
+      let travel = 0;
 
       particles.forEach(particle => {
         let baseX = particle.targetX;
@@ -185,8 +188,12 @@ const ParticleText = ({
         }
 
         const follow = reducedMotion ? 1 : 0.22;
-        particle.x += (baseX - particle.x) * follow;
-        particle.y += (baseY - particle.y) * follow;
+        const stepX = (baseX - particle.x) * follow;
+        const stepY = (baseY - particle.y) * follow;
+        particle.x += stepX;
+        particle.y += stepY;
+        const moved = Math.abs(stepX) + Math.abs(stepY);
+        if (moved > travel) travel = moved;
 
         ctx.globalAlpha = clamp(0.35 + progress * 0.65, 0, 1);
         drawParticle(particle);
@@ -197,6 +204,18 @@ const ParticleText = ({
 
       if (gathering && complete) {
         gathering = false;
+      }
+
+      // Park the loop once the name is sitting still. Without this it redraws
+      // every particle sixty times a second for the whole life of the page,
+      // for a picture that is not changing — which is most of the time, and
+      // costs the rest of the page its frames. Anything that can move it again
+      // comes through a pointer handler, and those start it back up.
+      const restless =
+        gathering || (!reducedMotion && idleDrift > 0) || pointer.active || travel > 0.05;
+      if (!restless) {
+        animationFrame = null;
+        return;
       }
 
       animationFrame = window.requestAnimationFrame(render);
@@ -345,19 +364,25 @@ const ParticleText = ({
       pointer.x = event.clientX - rect.left;
       pointer.y = event.clientY - rect.top;
       pointer.active = true;
+      ensureRenderLoop();
     };
 
     const handlePointerLeave = () => {
       pointer.active = false;
+      // One more run, so the particles can settle back rather than freezing
+      // wherever the pointer left them.
+      ensureRenderLoop();
     };
 
     const handlePointerEnter = event => {
       handlePointerMove(event);
       if (trigger === 'hover') startGather(true);
+      ensureRenderLoop();
     };
 
     const handleClick = () => {
       if (trigger === 'click') startGather(true);
+      ensureRenderLoop();
     };
 
     const reduceMotionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');

@@ -74,7 +74,8 @@ export default function Home() {
         <div className="home-portrait">
           <HalftoneDots
             src="/me/portrait-cut.png"
-            cell={3}
+            cell={4}
+            spill={20}
             accent="#000000"
             displace
             className="home-portrait-dots"

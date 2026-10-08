@@ -54,14 +54,18 @@ const FULL_FROM = 0.8
 const FULL_CORNER = 0.82
 const FULL_GROW = 1.05
 
-const LENS_RADIUS = 64
-const LENS_BOOST = 0.55
-const LENS_FOLLOW = 55
-const LENS_FADE_IN = 140
+/* How the dots answer a pointer. These were tuned on a small picture: on a
+   large one a 64px reach is a coin on a dinner plate, and the lag between the
+   cursor and the swell read as the whole thing being slow rather than as a
+   pointer being followed. Wider, and it arrives when you do. */
+const LENS_RADIUS = 86
+const LENS_BOOST = 0.72
+const LENS_FOLLOW = 22
+const LENS_FADE_IN = 60
 const LENS_FADE_OUT = 220
 const LENS_WOBBLE = 0.22
 const LENS_DRIFT = 0.0011
-const LENS_ATTACK = 60
+const LENS_ATTACK = 26
 const LENS_RELEASE = 420
 
 const LENS_PUSH = 4.5
@@ -247,6 +251,7 @@ export function HalftoneDots({
   gradient,
   accent = '#2563eb',
   cell = CELL,
+  spill = SPILL,
   displace = false,
   onBurst,
   className,
@@ -258,6 +263,13 @@ export function HalftoneDots({
   accent?: string
   /** Grid pitch in CSS pixels. Lower is finer, and costs cells squared. */
   cell?: number
+  /**
+   * How far outside its own box the canvas paints, in CSS pixels, so dots can
+   * swell and scatter past the edge. The grid fills all of it — a wide margin
+   * on a fine grid is thousands of cells a frame drawn outside the picture, so
+   * keep it near the largest displacement rather than at the default.
+   */
+  spill?: number
   displace?: boolean
   onBurst?: (presses: readonly number[]) => void
   className?: string
@@ -278,6 +290,8 @@ export function HalftoneDots({
     now: Field
     from: Field
     to: Field
+    /** Indices of the cells worth drawing — see where it is built. */
+    live: Int32Array
     started: number
     settled: boolean
   } | null>(null)
@@ -293,7 +307,6 @@ export function HalftoneDots({
     vy: new Float32Array(0),
   })
   const ripples = useRef<Array<{ x: number; y: number; at: number }>>([])
-  const ink = useRef<{ text: string[]; key: Int32Array }>({ text: [], key: new Int32Array(0) })
   const [burst, setBurst] = useState<BurstDot[] | null>(null)
 
   const exploded = useRef(false)
@@ -338,8 +351,8 @@ export function HalftoneDots({
     const sample = (ctx: CanvasRenderingContext2D, img: HTMLImageElement) => {
       const boxW = frame_.clientWidth
       const boxH = frame_.clientHeight
-      const width = boxW + SPILL * 2
-      const height = boxH + SPILL * 2
+      const width = boxW + spill * 2
+      const height = boxH + spill * 2
       const cols = Math.max(1, Math.round(width / cell))
       const rows = Math.max(1, Math.round(height / cell))
       const cw = width / cols
@@ -347,15 +360,19 @@ export function HalftoneDots({
       const maxR = Math.min(cw, ch) / 2
       const n = cols * rows
 
-      const frameX = SPILL - MARK_INSET + MARK_CLEAR
-      const frameY = SPILL - MARK_INSET + MARK_CLEAR
-      const frameW = boxW + MARK_INSET * 2 - MARK_CLEAR * 2
-      const frameH = boxH + MARK_INSET * 2 - MARK_CLEAR * 2
-      const fadeX = SPILL - MARK_INSET
-      const fadeY = SPILL - MARK_INSET
-      const fadeW = boxW + MARK_INSET * 2
-      const fadeH = boxH + MARK_INSET * 2
-      const fadeReach = SPILL - MARK_INSET
+      // The corner marks sit outside the picture, so they can only sit as far
+      // out as the canvas reaches. On a narrow spill they come in to meet it
+      // rather than being drawn off the edge.
+      const out = Math.min(MARK_INSET, spill)
+      const frameX = spill - out + MARK_CLEAR
+      const frameY = spill - out + MARK_CLEAR
+      const frameW = boxW + out * 2 - MARK_CLEAR * 2
+      const frameH = boxH + out * 2 - MARK_CLEAR * 2
+      const fadeX = spill - out
+      const fadeY = spill - out
+      const fadeW = boxW + out * 2
+      const fadeH = boxH + out * 2
+      const fadeReach = Math.max(1, spill - out)
 
       const bw = cols * SUP
       const bh = rows * SUP
@@ -584,7 +601,10 @@ export function HalftoneDots({
       const { cols, rows, x, y, w, maxR, width, height, field } = laid
       const n = cols * rows
 
-      const ss = Math.min(3, (window.devicePixelRatio || 1) * 1.5)
+      // One canvas pixel per screen pixel, no more. These are dots: the extra
+      // half-ratio bought nothing an eye can find on them, and cost every
+      // frame more than twice the fill.
+      const ss = Math.min(2, window.devicePixelRatio || 1)
       surface.width = Math.round(width * ss)
       surface.height = Math.round(height * ss)
       ctx.setTransform(ss, 0, 0, ss, 0, 0)
@@ -610,6 +630,21 @@ export function HalftoneDots({
       now.alpha.set(from.alpha)
       now.reveal.set(from.reveal)
 
+      // The cells that will ever put ink down. A masked image is mostly empty
+      // — the canvas is square, the picture inside it is a circle, and it
+      // paints a margin outside itself so dots can burst past the edge — so
+      // better than half of this grid is blank. Walking it anyway cost a
+      // distance check, a spring step and a lens lookup per cell per frame,
+      // all to decide not to draw. Collected once per layout instead, and the
+      // frame walks only these.
+      const alive: number[] = []
+      for (let i = 0; i < n; i += 1) {
+        const drawn = (r: Float32Array, a: Float32Array) => r[i]! > 0.06 && a[i]! > 0.004
+        if (drawn(field.r, field.alpha) || drawn(from.r, from.alpha) || field.reveal[i]! > 0.004) {
+          alive.push(i)
+        }
+      }
+
       lattice.current = {
         cols,
         rows,
@@ -622,9 +657,12 @@ export function HalftoneDots({
         now,
         from,
         to: field,
+        live: Int32Array.from(alive),
         started: performance.now(),
         settled: !morph,
       }
+      // Laid out again, so whatever was kept of the old picture is stale.
+      restReady = false
       if (!sameGrid) {
         swells.current = new Float32Array(n)
         springs.current = {
@@ -635,6 +673,133 @@ export function HalftoneDots({
         }
       }
       ensureLoop()
+    }
+
+    /* ── drawing the dots in groups ───────────────────────────────────────
+       A `fill()` per dot is what makes this expensive: a picture this size is
+       ten thousand of them, and ten thousand fills do not fit in a frame. But
+       a halftone of one photograph is not ten thousand different colours — it
+       is a few dozen, each used hundreds of times. So the dots are sorted into
+       buckets by colour and opacity, every dot in a bucket is added to one
+       path, and the bucket is filled once. Same picture, two orders of
+       magnitude fewer calls.
+
+       Opacity is rounded to a thirty-second, which is finer than an eye
+       resolves on a 3px dot and is what keeps the bucket count down. The
+       buffers are kept between frames and refilled, so a frame allocates
+       nothing. */
+    type Clump = { style: string; alpha: number; n: number; xs: Float32Array; ys: Float32Array; rs: Float32Array; fs: Float32Array }
+    const clumps = new Map<number, Clump>()
+    let clumpList: Clump[] = []
+
+    const batch = (red: number, green: number, blue: number, alpha: number, cx: number, cy: number, r: number, full: number) => {
+      const rr = Math.round(red)
+      const gg = Math.round(green)
+      const bb = Math.round(blue)
+      // One integer, built with shifts — a string key here would be an
+      // allocation per dot per frame, which is thousands of short-lived
+      // strings a second and a collector running through the animation.
+      // Coarse on purpose. A halftone carries its tone in the size of the dot,
+      // not in the exact colour of it, so rounding the colour to 32 levels a
+      // channel and the opacity to sixteenths costs nothing an eye can find —
+      // and it is the difference between a few hundred groups and a few
+      // thousand, which is the difference between batching and not.
+      const step = Math.max(1, Math.min(16, Math.round(alpha * 16)))
+      const key = (((rr >> 3) << 14) | ((gg >> 3) << 9) | ((bb >> 3) << 4) | (step - 1)) >>> 0
+      let c = clumps.get(key)
+      if (!c) {
+        c = {
+          style: `rgb(${String(rr)} ${String(gg)} ${String(bb)})`,
+          alpha: step / 16,
+          n: 0,
+          xs: new Float32Array(256),
+          ys: new Float32Array(256),
+          rs: new Float32Array(256),
+          fs: new Float32Array(256),
+        }
+        clumps.set(key, c)
+        clumpList.push(c)
+      }
+      if (c.n === c.xs.length) {
+        const grow = (a: Float32Array) => {
+          const b = new Float32Array(a.length * 2)
+          b.set(a)
+          return b
+        }
+        c.xs = grow(c.xs)
+        c.ys = grow(c.ys)
+        c.rs = grow(c.rs)
+        c.fs = grow(c.fs)
+      }
+      c.xs[c.n] = cx
+      c.ys[c.n] = cy
+      c.rs[c.n] = r
+      c.fs[c.n] = full
+      c.n += 1
+    }
+
+    const flush = (ctx: CanvasRenderingContext2D) => {
+      for (let k = 0; k < clumpList.length; k += 1) {
+        const c = clumpList[k]!
+        if (c.n === 0) continue
+        ctx.globalAlpha = c.alpha
+        ctx.fillStyle = c.style
+        ctx.beginPath()
+        for (let j = 0; j < c.n; j += 1) {
+          const cx = c.xs[j]!
+          const cy = c.ys[j]!
+          const r = c.rs[j]!
+          const full = c.fs[j]!
+          if (full > 0) {
+            const corner = r * (1 - (1 - FULL_CORNER) * full)
+            ctx.roundRect(cx - r, cy - r, r * 2, r * 2, corner)
+          } else {
+            ctx.moveTo(cx + r, cy)
+            ctx.arc(cx, cy, r, 0, Math.PI * 2)
+          }
+        }
+        ctx.fill()
+        c.n = 0
+      }
+      // A bucket nobody used this frame is a colour that has left the picture.
+      // Dropped, so a long-lived canvas does not accumulate every shade it has
+      // ever drawn and walk them all every frame.
+      if (clumpList.length > 512) {
+        clumps.clear()
+        clumpList = []
+      }
+    }
+
+    /* The picture standing still, drawn once and blitted every frame after.
+       Rebuilt whenever the dots are relaid — a resize, a theme, a new image —
+       and whenever the picture next comes to rest. */
+    let rest: HTMLCanvasElement | null = null
+    let restReady = false
+    let residueLast = 0
+    const hole = new Float32Array(4)
+    const holeLast = new Float32Array(4)
+
+    const paintRest = (lat: NonNullable<typeof lattice.current>) => {
+      rest ??= document.createElement('canvas')
+      const scale = surface.width / lat.width
+      rest.width = surface.width
+      rest.height = surface.height
+      const rctx = rest.getContext('2d')
+      if (!rctx) return
+      rctx.setTransform(scale, 0, 0, scale, 0, 0)
+      rctx.clearRect(0, 0, lat.width, lat.height)
+      const { x, y, maxR, now: cur, live } = lat
+      for (let li = 0; li < live.length; li += 1) {
+        const i = live[li]!
+        const r = cur.r[i]!
+        const a = cur.alpha[i]!
+        if (r <= 0.06 || a <= 0.004) continue
+        const full = Math.min(1, Math.max(0, (r / maxR - FULL_FROM) / (1 - FULL_FROM)))
+        batch(cur.rgb[i * 3]!, cur.rgb[i * 3 + 1]!, cur.rgb[i * 3 + 2]!, a, x[i]!, y[i]!, r, full)
+      }
+      flush(rctx)
+      rctx.globalAlpha = 1
+      restReady = true
     }
 
     const reach = (angle: number, now: number) =>
@@ -653,8 +818,12 @@ export function HalftoneDots({
       if (l.strength <= 0.001) return 0
       const dx = x - l.x
       const dy = y - l.y
-      const dist = Math.hypot(dx, dy)
-      if (dist >= LENS_RADIUS * (1 + LENS_WOBBLE)) return 0
+      const d2 = dx * dx + dy * dy
+      // Squared first: most dots are outside the lens, and this turns the
+      // common answer into a multiply and a compare instead of a square root.
+      const edge = LENS_RADIUS * (1 + LENS_WOBBLE)
+      if (d2 >= edge * edge) return 0
+      const dist = Math.sqrt(d2)
       const d = dist / reach(Math.atan2(dy, dx), now)
       if (d >= 1) return 0
       const falloff = (1 - d * d) * (1 - d * d)
@@ -705,17 +874,72 @@ export function HalftoneDots({
 
       const el = now - lat.started
       let settled = true
-      const { x, y, w, maxR, now: cur, from, to } = lat
+      const { x, y, w, maxR, now: cur, from, to, live } = lat
 
-      ctx.clearRect(0, 0, lat.width, lat.height)
+      /* Only the dots the pointer is actually touching are redrawn.
 
-      if (ink.current.key.length !== x.length) {
-        ink.current = { text: new Array<string>(x.length).fill(''), key: new Int32Array(x.length) }
+         Everything else is already on a second canvas, painted once, sitting
+         exactly as it will sit until something disturbs it — so a frame is a
+         blit of that, a hole punched where the pointer is, and a few thousand
+         dots drawn back into the hole. It used to be every dot in the picture,
+         every frame, which is tens of thousands of antialiased circles a
+         second for a picture that is standing still everywhere but one spot.
+
+         The hole is the lens and any ripple, grown by the furthest a dot can
+         be shoved, and joined with where the hole was last frame — otherwise a
+         quick drag leaves the dots it has just passed frozen mid-flinch. */
+      // The shove is a fraction of LENS_PUSH once the falloff has had its say,
+      // so three times it is already generous. Padding it by ten put the hole
+      // across most of the picture, which is the thing this is avoiding.
+      const reachNow = LENS_RADIUS * (1 + LENS_WOBBLE) + LENS_PUSH * 3
+      let hx0 = Infinity
+      let hy0 = Infinity
+      let hx1 = -Infinity
+      let hy1 = -Infinity
+      const touch = (cx: number, cy: number, r: number) => {
+        if (cx - r < hx0) hx0 = cx - r
+        if (cy - r < hy0) hy0 = cy - r
+        if (cx + r > hx1) hx1 = cx + r
+        if (cy + r > hy1) hy1 = cy + r
       }
-      const inkText = ink.current.text
-      const inkKey = ink.current.key
+      if (l.strength > 0.001 || residueLast > 0) touch(l.x, l.y, reachNow)
+      for (let k = 0; k < rings.length; k += 1) {
+        touch(rings[k]!.x, rings[k]!.y, ringR[k]! + RIPPLE_WIDTH * 2.5 + RIPPLE_PUSH * 3)
+      }
 
-      for (let i = 0; i < x.length; i += 1) {
+      const partial = restReady && lat.settled && hx1 > hx0
+      if (partial && rest) {
+        const px0 = Math.max(0, Math.min(hx0, holeLast[0]))
+        const py0 = Math.max(0, Math.min(hy0, holeLast[1]))
+        const px1 = Math.min(lat.width, Math.max(hx1, holeLast[2]))
+        const py1 = Math.min(lat.height, Math.max(hy1, holeLast[3]))
+        ctx.clearRect(0, 0, lat.width, lat.height)
+        ctx.drawImage(rest, 0, 0, lat.width, lat.height)
+        ctx.clearRect(px0, py0, px1 - px0, py1 - py0)
+        hole[0] = px0
+        hole[1] = py0
+        hole[2] = px1
+        hole[3] = py1
+      } else {
+        ctx.clearRect(0, 0, lat.width, lat.height)
+        hole[0] = 0
+        hole[1] = 0
+        hole[2] = lat.width
+        hole[3] = lat.height
+      }
+      holeLast[0] = hx0 === Infinity ? 0 : hx0
+      holeLast[1] = hy0 === Infinity ? 0 : hy0
+      holeLast[2] = hx1 === -Infinity ? 0 : hx1
+      holeLast[3] = hy1 === -Infinity ? 0 : hy1
+
+      for (let li = 0; li < live.length; li += 1) {
+        const i = live[li]!
+        // Outside the hole the dot is already on screen, from the blit.
+        if (partial) {
+          const bx = x[i]!
+          const by = y[i]!
+          if (bx < hole[0] || bx > hole[2] || by < hole[1] || by > hole[3]) continue
+        }
         if (!lat.settled) {
           const t = Math.min(1, Math.max(0, (el - w[i]! * MORPH_STAGGER) / MORPH))
           if (t < 1) settled = false
@@ -737,7 +961,7 @@ export function HalftoneDots({
         for (let k = 0; k < rings.length; k += 1) {
           const dx = x[i]! - rings[k]!.x
           const dy = y[i]! - rings[k]!.y
-          const dist = Math.hypot(dx, dy)
+          const dist = Math.sqrt(dx * dx + dy * dy)
           const u = (dist - ringR[k]!) / RIPPLE_WIDTH
           if (u < -2.5 || u > 2.5) continue
           const bell = Math.exp(-u * u) * ringAmp[k]!
@@ -768,32 +992,31 @@ export function HalftoneDots({
         const r = Math.min(maxR * FULL_GROW, cur.r[i]! * (1 + boost * lift))
         const a = cur.alpha[i]! + cur.reveal[i]! * lift
         if (r <= 0.06 || a <= 0.004) continue
-        ctx.globalAlpha = a
-
-        const rr = Math.round(cur.rgb[i * 3]!)
-        const gg = Math.round(cur.rgb[i * 3 + 1]!)
-        const bb = Math.round(cur.rgb[i * 3 + 2]!)
-        const key = (rr << 16) | (gg << 8) | bb
-        if (inkKey[i] !== key || inkText[i] === '') {
-          inkKey[i] = key
-          inkText[i] = `rgb(${String(rr)} ${String(gg)} ${String(bb)})`
-        }
-        ctx.fillStyle = inkText[i]!
-        ctx.beginPath()
 
         const cx = x[i]! + ox[i]!
         const cy = y[i]! + oy[i]!
         const full = Math.min(1, Math.max(0, (r / maxR - FULL_FROM) / (1 - FULL_FROM)))
-        if (full > 0) {
-          const corner = r * (1 - (1 - FULL_CORNER) * full)
-          ctx.roundRect(cx - r, cy - r, r * 2, r * 2, corner)
-        } else {
-          ctx.arc(cx, cy, r, 0, Math.PI * 2)
-        }
-        ctx.fill()
+        batch(
+          cur.rgb[i * 3]!,
+          cur.rgb[i * 3 + 1]!,
+          cur.rgb[i * 3 + 2]!,
+          a,
+          cx,
+          cy,
+          r,
+          full,
+        )
       }
+      flush(ctx)
       ctx.globalAlpha = 1
       if (settled) lat.settled = true
+      residueLast = residue
+
+      // The picture has arrived and nothing is touching it: this is what it
+      // looks like at rest, so keep a copy to blit from here on.
+      if (lat.settled && !restReady && l.strength <= 0.001 && residue === 0 && rings.length === 0) {
+        paintRest(lat)
+      }
 
       if (!lat.settled || l.strength > 0 || residue > 0 || rings.length > 0) {
         raf.current = requestAnimationFrame(frame)
@@ -952,9 +1175,9 @@ export function HalftoneDots({
         aria-hidden
         className="pointer-events-none absolute block"
         style={{
-          inset: -SPILL,
-          width: `calc(100% + ${String(SPILL * 2)}px)`,
-          height: `calc(100% + ${String(SPILL * 2)}px)`,
+          inset: -spill,
+          width: `calc(100% + ${String(spill * 2)}px)`,
+          height: `calc(100% + ${String(spill * 2)}px)`,
         }}
       />
 

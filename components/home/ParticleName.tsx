@@ -57,7 +57,11 @@ export default function ParticleName({ text }: { text: string }) {
         stagger={260}
         pointerRepel={18}
         repelRadius={70}
-        idleDrift={0.35}
+        // Still when nobody is touching it. The drift is a few pixels nobody
+        // reads as motion, and it is the difference between the name redrawing
+        // nine thousand particles forever and the loop parking itself the
+        // moment the letters land.
+        idleDrift={0}
         glow={false}
       />
     </h1>

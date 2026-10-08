@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Panel from "@/components/Panel";
 import PageHeader from "@/components/PageHeader";
-import SiteFooter from "@/components/SiteFooter";
+import Footer from "@/components/home/Footer";
+import TopStrip from "@/components/home/TopStrip";
+import "@/components/home/home.css";
 import DockArc from "@/components/lab/DockArc";
 import Collage from "@/components/lab/Collage";
 import {
@@ -62,7 +64,8 @@ const PIECES = [
 export default function LabPage() {
   return (
     <>
-      <main className="mx-auto w-full max-w-[640px] px-6 pt-8">
+      <main className="home-col">
+        <TopStrip />
         <PageHeader kicker="Lab" title="Motion experiments">
           Things I was curious about, built to see how they feel. The rest of
           the site is deliberately quiet — this is where the loud ones live.
@@ -81,8 +84,8 @@ export default function LabPage() {
             </Panel>
           ))}
         </div>
+        <Footer />
       </main>
-      <SiteFooter />
     </>
   );
 }

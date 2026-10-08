@@ -2,6 +2,10 @@
    Deliberately quiet: the demo is the loud part, the frame around it is not. */
 
 .lab-stage {
+  /* The demos draw past their own edges — one of them spins text round a
+     circle wider than the page. The stage is the frame, so it is the thing
+     that has to hold them. */
+  overflow: clip;
   background:
     radial-gradient(120% 100% at 50% 0%, rgba(0, 0, 0, 0.035), transparent 70%),
     #faf8f6;

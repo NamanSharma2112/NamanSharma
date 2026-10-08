@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Player, { type Track } from "@/components/home/Player";
+import { type Track } from "@/components/home/Player";
+import TopStrip from "@/components/home/TopStrip";
+import Footer from "@/components/home/Footer";
 import { HalftoneDots } from "@/components/ui/halftone-dots";
-import Nav from "@/components/home/Nav";
 import ParticleName from "@/components/home/ParticleName";
 import Chat from "@/components/home/Chat";
-import Status from "@/components/home/Status";
-import { SIGNATURE_PATHS, SIGNATURE_VIEWBOX } from "@/components/signature-paths";
 import "@/components/home/home.css";
 
 export const metadata: Metadata = {
@@ -61,44 +60,21 @@ export default function Home() {
   return (
     <main className="home">
       <div className="home-col">
-        <div className="home-strip">
-          {/* Left: the signature, and the player beside it. The player used to
-              be centred on the bar, which is where the nav now is — two things
-              absolutely centred on the same strip would sit on top of each
-              other the moment a track was configured. */}
-          <span className="home-strip-left">
-            <svg
-              className="home-sig"
-              viewBox={SIGNATURE_VIEWBOX}
-              role="img"
-              aria-label="Naman Sharma"
-            >
-              {SIGNATURE_PATHS.map((d, i) => (
-                <path key={i} d={d} />
-              ))}
-            </svg>
-            <Player track={TRACK} />
-          </span>
-
-          {/* The nav, at the top. */}
-          <span className="home-strip-centre">
-            <Nav />
-          </span>
-
-          <Status />
-        </div>
+        <TopStrip track={TRACK} />
 
         {/* The cut-out, not the original: the source is a circle on a black
             field, and the halftone drew that field as a solid ring of dots
             around the face. Masked to the circle, there is nothing outside it
             to draw.
 
-            Large, because the dot grid is a fixed 6px cell — at thumbnail size
-            a face does not survive the sampling. */}
+            The whole circle, not a crop inside it — which puts the head at
+            about a third of the frame, so the grid has to be fine enough that
+            a face still survives it. Cost is cells squared, so this is as
+            coarse as it can be and still read. */}
         <div className="home-portrait">
           <HalftoneDots
             src="/me/portrait-cut.png"
-            cell={4}
+            cell={3}
             accent="#000000"
             displace
             className="home-portrait-dots"
@@ -174,6 +150,7 @@ export default function Home() {
             </a>
           </p>
         </section>
+        <Footer />
       </div>
     </main>
   );

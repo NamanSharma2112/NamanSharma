@@ -141,6 +141,12 @@
     -moz-osx-font-smoothing: grayscale;
     height: 100%;
     width: 100%;
+    /* Nothing on this site is meant to be reached by scrolling sideways, and
+       several things are meant to hang past the edge — the halftone paints its
+       dots outside its own box, the social links float their names above
+       themselves. `clip` rather than `hidden`: hidden would make this a scroll
+       container and break every `position: sticky` inside it. */
+    overflow-x: clip;
   }
 
   body {
@@ -149,7 +155,14 @@
     font-weight: 500;
     min-height: 100%;
     width: 100%;
+    overflow-x: clip;
     overscroll-behavior: none;
+  }
+
+  /* While the intro sheet is up there is nothing behind it to reach. */
+  html.intro-up,
+  html.intro-up body {
+    overflow: hidden;
   }
 
   /* The desktop is a screen, not a document — it pins itself to the viewport

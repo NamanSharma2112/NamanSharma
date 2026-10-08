@@ -4,7 +4,9 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import Panel from "@/components/Panel";
 import PageHeader from "@/components/PageHeader";
-import SiteFooter from "@/components/SiteFooter";
+import Footer from "@/components/home/Footer";
+import TopStrip from "@/components/home/TopStrip";
+import "@/components/home/home.css";
 
 const INSPIRATIONS = [
   {
@@ -51,7 +53,8 @@ type Inspiration = (typeof INSPIRATIONS)[number];
 export default function InspirationPage() {
   return (
     <>
-      <main className="mx-auto w-full max-w-[640px] px-6 pt-8">
+      <main className="home-col">
+        <TopStrip />
         <PageHeader kicker="Inspiration" title="People I look up to">
           The people, sites and tools I admire and learn from. I keep adding to
           this as I find more.
@@ -86,8 +89,8 @@ export default function InspirationPage() {
             ))}
           </ul>
         </Panel>
+        <Footer />
       </main>
-      <SiteFooter />
     </>
   );
 }

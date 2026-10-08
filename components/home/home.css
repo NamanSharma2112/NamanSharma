@@ -34,7 +34,6 @@
    itself rather than between them — so whatever sits in the middle stays put
    however wide the two ends get. */
 .home-strip {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -44,24 +43,31 @@
   margin-bottom: 48px;
 }
 
-.home-strip-centre {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  translate: -50% -50%;
+.home-strip-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
 }
 
-/* The signature in the corner, at the size a letterhead would set it. */
-.home-sig {
-  height: 21px;
-  width: auto;
-  overflow: visible;
-  fill: none;
-  stroke: var(--fg);
-  stroke-width: 1.3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  opacity: 0.88;
+/* At the top now, so it loses the margin it had when it sat under the prose. */
+.home-nav {
+  margin-top: 0;
+}
+
+/* The strip is only as wide as the reading column, and three groups do not fit
+   across a phone. The nav keeps its place; the signature and the clock are the
+   two that can go. */
+/* The nav scrolls rather than wrapping when the strip runs out of room: a
+   two-line navbar on a phone pushes the portrait down the page. */
+@media (max-width: 720px) {
+  .home-strip-left {
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .home-strip-left::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* ── the name ───────────────────────────────────────────────────────────── */
@@ -479,7 +485,7 @@
 /* Square, and left-aligned on the column so its edge lines up with the name
    and the prose under it. */
 .home-portrait {
-  width: 300px;
+  width: 380px;
   max-width: 100%;
   aspect-ratio: 1;
   /* No nudge. The component paints 72px outside its own box so dots can burst
@@ -543,4 +549,149 @@
   margin-top: 1px;
   font-size: 12.5px;
   color: var(--fg-muted);
+}
+
+/* ── the name, as particles ─────────────────────────────────────────────── */
+
+/* The canvas needs a box, and the component centres the glyphs inside it — so
+   a full-width box put the name 191px right of the prose under it.
+
+   Measured: the ink is 235px wide. The box is that plus 80px of scatter room
+   each side, pulled back by the same 80px, which lands the first glyph exactly
+   on the column's left edge. The height is the 44px glyph plus the room the
+   particles fly into, and the overflow is what stops them reaching the
+   signature above. */
+.home-name.is-particles {
+  width: 395px;
+  max-width: 100%;
+  height: 92px;
+  margin-left: -80px;
+}
+
+/* ── the chat arriving ──────────────────────────────────────────────────── */
+
+.home-bubble {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+[data-in] .home-bubble {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 460ms var(--ease-out),
+    transform 460ms var(--ease-out);
+  /* 70ms apart: far enough to read as one arriving after another, close enough
+     that five of them are still one gesture. */
+  transition-delay: calc(var(--i) * 70ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-bubble {
+    opacity: 1;
+    transform: none;
+  }
+  [data-in] .home-bubble {
+    transition: none;
+    transition-delay: 0ms;
+  }
+}
+
+/* ── the footer ─────────────────────────────────────────────────────────── */
+
+.foot {
+  padding: 72px 0 56px;
+}
+
+.foot-rule {
+  height: 1px;
+  background: var(--line);
+}
+
+.foot-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 22px;
+  padding-top: 22px;
+}
+
+.foot-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.foot-role {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+.foot-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: 14px;
+  color: var(--fg-body);
+}
+
+.foot-links a {
+  transition: color 170ms var(--ease-out);
+}
+
+.foot-links a:hover {
+  color: var(--fg);
+}
+
+.foot-fine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 34px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--fg-muted);
+}
+
+/* ── a content page's head ──────────────────────────────────────────────── */
+
+.page-head {
+  margin-bottom: 30px;
+}
+
+.page-kicker {
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+/* The front page's serif, at the size a page title wants rather than the size
+   a name does. */
+.page-title {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.008em;
+  color: var(--fg);
+}
+
+.page-lede {
+  margin-top: 12px;
+  max-width: 54ch;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--fg-body);
+}
+
+/* Inner pages hang their content off the same column as the front page, and
+   the strip sets its own top space — so the old pt-8 is gone with it. */
+.home-col > main,
+main.home-col > * {
+  min-width: 0;
 }

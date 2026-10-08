@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Player, { type Track } from "@/components/home/Player";
+import { type Track } from "@/components/home/Player";
+import TopStrip from "@/components/home/TopStrip";
+import Footer from "@/components/home/Footer";
 import { HalftoneDots } from "@/components/ui/halftone-dots";
-import {
-  Conversation,
-  ConversationBubble,
-  ConversationContent,
-} from "@/components/ui/conversation";
-import Nav from "@/components/home/Nav";
-import Status from "@/components/home/Status";
-import { SIGNATURE_PATHS, SIGNATURE_VIEWBOX } from "@/components/signature-paths";
+import ParticleName from "@/components/home/ParticleName";
+import Chat from "@/components/home/Chat";
 import "@/components/home/home.css";
 
 export const metadata: Metadata = {
@@ -64,46 +60,28 @@ export default function Home() {
   return (
     <main className="home">
       <div className="home-col">
-        <div className="home-strip">
-          {/* The signature, small and still. Not a logo — it is the same hand
-              the intro writes, which is a thing of his rather than a mark
-              invented for the corner. */}
-          <svg
-            className="home-sig"
-            viewBox={SIGNATURE_VIEWBOX}
-            role="img"
-            aria-label="Naman Sharma"
-          >
-            {SIGNATURE_PATHS.map((d, i) => (
-              <path key={i} d={d} />
-            ))}
-          </svg>
-          {/* Centred on the bar. Renders nothing until the file exists, so
-              the slot is simply empty until a track is dropped in. */}
-          <span className="home-strip-centre">
-            <Player track={TRACK} />
-          </span>
-
-          <Status />
-        </div>
+        <TopStrip track={TRACK} />
 
         {/* The cut-out, not the original: the source is a circle on a black
             field, and the halftone drew that field as a solid ring of dots
             around the face. Masked to the circle, there is nothing outside it
             to draw.
 
-            Large, because the dot grid is a fixed 6px cell — at thumbnail size
-            a face does not survive the sampling. */}
+            The whole circle, not a crop inside it — which puts the head at
+            about a third of the frame, so the grid has to be fine enough that
+            a face still survives it. Cost is cells squared, so this is as
+            coarse as it can be and still read. */}
         <div className="home-portrait">
           <HalftoneDots
             src="/me/portrait-cut.png"
-            accent="#183b2b"
+            cell={3}
+            accent="#000000"
             displace
             className="home-portrait-dots"
           />
         </div>
 
-        <h1 className="home-name">Naman Sharma</h1>
+        <ParticleName text="Naman Sharma" />
 
         <div className="home-prose">
           <p>
@@ -132,8 +110,6 @@ export default function Home() {
             has a menu bar and a dock, and the windows drag and resize.
           </p>
         </div>
-
-        <Nav />
 
         <section className="home-section" aria-label="Selected work">
           <p className="home-section-label">Selected work</p>
@@ -165,17 +141,7 @@ export default function Home() {
           {/* The questions are the ones that actually get asked, and the
               answers are his. Nothing here is attributed to anyone — it is a
               contact section laid out as an exchange, not a testimonial. */}
-          <Conversation className="home-chat">
-            {TALK.map((t, i) => (
-              <ConversationBubble
-                key={i}
-                variant={t.from === "them" ? "muted" : "default"}
-                align={t.from === "them" ? "start" : "end"}
-              >
-                <ConversationContent>{t.text}</ConversationContent>
-              </ConversationBubble>
-            ))}
-          </Conversation>
+          <Chat lines={TALK} />
 
           <p className="home-chat-foot">
             Email is the fastest way —{" "}
@@ -184,6 +150,7 @@ export default function Home() {
             </a>
           </p>
         </section>
+        <Footer />
       </div>
     </main>
   );

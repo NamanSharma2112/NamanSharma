@@ -93,6 +93,17 @@ export default function Boot({ children }: { children: React.ReactNode }) {
     };
   }, [intro]);
 
+  // Nothing to scroll to while the sheet is up, but the page behind it is full
+  // height — so the bar was there, scrolling a screen you cannot see. Held
+  // until the reel has lifted rather than until it unmounts, so the page is
+  // free to move the moment it is yours.
+  useEffect(() => {
+    if (intro !== "reel" || done) return;
+    const root = document.documentElement;
+    root.classList.add("intro-up");
+    return () => root.classList.remove("intro-up");
+  }, [intro, done]);
+
   return (
     <IntroDone.Provider value={done}>
       {children}

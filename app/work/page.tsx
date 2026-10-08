@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import HighlightList from "@/components/HighlightList";
 import Panel from "@/components/Panel";
 import PageHeader from "@/components/PageHeader";
-import SiteFooter from "@/components/SiteFooter";
+import Footer from "@/components/home/Footer";
+import TopStrip from "@/components/home/TopStrip";
+import "@/components/home/home.css";
 import { PROJECTS } from "@/lib/projects";
 
 export const metadata: Metadata = {
@@ -13,7 +15,8 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <>
-      <main className="mx-auto w-full max-w-[640px] px-6 pt-8">
+      <main className="home-col">
+        <TopStrip />
         <PageHeader kicker="Work" title="Selected work">
           Passion projects and client work. Hover a title to see it.
         </PageHeader>
@@ -21,8 +24,8 @@ export default function WorkPage() {
         <Panel>
           <HighlightList title="Highlights" items={PROJECTS} />
         </Panel>
+        <Footer />
       </main>
-      <SiteFooter />
     </>
   );
 }

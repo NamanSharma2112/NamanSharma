@@ -21,19 +21,16 @@ export default function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <header className="mb-7">
-      <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--fg-muted)]">
+    <header className="page-head">
+      <p className="page-kicker">
         {kicker}
       </p>
       {/* Held back a beat so it lands after the kicker rather than with it. */}
-      <BlurReveal
-        as="h1"
-        text={title}
-        delay={0.08}
-        className="mt-2 block text-[25px] font-semibold tracking-[-0.021em] text-[var(--fg)]"
-      />
+      {/* The same serif the front page sets its name in, so a reader arriving
+          on /work recognises the hand. */}
+      <BlurReveal as="h1" text={title} delay={0.08} className="page-title" />
       {children && (
-        <p className="mt-3 max-w-[54ch] text-[14px] leading-[1.7] text-[var(--fg-body)]">
+        <p className="page-lede">
           {children}
         </p>
       )}

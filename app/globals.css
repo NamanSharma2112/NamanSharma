@@ -41,8 +41,8 @@
   --tabs-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-exit: cubic-bezier(0.4, 0, 0.6, 1);
   --color-nav-hover: var(--nav-hover);
-  --color-badge-blue-fg: var(----badge-blue-fg);
-  --color-badge-blue-bg: var(----badge-blue-bg);
+  --color-badge-blue-fg: var(--badge-blue-fg);
+  --color-badge-blue-bg: var(--badge-blue-bg);
   @keyframes popover-flip-in {
   from {
     transform: perspective(600px) rotateX(var(--popover-tilt-x, 0deg)) rotateY(var(--popover-tilt-y, 0deg)) scale(0.94);
@@ -141,6 +141,12 @@
     -moz-osx-font-smoothing: grayscale;
     height: 100%;
     width: 100%;
+    /* Nothing on this site is meant to be reached by scrolling sideways, and
+       several things are meant to hang past the edge — the halftone paints its
+       dots outside its own box, the social links float their names above
+       themselves. `clip` rather than `hidden`: hidden would make this a scroll
+       container and break every `position: sticky` inside it. */
+    overflow-x: clip;
   }
 
   body {
@@ -149,7 +155,14 @@
     font-weight: 500;
     min-height: 100%;
     width: 100%;
+    overflow-x: clip;
     overscroll-behavior: none;
+  }
+
+  /* While the intro sheet is up there is nothing behind it to reach. */
+  html.intro-up,
+  html.intro-up body {
+    overflow: hidden;
   }
 
   /* The desktop is a screen, not a document — it pins itself to the viewport
@@ -345,9 +358,10 @@
   --bg: #fcfdfb;
   --surface: #ffffff;
   --line: #e4e8e3;
-  --fg: #183b2b;
-  --fg-body: #566359;
-  --fg-muted: #8a968c;
+  --fg: #000000;
+  --fg-body: #44474a;
+  --fg-muted: #8b8f92;
+  --blue: #000000;
   --bubble-received: #ebeee9;
   --bubble-received-foreground: #183b2b;
   --nav-hover: oklch(0.945 0 0);
@@ -391,6 +405,7 @@
   --fg: #e6ece7;
   --fg-body: #9aa89d;
   --fg-muted: #6d7a71;
+  --blue: #0a7cff;
   --bubble-received: #232a25;
   --bubble-received-foreground: #e6ece7;
   --nav-hover: var(--muted);

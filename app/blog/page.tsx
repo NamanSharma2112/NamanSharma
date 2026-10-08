@@ -5,7 +5,9 @@ import { ArrowUpRight } from "lucide-react";
 import { ALL_POSTS } from "@/lib/blog-data";
 import Panel from "@/components/Panel";
 import PageHeader from "@/components/PageHeader";
-import SiteFooter from "@/components/SiteFooter";
+import Footer from "@/components/home/Footer";
+import TopStrip from "@/components/home/TopStrip";
+import "@/components/home/home.css";
 
 /**
  * The index, on the same sheet the rest of the site writes on — one column,
@@ -14,7 +16,8 @@ import SiteFooter from "@/components/SiteFooter";
 export default function BlogIndexPage() {
   return (
     <>
-      <main className="mx-auto w-full max-w-[640px] px-6 pt-8">
+      <main className="home-col">
+        <TopStrip />
         <PageHeader kicker="Writing" title="Notes & essays">
           Thoughts on design engineering, micro-interactions, and building
           interfaces that feel alive.
@@ -57,8 +60,8 @@ export default function BlogIndexPage() {
           ))}
           </div>
         </Panel>
+        <Footer />
       </main>
-      <SiteFooter />
     </>
   );
 }

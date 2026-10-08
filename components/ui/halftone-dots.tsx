@@ -23,6 +23,8 @@ const MORPH = 200
 const MORPH_STAGGER = 220
 const MORPH_DIP = 0.5
 
+/* Default grid pitch. Overridable per instance through the `cell` prop: at a
+   small rendered size a 6px cell leaves a whole face as a few dozen dots. */
 const CELL = 6
 const SUP = 4
 const SPILL = 72
@@ -244,6 +246,7 @@ export function HalftoneDots({
   backdrop,
   gradient,
   accent = '#2563eb',
+  cell = CELL,
   displace = false,
   onBurst,
   className,
@@ -253,6 +256,8 @@ export function HalftoneDots({
   backdrop?: string
   gradient?: [string, string]
   accent?: string
+  /** Grid pitch in CSS pixels. Lower is finer, and costs cells squared. */
+  cell?: number
   displace?: boolean
   onBurst?: (presses: readonly number[]) => void
   className?: string
@@ -335,8 +340,8 @@ export function HalftoneDots({
       const boxH = frame_.clientHeight
       const width = boxW + SPILL * 2
       const height = boxH + SPILL * 2
-      const cols = Math.max(1, Math.round(width / CELL))
-      const rows = Math.max(1, Math.round(height / CELL))
+      const cols = Math.max(1, Math.round(width / cell))
+      const rows = Math.max(1, Math.round(height / cell))
       const cw = width / cols
       const ch = height / rows
       const maxR = Math.min(cw, ch) / 2

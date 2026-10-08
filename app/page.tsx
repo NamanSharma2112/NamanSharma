@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Player, { type Track } from "@/components/home/Player";
+import { HalftoneDots } from "@/components/ui/halftone-dots";
+import {
+  Conversation,
+  ConversationBubble,
+  ConversationContent,
+} from "@/components/ui/conversation";
+import Nav from "@/components/home/Nav";
 import Status from "@/components/home/Status";
 import { SIGNATURE_PATHS, SIGNATURE_VIEWBOX } from "@/components/signature-paths";
 import "@/components/home/home.css";
@@ -29,6 +36,18 @@ const EMAIL = "namansharmans03@gmail.com";
  *   };
  */
 const TRACK: Track | null = null;
+
+/** The contact section, as an exchange. Generic questions, his own answers. */
+const TALK = [
+  { from: "them", text: "Are you taking on work?" },
+  { from: "me", text: "Yes — design engineering roles and freelance." },
+  { from: "them", text: "What do you actually do?" },
+  {
+    from: "me",
+    text: "Design and build the same thing. Interfaces, motion, and the details that decide whether it feels right.",
+  },
+  { from: "me", text: "Easiest is to email me." },
+] as const;
 
 /**
  * The front page.
@@ -68,6 +87,22 @@ export default function Home() {
           <Status />
         </div>
 
+        {/* The cut-out, not the original: the source is a circle on a black
+            field, and the halftone drew that field as a solid ring of dots
+            around the face. Masked to the circle, there is nothing outside it
+            to draw.
+
+            Large, because the dot grid is a fixed 6px cell — at thumbnail size
+            a face does not survive the sampling. */}
+        <div className="home-portrait">
+          <HalftoneDots
+            src="/me/portrait-cut.png"
+            accent="#183b2b"
+            displace
+            className="home-portrait-dots"
+          />
+        </div>
+
         <h1 className="home-name">Naman Sharma</h1>
 
         <div className="home-prose">
@@ -98,23 +133,7 @@ export default function Home() {
           </p>
         </div>
 
-        <nav className="home-jump" aria-label="Elsewhere">
-          <Link className="home-link" href="/work">
-            Work
-          </Link>
-          <Link className="home-link" href="/blog">
-            Writing
-          </Link>
-          <Link className="home-link" href="/inspiration">
-            Inspiration
-          </Link>
-          <Link className="home-link" href="/lab">
-            Lab
-          </Link>
-          <a className="home-link" href={`mailto:${EMAIL}`}>
-            Connect
-          </a>
-        </nav>
+        <Nav />
 
         <section className="home-section" aria-label="Selected work">
           <p className="home-section-label">Selected work</p>
@@ -140,14 +159,31 @@ export default function Home() {
           </div>
         </section>
 
-        <footer className="home-foot">
-          <p>
-            Open to design engineering roles and freelance work —{" "}
+        <section className="home-section" aria-label="Getting in touch">
+          <p className="home-section-label">Getting in touch</p>
+
+          {/* The questions are the ones that actually get asked, and the
+              answers are his. Nothing here is attributed to anyone — it is a
+              contact section laid out as an exchange, not a testimonial. */}
+          <Conversation className="home-chat">
+            {TALK.map((t, i) => (
+              <ConversationBubble
+                key={i}
+                variant={t.from === "them" ? "muted" : "default"}
+                align={t.from === "them" ? "start" : "end"}
+              >
+                <ConversationContent>{t.text}</ConversationContent>
+              </ConversationBubble>
+            ))}
+          </Conversation>
+
+          <p className="home-chat-foot">
+            Email is the fastest way —{" "}
             <a className="home-link" href={`mailto:${EMAIL}`}>
               {EMAIL}
             </a>
           </p>
-        </footer>
+        </section>
       </div>
     </main>
   );

@@ -49,7 +49,8 @@ import SiteAtmosphere from "@/components/SiteAtmosphere";
 import Boot from "@/components/Boot";
 import PhotoScope from "@/components/PhotoScope";
 import Landing from "@/components/Landing";
-import { CommandMenu } from "@/components/CommandMenu";
+import Menu from "@/components/home/Menu";
+import { SoundEffects } from "@/components/ui/sound";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { DesktopProvider } from "@/components/DesktopState";
 
@@ -68,32 +69,37 @@ export default function RootLayout({
           rather than hardcoded per theme here. Never pure black on white or
           pure white on black — the foreground token is an off-white at night,
           which is what stops long text buzzing. */}
-      <body suppressHydrationWarning className="flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          disableTransitionOnChange
-        >
-          <DesktopProvider>
-            {/* Photo, rain and the neon cat, behind every page. Both of these
+      <body
+        suppressHydrationWarning
+        className="flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300"
+      >
+        <SoundEffects>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            disableTransitionOnChange
+          >
+            <DesktopProvider>
+              {/* Photo, rain and the neon cat, behind every page. Both of these
                 hide themselves on /desktop, which brings its own. */}
-            {/* At the layout level so the intro plays once on entry rather
+              {/* At the layout level so the intro plays once on entry rather
                 than on every client-side navigation. */}
-            <Boot>
-              <SiteAtmosphere />
-              <PhotoScope>
-                <Landing delay={0.05}>
-                  <MinimalNav />
-                </Landing>
-                <Landing delay={0.16} className="relative z-10 flex-1">
-                  {children}
-                </Landing>
-              </PhotoScope>
-            </Boot>
-          </DesktopProvider>
-          <FloatingContactWidget />
-          <CommandMenu />
-        </ThemeProvider>
+              <Boot>
+                <SiteAtmosphere />
+                <PhotoScope>
+                  <Landing delay={0.05}>
+                    <MinimalNav />
+                  </Landing>
+                  <Landing delay={0.16} className="relative z-10 flex-1">
+                    {children}
+                  </Landing>
+                </PhotoScope>
+              </Boot>
+            </DesktopProvider>
+            <FloatingContactWidget />
+            <Menu />
+          </ThemeProvider>
+        </SoundEffects>
       </body>
     </html>
   );

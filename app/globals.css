@@ -401,13 +401,15 @@
   --bg: #1c1c1c;
   --surface: #232323;
   --line: #303030;
-  /* Off-white with the same green in it, never #fff. */
-  --fg: #e6ece7;
-  --fg-body: #9aa89d;
-  --fg-muted: #6d7a71;
+  /* Neutral grey, never #fff. These used to carry a green in them, which on
+     a page of running text reads as a tint rather than as warmth — measured,
+     the body copy sat twelve points of green over its own red and blue. */
+  --fg: #ededed;
+  --fg-body: #a8a8a8;
+  --fg-muted: #757575;
   --blue: #0a7cff;
-  --bubble-received: #232a25;
-  --bubble-received-foreground: #e6ece7;
+  --bubble-received: #262626;
+  --bubble-received-foreground: #ededed;
   --nav-hover: var(--muted);
 
   --background: var(--bg);
@@ -894,6 +896,50 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 1),
     0 0 0 2px rgba(37, 99, 235, 0.55);
+}
+
+/* ── the chat panel, assembled out of blocks ───────────────────────────── */
+
+/* The space the panel will occupy, held open whether it is there or not —
+   the pixels need somewhere to scatter before there is anything to show. It
+   never takes a click itself; the panel inside it does. */
+.chat-shell {
+  position: fixed;
+  right: 24px;
+  bottom: 96px;
+  z-index: 110;
+  width: 340px;
+  max-width: calc(100vw - 48px);
+  height: 452px;
+  max-height: calc(100vh - 140px);
+  pointer-events: none;
+}
+
+.chat-shell .pixelated-image-card {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  color: inherit;
+  /* The component clips to its own box; the blocks belong inside the panel's
+     corners rather than square across them. */
+  overflow: visible;
+}
+
+/* The spacer that gives the card its height is not wanted — this box is
+   already the size it should be. */
+.chat-shell .pixelated-image-card > div:first-child {
+  display: none;
+}
+
+.chat-shell .pixelated-image-card__pixels {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.chat-panel {
+  pointer-events: auto;
 }
 
 /* The pixel transition fills the button's face. The component ships sized and

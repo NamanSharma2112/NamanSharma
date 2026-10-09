@@ -74,7 +74,7 @@ export default function Home() {
         <div className="home-portrait">
           <HalftoneDots
             src="/me/portrait-art.png"
-            cell={4}
+            cell={3}
             // Room for the dots to burst past the edge. Wide, as the component
             // intends — the picture is only redrawn where it is being touched,
             // so the empty margin is a blit rather than ten thousand dots.

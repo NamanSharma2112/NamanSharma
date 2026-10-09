@@ -49,7 +49,8 @@
   gap: 14px;
 }
 
-/* At the top now, so it loses the margin it had when it sat under the prose. */
+/* At the top now, so it loses the margin it had when it sat under the prose —
+   and sits on the strip's centre line, level with the date and the clock. */
 .home-nav {
   margin-top: 0;
 }
@@ -148,6 +149,48 @@
 
 .home-item:first-child {
   border-top: 1px solid var(--line);
+}
+
+/* ── the work, as a stack you can rearrange ─────────────────────────────── */
+
+/* Each row is a card here rather than a ruled line: they are separated by a
+   gap and any one of them can be lifted out, and a hairline rule only reads
+   as a list while the list is continuous. */
+.home-work .home-item {
+  padding: 15px 16px 17px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  transition:
+    border-color 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out);
+}
+
+.home-work .home-item:first-child {
+  border-top: 1px solid var(--line);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-work .shredder__item:hover .home-item {
+    border-color: color-mix(in srgb, var(--fg) 18%, var(--line));
+  }
+}
+
+/* Held: off the page rather than on it. The drop shadow is the component's
+   own; this is the edge and the ground under it. */
+.home-work .shredder__item[data-state="drag"] .home-item {
+  border-color: color-mix(in srgb, var(--fg) 24%, var(--line));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.home-work .shredder__item {
+  border-radius: 12px;
+}
+
+/* The arrow is the row's own affordance and the row is now draggable, so the
+   cursor has to say which. */
+.home-work .home-item-go {
+  cursor: pointer;
 }
 
 .home-item-role {
@@ -514,9 +557,10 @@
 
 /* ── the nav row ────────────────────────────────────────────────────────── */
 
-.home-nav {
-  margin-top: 34px;
-}
+/* The space the nav used to need is set where the nav is set, at the top of
+   this file. It was still being pushed 34px down from here — same selector,
+   further down the sheet, so it won — which left it sitting half that distance
+   below the clock it shares the strip with. */
 
 .home-nav-panel {
   display: flex;

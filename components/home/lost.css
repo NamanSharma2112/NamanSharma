@@ -1,0 +1,108 @@
+/* The 404. One screen, a pit of balls across all of it, and the words in
+   front. */
+
+.lost {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* Behind everything, and the only thing the pointer can reach — the card
+   above it hands its own events back, so the balls follow the cursor across
+   the whole screen rather than only around the edges. */
+.lost-pit {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.lost-card {
+  position: relative;
+  z-index: 1;
+  max-width: 420px;
+  padding: 0 24px;
+  text-align: center;
+  /* Let the pointer through to the pit; the links take it back. */
+  pointer-events: none;
+}
+
+/* A breath of the page's own ground behind the words. The balls are busy and
+   a text shadow alone does not hold against a black sphere passing under a
+   lowercase letter. Soft-edged, so it reads as light rather than as a panel. */
+.lost-card::before {
+  content: "";
+  position: absolute;
+  inset: -16% -24%;
+  z-index: -1;
+  background: radial-gradient(
+    58% 62% at 50% 52%,
+    var(--bg) 0%,
+    color-mix(in srgb, var(--bg) 88%, transparent) 46%,
+    transparent 76%
+  );
+}
+
+.lost-number {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: clamp(92px, 18vw, 168px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  /* The balls pass behind it, and a flat number on a busy field is hard to
+     read — so it sits on a soft halo of the page's own ground. */
+  text-shadow: 0 0 46px var(--bg), 0 0 18px var(--bg);
+}
+
+.lost-title {
+  margin-top: 10px;
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--fg);
+  text-shadow: 0 0 20px var(--bg), 0 0 8px var(--bg);
+}
+
+.lost-note {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--fg-body);
+  text-shadow: 0 0 22px var(--bg), 0 0 10px var(--bg), 0 0 4px var(--bg);
+}
+
+.lost-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 26px;
+  pointer-events: auto;
+}
+
+.lost-links a {
+  font-size: 14px;
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: color-mix(in srgb, var(--fg) 32%, transparent);
+  text-shadow: 0 0 18px var(--bg), 0 0 7px var(--bg), 0 0 3px var(--bg);
+  transition: text-decoration-color 180ms var(--ease-out);
+}
+
+.lost-links a:hover {
+  text-decoration-color: var(--fg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The pit is the motion. Without it the page is just the words, which is
+     the right page to be reading anyway. */
+  .lost-pit {
+    display: none;
+  }
+}

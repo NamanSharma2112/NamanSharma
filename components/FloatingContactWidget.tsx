@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { MessageSquare, X, ArrowUp } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import PixelTransition from "@/components/reactbits/PixelTransition";
 
 type Message = {
   id: string;
@@ -178,14 +179,31 @@ export default function FloatingContactWidget() {
               isOpen ? "is-lit" : ""
             }`}
           >
-            {isOpen ? (
-              <X size={17} className="text-zinc-900" />
-            ) : (
-              <>
-                <MessageGlyph />
-                {/* Unread-style dot, on until the panel has been opened. */}
-                <span className="call-dot absolute right-1 top-1 size-2 rounded-full" />
-              </>
+            {/* Press it and the face does not swap, it dissolves: the bubble
+                breaks up into blocks and the cross settles out of them. Driven
+                by the panel rather than by the pointer, so the button comes
+                apart at the moment the chat opens. */}
+            <span className="call-face">
+              <PixelTransition
+                active={isOpen}
+                firstContent={
+                  <span className="call-layer">
+                    <MessageGlyph />
+                  </span>
+                }
+                secondContent={
+                  <span className="call-layer">
+                    <X size={17} className="text-zinc-900" />
+                  </span>
+                }
+                gridSize={6}
+                pixelColor="#1c1917"
+                animationStepDuration={0.3}
+              />
+            </span>
+            {/* Unread-style dot, on until the panel has been opened. */}
+            {!isOpen && (
+              <span className="call-dot absolute right-1 top-1 size-2 rounded-full" />
             )}
           </button>
         </span>

@@ -6,6 +6,7 @@ import Footer from "@/components/home/Footer";
 import { HalftoneDots } from "@/components/ui/halftone-dots";
 import ParticleName from "@/components/home/ParticleName";
 import Chat from "@/components/home/Chat";
+import Work, { type Project } from "@/components/home/Work";
 import "@/components/home/home.css";
 
 export const metadata: Metadata = {
@@ -62,16 +63,17 @@ export default function Home() {
       <div className="home-col">
         <TopStrip track={TRACK} />
 
-        {/* The cut-out, not the original: the source is a circle on a black
-            field, and the halftone drew that field as a solid ring of dots
-            around the face. Masked to the circle, there is nothing outside it
-            to draw.
+        {/* The drawing, lifted off the card it came on — the halftone reads a
+            white field as paper and would have ringed the whole picture with
+            dots. Only the backdrop came out: his face and shirt are white too,
+            and losing those leaves a drawing of hair and a beard the moment
+            the page goes dark.
 
-            Large, because the dot grid is a fixed cell — at thumbnail size a
-            face does not survive the sampling. */}
+            Large, because the dot grid is a fixed cell: at thumbnail size the
+            glasses are two dots and the face goes with them. */}
         <div className="home-portrait">
           <HalftoneDots
-            src="/me/portrait-cut.png"
+            src="/me/portrait-art.png"
             cell={4}
             // Room for the dots to burst past the edge. Wide, as the component
             // intends — the picture is only redrawn where it is being touched,
@@ -116,25 +118,8 @@ export default function Home() {
         <section className="home-section" aria-label="Selected work">
           <p className="home-section-label">Selected work</p>
 
-          <div className="home-list">
-            {WORK.map((w) => (
-              <a
-                key={w.name}
-                className="home-item"
-                href={w.href}
-                target={w.href.startsWith("http") ? "_blank" : undefined}
-                rel={w.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              >
-                <p className="home-item-role">{w.role}</p>
-                <p className="home-item-name">{w.name}</p>
-                <p className="home-item-note">{w.note}</p>
-                <span className="home-item-go">
-                  {w.cta}
-                  <Arrow />
-                </span>
-              </a>
-            ))}
-          </div>
+          {/* Pick one up and put it where you like. */}
+          <Work projects={WORK} />
         </section>
 
         <section className="home-section" aria-label="Getting in touch">
@@ -158,8 +143,9 @@ export default function Home() {
   );
 }
 
-const WORK = [
+const WORK: Project[] = [
   {
+    id: "motionkit",
     role: "Animation library",
     name: "MotionKit",
     note: "The motion pieces I kept rebuilding, packaged so they behave the same way every time.",
@@ -167,6 +153,7 @@ const WORK = [
     cta: "Open it",
   },
   {
+    id: "churnrate",
     role: "SaaS dashboard",
     name: "ChurnRate",
     note: "Churn analysis and analytics for subscription products, designed and built end to end.",
@@ -174,6 +161,7 @@ const WORK = [
     cta: "Open it",
   },
   {
+    id: "task-management",
     role: "Productivity tool",
     name: "Task Management",
     note: "A full-stack task app — boards, state and the whole workflow, built to stay quick as the list grows.",
@@ -181,6 +169,7 @@ const WORK = [
     cta: "Open it",
   },
   {
+    id: "desktop",
     role: "A machine in the browser",
     name: "Desktop",
     note: "Boot screen, menu bar, dock, draggable windows, and the games that came with it.",
@@ -189,20 +178,3 @@ const WORK = [
   },
 ];
 
-function Arrow() {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5" />
-    </svg>
-  );
-}

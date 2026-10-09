@@ -485,7 +485,7 @@
 /* Square, and left-aligned on the column so its edge lines up with the name
    and the prose under it. */
 .home-portrait {
-  width: 380px;
+  width: 340px;
   max-width: 100%;
   aspect-ratio: 1;
   /* No nudge. The component paints 72px outside its own box so dots can burst

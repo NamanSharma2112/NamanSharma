@@ -16,9 +16,18 @@ import ParticleText from "@/components/reactbits/ParticleText";
  * correcting it would redraw the whole particle field on first paint.
  */
 
+/**
+ * Neutral grey, both ways round.
+ *
+ * The particles are drawn in a blend between the two, so the highlight is half
+ * the colour you actually see — and a green highlight on an off-white made the
+ * whole name read green rather than lit. Measured, the ink averaged
+ * rgb(179,208,192): six points of green over the red and blue either side of
+ * it, which is past where an eye stops calling it grey.
+ */
 const INK = {
   light: { color: "#000000", highlight: "#4a4a4a" },
-  dark: { color: "#e6ece7", highlight: "#7fb398" },
+  dark: { color: "#ededed", highlight: "#8f8f8f" },
 };
 
 export default function ParticleName({ text }: { text: string }) {

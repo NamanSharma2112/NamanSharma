@@ -67,15 +67,16 @@ export default function Home() {
             around the face. Masked to the circle, there is nothing outside it
             to draw.
 
-            The whole circle, not a crop inside it — which puts the head at
-            about a third of the frame, so the grid has to be fine enough that
-            a face still survives it. Cost is cells squared, so this is as
-            coarse as it can be and still read. */}
+            Large, because the dot grid is a fixed cell — at thumbnail size a
+            face does not survive the sampling. */}
         <div className="home-portrait">
           <HalftoneDots
             src="/me/portrait-cut.png"
             cell={4}
-            spill={20}
+            // Room for the dots to burst past the edge. Wide, as the component
+            // intends — the picture is only redrawn where it is being touched,
+            // so the empty margin is a blit rather than ten thousand dots.
+            spill={56}
             accent="#000000"
             displace
             className="home-portrait-dots"

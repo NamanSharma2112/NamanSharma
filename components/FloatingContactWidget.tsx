@@ -82,15 +82,19 @@ export default function FloatingContactWidget() {
 
   return (
     <>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-24 right-6 z-[110] w-[340px] max-w-[calc(100vw-48px)] flex flex-col overflow-hidden rounded-2xl shadow-2xl border border-zinc-200/50 dark:border-zinc-800/50 bg-white/95 dark:bg-[#111110]/95 backdrop-blur-xl"
-          >
+      {/* The panel does not slide in, it assembles. Blocks scatter across the
+          space it is about to fill, and when they clear it is there — and the
+          same in reverse on the way out, so closing is not a window being
+          dismissed but the thing coming apart. */}
+      <div className="chat-shell">
+        <PixelTransition
+          active={isOpen}
+          gridSize={14}
+          pixelColor="var(--surface)"
+          animationStepDuration={0.42}
+          firstContent={<span />}
+          secondContent={
+            <div className="chat-panel flex size-full flex-col overflow-hidden rounded-2xl shadow-2xl border border-zinc-200/50 dark:border-zinc-800/50 bg-white/95 dark:bg-[#111110]/95 backdrop-blur-xl">
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-zinc-50/50 dark:bg-black/20">
               <div className="flex items-center gap-3">
@@ -164,9 +168,10 @@ export default function FloatingContactWidget() {
                 </button>
               </div>
             </form>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </div>
+          }
+        />
+      </div>
 
       {/* A round button that lights while the panel is open. */}
       <div className="fixed bottom-6 right-6 z-[100]">

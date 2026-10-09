@@ -44,7 +44,6 @@ export const metadata: Metadata = {
 };
 
 import FloatingContactWidget from "@/components/FloatingContactWidget";
-import MinimalNav from "@/components/MinimalNav";
 import SiteAtmosphere from "@/components/SiteAtmosphere";
 import Boot from "@/components/Boot";
 import PhotoScope from "@/components/PhotoScope";
@@ -87,9 +86,6 @@ export default function RootLayout({
               <Boot>
                 <SiteAtmosphere />
                 <PhotoScope>
-                  <Landing delay={0.05}>
-                    <MinimalNav />
-                  </Landing>
                   <Landing delay={0.16} className="relative z-10 flex-1">
                     {children}
                   </Landing>

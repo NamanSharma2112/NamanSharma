@@ -1,0 +1,56 @@
+.desk {
+  border-radius: 10px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.desk:focus-visible {
+  outline: 1px solid var(--anatomy-muted);
+  outline-offset: 6px;
+}
+
+.desk .iso-svg {
+  overflow: visible;
+}
+
+/* The screen is the one lit part of the figure: the machine is the subject
+   and the picture on it is what the machine does. */
+.desk-glass {
+  fill: var(--anatomy-shade-0);
+  transition: fill 420ms var(--anatomy-ease);
+}
+
+.desk-glass[data-on=""] {
+  fill: var(--anatomy-lit);
+}
+
+.desk-bar,
+.desk-dock {
+  fill: var(--anatomy-paper);
+  opacity: 0.16;
+}
+
+.desk-menu-item,
+.desk-slot {
+  fill: var(--anatomy-paper);
+  opacity: 0.5;
+}
+
+.desk-win {
+  fill: var(--anatomy-paper);
+  opacity: 0.9;
+}
+
+.desk-win-bar {
+  fill: var(--anatomy-shade-2);
+}
+
+.desk-win-light {
+  fill: var(--anatomy-lit);
+  opacity: 0.55;
+}
+
+@media (max-width: 640px) {
+  .desk { overflow: hidden; }
+  .iso-plate .desk .iso-svg { width: 116%; margin: -3% -8%; }
+}

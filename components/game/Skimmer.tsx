@@ -5,10 +5,13 @@ import { IsoFigure } from "@/components/iso/react/draw";
 import { useLoop, useReadout } from "@/components/iso/react/live";
 import { translateAlong } from "@/components/iso/iso-kit";
 import {
-  BUOY,
+  BURST,
   CROSS,
   DRONE,
+  ENEMY,
+  MUZZLE,
   type Piece,
+  ROCK,
   EDGE,
   HEIGHT,
   P,
@@ -35,22 +38,33 @@ import "./skimmer.css";
    is not a render. React is told three things only — ready, flying, over —
    because those are the three things that change what is on screen. */
 
-const LANE_IN = 430; /* where a thing enters, far up the lane */
+const LANE_IN = 400; /* where a thing enters, far up the lane */
 const LANE_OUT = -70; /* and where it is past you and gone */
-const PYLONS = 5;
-const BUOYS = 4;
+const PYLONS = 4;
+const ROCKS = 4;
 const DRONES = 4;
+const ENEMIES = 3;
 const TRACERS = 10;
 const CROSSES = 16;
 const CROSS_GAP = 44;
 
-type Kind = 0 | 1 | 2; /* pylon, buoy, drone */
+/* What is in the lane. A pylon is steel and stays there however much you
+   shoot it; the other three come apart, and the one that shoots back is
+   worth the most. */
+type Kind = 0 | 1 | 2 | 3; /* pylon, rock, drone, enemy */
+
+const ART: Record<Kind, Piece[]> = { 0: PYLON, 1: ROCK, 2: DRONE, 3: ENEMY };
+const HALF: Record<Kind, number> = { 0: 15, 1: 20, 2: 22, 3: 34 };
+/** Rounds to bring one down, and what it is worth. 0 is not destructible. */
+const HP: Record<Kind, number> = { 0: 0, 1: 1, 2: 1, 3: 2 };
+const WORTH: Record<Kind, number> = { 0: 0, 1: 20, 2: 60, 3: 120 };
 
 interface Thing {
   live: boolean;
   kind: Kind;
   d: number;
   s: number;
+  hp: number;
   node: SVGGElement | null;
 }
 
@@ -60,8 +74,6 @@ interface Shot {
   s: number;
   node: SVGGElement | null;
 }
-
-const HALF: Record<Kind, number> = { 0: 15, 1: 15, 2: 22 };
 
 /** One prebuilt piece, as JSX: a solid, a line on a face, or a row of
     screws. The build hands back an ordered list of these, so painter's
@@ -123,6 +135,7 @@ export default function Skimmer() {
     speed: 190,
     scroll: 0,
     cool: 0, /* time until the guns will fire again */
+    gun: 1 as 1 | -1, /* which of the two fires next */
     spawn: 0,
     hurt: 0, /* the flash after a knock */
     clock: 0,
@@ -134,8 +147,8 @@ export default function Skimmer() {
 
   if (g.current.things.length === 0) {
     const make = (kind: Kind, n: number) =>
-      Array.from({ length: n }, () => ({ live: false, kind, d: 0, s: 0, node: null }) as Thing);
-    g.current.things = [...make(0, PYLONS), ...make(1, BUOYS), ...make(2, DRONES)];
+      Array.from({ length: n }, () => ({ live: false, kind, d: 0, s: 0, hp: 0, node: null }) as Thing);
+    g.current.things = [...make(0, PYLONS), ...make(1, ROCKS), ...make(2, DRONES), ...make(3, ENEMIES)];
     g.current.shots = Array.from({ length: TRACERS }, () => ({ live: false, d: 0, s: 0, node: null }) as Shot);
   }
 
@@ -165,10 +178,11 @@ export default function Skimmer() {
     if (s.cool > 0) return;
     const free = s.shots.find((t) => !t.live);
     if (!free) return;
-    s.cool = 0.16;
+    s.cool = 0.12;
+    s.gun = s.gun === 1 ? -1 : 1;
     free.live = true;
-    free.d = 30;
-    free.s = s.s;
+    free.d = 46;
+    free.s = s.s + MUZZLE * s.gun;
   }, []);
 
   /* ── the keys ─────────────────────────────────────────────────────────
@@ -223,11 +237,11 @@ export default function Skimmer() {
       const step = Math.min(dt, 1 / 30);
       s.clock += step;
 
-      /* The lane scrolls even on the title card, so the thing is alive
-         before you touch it — but it holds still if the browser has been
-         asked for stillness. */
+      /* The lane only moves once it has taken off. A card that says "take
+         off" over water already sliding past is telling you two different
+         things at once. */
       const flying = phase === "flying";
-      const speed = calm ? 0 : flying ? s.speed : 70;
+      const speed = calm || !flying ? 0 : s.speed;
       s.scroll = (s.scroll + speed * step) % CROSS_GAP;
       water.current.forEach((node, i) => {
         const d = LANE_IN - ((i * CROSS_GAP + s.scroll) % (CROSSES * CROSS_GAP)) - 60;
@@ -254,10 +268,16 @@ export default function Skimmer() {
         s.spawn -= step;
         if (s.spawn <= 0) {
           s.spawn = Math.max(0.42, 1.25 - s.score * 0.0012);
-          const free = s.things.filter((t) => !t.live);
-          const pick = free[Math.floor(Math.random() * free.length)];
+          /* Weighted, so the lane is mostly things to shoot and the odd
+             pylon you simply have to go round. */
+          const r = Math.random();
+          const want: Kind = r < 0.26 ? 0 : r < 0.56 ? 1 : r < 0.82 ? 2 : 3;
+          const free = s.things.filter((t) => !t.live && t.kind === want);
+          const pick = free[Math.floor(Math.random() * free.length)] ??
+            s.things.find((t) => !t.live);
           if (pick) {
             pick.live = true;
+            pick.hp = HP[pick.kind];
             pick.d = LANE_IN;
             pick.s = (Math.random() * 2 - 1) * (EDGE - 18);
             pick.node?.setAttribute("opacity", "1");
@@ -267,11 +287,19 @@ export default function Skimmer() {
         for (const t of s.things) {
           if (!t.live) continue;
           t.d -= s.speed * step;
-          /* The drones come at you a little faster and drift, which is why
-             they are the ones worth shooting. */
+          /* A pylon and a rock are standing still and the lane brings them
+             to you. A drone drifts. An aircraft is flying at you, so it
+             closes faster and weaves, and it is the only one that has to be
+             led rather than simply aimed at. */
           if (t.kind === 2) {
             t.d -= 40 * step;
             t.s += Math.sin(s.clock * 1.7 + t.d * 0.03) * 36 * step;
+          } else if (t.kind === 3) {
+            /* It closes, but not so fast that it is past you before you
+               have fired: an aircraft worth 120 has to be shootable. */
+            t.d -= 55 * step;
+            t.s += Math.sin(s.clock * 1.1 + t.d * 0.02) * 64 * step;
+            t.s = Math.max(-EDGE - 10, Math.min(EDGE + 10, t.s));
           }
           if (t.d < LANE_OUT) {
             t.live = false;
@@ -306,15 +334,24 @@ export default function Skimmer() {
           if (hit) {
             b.live = false;
             b.node?.setAttribute("opacity", "0");
-            hit.live = false;
-            hit.node?.setAttribute("opacity", "0");
-            s.score += hit.kind === 2 ? 60 : 15;
-            hits.current?.setAttribute("transform", translateAlong(P, at(hit.d, hit.s, 14)));
-            hits.current?.setAttribute("opacity", "1");
-            hits.current?.animate?.(
-              [{ opacity: 1, transformBox: "fill-box" }, { opacity: 0 }],
-              { duration: 260, easing: "ease-out", fill: "forwards" },
-            );
+            /* Steel does not come apart: a round into a pylon is a spark
+               and nothing else. */
+            const armoured = HP[hit.kind] === 0;
+            if (!armoured && --hit.hp <= 0) {
+              hit.live = false;
+              hit.node?.setAttribute("opacity", "0");
+              s.score += WORTH[hit.kind];
+            }
+            const burst = hits.current;
+            if (burst) {
+              burst.setAttribute("transform", translateAlong(P, at(hit.d, hit.s, 16)));
+              burst.setAttribute("opacity", "1");
+              burst.animate?.([{ opacity: 1 }, { opacity: 0 }], {
+                duration: armoured ? 180 : 300,
+                easing: "ease-out",
+                fill: "forwards",
+              });
+            }
           }
         }
       }
@@ -390,9 +427,10 @@ export default function Skimmer() {
             <g
               key={i}
               opacity="0"
+              data-kind={t.kind}
               ref={(n) => { t.node = n; }}
             >
-              <Draw pieces={t.kind === 0 ? PYLON : t.kind === 1 ? BUOY : DRONE} />
+              <Draw pieces={ART[t.kind]} />
             </g>
           ))}
         </g>
@@ -405,7 +443,7 @@ export default function Skimmer() {
         ))}
 
         <g ref={hits} opacity="0">
-          <path className="iso-line skim-burst" data-tone="lit" d={RIPPLES[0]!} />
+          <path className="iso-line skim-burst" data-tone="lit" d={BURST} />
         </g>
 
         {/* and the aircraft, nearest the camera and drawn last */}
@@ -429,8 +467,8 @@ export default function Skimmer() {
           </p>
           <p className="skim-card-note">
             {phase === "over"
-              ? `${last} on that run${best > last ? ` · best ${best}` : ""}. The drones are worth four times a buoy.`
-              : "Steer across the lane, shoot the drones, miss the pylons. Three hulls."}
+              ? `${last} on that run${best > last ? ` · best ${best}` : ""}. An aircraft is worth six rocks, and takes two rounds.`
+              : "Steer across the lane. Rocks break, drones pop, aircraft take two rounds — the steel pylons you simply go round. Three hulls."}
           </p>
           <button className="skim-start" type="button" onClick={tap}>
             {phase === "over" ? "Fly again" : "Take off"}

@@ -10,6 +10,13 @@
   cursor: crosshair;
 }
 
+/* The kit lets a figure overflow its card on purpose — a dial's needle or a
+   lifted part can hang past the frame. A lane that scrolls cannot: its
+   water lines ran out under the legend and the caption. */
+.skim .iso-svg {
+  overflow: hidden;
+}
+
 /* The shadow on the water. Not a solid — it is the hull's plan lying flat,
    so it stretches and shrinks with the aircraft above it rather than being
    a blob that follows it around. */
@@ -31,8 +38,10 @@
   100% { opacity: 0; transform: scale(1.25); }
 }
 
+/* A round in flight. It has to be the brightest thing in the card for the
+   moment it is there, or you cannot tell whether the guns fired. */
 .skim-tracer {
-  stroke-width: 2;
+  stroke-width: 2.6;
   stroke-linecap: round;
 }
 

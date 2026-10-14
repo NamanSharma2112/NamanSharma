@@ -71,6 +71,12 @@ const ground = (d: number, s: number): Point3 => {
   return [x, y, 0];
 };
 
+/** And in the air, for anything that has to line up with the hull. */
+const air = (d: number, s: number, z: number): Point3 => {
+  const [x, y] = lane(d, s);
+  return [x, y, z];
+};
+
 /** A plan written in lane coordinates, extruded into a solid. */
 const solid = (
   plan: readonly (readonly [number, number])[],
@@ -430,12 +436,81 @@ export const PYLON: Piece[] = [
   { k: "s", p: part(pod(-11, 11, -11, 11, 4), 46.6, 4.4, { bevel: 1 }), t: "hi" },
 ];
 
-export const BUOY: Piece[] = [
-  { k: "s", p: part(body([[-12, 11], [0, 12], [12, 11]], 1, 16), 0, 10, { bevel: 2 }), t: "mid" },
-  { k: "s", p: part(pod(-11.8, 11.8, -11.8, 11.8, 5), 6.4, 1.8, { bevel: 0.5 }), t: "lo" },
-  { k: "d", at: studs([[7, 0], [-7, 0], [0, 7], [0, -7]], 10) },
-  { k: "s", p: part(pod(-2, 2, -2, 2, 0), 10, 14), t: "mid" },
-  { k: "s", p: part(pod(-3.4, 3.4, -3.4, 3.4, 1.6), 24, 3.6, { bevel: 0.8 }), t: "hi" },
+/* ── a rock ────────────────────────────────────────────────────────────
+   Three chunks off one jagged ring, each smaller and turned, so it reads
+   as one piece of stone rather than three tiers of a cake. The cracks are
+   chords: both ends land on the outline, like every other line here. */
+const jag = (n: number, r: number, seed: number): Pair[] =>
+  Array.from({ length: n }, (_, i) => {
+    const a = (i / n) * Math.PI * 2;
+    const k = r * (0.74 + 0.4 * Math.abs(Math.sin(seed + i * 2.3)));
+    return [Math.cos(a) * k, Math.sin(a) * k] as Pair;
+  });
+
+const shove = (plan: readonly Pair[], dd: number, ds: number): Pair[] =>
+  plan.map(([d, s]) => [d + dd, s + ds]);
+
+export const ROCK: Piece[] = [
+  { k: "s", p: part(jag(11, 17, 1.2), 0, 8, { bevel: 1 }), t: "mid" },
+  { k: "s", p: part(shove(jag(9, 12, 2.7), -3, 2.5), 7.4, 9, { bevel: 0.8 }), t: "mid" },
+  { k: "s", p: part(shove(jag(8, 7.5, 4.1), 2.5, -3), 15.6, 7, { bevel: 0.6 }), t: "hi" },
+  { k: "s", p: part(shove(jag(7, 4.4, 5.6), -7, -6), 7.4, 5, { bevel: 0.5 }), t: "lo" },
+  { k: "l", d: mark([[-1, -6.2], [5.6, 1.4]], 22.6), t: "faint" },
+  { k: "l", d: mark([[-12.4, 4.6], [5.8, -1.4]], 16.4), t: "faint" },
+  { k: "d", at: studs([[-7, 7], [6, 6], [3, -7.6]], 8) },
+];
+
+/* ── and something that flies back at you ──────────────────────────────
+   The same machine, smaller and the other way round: its nose points at
+   the camera, so its wings sweep the other way and its tail is the far
+   end. Two rounds to bring one down. */
+const E_HULL: Pair[] = [
+  [-26, 1],
+  [-20, 4.4],
+  [-8, 6.4],
+  [6, 6.2],
+  [18, 4.4],
+  [26, 1.6],
+];
+const E_LEAD: Pair[] = [
+  [-6, 7],
+  [2, 20],
+  [10, 34],
+  [15, 42],
+];
+const E_TRAIL: Pair[] = [
+  [10, 7],
+  [14, 20],
+  [17, 34],
+  [19, 42],
+];
+const eWing = (k: 1 | -1): Pair[] => {
+  const out: Pair[] = [];
+  for (let i = 0; i <= 10; i++) {
+    const t = 7 + (35 * i) / 10;
+    out.push([spline(E_LEAD, t), t * k]);
+  }
+  for (let i = 10; i >= 0; i--) {
+    const t = 7 + (35 * i) / 10;
+    out.push([spline(E_TRAIL, t), t * k]);
+  }
+  return out;
+};
+
+export const ENEMY: Piece[] = [
+  { k: "s", p: part(eWing(1), 19, 1.8), t: "mid" },
+  { k: "l", d: mark([[spline(E_LEAD, 24) + 1, 24], [spline(E_TRAIL, 24) - 1, 24]], 20.8), t: "faint" },
+  { k: "s", p: part(offset(body([[-8, 1], [0, 3], [8, 1]], 1, 10), 42), 17.4, 4), t: "lo" },
+  { k: "s", p: part(body(E_HULL, 1, 22), 16, 5.4, { bevel: 0.9 }), t: "hi" },
+  { k: "s", p: part(body(E_HULL, 0.66, 18), 21.4, 2.8, { bevel: 0.6 }), t: "hi" },
+  { k: "l", d: mark([[-20, 0], [20, 0]], 24.2), t: "faint" },
+  { k: "d", at: studs([[-6, 2.6], [-6, -2.6], [8, 2.4], [8, -2.4]], 24.2) },
+  { k: "s", p: part(body([[-18, 0.8], [-10, 4.2], [-2, 3.6]], 1, 10), 24.2, 2.6, { bevel: 0.5 }), t: "hi", lit: true },
+  { k: "s", p: part(eWing(-1), 19, 1.8), t: "mid" },
+  { k: "l", d: mark([[spline(E_LEAD, 24) + 1, -24], [spline(E_TRAIL, 24) - 1, -24]], 20.8), t: "faint" },
+  { k: "s", p: part(offset(body([[-8, 1], [0, 3], [8, 1]], 1, 10), -42), 17.4, 4), t: "lo" },
+  { k: "s", p: part(body([[20, 0.9], [26, 2.2], [31, 0.8]], 1, 10), 21, 9), t: "mid" },
+  { k: "s", p: part(pod(22, 31, -14, 14, 2.6), 29.6, 1.8, { bevel: 0.4 }), t: "mid" },
 ];
 
 export const DRONE: Piece[] = [
@@ -462,8 +537,34 @@ export const RAILS = [-135, 135].map((s) =>
   pathOf([iso(at(-90, s, 0), P), iso(at(470, s, 0), P)]),
 );
 
-/** A tracer: a short dash lying along the lane, pointing where it is going. */
-export const TRACER = pathOf([iso(at(0, 0, 0), P), iso(at(19, 0, 0), P)]);
+/** A tracer: a dash lying along the FUSELAGE, not along the lane. The
+    shapes are turned 17° off the lane so they read as objects, and a round
+    fired straight up the screen out of a nose that points 17° away from it
+    is the one place that shows — so the dash is drawn in the turned frame
+    and leaves along the gun it came out of. */
+export const TRACER = pathOf([iso(air(0, 0, 0), P), iso(air(26, 0, 0), P)]);
+
+/** Where the guns are, in lane units either side of the hull. */
+export const MUZZLE = 15;
+
+/** What a round does when it arrives: a ring and four radiating marks,
+    faded out by the page rather than drawn as a cartoon star. */
+export const BURST = [
+  pathOf(
+    Array.from({ length: 24 }, (_, i) => {
+      const a = (i / 24) * Math.PI * 2;
+      return iso(air(Math.cos(a) * 13, Math.sin(a) * 13, 0), P);
+    }),
+    true,
+  ),
+  ...[0, 1, 2, 3].map((i) => {
+    const a = (i / 4) * Math.PI * 2 + 0.6;
+    return pathOf([
+      iso(air(Math.cos(a) * 15, Math.sin(a) * 15, 0), P),
+      iso(air(Math.cos(a) * 24, Math.sin(a) * 24, 0), P),
+    ]);
+  }),
+].join("");
 
 /** How far across the lane anything may be. */
 export const EDGE = 105;

@@ -918,3 +918,257 @@ main.home-col > * {
 @media (max-width: 480px) {
   .home-plate-addr { display: none; }
 }
+
+/* ══ the page, to the wireframe ═══════════════════════════════════════════
+   One frame holds everything, so the bar, the hero, the figures and the
+   story all line up on the same two edges. Inside it the reading column
+   keeps its own measure — a paragraph wants less width than a drawing. */
+
+.home-frame {
+  width: min(1120px, calc(100vw - 48px));
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+/* The frame already sets the measure, so the column inside it stops
+   setting its own. */
+.home-frame .home-col {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── the hero card ──────────────────────────────────────────────────── */
+
+/* How the page opens. Not a card: no border, no fill, nothing but the
+   page's own ground behind it — the figures below are the framed things,
+   and a frame around the name as well would make the top of the page
+   argue with them. It takes the full width of the frame and is given room
+   to do it: the name is set to the width available rather than to a fixed
+   36px, and the prose runs to the frame's own measure.
+
+   The side padding is zero on purpose, so the name's first letter sits on
+   the same vertical as the card edges underneath it. */
+.home-hero {
+  padding: 18px 0 8px;
+  border: 0;
+  background: transparent;
+}
+
+.home-hero .home-name {
+  font-size: clamp(38px, 4.6vw, 54px);
+  line-height: 1.04;
+}
+
+.home-hero-lede {
+  margin-top: 22px;
+  max-width: 78ch;
+  font-size: 17px;
+  line-height: 1.82;
+  color: var(--fg-body);
+}
+
+.home-hero-lede + .home-hero-lede {
+  margin-top: 16px;
+}
+
+/* Three plain facts, set like the labels on the figures: the card has the
+   room now, and this is what the room is for. */
+.home-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 26px;
+  margin-top: 30px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.home-hero-meta li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.home-hero-meta li::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@media (max-width: 620px) {
+  .home-hero { padding: 12px 0 6px; }
+  .home-hero-lede { font-size: 16px; }
+}
+
+/* ── the figures, against the story that explains them ─────────────── */
+
+/* ── the figures, against the story that explains them ─────────────────
+   One grid holds all six cells — three drawings and the three passages
+   that go with them — so a figure and its paragraph are the same row and
+   line up by construction. The earlier version put the drawings in a
+   column of their own next to a single tall panel, and because a drawing
+   is three times the height of a paragraph the panel ran out of words
+   two thirds of the way down and left the second and third figures
+   facing nothing. */
+
+.home-split {
+  display: grid;
+  gap: 22px;
+  margin-top: 26px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .home-split {
+    /* The drawings take the narrower side: each one is already a framed
+       card, and the words beside them need the longer line. */
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+    gap: 26px 36px;
+    /* Level with its own figure, not hanging from the top of the row —
+       a 160px paragraph pinned to the top of a 580px card reads as a
+       mistake rather than as a pairing. */
+    align-items: center;
+  }
+
+  /* The introduction is the only cell that takes both columns. */
+  .home-split-intro {
+    grid-column: 1 / -1;
+  }
+}
+
+.home-bento {
+  /* The 54px above came from the row of three this replaced, where the
+     cards followed a heading. Here the grid sets the spacing. */
+  margin-top: 0;
+  min-width: 0;
+}
+
+.home-split-intro .home-story-lede {
+  max-width: 76ch;
+}
+
+.home-story-lede {
+  margin-top: 10px;
+  max-width: 60ch;
+  font-size: 15.5px;
+  line-height: 1.8;
+  color: var(--fg-body);
+}
+
+/* One passage per machine, in the cell beside it. The rule that used to
+   sit above each one separated chapters in a shared panel; in a grid the
+   row does that, and a line across the text would cut it off from the
+   figure it belongs to. */
+.home-chapter {
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  /* A hairline down the left instead: it ties the paragraph to the card
+     on its left rather than fencing it off from the one above. */
+  .home-chapter {
+    padding-left: 22px;
+    border-left: 1px solid var(--line);
+  }
+}
+
+.home-chapter-name {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: 25px;
+  font-weight: 400;
+  letter-spacing: -0.008em;
+  color: var(--fg);
+}
+
+.home-chapter-name span {
+  margin-left: 8px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  vertical-align: middle;
+}
+
+/* Set to carry its own figure: the card beside it is 575px tall, and type
+   this size at this leading brings the passage to about the same, so the row
+   reads as two things of equal weight rather than a drawing with a caption. */
+.home-chapter p {
+  margin-top: 14px;
+  font-size: 16.5px;
+  line-height: 1.95;
+  color: var(--fg-body);
+}
+
+.home-chapter p + p {
+  margin-top: 16px;
+}
+
+/* The figure's own numbers, set as a plate: a mono label and the value,
+   the way the cards label their parts. It is what fills the cell beside a
+   drawing that is three paragraphs tall. */
+.home-chapter-spec {
+  margin-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.home-chapter-spec li {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fg-body);
+}
+
+.home-chapter-spec span {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  padding-top: 3px;
+}
+
+.home-chapter a,
+.home-story-lede a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--fg) 32%, transparent);
+}
+
+.home-chapter a:hover {
+  text-decoration-color: var(--fg);
+}
+
+/* ── the big one, across the frame ──────────────────────────────────── */
+
+.home-bench-band {
+  margin-top: 20px;
+}
+
+/* ── the story under it ─────────────────────────────────────────────── */
+
+.home-story {
+  margin-top: 46px;
+}
+
+.home-story > .home-col + .home-col {
+  margin-top: 34px;
+}
+
+/* The hero's name sits beside the mark, so the earlier top margin for a
+   name that opened the page on its own no longer applies. */
+.home-hero .home-eye {
+  margin-top: 0;
+}

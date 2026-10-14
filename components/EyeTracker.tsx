@@ -362,6 +362,33 @@ export function EyeTracker({
     };
   }, [still, idle]);
 
+  /* ── a press squashes it ──────────────────────────────────
+     The mark is the one thing on the page that looks back, so a
+     tap on it should land on something. It squashes onto its
+     base while held and springs back past its own size when
+     let go: the overshoot is the whole difference between
+     rubber and a hover state.
+
+     Written as an attribute rather than through state — a press
+     is not a render, same as a pointer move — and the curves
+     live in the stylesheet next to the rest of the mark.
+     Release is bound to the window, so dragging off it while
+     held still lets it back up. */
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const down = () => el.setAttribute("data-press", "1");
+    const up = () => el.removeAttribute("data-press");
+    el.addEventListener("pointerdown", down);
+    window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
+    return () => {
+      el.removeEventListener("pointerdown", down);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+    };
+  }, []);
+
   const s = clamp(size, 16, 180);
   const body = SHAPES[shape] ?? SHAPES.Ball;
   const clip = `eyt-clip-${useId().replace(/:/g, "")}`;

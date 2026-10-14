@@ -26,8 +26,9 @@ export default function GamePage() {
       <TopStrip />
       <PageHeader kicker="Game" title="Shearwater SK-4">
         A ground-effect skimmer, drawn with the same kit as the figures and
-        wired to the keyboard. Steer across the lane, shoot the drones, and
-        miss what you cannot shoot.
+        wired to the keyboard. Steer across the lane, break the rocks, shoot
+        down the aircraft coming the other way, and go round the one thing
+        the guns will not touch.
       </PageHeader>
 
       <div className="iso game-stage">
@@ -37,9 +38,9 @@ export default function GamePage() {
           hint="← → to steer · Space for the guns"
           readout="alt 17.2 m · ias 58 kt · hdg 313° · bank R 2.1°"
           keys={[
-            { mark: "lit", label: "The skimmer, and the drones worth shooting" },
-            { mark: "raised", label: "Pylons and buoys, which are not" },
-            { mark: "edge", label: "The lane, scrolling under you" },
+            { mark: "lit", label: "The skimmer, and what is worth shooting" },
+            { mark: "raised", label: "Rocks and drones break; aircraft take two rounds" },
+            { mark: "edge", label: "Steel pylons do not, so go round them" },
           ]}
           caption="A ground-effect machine flies in the cushion of air over a surface, which is why this one has floats at the wingtips and sits as low as it does — the rings under it are that cushion. Everything in the lane is one solid built once and moved by a transform, so a frame of play costs a few dozen attribute writes rather than a redraw."
         >

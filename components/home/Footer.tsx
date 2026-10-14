@@ -29,6 +29,7 @@ export default function Footer() {
           <Link href="/inspiration">Inspiration</Link>
           <Link href="/lab">Lab</Link>
           <Link href="/desktop">Desktop</Link>
+          <Link href="/game">Game</Link>
         </nav>
       </div>
 

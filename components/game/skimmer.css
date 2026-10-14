@@ -1,0 +1,124 @@
+/* ══ the skimmer, and the card it flies in ═══════════════════════════════ */
+
+.skim {
+  position: relative;
+  touch-action: none; /* steering is a drag, not a scroll */
+  user-select: none;
+}
+
+.skim .iso-stage {
+  cursor: crosshair;
+}
+
+/* The shadow on the water. Not a solid — it is the hull's plan lying flat,
+   so it stretches and shrinks with the aircraft above it rather than being
+   a blob that follows it around. */
+.skim-shadow {
+  fill: color-mix(in srgb, var(--fg) 9%, transparent);
+}
+
+/* The cushion of air it rides on, opening outward. Three rings on the same
+   animation, started half a second apart. */
+.skim-wake path {
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: skim-wake 1.5s linear infinite;
+}
+
+@keyframes skim-wake {
+  0% { opacity: 0.5; transform: scale(0.5); }
+  100% { opacity: 0; transform: scale(1.25); }
+}
+
+.skim-tracer {
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.skim-burst {
+  stroke-width: 1.5;
+}
+
+/* The aircraft banks about its own middle, which only works if the middle is
+   where the box says it is. */
+.skim-plane {
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skim-wake path { animation: none; opacity: 0.25; }
+}
+
+/* ── the card over it, before and after a run ──────────────────────────── */
+
+.skim-card {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.skim-card-title {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: 26px;
+  color: var(--fg);
+}
+
+.skim-card-note {
+  max-width: 44ch;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--fg-body);
+}
+
+.skim-start {
+  margin-top: 6px;
+  padding: 10px 22px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg);
+  cursor: pointer;
+  transition: transform 140ms var(--ease-out), border-color 140ms var(--ease-out);
+}
+
+.skim-start:hover {
+  border-color: color-mix(in srgb, var(--fg) 45%, transparent);
+}
+
+.skim-start:active {
+  transform: scale(0.96);
+}
+
+.skim-card-keys {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+.skim-card-keys span {
+  display: inline-block;
+  margin: 0 4px 0 10px;
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  color: var(--fg-body);
+}
+
+.skim-card-keys span:first-child {
+  margin-left: 0;
+}

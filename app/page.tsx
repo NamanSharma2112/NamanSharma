@@ -73,23 +73,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── how the work gets made ──────────────────────────────────── */}
-      <section className="home-stage" aria-label="How I work">
-        <div className="home-col">
-          <p className="home-section-label">How I work</p>
-          <p className="home-stage-lede">
-            Design and build are the same job. A piece goes down the bench and
-            comes back changed at every pass — drawn, cut, pressed — and the
-            last station is a gauge, because a thing is not finished when it is
-            made, it is finished when it reads true.
-          </p>
-        </div>
-
-        <div className="home-bench iso">
-          <BenchFigure />
-        </div>
-      </section>
-
       {/* ── the three things, each as the machine it is ─────────────── */}
       <section className="home-stage" aria-label="What I have built">
         <div className="home-col">
@@ -140,8 +123,24 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="home-col">
+      {/* ── and the bench the three of them come off ────────────────── */}
+      <section className="home-stage" aria-label="How I work">
+        <div className="home-col">
+          <p className="home-section-label">How I work</p>
+          <p className="home-stage-lede">
+            Design and build are the same job. A piece goes down the bench and
+            comes back changed at every pass — drawn, cut, pressed — and the
+            last station is a gauge, because a thing is not finished when it is
+            made, it is finished when it reads true.
+          </p>
+        </div>
 
+        <div className="home-bench iso">
+          <BenchFigure />
+        </div>
+      </section>
+
+      <div className="home-col">
         <section className="home-section" aria-label="Selected work">
           <p className="home-section-label">Selected work</p>
 

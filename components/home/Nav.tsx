@@ -55,6 +55,12 @@ export default function Nav() {
                 </NavigationMenuLink>
               </li>
               <li>
+                <NavigationMenuLink render={<Link href="/game" />}>
+                  <span className="home-nav-name">Game</span>
+                  <span className="home-nav-note">Fly the skimmer</span>
+                </NavigationMenuLink>
+              </li>
+              <li>
                 <NavigationMenuLink render={<Link href="/lab" />}>
                   <span className="home-nav-name">Lab</span>
                   <span className="home-nav-note">Motion experiments</span>

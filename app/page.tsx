@@ -102,51 +102,89 @@ export default function Home() {
           </p>
 
           <p>
-            Most of what I make starts as a passion project.{" "}
-            <a href="https://www.motionlib.me/" target="_blank" rel="noopener noreferrer">
-              MotionKit
-            </a>{" "}
-            is the motion code I kept rebuilding, packaged so it behaves the
-            same way every time.{" "}
-            <a href="https://www.churnrate.fun/" target="_blank" rel="noopener noreferrer">
-              ChurnRate
-            </a>{" "}
-            is a dashboard for subscription products, designed and built end to
-            end.
-          </p>
-
-          <p>
-            I also rebuilt a whole{" "}
-            <Link href="/desktop">desktop</Link> in the browser — it boots, it
-            has a menu bar and a dock, and the windows drag and resize.
+            So the rest of this page is drawn rather than described. Each
+            machine below is the thing it explains, and every number on one
+            comes from the same model that moves its parts — the cam really is
+            cut to the curve this site animates with, and the dial really is
+            counting the beads on the rods.
           </p>
         </div>
+      </div>
+
+      {/* ── how the work gets made ──────────────────────────────────── */}
+      <section className="home-stage" aria-label="How I work">
+        <div className="home-col">
+          <p className="home-section-label">How I work</p>
+          <p className="home-stage-lede">
+            Design and build are the same job. A piece goes down the bench and
+            comes back changed at every pass — drawn, cut, pressed — and the
+            last station is a gauge, because a thing is not finished when it is
+            made, it is finished when it reads true.
+          </p>
+        </div>
+
+        <div className="home-bench iso">
+          <BenchFigure />
+        </div>
+      </section>
+
+      {/* ── the three things, each as the machine it is ─────────────── */}
+      <section className="home-stage" aria-label="What I have built">
+        <div className="home-col">
+          <p className="home-section-label">What I&rsquo;ve built</p>
+          <p className="home-stage-lede">
+            Three projects, each drawn as the machine it actually is. Turn the
+            first one, watch the second count, boot the third.
+          </p>
+        </div>
+
+        <div className="home-bento-row iso">
+          <article className="home-tile">
+            <h2 className="home-tile-name">MotionKit</h2>
+            <p className="home-tile-role">Animation library</p>
+            <CamFigure />
+            <p className="home-tile-note">
+              The motion code I kept rebuilding, packaged so a preset behaves
+              the same way every time. The cam is cut to one of its curves.{" "}
+              <a href="https://www.motionlib.me/" target="_blank" rel="noopener noreferrer">
+                Open it
+              </a>
+            </p>
+          </article>
+
+          <article className="home-tile">
+            <h2 className="home-tile-name">ChurnRate</h2>
+            <p className="home-tile-role">SaaS dashboard</p>
+            <ChurnFigure />
+            <p className="home-tile-note">
+              Churn analysis for subscription products, designed and built end
+              to end. A rod is a cohort, a bead is a subscriber.{" "}
+              <a href="https://www.churnrate.fun/" target="_blank" rel="noopener noreferrer">
+                Open it
+              </a>
+            </p>
+          </article>
+
+          <article className="home-tile">
+            <h2 className="home-tile-name">Desktop</h2>
+            <p className="home-tile-role">A machine in the browser</p>
+            <DeskFigure />
+            <p className="home-tile-note">
+              A whole desktop in a tab: it boots, it has a menu bar and a dock,
+              and the windows drag and resize.{" "}
+              <Link href="/desktop">Boot it</Link>
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <div className="home-col">
 
         <section className="home-section" aria-label="Selected work">
           <p className="home-section-label">Selected work</p>
 
           {/* Pick one up and put it where you like. */}
           <Work projects={WORK} />
-        </section>
-
-        {/* Three machines, side by side: the easing curve a library ships,
-            the churn a dashboard watches, the desktop that runs in a tab.
-            The row breaks out of the reading column — at a third of 624px
-            each a figure is too small to read — and falls back to one above
-            the other when there is not the width for three. */}
-        <section className="home-bento" aria-label="How they work">
-          <p className="home-section-label">How they work</p>
-          <div className="home-bento-row iso">
-            <CamFigure />
-            <ChurnFigure />
-            <DeskFigure />
-          </div>
-
-          {/* And the bench the three of them come off. One piece, four
-              passes, and a gauge at the end that decides it is done. */}
-          <div className="home-bench iso">
-            <BenchFigure />
-          </div>
         </section>
 
         <section className="home-section" aria-label="Getting in touch">

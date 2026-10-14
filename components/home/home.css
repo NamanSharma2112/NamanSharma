@@ -801,3 +801,70 @@ main.home-col > * {
   width: min(1280px, calc(100vw - 48px));
   margin-top: 20px;
 }
+
+/* ── the drawn stages ────────────────────────────────────────────────────
+   Two full-width bands that carry the figures. Their text stays in the
+   reading column; only the machines break out of it. */
+
+.home-stage {
+  margin-top: 56px;
+}
+
+.home-stage-lede {
+  margin-top: 10px;
+  max-width: 54ch;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--fg-body);
+}
+
+/* One tile per project: what it is, the machine, then what it does. */
+.home-tile {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.home-tile-name {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.008em;
+  color: var(--fg);
+}
+
+.home-tile-role {
+  margin-top: 2px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+.home-tile-note {
+  margin-top: 14px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--fg-body);
+}
+
+.home-tile-note a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--fg) 32%, transparent);
+}
+
+.home-tile-note a:hover {
+  text-decoration-color: var(--fg);
+}
+
+/* The row and the bench already centre themselves on the window; inside a
+   full-width band they no longer need to be pulled out of the column. */
+.home-stage .home-bento-row,
+.home-stage .home-bench {
+  left: auto;
+  transform: none;
+  margin-inline: auto;
+  margin-top: 22px;
+}

@@ -1,0 +1,35 @@
+.cam {
+  border-radius: 10px;
+  cursor: ew-resize;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.cam:focus-visible {
+  outline: 1px solid var(--anatomy-muted);
+  outline-offset: 6px;
+}
+
+.cam .iso-svg {
+  overflow: visible;
+}
+
+/* The cam is the subject, so it carries the one lit edge. */
+.cam-disc > .iso-edge {
+  stroke: var(--anatomy-lit);
+}
+
+.cam-needle {
+  stroke-width: 1.1;
+}
+
+@media (max-width: 640px) {
+  .cam {
+    overflow: hidden;
+  }
+  .iso-plate .cam .iso-svg {
+    width: 116%;
+    margin: -3% -8%;
+  }
+}

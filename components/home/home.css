@@ -567,12 +567,6 @@
   user-select: all;
 }
 
-/* The card is built for a wide stage; in this column it sits at the
-   column's width and keeps its own radius. */
-.home-profile {
-  margin: 18px 0 26px;
-  max-width: 100%;
-}
 
 /* ── the nav row ────────────────────────────────────────────────────────── */
 
@@ -757,4 +751,12 @@
 .home-col > main,
 main.home-col > * {
   min-width: 0;
+}
+
+/* ── the figure on /work ─────────────────────────────────────────────── */
+
+/* The kit's card sets its own type and ground; this only places it in the
+   column and gives it the page's light tokens. */
+.work-figure {
+  margin: 30px 0 34px;
 }

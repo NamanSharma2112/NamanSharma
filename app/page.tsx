@@ -9,6 +9,10 @@ import Chat from "@/components/home/Chat";
 import { NeonEdgeButton } from "@/components/ui/neon-edge-button";
 import { Mail } from "lucide-react";
 import Work, { type Project } from "@/components/home/Work";
+import { CamFigure } from "@/components/figures/cam/figure";
+import { DeskFigure } from "@/components/figures/desk/figure";
+import { ChurnFigure } from "@/components/figures/churn/figure";
+import "@/components/iso/iso.css";
 import "@/components/home/home.css";
 
 export const metadata: Metadata = {
@@ -122,6 +126,20 @@ export default function Home() {
 
           {/* Pick one up and put it where you like. */}
           <Work projects={WORK} />
+        </section>
+
+        {/* Three machines, side by side: the easing curve a library ships,
+            the churn a dashboard watches, the desktop that runs in a tab.
+            The row breaks out of the reading column — at a third of 624px
+            each a figure is too small to read — and falls back to one above
+            the other when there is not the width for three. */}
+        <section className="home-bento" aria-label="How they work">
+          <p className="home-section-label">How they work</p>
+          <div className="home-bento-row iso">
+            <CamFigure />
+            <ChurnFigure />
+            <DeskFigure />
+          </div>
         </section>
 
         <section className="home-section" aria-label="Getting in touch">

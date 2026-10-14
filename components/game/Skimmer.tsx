@@ -3,11 +3,12 @@
 import * as React from "react";
 import { IsoFigure } from "@/components/iso/react/draw";
 import { useLoop, useReadout } from "@/components/iso/react/live";
-import { type SolidPaths, translateAlong } from "@/components/iso/iso-kit";
+import { translateAlong } from "@/components/iso/iso-kit";
 import {
   BUOY,
   CROSS,
   DRONE,
+  type Piece,
   EDGE,
   HEIGHT,
   P,
@@ -62,19 +63,35 @@ interface Shot {
 
 const HALF: Record<Kind, number> = { 0: 15, 1: 15, 2: 22 };
 
-/** One prebuilt solid, as JSX. */
-function Solid({ paths, tone = "mid", lit }: { paths: SolidPaths; tone?: string; lit?: boolean }) {
+/** One prebuilt piece, as JSX: a solid, a line on a face, or a row of
+    screws. The build hands back an ordered list of these, so painter's
+    order is decided in the geometry and read straight off here. */
+function Draw({ pieces }: { pieces: Piece[] }) {
   return (
-    <g className="iso-solid" data-lit={lit ? "" : undefined}>
-      <path className="iso-fill" d={paths.fill} />
-      {paths.shades.map((d, i) => (
-        <path key={i} className="iso-shade" data-shade={i} d={d} />
-      ))}
-      <path className="iso-top" d={paths.top} />
-      <path className="iso-line iso-crease" data-tone="faint" d={paths.crease} />
-      {paths.bevel ? <path className="iso-line iso-bevel" data-tone="lo" d={paths.bevel} /> : null}
-      <path className="iso-line iso-edge" data-tone={tone} d={paths.outline} />
-    </g>
+    <>
+      {pieces.map((piece, i) =>
+        piece.k === "s" ? (
+          <g key={i} className="iso-solid" data-lit={piece.lit ? "" : undefined}>
+            <path className="iso-fill" d={piece.p.fill} />
+            {piece.p.shades.map((d, n) => (
+              <path key={n} className="iso-shade" data-shade={n} d={d} />
+            ))}
+            <path className="iso-top" d={piece.p.top} />
+            <path className="iso-line iso-crease" data-tone="faint" d={piece.p.crease} />
+            {piece.p.bevel ? <path className="iso-line iso-bevel" data-tone="lo" d={piece.p.bevel} /> : null}
+            <path className="iso-line iso-edge" data-tone={piece.t} d={piece.p.outline} />
+          </g>
+        ) : piece.k === "l" ? (
+          <path key={i} className="iso-line" data-tone={piece.t} d={piece.d} />
+        ) : (
+          <g key={i} className="iso-dots">
+            {piece.at.map(([x, y], n) => (
+              <circle key={n} cx={x} cy={y} r={0.9} />
+            ))}
+          </g>
+        ),
+      )}
+    </>
   );
 }
 
@@ -375,23 +392,7 @@ export default function Skimmer() {
               opacity="0"
               ref={(n) => { t.node = n; }}
             >
-              {t.kind === 0 ? (
-                <>
-                  <Solid paths={PYLON.post} tone="mid" />
-                  <Solid paths={PYLON.cap} tone="hi" />
-                </>
-              ) : t.kind === 1 ? (
-                <>
-                  <Solid paths={BUOY.body} tone="mid" />
-                  <Solid paths={BUOY.mast} tone="lo" />
-                </>
-              ) : (
-                <>
-                  <Solid paths={DRONE.body} tone="hi" lit />
-                  <Solid paths={DRONE.rotorR} tone="lo" />
-                  <Solid paths={DRONE.rotorL} tone="lo" />
-                </>
-              )}
+              <Draw pieces={t.kind === 0 ? PYLON : t.kind === 1 ? BUOY : DRONE} />
             </g>
           ))}
         </g>
@@ -416,20 +417,7 @@ export default function Skimmer() {
             ))}
           </g>
           <g ref={bank} className="skim-plane">
-            {/* Painter's order, far side first. The nose points away, so the
-                tail is the near end and the right wing is the far one: draw
-                it before the hull and the left wing after, or the hull cuts
-                through a wing it is behind. */}
-            <Solid paths={PLANE.floatR} tone="lo" />
-            <Solid paths={PLANE.wingR} tone="mid" />
-            <Solid paths={PLANE.hull} tone="hi" lit />
-            <Solid paths={PLANE.canopy} tone="hi" />
-            <Solid paths={PLANE.nacelleR} tone="mid" />
-            <Solid paths={PLANE.nacelleL} tone="mid" />
-            <Solid paths={PLANE.tailplane} tone="mid" />
-            <Solid paths={PLANE.fin} tone="mid" />
-            <Solid paths={PLANE.wingL} tone="mid" />
-            <Solid paths={PLANE.floatL} tone="lo" />
+            <Draw pieces={PLANE} />
           </g>
         </g>
       </IsoFigure>

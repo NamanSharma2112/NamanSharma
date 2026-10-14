@@ -12,6 +12,7 @@ import Work, { type Project } from "@/components/home/Work";
 import { CamFigure } from "@/components/figures/cam/figure";
 import { DeskFigure } from "@/components/figures/desk/figure";
 import { ChurnFigure } from "@/components/figures/churn/figure";
+import { BenchFigure } from "@/components/figures/bench/figure";
 import "@/components/iso/iso.css";
 import "@/components/home/home.css";
 
@@ -139,6 +140,12 @@ export default function Home() {
             <CamFigure />
             <ChurnFigure />
             <DeskFigure />
+          </div>
+
+          {/* And the bench the three of them come off. One piece, four
+              passes, and a gauge at the end that decides it is done. */}
+          <div className="home-bench iso">
+            <BenchFigure />
           </div>
         </section>
 

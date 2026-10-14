@@ -792,3 +792,12 @@ main.home-col > * {
 .home-bento-row > * {
   min-width: 0;
 }
+
+/* The big one gets the same breakout as the row above it, and all of it. */
+.home-bench {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1280px, calc(100vw - 48px));
+  margin-top: 20px;
+}

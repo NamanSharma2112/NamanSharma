@@ -1,0 +1,23 @@
+.bench {
+  border-radius: 10px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.bench:focus-visible {
+  outline: 1px solid var(--anatomy-muted);
+  outline-offset: 6px;
+}
+
+.bench .iso-svg { overflow: visible; }
+
+/* The work is the one lit part: everything else on the bench exists to
+   reach it. */
+.bench-piece > .iso-edge { stroke: var(--anatomy-lit); }
+
+.bench-needle { stroke-width: 1.1; }
+
+@media (max-width: 640px) {
+  .bench { overflow: hidden; }
+  .iso-plate .bench .iso-svg { width: 118%; margin: -3% -9%; }
+}

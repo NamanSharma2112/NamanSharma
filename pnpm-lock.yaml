@@ -32,6 +32,9 @@ importers:
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      feral-blob:
+        specifier: ^0.2.0
+        version: 0.2.0(motion@12.43.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       gsap:
         specifier: ^3.15.0
         version: 3.15.0
@@ -2368,6 +2371,13 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  feral-blob@0.2.0:
+    resolution: {integrity: sha512-VCVpLiHd3i+fjcJpMlB0Qrxr9O/FTn/ui85J9pRgIbm+OmltApWaupEEkwqX/fDXf2txKT3U1xpFbIYtdqVK+w==}
+    peerDependencies:
+      motion: '>=11'
+      react: '>=18'
+      react-dom: '>=18'
 
   fflate@0.8.3:
     resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
@@ -6419,6 +6429,12 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
       picomatch: 4.0.7
+
+  feral-blob@0.2.0(motion@12.43.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    dependencies:
+      motion: 12.43.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
 
   fflate@0.8.3: {}
 

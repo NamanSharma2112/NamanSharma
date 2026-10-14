@@ -1,0 +1,94 @@
+/* ══ the jelly blob, in this page's ink ══════════════════════════════════
+   feral-blob is var-driven all the way down — body gradient, outline, arms,
+   cheeks, eyes, belly glow, and the ground shadow and shading that derive
+   from them. So the skin is set here and the package is left alone.
+
+   The target is the figures further down the page: a white solid, one
+   hairline outline, grey shading, no colour. That is what the whole site is
+   drawn in, and a violet jelly next to the name would be the only saturated
+   thing on it.
+
+   Three things in the component stay fixed whatever the palette — the white
+   glints, the near-black mouth and the blue tears of the sad mood — which is
+   why the dark skin below goes to a mid graphite rather than to black: the
+   mouth has to stay readable against the body. */
+
+.mascot {
+  display: inline-flex;
+  align-items: center;
+
+  /* body gradient, top → rim */
+  --jelly-body-top: #ffffff;
+  --jelly-body-mid: #f1f1ef;
+  --jelly-body-deep: #dcdcd7;
+  --jelly-body-rim: #fbfbf9;
+
+  /* the hairline, the same weight the figures are drawn with */
+  --jelly-outline: #1a1a1a;
+  --jelly-outline-light: #4a4a4a;
+
+  /* arms, a step deeper than the body so they read as mass */
+  --jelly-arm-light: #fbfbf9;
+  --jelly-arm-mid: #eceae6;
+  --jelly-arm-deep: #d4d4ce;
+
+  /* cheeks: neutral, so the blush is shading rather than pink */
+  --jelly-cheek-light: #ebebe7;
+  --jelly-cheek: #dedeD8;
+  --jelly-cheek-deep: #d2d2cb;
+
+  /* eyes and face ink, off the page's own ink */
+  --jelly-eye-light: #3a3a3f;
+  --jelly-eye: #15151a;
+  --jelly-eye-deep: #0b0b0d;
+  --jelly-face-ink: #15151a;
+  --jelly-face-soft: #3a3a3f;
+
+  --jelly-belly-glow: #f6f6f2;
+  --jelly-eye-sparkle: #b9b9b4;
+  --jelly-shadow: #b4b4ae;
+  --jelly-shadow-light: #cfcfc9;
+}
+
+/* The site switches on a class, not a data attribute, so the package's own
+   light/dark hooks never fire here and both halves are written out. */
+html.dark .mascot {
+  --jelly-body-top: #6c6c74;
+  --jelly-body-mid: #4e4e56;
+  --jelly-body-deep: #34343b;
+  --jelly-body-rim: #7c7c86;
+
+  --jelly-outline: #e8e8e6;
+  --jelly-outline-light: #a8a8a4;
+
+  --jelly-arm-light: #76767f;
+  --jelly-arm-mid: #55555d;
+  --jelly-arm-deep: #3a3a41;
+
+  --jelly-cheek-light: #7a7a83;
+  --jelly-cheek: #6a6a73;
+  --jelly-cheek-deep: #5c5c65;
+
+  --jelly-eye-light: #2a2a30;
+  --jelly-eye: #121216;
+  --jelly-eye-deep: #08080a;
+  --jelly-face-ink: #121216;
+  --jelly-face-soft: #2a2a30;
+
+  --jelly-belly-glow: #85858f;
+  --jelly-eye-sparkle: #9a9aa4;
+  --jelly-shadow: #1c1c20;
+  --jelly-shadow-light: #2a2a30;
+}
+
+/* The art sits in the middle of a 900 × 720 box, so the box is set wider
+   than the blob looks and the overflow is left visible for the arms and the
+   ground shadow. */
+.mascot-blob {
+  width: 108px;
+  height: auto;
+}
+
+@media (max-width: 620px) {
+  .mascot-blob { width: 84px; }
+}

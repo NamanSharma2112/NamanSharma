@@ -60,8 +60,10 @@ export default function Work({ projects }: { projects: readonly Project[] }) {
         onReorder={setRows}
         shred={false}
         // Wider than the column: the CSS caps it at 100%, so this just means
-        // "as wide as there is room for".
-        width={900}
+        // "as wide as there is room for". 1120 is the page frame's own width,
+        // so the list ends on the same vertical as the figure cards above it
+        // rather than stopping 60px short of them.
+        width={1120}
         height={height}
         inset={0}
         gap={GAP}

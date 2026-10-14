@@ -4,6 +4,7 @@ import { useState } from "react";
 import { arc, motion } from "motion/react";
 import { Compass, Folder, Mail, Music, X } from "lucide-react";
 
+import { PressButton } from "@/components/ui/press-button";
 /**
  * Minimise to the dock, along a curve.
  *
@@ -45,14 +46,14 @@ export default function DockArc() {
               <span className="truncate font-mono text-[10px] text-zinc-500 dark:text-zinc-400">
                 window.jpg
               </span>
-              <button
+              <PressButton variant="bare"
                 type="button"
                 aria-label="Minimise to dock"
                 onClick={() => setMinimised(true)}
                 className="grid size-6 place-items-center rounded-md text-zinc-500 transition-colors hover:bg-black/5 hover:text-zinc-900 dark:hover:bg-white/10 dark:hover:text-white"
               >
                 <X className="size-3.5" />
-              </button>
+              </PressButton>
             </div>
             <img
               src={SHOT}

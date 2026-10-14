@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useTheme } from "next-themes";
 
+import { PressButton } from "@/components/ui/press-button";
 /**
  * The strip on the right of the masthead: today's date, a second hand ticking
  * beside it, and the light the page is in.
@@ -94,7 +95,7 @@ export default function Status() {
   return (
     <div ref={box} className="st">
       <div className="st-slot">
-        <button
+        <PressButton variant="bare"
           type="button"
           className="st-date"
           onMouseEnter={() => setOpen("clock")}
@@ -105,7 +106,7 @@ export default function Status() {
           {/* Held at a fixed width so the strip does not jump when the date
               arrives on the client. */}
           {date || "     "}
-        </button>
+        </PressButton>
 
         <AnimatePresence>
           {open === "clock" && now && (
@@ -129,7 +130,7 @@ export default function Status() {
       </svg>
 
       <div className="st-slot">
-        <button
+        <PressButton variant="bare"
           type="button"
           aria-label="Appearance"
           aria-expanded={open === "light"}
@@ -137,7 +138,7 @@ export default function Status() {
           onClick={() => setOpen((o) => (o === "light" ? null : "light"))}
         >
           <Glyph pref={pref} now={now} />
-        </button>
+        </PressButton>
 
         <AnimatePresence>
           {open === "light" && (
@@ -155,7 +156,7 @@ export default function Status() {
                     ["dark", "Night", "Dark mode"],
                   ] as const
                 ).map(([key, title, note]) => (
-                  <button
+                  <PressButton variant="bare"
                     key={key}
                     type="button"
                     className={`st-row ${pref === key ? "is-on" : ""}`}
@@ -173,7 +174,7 @@ export default function Status() {
                         <path d="m5 12.5 4.5 4.5L19 7.5" />
                       </svg>
                     )}
-                  </button>
+                  </PressButton>
                 ))}
               </div>
             </motion.div>

@@ -6,6 +6,8 @@ import Footer from "@/components/home/Footer";
 import { HalftoneDots } from "@/components/ui/halftone-dots";
 import ParticleName from "@/components/home/ParticleName";
 import Chat from "@/components/home/Chat";
+import { NeonEdgeButton } from "@/components/ui/neon-edge-button";
+import { Mail } from "lucide-react";
 import Work, { type Project } from "@/components/home/Work";
 import "@/components/home/home.css";
 
@@ -130,12 +132,12 @@ export default function Home() {
               contact section laid out as an exchange, not a testimonial. */}
           <Chat lines={TALK} />
 
-          <p className="home-chat-foot">
-            Email is the fastest way —{" "}
-            <a className="home-link" href={`mailto:${EMAIL}`}>
-              {EMAIL}
-            </a>
-          </p>
+          <div className="home-chat-foot">
+            <NeonEdgeButton href={`mailto:${EMAIL}`} icon={<Mail />}>
+              Email me
+            </NeonEdgeButton>
+            <span className="home-chat-address">{EMAIL}</span>
+          </div>
         </section>
         <Footer />
       </div>

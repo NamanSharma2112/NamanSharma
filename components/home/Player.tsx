@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { PressButton } from "@/components/ui/press-button";
 /**
  * The pill in the middle of the topbar: a track, and a button to play it.
  *
@@ -76,7 +77,7 @@ export default function Player({ track }: { track: Track | null }) {
         }}
       />
 
-      <button
+      <PressButton variant="bare"
         type="button"
         className="pl-pill"
         onClick={toggle}
@@ -114,7 +115,7 @@ export default function Player({ track }: { track: Track | null }) {
         <span className="pl-bar" aria-hidden>
           <span className="pl-bar-fill" style={{ transform: `scaleX(${progress})` }} />
         </span>
-      </button>
+      </PressButton>
     </div>
   );
 }

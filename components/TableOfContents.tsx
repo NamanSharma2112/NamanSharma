@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Type } from "lucide-react";
 
+import { PressButton } from "@/components/ui/press-button";
 type TOCItem = { id: string; heading: string };
 type FontOption = { label: string; value: string };
 
@@ -175,7 +176,7 @@ export default function TableOfContents({
                     {fontOptions.map((opt, idx) => {
                       const isSelected = fontIndex === idx;
                       return (
-                        <button
+                        <PressButton variant="bare"
                           key={opt.label}
                           onClick={() => onFontChange(idx)}
                           className="relative flex-1 py-[5px] rounded-[10px] text-[12px] cursor-pointer outline-none select-none"
@@ -197,7 +198,7 @@ export default function TableOfContents({
                             />
                           )}
                           <span className="relative z-10 font-medium">{opt.label}</span>
-                        </button>
+                        </PressButton>
                       );
                     })}
                   </div>

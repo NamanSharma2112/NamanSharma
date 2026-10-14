@@ -6,6 +6,7 @@ import { Copy, Check } from "lucide-react";
 import { SiX } from "@icons-pack/react-simple-icons";
 import { playTap } from "@/lib/sounds";
 
+import { PressButton } from "@/components/ui/press-button";
 interface Position {
   x: number;
   y: number;
@@ -99,25 +100,25 @@ export default function SelectionToolbar({ slug }: { slug: string }) {
             backdropFilter: "blur(12px)",
           }}
         >
-          <button
+          <PressButton variant="bare"
             onMouseDown={(e) => e.preventDefault()}
             onClick={shareOnX}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-zinc-300 hover:text-white hover:bg-white/10 transition-colors text-xs font-medium"
           >
             <SiX size={13} />
             <span>Tweet</span>
-          </button>
+          </PressButton>
 
           <div className="w-px h-4 bg-zinc-700" />
 
-          <button
+          <PressButton variant="bare"
             onMouseDown={(e) => e.preventDefault()}
             onClick={copyQuote}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-zinc-300 hover:text-white hover:bg-white/10 transition-colors text-xs font-medium"
           >
             {copied ? <Check size={13} className="text-green-400" /> : <Copy size={13} />}
             <span>{copied ? "Copied" : "Copy"}</span>
-          </button>
+          </PressButton>
         </motion.div>
       )}
     </AnimatePresence>

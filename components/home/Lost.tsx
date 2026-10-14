@@ -1,17 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import Ballpit from "@/components/reactbits/Ballpit";
+import { NotFound } from "@/components/ui/not-found";
+import { GooeyMenu } from "@/components/ui/gooey-menu";
 import "@/components/home/lost.css";
 
 /**
  * The page you get when there is no page.
  *
- * A pit of balls behind the number, and your cursor is a ball in it — so the
- * dead end is at least worth a few seconds. Everything in front of it is a
- * link back out.
+ * A pit of balls behind it, and your cursor is a ball in it. In front, the
+ * number as three loose digits that lean away from the pointer, and a single
+ * way out: a pill that pours open into every page on the site.
  *
  * The balls are lit and shaded by three.js, so their colours are numbers
  * rather than CSS variables and have to be chosen for the theme by hand.
@@ -31,7 +33,17 @@ const BALLS = {
   },
 };
 
+const PAGES = [
+  { label: "Home", href: "/" },
+  { label: "Work", href: "/work" },
+  { label: "Writing", href: "/blog" },
+  { label: "Inspiration", href: "/inspiration" },
+  { label: "Lab", href: "/lab" },
+  { label: "Desktop", href: "/desktop" },
+];
+
 export default function Lost() {
+  const router = useRouter();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -67,18 +79,21 @@ export default function Lost() {
       </div>
 
       <div className="lost-card">
-        <p className="lost-number">404</p>
-        <h1 className="lost-title">Nothing here</h1>
-        <p className="lost-note">
-          This address does not go anywhere. The balls are real, though — push
-          them around on your way out.
-        </p>
-        <nav className="lost-links">
-          <Link href="/">Home</Link>
-          <Link href="/work">Work</Link>
-          <Link href="/blog">Writing</Link>
-          <Link href="/lab">Lab</Link>
-        </nav>
+        <NotFound
+          errorCode="404"
+          title="Nothing here."
+          description="This address does not go anywhere. The balls are real, though — push them around on your way out."
+        >
+          {/* The only exit, and it holds all of them. Choosing a page goes
+              there; nothing on this page needs a second button. */}
+          <GooeyMenu
+            className="lost-menu"
+            width={260}
+            defaultValue="Take me somewhere"
+            options={PAGES.map((p) => p.label)}
+            onSelect={(_, index) => router.push(PAGES[index].href)}
+          />
+        </NotFound>
       </div>
     </main>
   );

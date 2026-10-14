@@ -7,6 +7,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import PixelTransition from "@/components/reactbits/PixelTransition";
 
+import { PressButton } from "@/components/ui/press-button";
 type Message = {
   id: string;
   text: string;
@@ -109,12 +110,12 @@ export default function FloatingContactWidget() {
                   </div>
                 </div>
               </div>
-              <button 
+              <PressButton variant="bare" 
                 onClick={() => setIsOpen(false)}
                 className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors text-zinc-500"
               >
                 <X size={16} />
-              </button>
+              </PressButton>
             </div>
 
             {/* Messages Area */}
@@ -159,13 +160,13 @@ export default function FloatingContactWidget() {
                   placeholder="iMessage"
                   className="w-full bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/80 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-white/30 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-500 transition-shadow"
                 />
-                <button 
+                <PressButton variant="bare" 
                   type="submit"
                   disabled={!inputValue.trim()}
                   className="absolute right-1 w-8 h-8 flex items-center justify-center rounded-full bg-white text-black disabled:opacity-50 disabled:bg-zinc-300 dark:disabled:bg-zinc-700 transition-colors"
                 >
                   <ArrowUp size={16} strokeWidth={2.5} />
-                </button>
+                </PressButton>
               </div>
             </form>
             </div>

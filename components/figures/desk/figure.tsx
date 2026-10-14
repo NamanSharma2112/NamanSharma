@@ -8,7 +8,7 @@ import { DeskArt } from "./art";
 export function DeskFigure() {
   return (
     <Plate
-      fig="Fig 2"
+      fig="Fig 3"
       title="A machine in the browser"
       hint="Hover to boot it again"
       readout="booting…"

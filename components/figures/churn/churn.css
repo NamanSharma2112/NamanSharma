@@ -1,0 +1,23 @@
+.churn {
+  border-radius: 10px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.churn:focus-visible {
+  outline: 1px solid var(--anatomy-muted);
+  outline-offset: 6px;
+}
+
+.churn .iso-svg { overflow: visible; }
+
+/* A bead that has crossed the bar is spent, so it loses its weight. The
+   beads still on the kept side are the subject. */
+.churn-bead { transition: opacity 300ms var(--anatomy-ease); }
+
+.churn-needle { stroke-width: 1.1; }
+
+@media (max-width: 640px) {
+  .churn { overflow: hidden; }
+  .iso-plate .churn .iso-svg { width: 116%; margin: -3% -8%; }
+}

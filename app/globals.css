@@ -1575,3 +1575,83 @@
     outline-offset: 2px;
   }
 }
+
+/* ══ Eye tracker ═══════════════════════════════════════════
+   See lab/Watcher.tsx. The frame holds the largest ball the
+   Size knob allows, so the wall never rescales it. */
+.eyt {
+  width: 200px;
+  height: 200px;
+  display: grid;
+  place-items: center;
+
+  /* ── Bencho's tokens, read off this project's own ─────────
+     The CSS below reads four custom properties and defines
+     none of them. Three are named for Bencho's palette and are
+     scoped here rather than declared globally, so nothing new
+     leaks into the page's own token set:
+
+       --fill-slab  the surface a thing is drawn on  → --surface
+       --fill-on    the ink that sits on that slab   → --fg
+       --ink        the page's ink                   → --fg
+
+     The fourth, --bg, this project already has and already
+     means the same thing (the page's ground), so it is left
+     alone to resolve to the site's own.
+
+     None of the four ends in -rgb, so nothing here wants the
+     three-bare-numbers form. */
+  --fill-slab: var(--surface);
+  --fill-on: var(--fg);
+  --ink: var(--fg);
+}
+
+.eyt-ball {
+  width: var(--eyt-size, 100px);
+  height: var(--eyt-size, 100px);
+  overflow: visible;}
+
+/* the ball is the Fill's own slab and the eyes its ink: white
+   with dark eyes on a light fill, near-black with light eyes on
+   a dark one */
+.eyt-body { fill: var(--fill-slab, #ffffff); }
+
+.eyt-eye { fill: var(--fill-on, #0b0b0d); }
+
+/* The four rules below are Bencho's own logo harness. `.logo-test`
+   and `[data-theme]` do not exist in this project — it switches on
+   a `.dark` class — so they never match here. Kept because they
+   are part of the component as shipped, and because they record
+   what the mark is meant to do when it IS the logo: ink body,
+   ground-coloured eyes, inverted. */
+.logo-test .eyt { width: auto; height: auto; }
+
+.logo-test .eyt-body { fill: var(--ink); }
+
+.logo-test .eyt-eye { fill: var(--bg); }
+
+/* the circle and pill in dark mode match the hexagon: a lifted
+   dark body with the eyes kept white */
+[data-theme="dark"] .logo-test .eyt-body { fill: #2b2c30; }
+
+[data-theme="dark"] .logo-test .eyt-eye { fill: #fbfbfa; }
+
+/* ── beside the name ──────────────────────────────────────────
+   At this size the 200px frame would push the prose a third of
+   the way down the screen, so it shrinks to the mark itself and
+   sits on the baseline of the name. The body takes the page's
+   ink and the eyes its ground, which is the logo treatment
+   above — here it reads as a small black mark with white eyes,
+   the same weight as the heading beside it. */
+.home-eye {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.home-eye .eyt {
+  width: auto;
+  height: auto;
+  --fill-slab: var(--fg);
+  --fill-on: var(--bg);
+}

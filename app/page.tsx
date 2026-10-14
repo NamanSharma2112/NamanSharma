@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { type Track } from "@/components/home/Player";
 import TopStrip from "@/components/home/TopStrip";
+import { EyeTracker } from "@/components/EyeTracker";
 import Footer from "@/components/home/Footer";
 import { Mail } from "lucide-react";
 import Work, { type Project } from "@/components/home/Work";
@@ -54,7 +55,12 @@ export default function Home() {
       <div className="home-col">
         <TopStrip track={TRACK} />
 
-        <h1 className="home-name">Naman Sharma</h1>
+        {/* The mark watches you while you are in the column it sits in,
+            and faces front when you leave it. */}
+        <div className="home-eye">
+          <EyeTracker size={40} shape="Ball" eyes="Slant" eyeScale={1.25} follow={70} bounce={34} />
+          <h1 className="home-name">Naman Sharma</h1>
+        </div>
 
         <div className="home-prose">
           <p>

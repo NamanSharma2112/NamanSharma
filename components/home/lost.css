@@ -27,8 +27,31 @@
   max-width: 420px;
   padding: 0 24px;
   text-align: center;
-  /* Let the pointer through to the pit; the links take it back. */
+  /* Let the pointer through to the pit; the digits and the menu take it
+     back. */
   pointer-events: none;
+}
+
+.lost-card section,
+.lost-card [role="presentation"],
+.lost-menu {
+  pointer-events: auto;
+}
+
+/* The digits stand over moving balls: the same halo the old number had. */
+.lost-card [role="presentation"] span {
+  text-shadow: 0 0 46px var(--bg), 0 0 18px var(--bg);
+}
+
+.lost-card h1,
+.lost-card p {
+  text-shadow: 0 0 22px var(--bg), 0 0 10px var(--bg), 0 0 4px var(--bg);
+}
+
+/* The menu reserves room for its open panel, so the space is there before
+   it pours open rather than the page jumping when it does. */
+.lost-menu {
+  margin-bottom: -150px;
 }
 
 /* A breath of the page's own ground behind the words. The balls are busy and

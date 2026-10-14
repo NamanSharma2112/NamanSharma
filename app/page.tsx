@@ -6,6 +6,9 @@ import Footer from "@/components/home/Footer";
 import { HalftoneDots } from "@/components/ui/halftone-dots";
 import ParticleName from "@/components/home/ParticleName";
 import Chat from "@/components/home/Chat";
+import { ProfileCard } from "@/components/ui/profile-card";
+import { NeonEdgeButton } from "@/components/ui/neon-edge-button";
+import { Mail } from "lucide-react";
 import Work, { type Project } from "@/components/home/Work";
 import "@/components/home/home.css";
 
@@ -125,17 +128,34 @@ export default function Home() {
         <section className="home-section" aria-label="Getting in touch">
           <p className="home-section-label">Getting in touch</p>
 
+          {/* Who you would be writing to. Every detail on it is one this site
+              already states — the handle is the one the menu links to, the
+              line is the opening of the prose above — and it carries no
+              follower count or verification tick, because there are none
+              to quote. */}
+          <ProfileCard
+            className="home-profile"
+            name="Naman Sharma"
+            username="@NamanSharma2112"
+            description="Design engineer. I build for the web, and I care about how an interface feels."
+            avatarSrc="/me/portrait-art.png"
+            website="github.com/NamanSharma2112"
+            actionLabel="Follow"
+            actionHref="https://x.com/NamanSharma2112"
+            xHref="https://x.com/NamanSharma2112"
+          />
+
           {/* The questions are the ones that actually get asked, and the
               answers are his. Nothing here is attributed to anyone — it is a
               contact section laid out as an exchange, not a testimonial. */}
           <Chat lines={TALK} />
 
-          <p className="home-chat-foot">
-            Email is the fastest way —{" "}
-            <a className="home-link" href={`mailto:${EMAIL}`}>
-              {EMAIL}
-            </a>
-          </p>
+          <div className="home-chat-foot">
+            <NeonEdgeButton href={`mailto:${EMAIL}`} icon={<Mail />}>
+              Email me
+            </NeonEdgeButton>
+            <span className="home-chat-address">{EMAIL}</span>
+          </div>
         </section>
         <Footer />
       </div>

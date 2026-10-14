@@ -549,10 +549,29 @@
 }
 
 .home-chat-foot {
-  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
   font-size: 15px;
   line-height: 1.6;
   color: var(--fg-body);
+}
+
+/* The address beside the button, selectable, for anyone who would rather
+   copy it than have a mail client open. */
+.home-chat-address {
+  font-size: 14px;
+  color: var(--fg-muted);
+  user-select: all;
+}
+
+/* The card is built for a wide stage; in this column it sits at the
+   column's width and keeps its own radius. */
+.home-profile {
+  margin: 18px 0 26px;
+  max-width: 100%;
 }
 
 /* ── the nav row ────────────────────────────────────────────────────────── */

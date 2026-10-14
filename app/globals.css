@@ -3,6 +3,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
+  /* easyui's colour names, read from this site's palette (see the aliases
+     further down), so text-text-primary and bg-surface-raised work. */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface: var(--surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --ring-duration: 150ms;
@@ -1543,3 +1550,28 @@
     transform: translateX(5.5px);
     --speaker-ms: 260ms;
     --speaker-delay: 80ms;}
+
+/* ── easyui, in this site's colours ──────────────────────────────────────
+
+   The easyui pieces (press button, skeleton, not-found, profile card) are
+   written against their own token names. Rather than restyle each one,
+   their names point at the palette everything else uses — so they follow
+   the light and the dark theme with the rest of the page, and a change to
+   the palette reaches them too. `.dark` sits on <html>, the same element as
+   `:root`, so these resolve to the dark values when it is set. */
+:root {
+  --text-primary: var(--fg);
+  --text-secondary: var(--fg-body);
+  --text-muted: var(--fg-muted);
+  --surface-raised: var(--surface);
+  --surface-hover: color-mix(in srgb, var(--fg) 5%, var(--surface));
+  --border-hover: color-mix(in srgb, var(--fg) 22%, var(--line));
+}
+
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--fg) 45%, transparent);
+    outline-offset: 2px;
+  }
+}

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Play, Pause, Square, Volume2 } from "lucide-react";
 import { playTap } from "@/lib/sounds";
 
+import { PressButton } from "@/components/ui/press-button";
 /**
  * The four equaliser bars beside the play button.
  *
@@ -124,7 +125,7 @@ export default function TextToSpeech({
 
   return (
     <div className="flex items-center gap-2 mt-4">
-      <button
+      <PressButton variant="bare"
         onClick={handlePlayPause}
         className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all active:scale-95 ${
           isDark 
@@ -138,10 +139,10 @@ export default function TextToSpeech({
           <Volume2 size={14} className={isDark ? "text-amber-400" : "text-blue-600"} />
         )}
         <span>{isPlaying && !isPaused ? "Pause Audio" : "Listen to Article"}</span>
-      </button>
+      </PressButton>
 
       {isPlaying && (
-        <button
+        <PressButton variant="bare"
           onClick={handleStop}
           className={`flex items-center justify-center w-8 h-8 rounded-full transition-all active:scale-95 ${
             isDark 
@@ -151,7 +152,7 @@ export default function TextToSpeech({
           title="Stop reading"
         >
           <Square size={12} />
-        </button>
+        </PressButton>
       )}
       
       {isPlaying && !isPaused && (

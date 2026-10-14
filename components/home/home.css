@@ -20,12 +20,10 @@
   padding: 0 24px;
 }
 
-@media (min-width: 1100px) {
-  .home-col {
-    margin-left: max(24px, calc(50% - 336px + 56px));
-    margin-right: auto;
-  }
-}
+/* One centre line for the whole page. The reading column and the figures
+   are different widths on purpose — a measured drawing wants more room
+   than a paragraph — but they are centred on the same axis, so the page
+   reads as a document rather than as two layouts side by side. */
 
 /* ── the strip across the top ───────────────────────────────────────────── */
 
@@ -618,6 +616,13 @@
    on the column's left edge. The height is the 44px glyph plus the room the
    particles fly into, and the overflow is what stops them reaching the
    signature above. */
+/* With no portrait above it the name opens the page, so it takes the space
+   the picture used to hold. */
+.home-strip + .home-name {
+  margin-top: 2px;
+  font-size: 34px;
+}
+
 .home-name.is-particles {
   width: 395px;
   max-width: 100%;
@@ -775,7 +780,7 @@ main.home-col > * {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
-  width: min(1280px, calc(100vw - 48px));
+  width: min(1120px, calc(100vw - 48px));
   display: grid;
   gap: 20px;
   margin-top: 16px;
@@ -798,6 +803,118 @@ main.home-col > * {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
-  width: min(1280px, calc(100vw - 48px));
+  width: min(1120px, calc(100vw - 48px));
   margin-top: 20px;
+}
+
+/* ── the drawn stages ────────────────────────────────────────────────────
+   Two full-width bands that carry the figures. Their text stays in the
+   reading column; only the machines break out of it. */
+
+.home-stage {
+  margin-top: 56px;
+}
+
+.home-stage-lede {
+  margin-top: 10px;
+  max-width: 54ch;
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--fg-body);
+}
+
+/* One tile per project: what it is, the machine, then what it does. */
+.home-tile {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.home-tile-name {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.008em;
+  color: var(--fg);
+}
+
+.home-tile-role {
+  margin-top: 2px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+.home-tile-note {
+  margin-top: 14px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--fg-body);
+}
+
+.home-tile-note a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--fg) 32%, transparent);
+}
+
+.home-tile-note a:hover {
+  text-decoration-color: var(--fg);
+}
+
+/* The row and the bench already centre themselves on the window; inside a
+   full-width band they no longer need to be pulled out of the column. */
+.home-stage .home-bento-row,
+.home-stage .home-bench {
+  left: auto;
+  transform: none;
+  margin-inline: auto;
+  margin-top: 22px;
+}
+
+/* ── the one action on the page ──────────────────────────────────────────
+   Drawn the way the figure cards are: a hairline box, a mono label in the
+   corner type, and the address set beside it rather than inside it. */
+
+.home-plate-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 11px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg);
+  transition:
+    border-color 180ms var(--ease-out),
+    background-color 180ms var(--ease-out);
+}
+
+.home-plate-link:hover {
+  border-color: color-mix(in srgb, var(--fg) 26%, var(--line));
+  background: color-mix(in srgb, var(--fg) 3%, var(--surface));
+}
+
+.home-plate-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+.home-plate-addr {
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+  color: var(--fg-muted);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 480px) {
+  .home-plate-addr { display: none; }
 }

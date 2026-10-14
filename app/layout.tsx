@@ -43,7 +43,6 @@ export const metadata: Metadata = {
   },
 };
 
-import FloatingContactWidget from "@/components/FloatingContactWidget";
 import SiteAtmosphere from "@/components/SiteAtmosphere";
 import Boot from "@/components/Boot";
 import PhotoScope from "@/components/PhotoScope";
@@ -92,7 +91,6 @@ export default function RootLayout({
                 </PhotoScope>
               </Boot>
             </DesktopProvider>
-            <FloatingContactWidget />
             <Menu />
           </ThemeProvider>
         </SoundEffects>

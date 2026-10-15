@@ -898,8 +898,12 @@ main.home-col > * {
 }
 
 .home-plate-link:hover {
-  border-color: color-mix(in srgb, var(--fg) 26%, var(--line));
-  background: color-mix(in srgb, var(--fg) 3%, var(--surface));
+  border-color: color-mix(in srgb, var(--mark) 45%, var(--line));
+  background: color-mix(in srgb, var(--mark) 4%, var(--surface));
+}
+
+.home-plate-link:hover svg {
+  color: var(--mark);
 }
 
 .home-plate-link svg {
@@ -999,6 +1003,11 @@ main.home-col > * {
   height: 4px;
   border-radius: 50%;
   background: currentColor;
+}
+
+/* Only the last of the three is a live fact, so only it is marked. */
+.home-hero-meta li:last-child {
+  color: var(--mark);
 }
 
 @media (max-width: 620px) {
@@ -1144,11 +1153,15 @@ main.home-col > * {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-  text-decoration-color: color-mix(in srgb, var(--fg) 32%, transparent);
+  /* The rule under a link is where the accent earns its keep: it marks the
+     one word in a paragraph that does something. */
+  text-decoration-color: color-mix(in srgb, var(--mark) 55%, transparent);
 }
 
-.home-chapter a:hover {
-  text-decoration-color: var(--fg);
+.home-chapter a:hover,
+.home-story-lede a:hover {
+  color: var(--mark);
+  text-decoration-color: var(--mark);
 }
 
 /* ── the big one, across the frame ──────────────────────────────────── */

@@ -303,8 +303,19 @@ export const ART = (() => {
     /* Where the finished work is set down. */
     out: slabOf(OUT, 0, 4, P, 4, 0.5),
     outWell: planOutline(insetPlan(OUT, 4), 4, P),
+    /* The pieces that have come off it. They are the same slab as the one
+       on the carriage, at the same thickness — a finished piece that is a
+       fifth as thick as the one being worked reads as a shim, not as the
+       output. Each carries its stamp, because the stamp is the thing that
+       says it is finished. */
     outDone: [0, 1, 2].map((i) =>
-      slabOf({ x: OUT.x + 9 + i * 2, y: OUT.y + 10 + i * 2, w: 34, d: 26, r: 2 }, 4 + i * 1.4, 1.4, P, 2),
+      slabOf({ x: OUT.x + 9 + i * 2, y: OUT.y + 10 + i * 2, w: 34, d: 26, r: 2 }, 4 + i * 4.6, 4.4, P, 2, 0.5),
+    ),
+    outStamp: [0, 1, 2].map((i) =>
+      ring(OUT.x + 9 + i * 2 + 25, OUT.y + 10 + i * 2 + 18, 3.4, 8.4 + i * 4.6, P, 18),
+    ),
+    outNotch: [0, 1, 2].map((i) =>
+      planOutline({ x: OUT.x + 12 + i * 2, y: OUT.y + 13 + i * 2, w: 11, d: 9, r: 1.5 }, 8.4 + i * 4.6, P),
     ),
 
     /* Conduit from the control box along the back of the bench, dropping at

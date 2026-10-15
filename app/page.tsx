@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { type Track } from "@/components/home/Player";
 import TopStrip from "@/components/home/TopStrip";
-import Mascot from "@/components/home/Mascot";
+import { EyeTracker } from "@/components/EyeTracker";
 import Footer from "@/components/home/Footer";
 import { Mail } from "lucide-react";
 import { CamFigure } from "@/components/figures/cam/figure";
@@ -55,23 +55,13 @@ export default function Home() {
         {/* ── the bar ─────────────────────────────────────────────── */}
         <TopStrip track={TRACK} />
 
-        {/* ── who, with the mark that watches you ──────────────────── */}
+        {/* ── who ──────────────────────────────────────────────────── */}
         <header className="home-hero home-col">
-          <div className="home-eye">
-            <h1 className="home-name">Naman Sharma</h1>
-            <Mascot />
-          </div>
+          <h1 className="home-name">Naman Sharma</h1>
           <p className="home-hero-lede">
             I&rsquo;m a design engineer. I build for the web, and I care about
             how an interface <em>feels</em> — the easing curve, the hairline,
             the way a thing behaves when you interrupt it halfway.
-          </p>
-          <p className="home-hero-lede">
-            Design and build are one job to me. I draw the thing, build the
-            thing, and then keep it on the bench until it reads true — which is
-            usually the longest part and the part nobody sees. Most of what is
-            on this page is a working machine rather than a picture of one:
-            turn the crank and it runs.
           </p>
           <ul className="home-hero-meta">
             <li>Design engineer</li>
@@ -91,11 +81,9 @@ export default function Home() {
           <div className="home-split-intro">
             <p className="home-section-label">The short version</p>
             <p className="home-story-lede">
-              Everything below is drawn rather than described. Each figure is
-              the machine the project actually is, and every number on it
-              comes from the same model that moves its parts — the cam really
-              is cut to the curve this site animates with, and the dial really
-              is counting the beads on the rods.
+              Drawn rather than described. Each figure is the machine the
+              project actually is, and every number on it comes from the same
+              model that moves its parts.
             </p>
           </div>
 
@@ -110,19 +98,10 @@ export default function Home() {
               MotionKit <span>Animation library</span>
             </h2>
             <p>
-              I kept writing the same motion code, and kept getting it
-              slightly different each time — a drawer eased one way on this
-              screen and another way on that one, a spring retuned by hand
-              every time it came up. So I packaged it. A preset now behaves
-              the same way wherever it is used, and the curve becomes a
-              decision made once instead of a number retyped.
-            </p>
-            <p>
-              The cam beside this is cut to one of those curves: its radius at
-              any angle is the eased value at that fraction of a turn, so one
-              turn of the crank plays the curve exactly once and the slide
-              travels the same distance every time. That is the whole argument
-              for a library, in one object you can turn.{" "}
+              I kept writing the same motion code and kept getting it slightly
+              different each time, so I packaged it. The cam beside this is cut
+              to one of its curves: one turn of the crank plays the curve once
+              and the slide travels the same distance every time.{" "}
               <a href="https://www.motionlib.me/" target="_blank" rel="noopener noreferrer">
                 Open it
               </a>
@@ -150,21 +129,10 @@ export default function Home() {
               ChurnRate <span>SaaS dashboard</span>
             </h2>
             <p>
-              Churn is a number that hides what it means. A few per cent a
-              month sounds survivable right up until you count the people it
-              stands for, which is the moment the number becomes useful. So
-              the figure is built the other way round: a rod is a monthly
-              cohort, a bead is a subscriber, and the beads that cross the bar
-              are the ones who left — the thing a dashboard exists to make you
-              feel, not just read.
-            </p>
-            <p>
-              The product behind it is churn analysis and analytics for
-              subscription products, designed and built end to end. The
-              abacus holds it to the same rule the screens do: the dial reads
-              the beads themselves rather than the model that moves them,
-              because a number you cannot point at is a number nobody
-              believes.{" "}
+              Churn is a number that hides what it means. A rod is a monthly
+              cohort and a bead is a subscriber, so the beads that cross the
+              bar are the people who left — the thing a dashboard exists to
+              make you feel, not just read.{" "}
               <a href="https://www.churnrate.fun/" target="_blank" rel="noopener noreferrer">
                 Open it
               </a>
@@ -193,16 +161,7 @@ export default function Home() {
             <p>
               Then I rebuilt a whole desktop in a tab, because the only way to
               learn how an interface should behave is to build one that has to
-              do everything. It boots. It puts up a menu bar and a dock. The
-              windows drag, resize and come back to the front when you click
-              them, and there are games in there too.
-            </p>
-            <p>
-              None of it is a mockup, which is the point: every edge case had
-              to be decided rather than drawn around — a window dragged off
-              the screen, one resized past its own minimum, the same app
-              opened twice. Most of what I know about how an interface should
-              feel came out of settling those.{" "}
+              do everything — and none of it is a mockup.{" "}
               <Link href="/desktop">Boot it</Link>
             </p>
             <ul className="home-chapter-spec">
@@ -230,11 +189,9 @@ export default function Home() {
             <p className="home-section-label">How I work</p>
             <p className="home-story-lede">
               Design and build are the same job. A piece goes down the bench
-              and comes back changed at every pass — drawn, cut, pressed — and
-              the last station is a gauge, because a thing is not finished
-              when it is made, it is finished when it reads true. That last
-              station is most of the work, and it is the part that does not
-              show.
+              and comes back changed at every pass, and the last station is a
+              gauge: a thing is not finished when it is made, it is finished
+              when it reads true.
             </p>
           </div>
 
@@ -242,11 +199,8 @@ export default function Home() {
             <section className="home-section" aria-label="Getting in touch">
               <p className="home-section-label">Getting in touch</p>
               <p className="home-story-lede">
-                Open to design engineering roles and freelance work. If you
-                have something with a mechanism in it — motion that has to
-                feel right, a dashboard that has to be read at a glance, an
-                interface that has to hold up when someone interrupts it — I
-                would like to hear about it.
+                Open to design engineering roles and freelance work. If it has
+                a mechanism in it, I would like to hear about it.
               </p>
 
               {/* Set like the corner of a figure card: a hairline, a mono
@@ -261,6 +215,14 @@ export default function Home() {
             <Footer />
           </div>
         </section>
+      </div>
+
+      {/* ── the mark that watches you ─────────────────────────────────
+          Off in the corner rather than beside the name: at the top it sat
+          on the same line as the heading and read as punctuation, and the
+          whole point of it is that it follows you around the page. */}
+      <div className="home-watch" aria-hidden>
+        <EyeTracker size={54} shape="Ball" eyes="Slant" eyeScale={1.25} follow={70} bounce={34} />
       </div>
     </main>
   );

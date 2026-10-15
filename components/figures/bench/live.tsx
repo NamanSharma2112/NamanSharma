@@ -66,6 +66,7 @@ export function BenchLive(props: {
   const marks = React.useRef<SVGGElement>(null);
   const tools = React.useRef<SVGGElement>(null);
   const needle = React.useRef<SVGPathElement>(null);
+  const done = React.useRef<(SVGGElement | null)[]>([]);
   const state = React.useRef({ clock: 0, said: "", spin: 0 });
 
   const rest = React.useMemo(
@@ -111,6 +112,13 @@ export function BenchLive(props: {
       // The needle reads the probe, so it only moves when something is
       // touching the work.
       needle.current?.setAttribute("d", needleAt(step.tool === 3 ? step.bite * 0.78 : 0));
+
+      /* What the bench has made. A machine with nothing coming off it is a
+         machine you have to take on trust, so the finished pieces stack up
+         in the tray at the end — one per cycle, three, then the tray is
+         cleared and it starts again. */
+      const made = Math.floor(s.clock / CYCLE) % 4;
+      done.current.forEach((node, i) => node?.setAttribute("opacity", i < made ? "1" : "0"));
 
       const line = readoutOf(step);
       if (line !== s.said) {
@@ -218,6 +226,23 @@ export function BenchLive(props: {
         <path ref={needle} className="iso-line bench-needle" data-tone="lit" d={needleAt(0)} />
         {props.box}
         {props.front}
+
+        {/* The output: set down on the tray at the end of the bench. */}
+        {ART.outDone.map((paths, i) => (
+          <g key={i} opacity="0" ref={(n) => { done.current[i] = n; }}>
+            <g className="iso-solid bench-done" data-lit={i === 2 ? "" : undefined}>
+              <path className="iso-fill" d={paths.fill} />
+              {paths.shades.map((d, n) => (
+                <path key={n} className="iso-shade" data-shade={n} d={d} />
+              ))}
+              <path className="iso-top" d={paths.top} />
+              <path className="iso-line iso-crease" data-tone="faint" d={paths.crease} />
+              <path className="iso-line iso-edge" data-tone="mid" d={paths.outline} />
+            </g>
+            <path className="iso-line" data-tone="lo" d={ART.outNotch[i]!} />
+            <path className="iso-line" data-tone="mid" d={ART.outStamp[i]!} />
+          </g>
+        ))}
       </IsoFigure>
     </div>
   );

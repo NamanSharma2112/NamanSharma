@@ -110,7 +110,6 @@ export function ChurnLive(props: {
       <IsoFigure width={WIDTH} height={HEIGHT} label={LABEL}>
         {props.base}
         {props.frame}
-        {props.bar}
 
         {/* Rows run back to front, and within a row the beads are drawn from
             the far end in, so a bead in front is drawn over the one behind
@@ -141,6 +140,13 @@ export function ChurnLive(props: {
             })}
           </g>
         ))}
+
+        {/* The bar last. It is a solid plate standing across every rod, so
+            everything on the far side of it is behind it — drawn before it,
+            the beads came out on top of a plate they are physically behind,
+            which is the overlap that showed. The kept beads sit down and
+            right of its base and are not covered. */}
+        {props.bar}
 
         {props.dial}
         <path ref={needle} className="iso-line churn-needle" data-tone="lit" d={needleAt(1)} />

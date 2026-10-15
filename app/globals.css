@@ -362,12 +362,27 @@
 
      Taken from the reference, measured: bg rgb(252,253,251), ink rgb(24,59,43),
      secondary rgb(86,99,89). */
-  --bg: #fcfdfb;
-  --surface: #ffffff;
-  --line: #e4e8e3;
-  --fg: #000000;
-  --fg-body: #44474a;
-  --fg-muted: #8b8f92;
+  /* ── paper, not screen ────────────────────────────────────────────────
+     The page used to be a cool near-white with cool greys on it, which is
+     the colour of a blank browser window rather than of a sheet. Every
+     value here is mixed off the same warm hue instead, so the ground reads
+     as paper and the greys read as pencil on it. The ink stays almost
+     black — warmth belongs in the ground, not in the text. */
+  --bg: #fbf8f3;
+  --surface: #fffdf9;
+  --line: #e7e0d5;
+  --fg: #14120f;
+  --fg-body: #4c4740;
+  --fg-muted: #948c80;
+
+  /* ── the one accent ───────────────────────────────────────────────────
+     Annotation red, the colour a draughtsman marks a print with. It is
+     spent in about eight places and nowhere else: links, focus, the
+     availability dot, and the one lit part of each figure — the cam disc,
+     the beads that churned, the drone's hub, the tracer leaving the gun.
+     Anywhere it appears, it means "this is the thing to look at". */
+  --mark: #c2410c;
+  --mark-soft: color-mix(in srgb, var(--mark) 13%, transparent);
   --blue: #000000;
   --bubble-received: #ebeee9;
   --bubble-received-foreground: #183b2b;
@@ -405,9 +420,11 @@
 }
 
 .dark {
-  --bg: #1c1c1c;
-  --surface: #232323;
-  --line: #303030;
+  /* The same move the other way: a charcoal with a little blue in it reads
+     as a room rather than as a switched-off screen. */
+  --bg: #191a1d;
+  --surface: #212327;
+  --line: #2f3238;
   /* Neutral grey, never #fff. These used to carry a green in them, which on
      a page of running text reads as a tint rather than as warmth — measured,
      the body copy sat twelve points of green over its own red and blue. */
@@ -415,6 +432,10 @@
   --fg-body: #a8a8a8;
   --fg-muted: #757575;
   --blue: #0a7cff;
+  /* Lifted, because annotation red at its paper value disappears into a
+     charcoal ground. */
+  --mark: #f97347;
+  --mark-soft: color-mix(in srgb, var(--mark) 18%, transparent);
   --bubble-received: #262626;
   --bubble-received-foreground: #ededed;
   --nav-hover: var(--muted);
@@ -1571,7 +1592,7 @@
 @utility focus-ring {
   outline: none;
   &:focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--fg) 45%, transparent);
+    outline: 2px solid var(--mark);
     outline-offset: 2px;
   }
 }
@@ -1670,6 +1691,33 @@
 
 [data-theme="dark"] .logo-test .eyt-eye { fill: #fbfbfa; }
 
+/* ── parked in the corner ─────────────────────────────────────
+   It sits over the page rather than in it, bottom right, where it
+   can watch the pointer wherever the pointer is. The 200px frame
+   the wall uses would be a third of a phone screen, so it shrinks
+   to the mark itself and takes the page's ink with the ground as
+   its eyes — the logo treatment, at the size of a thumbnail. */
+.home-watch {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 30;
+  pointer-events: auto;
+}
+
+.home-watch .eyt {
+  width: auto;
+  height: auto;
+  --fill-slab: var(--fg);
+  --fill-on: var(--bg);
+  filter: drop-shadow(0 6px 16px color-mix(in srgb, var(--fg) 16%, transparent));
+}
+
+@media (max-width: 620px) {
+  .home-watch { right: 14px; bottom: 14px; }
+  .home-watch .eyt { --eyt-size: 40px; }
+}
+
 /* ── beside the name ──────────────────────────────────────────
    At this size the 200px frame would push the prose a third of
    the way down the screen, so it shrinks to the mark itself and
@@ -1688,4 +1736,23 @@
   height: auto;
   --fill-slab: var(--fg);
   --fill-on: var(--bg);
+}
+
+/* ── where the accent is spent ══════════════════════════════════════════
+   Eight places, listed here so the next person can see the whole budget at
+   once rather than finding it a rule at a time. */
+
+::selection {
+  background: var(--mark-soft);
+}
+
+:focus-visible {
+  outline-color: var(--mark);
+}
+
+/* The figures' one lit part, and the lines drawn in their accent tone.
+   Everything else in a drawing stays ink. */
+.iso {
+  --anatomy-lit: var(--mark);
+  --anatomy-red: var(--mark);
 }

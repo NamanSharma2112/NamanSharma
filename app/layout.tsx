@@ -63,6 +63,21 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${serif.variable} h-full antialiased`}
     >
+      {/* Set before the first paint, so nothing has to be hidden and then
+          shown. `data-js` says script is running — anything that starts
+          hidden waiting for script only does so when script is there to
+          release it. `data-boarded` says no intro will play: the visitor has
+          seen it this session, or has asked for reduced motion, and in both
+          cases the page is finished on the first frame rather than held at
+          zero opacity until hydration catches up. */}
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{var d=document.documentElement;d.setAttribute("data-js","");if(sessionStorage.getItem("introduced")==="true"||matchMedia("(prefers-reduced-motion: reduce)").matches)d.setAttribute("data-boarded","")}catch(e){}',
+          }}
+        />
+      </head>
       {/* One ground for the whole site, read off the tokens in globals.css
           rather than hardcoded per theme here. Never pure black on white or
           pure white on black — the foreground token is an off-white at night,

@@ -201,46 +201,6 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #a3a3a3;
   }
-  .sliding-tab-pill {
-    transition: transform var(--tabs-duration) var(--tabs-ease), width var(--tabs-duration) var(--tabs-ease);
-    will-change: transform, width;
-  }
-  .sliding-tab-active-label {
-    transition: clip-path var(--tabs-duration) var(--tabs-ease);
-    will-change: clip-path;
-  }
-  .sliding-tab-icon-slot {
-    transition: width var(--tabs-duration) var(--tabs-ease);
-  }
-  .sliding-tab-icon {
-    opacity: 0;
-    scale: 0.25;
-    filter: blur(4px);
-    transition: opacity calc(var(--tabs-duration) * 0.6) var(--tabs-ease), scale calc(var(--tabs-duration) * 0.6) var(--tabs-ease), filter calc(var(--tabs-duration) * 0.6) var(--tabs-ease);
-  }
-  .sliding-tab-icon-slot[data-shown] .sliding-tab-icon {
-    opacity: 1;
-    scale: 1;
-    filter: blur(0);
-    transition-duration: var(--tabs-duration);
-  }
-
-@media (prefers-reduced-motion: reduce) {
-  .sliding-tab-pill {
-    transition: none;
-    }
-  .sliding-tab-active-label {
-    transition: none;
-    }
-  .sliding-tab-icon-slot {
-    transition: none;
-    }
-  .sliding-tab-icon {
-    scale: 1;
-    filter: none;
-    transition: opacity calc(var(--tabs-duration) * 0.6) linear;
-    }
-  }
 }
 
 /* ── Signature SVG draw ── */
@@ -249,76 +209,6 @@
     stroke-dashoffset: 0;
     opacity: 1;
   }
-}
-
-.signature-path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  opacity: 0;
-  animation: draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
-  animation-delay: 0.1s;
-}
-
-/* ── Hover Cards ── */
-.card-trigger {
-  position: relative;
-  display: inline-block;
-}
-
-.card-stack {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  pointer-events: none;
-  z-index: 50;
-}
-
-.hover-card {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 145px;
-  height: 172px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
-  opacity: 0;
-  transform: translateX(calc(-50% + var(--dx, 0px))) rotate(0deg) scale(0.9);
-  transition:
-    opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: var(--delay, 0ms);
-}
-
-.card-trigger:hover .hover-card {
-  opacity: 1;
-  transform: translateX(calc(-50% + var(--dx, 0px))) rotate(var(--r, 0deg)) scale(1);
-}
-
-/* ── Copied Toast ── */
-.copied-toast {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
-  background: #000;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 4px 10px;
-  border-radius: 6px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-.copied-toast.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
 }
 
 /* ── Legacy animations (used by /blog, /components routes) ── */
@@ -337,15 +227,6 @@
   from { opacity: 0; }
 }
 
-.custom-bg {
-  background-image: linear-gradient(to right, #6b728020 1px, transparent 1px), linear-gradient(to bottom, #6b728020 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.dark .custom-bg {
-  background-image: linear-gradient(to right, #6b728040 1px, transparent 1px), linear-gradient(to bottom, #6b728040 1px, transparent 1px);
-}
-
 /* ── Motion tokens ──────────────────────────────────────────────────────────
    The browser's built-in easings are too weak to read as deliberate. Every
    animation on the site pulls its curve from here rather than hand-rolling a
@@ -353,36 +234,42 @@
 :root {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-
-  /* ── the palette ──────────────────────────────────────────────────────────
-     Not a neutral grey. The ground is an off-white with a trace of green in it
-     and the ink is a deep green-black, which is what keeps a near-white page
-     from reading as a blank browser window: there is a temperature to it, and
-     every grey on the page is mixed from the same hue rather than from black.
-
-     Taken from the reference, measured: bg rgb(252,253,251), ink rgb(24,59,43),
-     secondary rgb(86,99,89). */
-  /* ── paper, not screen ────────────────────────────────────────────────
-     The page used to be a cool near-white with cool greys on it, which is
-     the colour of a blank browser window rather than of a sheet. Every
-     value here is mixed off the same warm hue instead, so the ground reads
-     as paper and the greys read as pencil on it. The ink stays almost
-     black — warmth belongs in the ground, not in the text. */
-  --bg: #fbf8f3;
-  --surface: #fffdf9;
-  --line: #e7e0d5;
-  --fg: #14120f;
-  --fg-body: #4c4740;
-  --fg-muted: #948c80;
+  /* ── stone, not cream ──────────────────────────────────────────────────
+     Warm, but low in chroma. A yellow-cream ground with a rust accent is the
+     palette every generated page reaches for first, and it read as that: the
+     ground is a pale stone instead, warm enough not to be a blank browser
+     window and grey enough not to be parchment. The ink stays almost black
+     and the running text sits at 10:1 — a page set in soft grey reads
+     unfinished. The muted ink is for notes and labels only, and still clears
+     4.5:1 on both the ground and the figure plates. */
+  --bg: #f5f4f0;
+  --surface: #fbfaf8;
+  --plate: #ecebe5;
+  --line: #e0ddd5;
+  --fg: #161512;
+  --fg-body: #3a3732;
+  --fg-muted: #67625a;
 
   /* ── the one accent ───────────────────────────────────────────────────
-     Annotation red, the colour a draughtsman marks a print with. It is
-     spent in about eight places and nowhere else: links, focus, the
-     availability dot, and the one lit part of each figure — the cam disc,
-     the beads that churned, the drone's hub, the tracer leaving the gun.
-     Anywhere it appears, it means "this is the thing to look at". */
-  --mark: #c2410c;
+     Annotation red, the colour a draughtsman marks a print with — pushed
+     off orange toward red so it reads as a mark rather than as rust. It is
+     spent on links, focus, selection, the availability line and the one lit
+     part of each figure, and nowhere else: anywhere it appears, it means
+     "this is the thing to look at". 4.8:1 on the ground, so it can carry
+     text. */
+  --mark: #c8361a;
   --mark-soft: color-mix(in srgb, var(--mark) 13%, transparent);
+
+  /* ── one type scale ───────────────────────────────────────────────────
+     Five sizes do every job on the page: the name, a section heading, the
+     lead, running text, and notes. The page had eleven, which is the
+     difference between a hierarchy and a gradient. */
+  --text-display: clamp(52px, 7.2vw, 96px);
+  --text-heading: clamp(26px, 2.4vw, 32px);
+  --text-lead: clamp(18px, 1.4vw, 20px);
+  --text-body: 17px;
+  --text-small: 14px;
+
   --blue: #000000;
   --bubble-received: #ebeee9;
   --bubble-received-foreground: #183b2b;
@@ -403,11 +290,11 @@
   --popover-foreground: var(--fg);
   --primary: var(--fg);
   --primary-foreground: var(--bg);
-  --secondary: #eef1ec;
+  --secondary: var(--plate);
   --secondary-foreground: var(--fg);
-  --muted: #eef1ec;
+  --muted: var(--plate);
   --muted-foreground: var(--fg-muted);
-  --accent: #eef1ec;
+  --accent: var(--plate);
   --accent-foreground: var(--fg);
   --destructive: #b4453a;
   --border: var(--line);
@@ -424,17 +311,20 @@
      as a room rather than as a switched-off screen. */
   --bg: #191a1d;
   --surface: #212327;
+  --plate: #1f2125;
   --line: #2f3238;
   /* Neutral grey, never #fff. These used to carry a green in them, which on
      a page of running text reads as a tint rather than as warmth — measured,
      the body copy sat twelve points of green over its own red and blue. */
   --fg: #ededed;
-  --fg-body: #a8a8a8;
-  --fg-muted: #757575;
+  /* Running text at 10:1 and notes at 5.4:1. The old muted grey sat at 3.8,
+     under the line for anything meant to be read. */
+  --fg-body: #c9c9c9;
+  --fg-muted: #8f8f8f;
   --blue: #0a7cff;
   /* Lifted, because annotation red at its paper value disappears into a
      charcoal ground. */
-  --mark: #f97347;
+  --mark: #ff6b4a;
   --mark-soft: color-mix(in srgb, var(--mark) 18%, transparent);
   --bubble-received: #262626;
   --bubble-received-foreground: #ededed;
@@ -448,11 +338,11 @@
   --popover-foreground: var(--fg);
   --primary: var(--fg);
   --primary-foreground: var(--bg);
-  --secondary: #272727;
+  --secondary: #26282c;
   --secondary-foreground: var(--fg);
-  --muted: #272727;
+  --muted: #26282c;
   --muted-foreground: var(--fg-muted);
-  --accent: #272727;
+  --accent: #26282c;
   --accent-foreground: var(--fg);
   --destructive: #d4675a;
   --border: var(--line);
@@ -544,9 +434,6 @@
       transform: none;
     }
   }
-  .t-surface::before {
-    transition-duration: 0ms;
-  }
   .popover-panel[data-open] {
     animation: popover-fade-in 140ms var(--ease-out);
   }
@@ -561,9 +448,6 @@
   }
   .command-overlay, .command-dialog, .command-dialog.cmd-level-shift, .command-list.cmd-level-enter {
     animation: none !important;
-  }
-  .command-dialog.cmd-ready .command-active-indicator {
-    transition: none;
   }
   .sound-slash, .sound-wave, .sound-speaker {
     transition: none;}
@@ -681,11 +565,10 @@
   padding: 2px 6px;
   border-radius: 4px;
   white-space: nowrap;
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #6b6259;
+  /* The page's own face at a size meant to be read: it was 9px tracked
+     capitals in a third typeface, the smallest text on the site. */
+  font-size: 13px;
+  color: var(--fg-muted);
   background: color-mix(in srgb, var(--page-bg, var(--bg)) 88%, transparent);
   opacity: 0;
   pointer-events: none;
@@ -778,53 +661,6 @@
    goes from a muted dot to blue and the address darkens. The same move as the
    phrase in the bio, so the two inline affordances on the page behave alike
    rather than each inventing their own hover. */
-.copy-email {
-  cursor: pointer;
-  padding: 0;
-  background: transparent;
-  vertical-align: baseline;
-  text-decoration-line: underline;
-  text-decoration-style: dotted;
-  text-decoration-color: rgba(120, 108, 98, 0.55);
-  text-underline-offset: 3px;
-  transition:
-    color 200ms var(--ease-out),
-    text-decoration-color 200ms var(--ease-out);
-}
-
-.dark .copy-email {
-  text-decoration-color: rgba(255, 255, 255, 0.32);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .copy-email:hover {
-    color: #18181b;
-    text-decoration-color: rgba(37, 99, 235, 0.85);
-  }
-
-  .dark .copy-email:hover {
-    color: #fafafa;
-    text-decoration-color: rgba(96, 165, 250, 0.9);
-  }
-}
-
-.copy-email:focus-visible {
-  outline: none;
-  color: #18181b;
-  text-decoration-color: rgba(37, 99, 235, 0.85);
-  border-radius: 3px;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.45);
-}
-
-.dark .copy-email:focus-visible {
-  color: #fafafa;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .copy-email {
-    transition: none;
-  }
-}
 
 /* The page arriving once the intro lifts. Deliberately no forwards fill —
    holding a transform or filter here would make this element the containing
@@ -841,24 +677,62 @@
   }
 }
 
-.landing-in {
-  animation: landing-in 420ms var(--ease-out) backwards;
+/* Every hidden starting state on the site is behind the same two gates:
+   motion is wanted, and an intro is actually about to play. Without them
+   the page is finished on its first frame — which is what a returning
+   visitor and a reduced-motion visitor both get. */
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-boarded]) .landing-wait {
+    opacity: 0;
+  }
+
+  html:not([data-boarded]) .landing-in {
+    animation: landing-in 420ms var(--ease-out) backwards;
+  }
 }
 
 /* Blocks inside a landing arrive in sequence rather than all at once. Six
    steps at 55ms is under a third of a second end to end, so the page is
    settled about as fast as it would have been anyway. */
-.landing-stagger > * {
-  animation: landing-in 420ms var(--ease-out) backwards;
-}
+@media (prefers-reduced-motion: no-preference) {
+  .landing-stagger > * {
+    animation: landing-in 420ms var(--ease-out) backwards;
+  }
 
-.landing-stagger > *:nth-child(1) { animation-delay: 0ms; }
-.landing-stagger > *:nth-child(2) { animation-delay: 55ms; }
-.landing-stagger > *:nth-child(3) { animation-delay: 110ms; }
-.landing-stagger > *:nth-child(4) { animation-delay: 165ms; }
-.landing-stagger > *:nth-child(5) { animation-delay: 220ms; }
-.landing-stagger > *:nth-child(6) { animation-delay: 275ms; }
-.landing-stagger > *:nth-child(n + 7) { animation-delay: 330ms; }
+  .landing-stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .landing-stagger > *:nth-child(2) { animation-delay: 55ms; }
+  .landing-stagger > *:nth-child(3) { animation-delay: 110ms; }
+  .landing-stagger > *:nth-child(4) { animation-delay: 165ms; }
+  .landing-stagger > *:nth-child(5) { animation-delay: 220ms; }
+  .landing-stagger > *:nth-child(6) { animation-delay: 275ms; }
+  .landing-stagger > *:nth-child(n + 7) { animation-delay: 330ms; }
+
+  /* The front page's one authored moment: the name, then what it is,
+     then what to do about it, each a beat behind the last. Only on a
+     boarded visit — on a first one the intro is the arrival, and this
+     would only play underneath it. */
+  html[data-boarded] .home-arrive > * {
+    animation: landing-in 560ms var(--ease-out) backwards;
+  }
+
+  html[data-boarded] .home-arrive > :nth-child(2) { animation-delay: 80ms; }
+  html[data-boarded] .home-arrive > :nth-child(3) { animation-delay: 160ms; }
+
+  /* Scrolled into view once, then left alone. A short rise and a fade —
+     anything further reads as the page moving under you rather than the
+     content arriving. Only on a page that is running script, so nothing
+     waits for a release that will never come. */
+  html[data-js] .reveal:not([data-in]) {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  .reveal {
+    transition:
+      opacity 640ms var(--ease-out) var(--reveal-delay, 0ms),
+      transform 640ms var(--ease-out) var(--reveal-delay, 0ms);
+  }
+}
 
 /* Gentler, not gone: the fade still explains that the page has arrived, the
    travel is what goes. */
@@ -1052,243 +926,6 @@
     inherits: false;
     initial-value: transparent;
 }
-  .t-surface::before {
-    --surface-top: var(--surface-base);
-    --surface-bottom: var(--surface-lit);
-    --surface-edge-mid: color-mix(in srgb, var(--surface-edge-top), var(--surface-edge-bottom));
-    --surface-drop-near: transparent;
-    --surface-sheen: linear-gradient(transparent, transparent);
-    --surface-shade: transparent;
-    --surface-glow: transparent;
-    --surface-strength: calc(var(--surface-calm, 1) * 100%);
-    --surface-fall: color-mix( in srgb, var(--surface-bottom) var(--surface-strength), var(--surface-top) );
-    background: var(--surface-sheen) padding-box, linear-gradient(var(--surface-top), var(--surface-fall)) padding-box, linear-gradient( color-mix(in srgb, var(--surface-edge-top) var(--surface-strength), transparent), color-mix(in srgb, var(--surface-edge-mid) var(--surface-strength), transparent), color-mix(in srgb, var(--surface-edge-bottom) var(--surface-strength), transparent) ) border-box, linear-gradient(var(--surface-top), var(--surface-fall)) border-box;
-    box-shadow: 0 0 0 1px var(--surface-ring), inset 0 -3px 6px -3px color-mix(in srgb, var(--surface-shade) var(--surface-strength), transparent), 0 1px 1px 0 color-mix(in srgb, var(--surface-drop-near) var(--surface-strength), transparent), 0 2px 4px 0 color-mix(in srgb, var(--surface-drop) var(--surface-strength), transparent), 0 8px 20px -8px color-mix(in srgb, var(--surface-glow) var(--surface-strength), transparent);
-    transition: scale 150ms var(--ease-out), --surface-top 150ms var(--ease-out), --surface-bottom 150ms var(--ease-out);
-}
-  .t-surface.t-flat::before {
-    background: revert-layer;
-    box-shadow: revert-layer;
-    transition: revert-layer;
-}
-  .t-well {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1), inset 0 0 0 1px rgb(0 0 0 / 0.04), 0 1px 0 rgb(255 255 255 / 0.6);
-}
-  .dark .t-well {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.5), inset 0 0 0 1px rgb(0 0 0 / 0.25), 0 1px 0 rgb(255 255 255 / 0.06);
-}
-  .t-surface-primary::before {
-    --surface-base: #323137;
-    --surface-lit: #201e25;
-    --surface-edge-top: #4b4951;
-    --surface-edge-bottom: #18171b;
-    --surface-ring: #0d0d0d;
-    --surface-drop: rgb(0 0 0 / 0.1);
-}
-  .t-surface-secondary::before {
-    --surface-base: #f2f2f3;
-    --surface-lit: #eaeaec;
-    --surface-edge-top: rgb(255 255 255 / 0);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: rgb(0 0 0 / 0.06);
-    --surface-ring: rgb(0 0 0 / 0.11);
-    --surface-drop-near: rgb(0 0 0 / 0.04);
-    --surface-drop: rgb(0 0 0 / 0.05);
-}
-  .t-surface-outline::before {
-    --surface-base: #ffffff;
-    --surface-lit: #f0f0f1;
-    --surface-edge-top: rgb(255 255 255 / 0);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: rgb(0 0 0 / 0.1);
-    --surface-ring: rgb(0 0 0 / 0.15);
-    --surface-drop-near: rgb(0 0 0 / 0.06);
-    --surface-drop: rgb(0 0 0 / 0.1);
-}
-  .t-surface-destructive::before {
-    --surface-base: #d0262b;
-    --surface-lit: #b81a1f;
-    --surface-edge-top: rgb(255 255 255 / 0.28);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: rgb(0 0 0 / 0.14);
-    --surface-ring: #a11216;
-    --surface-drop-near: rgb(0 0 0 / 0.08);
-    --surface-drop: rgb(0 0 0 / 0.1);
-}
-  .dark .t-surface-primary::before {
-    --surface-base: #f6f6f8;
-    --surface-lit: #dadadf;
-    --surface-sheen: linear-gradient(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0) 45%);
-    --surface-edge-top: rgb(255 255 255 / 0);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: rgb(0 0 0 / 0.2);
-    --surface-ring: #b8b8bf;
-    --surface-shade: rgb(0 0 0 / 0.12);
-    --surface-drop-near: rgb(0 0 0 / 0.3);
-    --surface-drop: rgb(0 0 0 / 0.4);
-    --surface-glow: rgb(255 255 255 / 0.1);
-}
-  .dark .t-surface-secondary::before {
-    --surface-base: #2c2c30;
-    --surface-lit: #38383c;
-    --surface-edge-top: #56565b;
-    --surface-edge-bottom: #36363a;
-    --surface-ring: #232326;
-    --surface-edge-mid: color-mix(in srgb, var(--surface-edge-top), var(--surface-edge-bottom));
-    --surface-drop-near: transparent;
-    --surface-drop: rgb(0 0 0 / 0.4);
-}
-  .dark .t-surface-outline::before {
-    --surface-base: #1b1b1e;
-    --surface-lit: #141416;
-    --surface-edge-top: rgb(255 255 255 / 0);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: rgb(0 0 0 / 0.3);
-    --surface-ring: #2e2e33;
-    --surface-drop-near: rgb(0 0 0 / 0.3);
-    --surface-drop: rgb(0 0 0 / 0.4);
-}
-  .dark .t-surface-destructive::before {
-    --surface-base: #c8161b;
-    --surface-lit: #d0262b;
-    --surface-edge-top: #e45c60;
-    --surface-edge-bottom: #cd262b;
-    --surface-ring: #7a0d10;
-    --surface-edge-mid: color-mix(in srgb, var(--surface-edge-top), var(--surface-edge-bottom));
-    --surface-drop-near: transparent;
-    --surface-drop: rgb(0 0 0 / 0.4);
-}
-  .t-surface-info::before {
-    --surface-base: #e8f1fe;
-    --surface-lit: #dde9fd;
-    --surface-edge-top: rgb(255 255 255 / 0);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: rgb(37 99 235 / 0.14);
-    --surface-ring: rgb(37 99 235 / 0.22);
-    --surface-drop-near: rgb(0 0 0 / 0.04);
-    --surface-drop: rgb(0 0 0 / 0.05);
-}
-  .dark .t-surface-info::before {
-    --surface-base: #1c2842;
-    --surface-lit: #22304f;
-    --surface-edge-top: #3a5285;
-    --surface-edge-bottom: #26355a;
-    --surface-ring: #111a2b;
-    --surface-edge-mid: color-mix(in srgb, var(--surface-edge-top), var(--surface-edge-bottom));
-    --surface-drop-near: transparent;
-    --surface-drop: rgb(0 0 0 / 0.4);
-}
-  .t-surface-warning::before {
-    --surface-base: #fef3dc;
-    --surface-lit: #fcebc9;
-    --surface-edge-top: rgb(255 255 255 / 0);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: rgb(217 119 6 / 0.16);
-    --surface-ring: rgb(217 119 6 / 0.26);
-    --surface-drop-near: rgb(0 0 0 / 0.04);
-    --surface-drop: rgb(0 0 0 / 0.05);
-}
-  .dark .t-surface-warning::before {
-    --surface-base: #332712;
-    --surface-lit: #3d2f17;
-    --surface-edge-top: #6b5226;
-    --surface-edge-bottom: #45351a;
-    --surface-ring: #1f170a;
-    --surface-edge-mid: color-mix(in srgb, var(--surface-edge-top), var(--surface-edge-bottom));
-    --surface-drop-near: transparent;
-    --surface-drop: rgb(0 0 0 / 0.4);
-}
-  .t-surface-success::before {
-    --surface-base: #e7f4ea;
-    --surface-lit: #daeedf;
-    --surface-edge-top: rgb(255 255 255 / 0);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: rgb(2 135 68 / 0.14);
-    --surface-ring: rgb(2 135 68 / 0.22);
-    --surface-drop-near: rgb(0 0 0 / 0.04);
-    --surface-drop: rgb(0 0 0 / 0.05);
-}
-  .dark .t-surface-success::before {
-    --surface-base: #13301c;
-    --surface-lit: #163922;
-    --surface-edge-top: #26613a;
-    --surface-edge-bottom: #164124;
-    --surface-ring: #0c1f12;
-    --surface-edge-mid: color-mix(in srgb, var(--surface-edge-top), var(--surface-edge-bottom));
-    --surface-drop-near: transparent;
-    --surface-drop: rgb(0 0 0 / 0.4);
-}
-  .t-surface-danger::before {
-    --surface-base: #feebe9;
-    --surface-lit: #fce1de;
-    --surface-edge-top: rgb(255 255 255 / 0);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: rgb(209 16 37 / 0.14);
-    --surface-ring: rgb(209 16 37 / 0.22);
-    --surface-drop-near: rgb(0 0 0 / 0.04);
-    --surface-drop: rgb(0 0 0 / 0.05);
-}
-  .dark .t-surface-danger::before {
-    --surface-base: #3e1e1c;
-    --surface-lit: #4b2421;
-    --surface-edge-top: #7e3e3a;
-    --surface-edge-bottom: #552724;
-    --surface-ring: #291312;
-    --surface-edge-mid: color-mix(in srgb, var(--surface-edge-top), var(--surface-edge-bottom));
-    --surface-drop-near: transparent;
-    --surface-drop: rgb(0 0 0 / 0.4);
-}
-  .t-surface-tint::before {
-    --surface-base: color-mix(in oklab, currentColor 9%, var(--surface-ground, var(--background)));
-    --surface-lit: color-mix(in oklab, currentColor 13%, var(--surface-ground, var(--background)));
-    --surface-edge-top: rgb(255 255 255 / 0);
-    --surface-edge-mid: rgb(255 255 255 / 0);
-    --surface-edge-bottom: color-mix(in srgb, currentColor 16%, transparent);
-    --surface-ring: color-mix(in srgb, currentColor 24%, transparent);
-    --surface-drop-near: rgb(0 0 0 / 0.04);
-    --surface-drop: rgb(0 0 0 / 0.05);
-}
-  .dark .t-surface-tint::before {
-    --surface-base: color-mix(in oklab, currentColor 13%, var(--surface-ground, var(--background)));
-    --surface-lit: color-mix(in oklab, currentColor 17%, var(--surface-ground, var(--background)));
-    --surface-edge-top: color-mix( in oklab, currentColor 34%, var(--surface-ground, var(--background)) );
-    --surface-edge-bottom: color-mix( in oklab, currentColor 20%, var(--surface-ground, var(--background)) );
-    --surface-edge-mid: color-mix(in srgb, var(--surface-edge-top), var(--surface-edge-bottom));
-    --surface-ring: color-mix(in srgb, currentColor 24%, transparent);
-    --surface-drop-near: transparent;
-    --surface-drop: transparent;
-}
-
-@media (hover: hover) {
-  .t-surface-primary:hover::before, .t-surface-destructive:hover::before, .dark .t-surface-secondary:hover::before, .dark .t-surface-outline:hover::before {
-    --surface-top: color-mix(in srgb, var(--surface-base), white 6%);
-    --surface-bottom: color-mix(in srgb, var(--surface-lit), white 6%);
-  }
-  .t-surface-secondary:hover::before, .t-surface-outline:hover::before, .dark .t-surface-primary:hover::before {
-    --surface-top: color-mix(in srgb, var(--surface-base), black 4%);
-    --surface-bottom: color-mix(in srgb, var(--surface-lit), black 4%);
-  }
-}
-  .t-surface-outline[aria-expanded='true']::before {
-    --surface-top: color-mix(in srgb, var(--surface-base), black 4%);
-    --surface-bottom: color-mix(in srgb, var(--surface-lit), black 4%);
-}
-  .dark .t-surface-outline[aria-expanded='true']::before {
-    --surface-top: color-mix(in srgb, var(--surface-base), white 6%);
-    --surface-bottom: color-mix(in srgb, var(--surface-lit), white 6%);
-}
-  .dark .t-surface.t-label::before {
-    --surface-ring: color-mix(in srgb, currentColor 24%, transparent);
-    --surface-edge-top: transparent;
-    --surface-edge-mid: transparent;
-    --surface-edge-bottom: transparent;
-    --surface-drop-near: transparent;
-    --surface-drop: transparent;
-}
-  .t-surface.t-label:not(a, button):hover::before {
-    --surface-top: var(--surface-base);
-    --surface-bottom: var(--surface-lit);
-}
   .popover-panel[data-side='bottom'] {
     --popover-tilt-x: -20deg;
 }
@@ -1428,16 +1065,6 @@
 }
   .command-list.cmd-level-enter {
     animation: command-level-enter 220ms cubic-bezier(0.23, 1, 0.32, 1);
-}
-  .command-active-indicator {
-    position: absolute;
-    z-index: 0;
-    border-radius: 8px;
-    background: var(--accent);
-    pointer-events: none;
-}
-  .command-dialog.cmd-ready .command-active-indicator {
-    transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), width 150ms cubic-bezier(0.16, 1, 0.3, 1), height 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
   .command-group-heading {
     position: relative;
@@ -1607,64 +1234,39 @@
   place-items: center;
 
   /* ── Bencho's tokens, read off this project's own ─────────
-     The CSS below reads four custom properties and defines
-     none of them. Three are named for Bencho's palette and are
-     scoped here rather than declared globally, so nothing new
-     leaks into the page's own token set:
+     The CSS below reads six custom properties and defines none
+     of them. Two this project already has under the same name
+     and for the same job, so they are left alone to resolve to
+     the site's own:
 
-       --fill-slab  the surface a thing is drawn on  → --surface
-       --fill-on    the ink that sits on that slab   → --fg
-       --ink        the page's ink                   → --fg
+       --bg    the page's ground                  (globals :root)
+       --card  the surface a card is drawn on     (the shadcn
+               layer, already mapped to --surface)
 
-     The fourth, --bg, this project already has and already
-     means the same thing (the page's ground), so it is left
-     alone to resolve to the site's own.
+     The other four have no equivalent here by name, so they are
+     defined on the component's own root and nothing leaks into
+     the page's token set:
 
-     None of the four ends in -rgb, so nothing here wants the
-     three-bare-numbers form. */
+       --fill-slab  the slab a thing is drawn on  → --surface
+       --fill-on    the ink sitting on that slab  → --fg
+       --ink        the page's ink                → --fg
+       --font-ui    the interface face            → Geist, the
+                    face next/font loads for the whole site
+
+     None of the six ends in -rgb, so nothing here wants the
+     three-bare-numbers form. --tint is not a token: the
+     component writes it inline, one of its own three colours,
+     each time it speaks. */
   --fill-slab: var(--surface);
   --fill-on: var(--fg);
   --ink: var(--fg);
+  --font-ui: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 .eyt-ball {
   width: var(--eyt-size, 100px);
   height: var(--eyt-size, 100px);
-  overflow: visible;
-
-  /* ── the squash, on press ───────────────────────────────────
-     It squashes from its base, not its middle: a ball pressed
-     from above spreads where it meets the ground and keeps its
-     footing, and scaling about the centre instead makes it
-     shrink away from the floor, which reads as a shrinking
-     picture of a ball rather than a ball.
-
-     Going down is quick and flat — a press should feel like
-     contact. Coming back overshoots (the 1.7 in the curve
-     carries it past 1 and lets it settle), because that
-     overshoot is the only thing here that says rubber. */
-  transform-origin: 50% 100%;
-  transition: transform 460ms cubic-bezier(0.22, 1.7, 0.36, 1);
-  will-change: transform;
-}
-
-.eyt[data-press="1"] .eyt-ball {
-  /* wider than it is tall, by the same volume either way */
-  transform: scale(1.14, 0.8);
-  transition-duration: 110ms;
-  transition-timing-function: cubic-bezier(0.3, 0, 0.2, 1);
-}
-
-/* It takes a press, so it says so, and a tap is not held back
-   waiting to see whether it was a double-tap. */
-.eyt { cursor: pointer; touch-action: manipulation; }
-
-/* The squash is the one thing here with a duration, so it is the
-   one thing that has to go when motion is turned down. */
-@media (prefers-reduced-motion: reduce) {
-  .eyt-ball { transition: none; }
-  .eyt[data-press="1"] .eyt-ball { transform: none; }
-}
+  overflow: visible;}
 
 /* the ball is the Fill's own slab and the eyes its ink: white
    with dark eyes on a light fill, near-black with light eyes on
@@ -1672,6 +1274,52 @@
 .eyt-body { fill: var(--fill-slab, #ffffff); }
 
 .eyt-eye { fill: var(--fill-on, #0b0b0d); }
+
+/* a press on the toy opens a chat bubble off its lower right: the
+   pet's bubble, its square corner pointing back at the face */
+.eyt { position: relative; }
+
+/* a press gives a little under the finger and springs back out */
+.eyt-ball[data-poke] {
+  cursor: pointer;
+  transform-origin: center;
+  transition: scale 420ms cubic-bezier(0.24, 1.34, 0.38, 1);
+  -webkit-tap-highlight-color: transparent;}
+
+.eyt-ball[data-poke]:active { scale: 0.96; transition-duration: 160ms; transition-timing-function: ease; }
+
+.eyt-say {
+  position: absolute;
+  left: calc(50% + var(--eyt-size, 100px) * 0.36);
+  top: calc(50% + var(--eyt-size, 100px) * 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 34px;
+  padding: 0 16px;
+  border-radius: 6px 14px 14px 14px;
+  background: var(--tint, #3b5bff);
+  box-shadow: inset 0 -1.5px 0 rgba(0, 0, 0, 0.1);
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 400;
+  white-space: nowrap;
+  transform-origin: top left;
+  opacity: 0;
+  scale: 0.85;
+  pointer-events: none;
+  transition: opacity 160ms ease, scale 220ms cubic-bezier(0.24, 1.34, 0.38, 1), background-color 220ms ease;
+  letter-spacing: 0em;}
+
+.eyt-say[data-on] { opacity: 1; scale: 1; }
+
+.eyt-caret {
+  width: 1.5px;
+  height: 13px;
+  border-radius: 1px;
+  background: var(--fill-slab, var(--card));
+  animation: pet-caret 1s steps(1) infinite;}
 
 /* The four rules below are Bencho's own logo harness. `.logo-test`
    and `[data-theme]` do not exist in this project — it switches on
@@ -1687,9 +1335,12 @@
 
 /* the circle and pill in dark mode match the hexagon: a lifted
    dark body with the eyes kept white */
-[data-theme="dark"] .logo-test .eyt-body { fill: #2b2c30; }
+[data-theme="dark"] .logo-test .eyt-body { fill: #2b2c30; /* the hexagon's body; site chrome, not a block: keep off the system snap */ }
 
 [data-theme="dark"] .logo-test .eyt-eye { fill: #fbfbfa; }
+
+@keyframes pet-caret {
+  50% { opacity: 0; }}
 
 /* ── parked in the corner ─────────────────────────────────────
    It sits over the page rather than in it, bottom right, where it
@@ -1702,7 +1353,6 @@
   right: 22px;
   bottom: 22px;
   z-index: 30;
-  pointer-events: auto;
 }
 
 .home-watch .eyt {
@@ -1710,32 +1360,34 @@
   height: auto;
   --fill-slab: var(--fg);
   --fill-on: var(--bg);
-  filter: drop-shadow(0 6px 16px color-mix(in srgb, var(--fg) 16%, transparent));
+}
+
+/* Its bubble opens off the lower right, which in the bottom-right
+   corner is off the screen. Here it opens up and to the left
+   instead, and its square corner moves with it so it still points
+   back at the face. The caret takes the ball's ink, since the slab
+   token has been turned into the body colour above. */
+.home-watch .eyt-say {
+  left: auto;
+  top: auto;
+  right: calc(50% + var(--eyt-size, 100px) * 0.36);
+  bottom: calc(50% + var(--eyt-size, 100px) * 0.3);
+  border-radius: 14px 14px 6px 14px;
+  transform-origin: bottom right;
+}
+
+.home-watch .eyt-caret {
+  background: #ffffff;
 }
 
 @media (max-width: 620px) {
   .home-watch { right: 14px; bottom: 14px; }
-  .home-watch .eyt { --eyt-size: 40px; }
 }
 
-/* ── beside the name ──────────────────────────────────────────
-   At this size the 200px frame would push the prose a third of
-   the way down the screen, so it shrinks to the mark itself and
-   sits on the baseline of the name. The body takes the page's
-   ink and the eyes its ground, which is the logo treatment
-   above — here it reads as a small black mark with white eyes,
-   the same weight as the heading beside it. */
-.home-eye {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.home-eye .eyt {
-  width: auto;
-  height: auto;
-  --fill-slab: var(--fg);
-  --fill-on: var(--bg);
+/* In-page links glide rather than cut, for anyone who has not asked for
+   less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }
 
 /* ── where the accent is spent ══════════════════════════════════════════

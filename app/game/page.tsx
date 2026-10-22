@@ -24,7 +24,7 @@ export default function GamePage() {
   return (
     <main className="home-col">
       <TopStrip />
-      <PageHeader kicker="Game" title="Shearwater SK-4">
+      <PageHeader title="Shearwater SK-4">
         A ground-effect skimmer, drawn with the same kit as the figures and
         wired to the keyboard. Steer across the lane, break the rocks, shoot
         down the aircraft coming the other way, and go round the one thing

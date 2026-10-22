@@ -20,11 +20,6 @@
   padding: 0 24px;
 }
 
-/* One centre line for the whole page. The reading column and the figures
-   are different widths on purpose — a measured drawing wants more room
-   than a paragraph — but they are centred on the same axis, so the page
-   reads as a document rather than as two layouts side by side. */
-
 /* ── the strip across the top ───────────────────────────────────────────── */
 
 /* The reference's topbar, measured: the column's own width, 80px tall, the
@@ -111,16 +106,6 @@
   text-decoration-color: var(--fg);
 }
 
-/* ── the row of section links ───────────────────────────────────────────── */
-
-.home-jump {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 22px;
-  margin-top: 34px;
-  font-size: 16px;
-}
-
 /* ── a list of work, in the second reference's shape ────────────────────── */
 
 .home-section {
@@ -131,12 +116,6 @@
   font-size: 13px;
   color: var(--fg-muted);
   letter-spacing: 0.002em;
-}
-
-.home-list {
-  margin-top: 22px;
-  display: flex;
-  flex-direction: column;
 }
 
 .home-item {
@@ -233,34 +212,6 @@
   }
 }
 
-/* ── a bordered card, for the things that are not a list ────────────────── */
-
-.home-card {
-  padding: 18px 18px 20px;
-  border: 1px solid var(--line);
-  border-radius: 13px;
-  background: var(--surface);
-}
-
-.home-card-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--fg);
-}
-
-.home-card-note {
-  margin-top: 4px;
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--fg-body);
-}
-
-.home-foot {
-  padding: 72px 0 56px;
-  font-size: 14px;
-  color: var(--fg-muted);
-}
-
 /* ── the status strip ───────────────────────────────────────────────────── */
 
 .st {
@@ -355,8 +306,8 @@
 .st-face { width: 104px; height: 104px; margin: 11px auto 9px; }
 .st-rim { fill: none; stroke: var(--line); stroke-width: 1.2; }
 .st-hands line { stroke: var(--fg); stroke-linecap: round; }
-.st-second { stroke: #c2574a; stroke-width: 1.4; stroke-linecap: round; }
-.st-pin { fill: #c2574a; }
+.st-second { stroke: var(--mark); stroke-width: 1.4; stroke-linecap: round; }
+.st-pin { fill: var(--mark); }
 
 .st-clock-time {
   font-size: 25px;
@@ -535,34 +486,10 @@
   margin-bottom: 34px;
 }
 
-.home-portrait-dots {
-  width: 100%;
-  height: 100%;
-}
-
 /* ── the contact exchange ───────────────────────────────────────────────── */
 
 .home-chat {
   margin-top: 20px;
-}
-
-.home-chat-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 14px;
-  margin-top: 24px;
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--fg-body);
-}
-
-/* The address beside the button, selectable, for anyone who would rather
-   copy it than have a mail client open. */
-.home-chat-address {
-  font-size: 14px;
-  color: var(--fg-muted);
-  user-select: all;
 }
 
 
@@ -661,50 +588,52 @@
 
 /* ── the footer ─────────────────────────────────────────────────────────── */
 
+/* Set off by space rather than by a rule: the gap above it is the largest on
+   the page, which is all a footer needs to read as the end. */
 .foot {
-  padding: 72px 0 56px;
-}
-
-.foot-rule {
-  height: 1px;
-  background: var(--line);
+  padding: clamp(96px, 12vw, 168px) 0 56px;
 }
 
 .foot-row {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 22px;
-  padding-top: 22px;
+  gap: 22px 40px;
 }
 
 .foot-name {
-  font-size: 15px;
-  font-weight: 500;
+  display: block;
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: clamp(44px, 6vw, 76px);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
   color: var(--fg);
 }
 
 .foot-role {
-  margin-top: 2px;
-  font-size: 13px;
+  margin-top: 10px;
+  font-size: var(--text-small);
   color: var(--fg-muted);
 }
 
 .foot-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
-  font-size: 14px;
+  gap: 8px 22px;
+  font-size: 15px;
   color: var(--fg-body);
 }
 
 .foot-links a {
-  transition: color 170ms var(--ease-out);
+  transition: color 160ms ease;
 }
 
-.foot-links a:hover {
-  color: var(--fg);
+@media (hover: hover) and (pointer: fine) {
+  .foot-links a:hover {
+    color: var(--mark);
+  }
 }
 
 .foot-fine {
@@ -713,8 +642,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-top: 34px;
-  font-size: 13.5px;
+  margin-top: 40px;
+  font-size: var(--text-small);
   line-height: 1.6;
   color: var(--fg-muted);
 }
@@ -722,33 +651,30 @@
 /* ── a content page's head ──────────────────────────────────────────────── */
 
 .page-head {
-  margin-bottom: 30px;
+  padding-top: clamp(16px, 4vw, 48px);
+  margin-bottom: 48px;
 }
 
-.page-kicker {
-  font-size: 13px;
-  color: var(--fg-muted);
-}
-
-/* The front page's serif, at the size a page title wants rather than the size
-   a name does. */
+/* The front page's serif at the front page's display size: every page opens
+   on its title the way the home page opens on the name. */
 .page-title {
   display: block;
-  margin-top: 8px;
   font-family: var(--font-serif), ui-serif, Georgia, serif;
-  font-size: 34px;
+  font-size: var(--text-display);
   font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.008em;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
   color: var(--fg);
+  text-wrap: balance;
 }
 
 .page-lede {
-  margin-top: 12px;
-  max-width: 54ch;
-  font-size: 16px;
-  line-height: 1.75;
+  margin-top: 20px;
+  max-width: 34em;
+  font-size: var(--text-lead);
+  line-height: 1.55;
   color: var(--fg-body);
+  text-wrap: pretty;
 }
 
 /* Inner pages hang their content off the same column as the front page, and
@@ -758,175 +684,66 @@ main.home-col > * {
   min-width: 0;
 }
 
-/* ── the figure on /work ─────────────────────────────────────────────── */
+/* ── the one action ──────────────────────────────────────────────────────
+   A real button, decided once and used everywhere it appears: flat, one
+   fill, fully round. It is the only filled control on the page, so the eye
+   finds it without being told. It answers a press within a frame — the
+   scale is the confirmation that the page heard you — and its hover only
+   exists where there is a pointer that can hover, so a phone never gets a
+   colour stuck on after a tap. */
 
-/* The kit's card sets its own type and ground; this only places it in the
-   column and gives it the page's light tokens. */
-.work-figure {
-  margin: 30px 0 34px;
-}
-
-/* ── the bento row ───────────────────────────────────────────────────────
-   The figures are 600 × 352 cards and have to read at about 390px, so
-   three of them do not fit the 624px reading column. The row centres
-   itself on the window instead, which it can do because the document
-   clips that axis, and goes to one column when three will not fit. */
-
-.home-bento {
-  margin-top: 54px;
-}
-
-.home-bento-row {
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(1120px, calc(100vw - 48px));
-  display: grid;
-  gap: 20px;
-  margin-top: 16px;
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 1180px) {
-  .home-bento-row {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Each card fills its cell, and its figure scales with it. */
-.home-bento-row > * {
-  min-width: 0;
-}
-
-/* The big one gets the same breakout as the row above it, and all of it. */
-.home-bench {
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(1120px, calc(100vw - 48px));
-  margin-top: 20px;
-}
-
-/* ── the drawn stages ────────────────────────────────────────────────────
-   Two full-width bands that carry the figures. Their text stays in the
-   reading column; only the machines break out of it. */
-
-.home-stage {
-  margin-top: 56px;
-}
-
-.home-stage-lede {
-  margin-top: 10px;
-  max-width: 54ch;
-  font-size: 15.5px;
-  line-height: 1.75;
-  color: var(--fg-body);
-}
-
-/* One tile per project: what it is, the machine, then what it does. */
-.home-tile {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.home-tile-name {
-  font-family: var(--font-serif), ui-serif, Georgia, serif;
-  font-size: 22px;
-  font-weight: 400;
-  letter-spacing: -0.008em;
-  color: var(--fg);
-}
-
-.home-tile-role {
-  margin-top: 2px;
-  margin-bottom: 12px;
-  font-size: 13px;
-  color: var(--fg-muted);
-}
-
-.home-tile-note {
-  margin-top: 14px;
-  font-size: 14.5px;
-  line-height: 1.7;
-  color: var(--fg-body);
-}
-
-.home-tile-note a {
-  color: var(--fg);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  text-decoration-color: color-mix(in srgb, var(--fg) 32%, transparent);
-}
-
-.home-tile-note a:hover {
-  text-decoration-color: var(--fg);
-}
-
-/* The row and the bench already centre themselves on the window; inside a
-   full-width band they no longer need to be pulled out of the column. */
-.home-stage .home-bento-row,
-.home-stage .home-bench {
-  left: auto;
-  transform: none;
-  margin-inline: auto;
-  margin-top: 22px;
-}
-
-/* ── the one action on the page ──────────────────────────────────────────
-   Drawn the way the figure cards are: a hairline box, a mono label in the
-   corner type, and the address set beside it rather than inside it. */
-
-.home-plate-link {
+.home-button {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-top: 22px;
-  padding: 11px 16px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface);
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 11.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--fg);
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: var(--fg);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
   transition:
-    border-color 180ms var(--ease-out),
-    background-color 180ms var(--ease-out);
+    transform 160ms var(--ease-out),
+    background-color 200ms var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
 }
 
-.home-plate-link:hover {
-  border-color: color-mix(in srgb, var(--mark) 45%, var(--line));
-  background: color-mix(in srgb, var(--mark) 4%, var(--surface));
+.home-button svg {
+  width: 16px;
+  height: 16px;
 }
 
-.home-plate-link:hover svg {
-  color: var(--mark);
+.home-button:active {
+  transform: scale(0.97);
 }
 
-.home-plate-link svg {
-  width: 14px;
-  height: 14px;
+@media (hover: hover) and (pointer: fine) {
+  .home-button:hover {
+    background: var(--mark);
+  }
 }
 
-.home-plate-addr {
-  padding-left: 10px;
-  border-left: 1px solid var(--line);
+.home-button:focus-visible {
+  outline: 2px solid var(--mark);
+  outline-offset: 3px;
+}
+
+/* The address beside it, as text you can select — for anyone who would
+   rather copy it than have a mail client open. */
+.home-addr {
+  font-size: var(--text-small);
   color: var(--fg-muted);
-  text-transform: none;
-  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  user-select: all;
 }
 
-@media (max-width: 480px) {
-  .home-plate-addr { display: none; }
-}
-
-/* ══ the page, to the wireframe ═══════════════════════════════════════════
-   One frame holds everything, so the bar, the hero, the figures and the
-   story all line up on the same two edges. Inside it the reading column
-   keeps its own measure — a paragraph wants less width than a drawing. */
+/* ══ the page ══════════════════════════════════════════════════════════════
+   One frame holds everything, so the bar, the name, the figures and the
+   close all share the same two edges. Sections are separated by much more
+   space than anything inside one, which is what lets a section read as a
+   section without a rule or a label to say so. */
 
 .home-frame {
   width: min(1120px, calc(100vw - 48px));
@@ -934,8 +751,6 @@ main.home-col > * {
   padding-bottom: 40px;
 }
 
-/* The frame already sets the measure, so the column inside it stops
-   setting its own. */
 .home-frame .home-col {
   width: 100%;
   max-width: none;
@@ -943,212 +758,34 @@ main.home-col > * {
   padding: 0;
 }
 
-/* ── the hero card ──────────────────────────────────────────────────── */
-
-/* How the page opens. Not a card: no border, no fill, nothing but the
-   page's own ground behind it — the figures below are the framed things,
-   and a frame around the name as well would make the top of the page
-   argue with them. It takes the full width of the frame and is given room
-   to do it: the name is set to the width available rather than to a fixed
-   36px, and the prose runs to the frame's own measure.
-
-   The side padding is zero on purpose, so the name's first letter sits on
-   the same vertical as the card edges underneath it. */
-.home-hero {
-  padding: 18px 0 8px;
-  border: 0;
-  background: transparent;
+.home-section-gap {
+  margin-top: clamp(96px, 12vw, 168px);
 }
 
-.home-hero .home-name {
-  font-size: clamp(38px, 4.6vw, 54px);
-  line-height: 1.04;
-}
-
-.home-hero-lede {
-  margin-top: 22px;
-  max-width: 78ch;
-  font-size: 17px;
-  line-height: 1.82;
-  color: var(--fg-body);
-}
-
-.home-hero-lede + .home-hero-lede {
-  margin-top: 16px;
-}
-
-/* Three plain facts, set like the labels on the figures: the card has the
-   room now, and this is what the room is for. */
-.home-hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 26px;
-  margin-top: 30px;
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-}
-
-.home-hero-meta li {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.home-hero-meta li::before {
-  content: "";
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-/* Only the last of the three is a live fact, so only it is marked. */
-.home-hero-meta li:last-child {
-  color: var(--mark);
-}
-
-@media (max-width: 620px) {
-  .home-hero { padding: 12px 0 6px; }
-  .home-hero-lede { font-size: 16px; }
-}
-
-/* ── the figures, against the story that explains them ─────────────── */
-
-/* ── the figures, against the story that explains them ─────────────────
-   One grid holds all six cells — three drawings and the three passages
-   that go with them — so a figure and its paragraph are the same row and
-   line up by construction. The earlier version put the drawings in a
-   column of their own next to a single tall panel, and because a drawing
-   is three times the height of a paragraph the panel ran out of words
-   two thirds of the way down and left the second and third figures
-   facing nothing. */
-
-.home-split {
-  display: grid;
-  gap: 22px;
-  margin-top: 26px;
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 900px) {
-  .home-split {
-    /* The drawings take the narrower side: each one is already a framed
-       card, and the words beside them need the longer line. */
-    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
-    gap: 26px 36px;
-    /* Level with its own figure, not hanging from the top of the row —
-       a 160px paragraph pinned to the top of a 580px card reads as a
-       mistake rather than as a pairing. */
-    align-items: center;
-  }
-
-  /* The introduction is the only cell that takes both columns. */
-  .home-split-intro {
-    grid-column: 1 / -1;
-  }
-}
-
-.home-bento {
-  /* The 54px above came from the row of three this replaced, where the
-     cards followed a heading. Here the grid sets the spacing. */
-  margin-top: 0;
-  min-width: 0;
-}
-
-.home-split-intro .home-story-lede {
-  max-width: 76ch;
-}
-
-.home-story-lede {
-  margin-top: 10px;
-  max-width: 60ch;
-  font-size: 15.5px;
-  line-height: 1.8;
-  color: var(--fg-body);
-}
-
-/* One passage per machine, in the cell beside it. The rule that used to
-   sit above each one separated chapters in a shared panel; in a grid the
-   row does that, and a line across the text would cut it off from the
-   figure it belongs to. */
-.home-chapter {
-  min-width: 0;
-}
-
-@media (min-width: 900px) {
-  /* A hairline down the left instead: it ties the paragraph to the card
-     on its left rather than fencing it off from the one above. */
-  .home-chapter {
-    padding-left: 22px;
-    border-left: 1px solid var(--line);
-  }
-}
-
-.home-chapter-name {
+/* A section's heading: the display serif at the heading step. The page used
+   small grey labels above its sections instead, which say "a section
+   starts here" without saying what it is. */
+.home-h2 {
   font-family: var(--font-serif), ui-serif, Georgia, serif;
-  font-size: 25px;
+  font-size: var(--text-heading);
   font-weight: 400;
-  letter-spacing: -0.008em;
+  line-height: 1.1;
+  letter-spacing: -0.012em;
   color: var(--fg);
+  text-wrap: balance;
 }
 
-.home-chapter-name span {
-  margin-left: 8px;
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-  vertical-align: middle;
-}
-
-/* Set to carry its own figure: the card beside it is 575px tall, and type
-   this size at this leading brings the passage to about the same, so the row
-   reads as two things of equal weight rather than a drawing with a caption. */
-.home-chapter p {
+.home-lede {
   margin-top: 14px;
-  font-size: 16.5px;
-  line-height: 1.95;
-  color: var(--fg-body);
-}
-
-.home-chapter p + p {
-  margin-top: 16px;
-}
-
-/* The figure's own numbers, set as a plate: a mono label and the value,
-   the way the cards label their parts. It is what fills the cell beside a
-   drawing that is three paragraphs tall. */
-.home-chapter-spec {
-  margin-top: 20px;
-  border-top: 1px solid var(--line);
-}
-
-.home-chapter-spec li {
-  display: grid;
-  grid-template-columns: 92px minmax(0, 1fr);
-  gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--line);
-  font-size: 14px;
+  max-width: 62ch;
+  font-size: var(--text-body);
   line-height: 1.65;
   color: var(--fg-body);
+  text-wrap: pretty;
 }
 
-.home-chapter-spec span {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-  padding-top: 3px;
-}
-
-.home-chapter a,
-.home-story-lede a {
+.home-lede a,
+.home-chapter a {
   color: var(--fg);
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -1156,32 +793,228 @@ main.home-col > * {
   /* The rule under a link is where the accent earns its keep: it marks the
      one word in a paragraph that does something. */
   text-decoration-color: color-mix(in srgb, var(--mark) 55%, transparent);
+  transition: color 160ms ease, text-decoration-color 160ms ease;
 }
 
-.home-chapter a:hover,
-.home-story-lede a:hover {
-  color: var(--mark);
-  text-decoration-color: var(--mark);
+@media (hover: hover) and (pointer: fine) {
+  .home-lede a:hover,
+  .home-chapter a:hover {
+    color: var(--mark);
+    text-decoration-color: var(--mark);
+  }
 }
 
-/* ── the big one, across the frame ──────────────────────────────────── */
+/* ── the name ───────────────────────────────────────────────────────────
+   The first screen's one dominant thing. At display size the name leads
+   on its own, and the line under it says in plain words what it is — a
+   bare name at heading size was asking the visitor to work that out. */
+
+.home-hero {
+  display: grid;
+  gap: 48px;
+  padding-top: clamp(24px, 5vw, 64px);
+}
+
+@media (min-width: 1000px) {
+  .home-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+    align-items: end;
+    gap: 64px;
+  }
+}
+
+/* The contents, on the far side of the name. Names in the display serif at
+   the heading step, what each one is under it, and space between them
+   rather than rules. */
+.home-index {
+  display: grid;
+  gap: 18px;
+  align-content: end;
+}
+
+.home-index a {
+  display: grid;
+  gap: 2px;
+  border-radius: 8px;
+}
+
+.home-index-name {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  transition: color 160ms ease;
+}
+
+.home-index-role {
+  font-size: var(--text-small);
+  color: var(--fg-muted);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-index a:hover .home-index-name {
+    color: var(--mark);
+  }
+}
+
+.home-index a:focus-visible {
+  outline: 2px solid var(--mark);
+  outline-offset: 4px;
+}
+
+/* A jump lands the section's top below the bar, not under it. */
+.home [id] {
+  scroll-margin-top: 40px;
+}
+
+.home-hero .home-name {
+  font-size: var(--text-display);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+}
+
+.home-hero-lede {
+  margin-top: 22px;
+  max-width: 34em;
+  font-size: var(--text-lead);
+  line-height: 1.55;
+  color: var(--fg-body);
+  text-wrap: pretty;
+}
+
+.home-hero-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 22px;
+  margin-top: 32px;
+}
+
+/* Availability, the one live fact about the person: a dot in the accent
+   and the plain sentence, in the text face. */
+.home-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--text-small);
+  color: var(--fg-body);
+}
+
+.home-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mark);
+  box-shadow: 0 0 0 4px var(--mark-soft);
+}
+
+/* ── the figures, against the passages that explain them ───────────────
+   One grid holds the heading and all six cells — three drawings and the
+   three passages that go with them — so a figure and its paragraph share a
+   row and line up by construction. */
+
+.home-split {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .home-split {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+    gap: 72px 56px;
+    align-items: center;
+  }
+
+  .home-split-intro {
+    grid-column: 1 / -1;
+    margin-bottom: -24px;
+  }
+}
+
+.home-bento {
+  min-width: 0;
+}
+
+/* Every drawing on the home page is explained by the passage beside or
+   above it, so the caption under it — the same explanation again, smaller
+   and greyer, at a measure of 170 characters on the wide one — goes. The
+   legend stays: it is the key to the drawing, not a second account of it. */
+.home .iso-caption {
+  display: none;
+}
+
+.home-chapter {
+  min-width: 0;
+  max-width: 34em;
+}
+
+.home-chapter-name {
+  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-size: var(--text-heading);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+  color: var(--fg);
+}
+
+/* What it is, under its name rather than above it or squeezed beside it
+   in another face — one face per line, and the name reads first. */
+.home-chapter-role {
+  margin-top: 6px;
+  font-size: var(--text-small);
+  color: var(--fg-muted);
+}
+
+.home-chapter p:not(.home-chapter-role) {
+  margin-top: 16px;
+  font-size: var(--text-body);
+  line-height: 1.7;
+  color: var(--fg-body);
+  text-wrap: pretty;
+}
+
+/* The figure's own numbers. A step in tone holds them together rather than
+   a box of hairlines: the rows read as one object, and the space between
+   them does the separating. */
+.home-chapter-spec {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: var(--plate);
+}
+
+.home-chapter-spec > div {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 16px;
+  font-size: var(--text-small);
+  line-height: 1.55;
+}
+
+.home-chapter-spec dt {
+  color: var(--fg-muted);
+}
+
+.home-chapter-spec dd {
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── how it gets made, and the close ───────────────────────────────────── */
 
 .home-bench-band {
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
-/* ── the story under it ─────────────────────────────────────────────── */
-
-.home-story {
-  margin-top: 46px;
-}
-
-.home-story > .home-col + .home-col {
-  margin-top: 34px;
-}
-
-/* The hero's name sits beside the mark, so the earlier top margin for a
-   name that opened the page on its own no longer applies. */
-.home-hero .home-eye {
-  margin-top: 0;
+.home-close-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 22px;
+  margin-top: 28px;
 }

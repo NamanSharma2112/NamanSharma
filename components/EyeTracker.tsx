@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useLayoutEffect, useRef } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 /* ══ Eye tracker ═══════════════════════════════════════════
    A ball with two eyes that watches your cursor, wherever it is
@@ -82,6 +82,26 @@ const GAP = 0.19;
 const TILT = 64;
 
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+
+/* ── it talks back when you poke it ─────────────────────────
+   A press on the toy (never on the mark) opens a little chat
+   bubble off its lower right — the pet's bubble, same shape and
+   tints — types one short line into it a letter at a time,
+   holds it to be read, and folds it away. Never the same line
+   twice running. */
+const LINES = [
+  "Hey, I see you.",
+  "Boop.",
+  "That tickles.",
+  "Hi there!",
+  "Stop poking me.",
+  "I'm watching you.",
+  "Again? Okay.",
+  "You found me.",
+];
+const TINTS = ["#3b5bff", "#179c52", "#e0307f"];
+const KEY_MS = 38;
+const HOLD_MS = 1500;
 
 /* ── the body, in three shapes ──────────────────────────────
    The eyes are worked out on a sphere whatever the body is, so
@@ -189,6 +209,32 @@ export function EyeTracker({
 } = {}) {
   const still = stillness();
   const box = useRef<HTMLDivElement>(null);
+  const [typed, setTyped] = useState("");
+  const [talking, setTalking] = useState(false);
+  const [tint, setTint] = useState(TINTS[0]!);
+  const turn = useRef(0);
+  const lastLine = useRef(-1);
+  useEffect(() => () => { turn.current++; }, []);
+  const poke = async () => {
+    if (idle) return;
+    const mine = ++turn.current;
+    const pool = LINES.map((_, i) => i).filter((i) => i !== lastLine.current);
+    const i = pool[Math.floor(Math.random() * pool.length)]!;
+    lastLine.current = i;
+    const line = LINES[i]!;
+    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    setTint(TINTS[Math.floor(Math.random() * TINTS.length)]!);
+    setTyped("");
+    setTalking(true);
+    for (let k = 1; k <= line.length; k++) {
+      await wait(KEY_MS + Math.random() * 30);
+      if (mine !== turn.current) return;
+      setTyped(line.slice(0, k));
+    }
+    await wait(HOLD_MS);
+    if (mine !== turn.current) return;
+    setTalking(false);
+  };
   const eyes = useRef<(SVGGElement | null)[]>([]);
   const knobs = useRef({ follow, bounce, eyeScale });
   knobs.current = { follow, bounce, eyeScale };
@@ -309,10 +355,13 @@ export function EyeTracker({
        cursor crossing the page read as noise. The reach is
        measured against that card, so the eyes arrive at the rim
        as you arrive at its edge. */
-    /* `.home-col` is this project's reading column: the card
-       equivalent here, so the eyes follow you down the page's
-       own measure and face front when you leave it. */
-    const frame = el.closest<HTMLElement>(".bench-card, .dtl-block, .board, .sf-thumb, .home-col") ?? el;
+    /* This project's one is not in a card: it is parked in the
+       corner of the page, so its card is the page. Without this
+       it fell back to its own 54px box and only looked at you
+       when you were already on top of it. */
+    const frame =
+      el.closest<HTMLElement>(".bench-card, .dtl-block, .board, .sf-thumb") ??
+      (el.closest(".home-watch") ? document.documentElement : el);
     const aim = (e: PointerEvent) => {
       const f = frame.getBoundingClientRect();
       if (e.clientX < f.left || e.clientX > f.right || e.clientY < f.top || e.clientY > f.bottom) {
@@ -361,33 +410,6 @@ export function EyeTracker({
       document.documentElement.removeEventListener("pointerleave", rest);
     };
   }, [still, idle]);
-
-  /* ── a press squashes it ──────────────────────────────────
-     The mark is the one thing on the page that looks back, so a
-     tap on it should land on something. It squashes onto its
-     base while held and springs back past its own size when
-     let go: the overshoot is the whole difference between
-     rubber and a hover state.
-
-     Written as an attribute rather than through state — a press
-     is not a render, same as a pointer move — and the curves
-     live in the stylesheet next to the rest of the mark.
-     Release is bound to the window, so dragging off it while
-     held still lets it back up. */
-  useEffect(() => {
-    const el = box.current;
-    if (!el) return;
-    const down = () => el.setAttribute("data-press", "1");
-    const up = () => el.removeAttribute("data-press");
-    el.addEventListener("pointerdown", down);
-    window.addEventListener("pointerup", up);
-    window.addEventListener("pointercancel", up);
-    return () => {
-      el.removeEventListener("pointerdown", down);
-      window.removeEventListener("pointerup", up);
-      window.removeEventListener("pointercancel", up);
-    };
-  }, []);
 
   const s = clamp(size, 16, 180);
   const body = SHAPES[shape] ?? SHAPES.Ball;
@@ -440,7 +462,12 @@ export function EyeTracker({
       role="img"
       aria-label="A ball with two eyes that follows the cursor"
     >
-      <svg className="eyt-ball" viewBox="0 0 100 100">
+      <svg
+        className="eyt-ball"
+        viewBox="0 0 100 100"
+        data-poke={idle ? undefined : true}
+        onClick={poke}
+      >
         <defs>
           <clipPath id={clip}>
             <path ref={clipEl} d={shown.current ? outline(shown.current) : body} />
@@ -462,6 +489,17 @@ export function EyeTracker({
         ))}
         </g>
       </svg>
+      {idle ? null : (
+        <span
+          className="eyt-say"
+          data-on={talking || undefined}
+          aria-live="polite"
+          style={{ "--tint": tint } as React.CSSProperties}
+        >
+          <span>{typed}</span>
+          <span className="eyt-caret" />
+        </span>
+      )}
     </div>
   );
 }

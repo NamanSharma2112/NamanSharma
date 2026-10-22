@@ -40,7 +40,7 @@ export default function Landing({
 
   return (
     <div
-      className={cn(className, done ? "landing-in" : "opacity-0")}
+      className={cn(className, done ? "landing-in" : "landing-wait")}
       style={done && delay ? { animationDelay: `${delay}s` } : undefined}
     >
       {children}

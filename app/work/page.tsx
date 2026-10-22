@@ -17,7 +17,7 @@ export default function WorkPage() {
     <>
       <main className="home-col">
         <TopStrip />
-        <PageHeader kicker="Work" title="Selected work">
+        <PageHeader title="Selected work">
           Passion projects and client work. Hover a title to see it.
         </PageHeader>
 

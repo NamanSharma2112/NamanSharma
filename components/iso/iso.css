@@ -128,3 +128,46 @@ html:not(.dark) .iso{
   --anatomy-paper:var(--bg);
   --anatomy-page:var(--bg);
 }
+
+/* ── the plate, in this site's hand ──────────────────────────────────────
+   The kit frames each figure in a 1px ring and sets its corners in tracked
+   monospace capitals. On a page of its own that is the look of a drawing
+   sheet; on this site it was the one place that spoke a second visual
+   language — a hairline box and a third typeface, next to prose set in
+   neither. So the plate is a step in tone instead of a line, with soft
+   corners, and the corners are set in the page's own face at a size meant
+   to be read. The readout keeps tabular figures: its numbers change every
+   frame, and in proportional digits the whole line would shiver as they
+   did. */
+/* Matched to the theme bridge's own specificity, or the light theme's
+   values above win and the corner labels fall back to the kit's 3:1 grey.
+   The plate is the page's raised surface — a sheet laid on the stone. */
+html:not(.dark) .iso,
+html.dark .iso{
+  --anatomy-card:var(--surface);
+  --anatomy-paper:var(--surface);
+  --anatomy-text:var(--fg-body);
+  --anatomy-muted:var(--fg-muted);
+}
+
+.iso-plate{
+  box-shadow:none;
+  border-radius:18px;
+}
+
+.iso-plate-corner,
+.iso-plate-corner[data-corner="title"],
+.iso-plate-corner[data-corner="hint"]{
+  font-family:var(--font-geist-sans),ui-sans-serif,system-ui,sans-serif;
+  font-size:13px;
+  letter-spacing:0;
+  text-transform:none;
+}
+
+.iso-plate-corner[data-corner="fig"]{
+  font-weight:500;
+}
+
+.iso-legend{
+  font-size:14px;
+}

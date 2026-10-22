@@ -47,6 +47,10 @@ export default function Boot({ children }: { children: React.ReactNode }) {
     } catch {
       // Storage blocked: treat it as a first visit.
     }
+    // A visitor who has asked for less motion gets the page, not a reel
+    // about the page: four seconds of a name turning over is exactly the
+    // thing the setting exists to turn off.
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) boarded = true;
 
     if (boarded) {
       setIntro("none");

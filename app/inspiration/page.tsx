@@ -55,7 +55,7 @@ export default function InspirationPage() {
     <>
       <main className="home-col">
         <TopStrip />
-        <PageHeader kicker="Inspiration" title="People I look up to">
+        <PageHeader title="People I look up to">
           The people, sites and tools I admire and learn from. I keep adding to
           this as I find more.
         </PageHeader>

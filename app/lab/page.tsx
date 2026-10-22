@@ -66,7 +66,7 @@ export default function LabPage() {
     <>
       <main className="home-col">
         <TopStrip />
-        <PageHeader kicker="Lab" title="Motion experiments">
+        <PageHeader title="Motion experiments">
           Things I was curious about, built to see how they feel. The rest of
           the site is deliberately quiet — this is where the loud ones live.
         </PageHeader>

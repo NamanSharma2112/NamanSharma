@@ -4,17 +4,16 @@ import SocialLinks from "@/components/SocialLinks";
 /**
  * One ending for every page.
  *
- * A rule, who wrote it, where else to go, and the fine print — in that order,
- * because that is the order you want them in once you have reached the bottom
- * and are deciding whether to leave.
+ * Who wrote it, where else to go, and the fine print — in that order, because
+ * that is the order you want them in once you have reached the bottom and are
+ * deciding whether to leave. The name comes back large, as a signature rather
+ * than as a heading: the page closes on the person it opened with.
  */
 const EMAIL = "namansharmans03@gmail.com";
 
 export default function Footer() {
   return (
     <footer className="foot">
-      <div className="foot-rule" />
-
       <div className="foot-row">
         <div>
           <Link href="/" className="foot-name">

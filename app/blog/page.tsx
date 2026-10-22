@@ -18,7 +18,7 @@ export default function BlogIndexPage() {
     <>
       <main className="home-col">
         <TopStrip />
-        <PageHeader kicker="Writing" title="Notes & essays">
+        <PageHeader title="Notes & essays">
           Thoughts on design engineering, micro-interactions, and building
           interfaces that feel alive.
         </PageHeader>

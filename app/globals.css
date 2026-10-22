@@ -234,21 +234,22 @@
 :root {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  /* ── stone, not cream ──────────────────────────────────────────────────
-     Warm, but low in chroma. A yellow-cream ground with a rust accent is the
-     palette every generated page reaches for first, and it read as that: the
-     ground is a pale stone instead, warm enough not to be a blank browser
-     window and grey enough not to be parchment. The ink stays almost black
-     and the running text sits at 10:1 — a page set in soft grey reads
-     unfinished. The muted ink is for notes and labels only, and still clears
-     4.5:1 on both the ground and the figure plates. */
-  --bg: #f5f4f0;
-  --surface: #fbfaf8;
-  --plate: #ecebe5;
-  --line: #e0ddd5;
-  --fg: #161512;
-  --fg-body: #3a3732;
-  --fg-muted: #67625a;
+  /* ── neutral paper ─────────────────────────────────────────────────────
+     An off-white with no tint in it, and inks mixed from the same neutral.
+     The page tried warmth twice — a cream, then a stone — and both read as
+     the palette every generated page reaches for. Without a hue the ground
+     steps back and the figures carry the page: their parts are white, so
+     each sits on a white sheet a step lighter than the ground and its
+     outlines stay crisp. Off-white rather than white, so long reading is
+     not a lightbox. Running text 10:1; notes clear 4.5:1 on the ground and
+     on the panels. */
+  --bg: #f7f7f6;
+  --surface: #ffffff;
+  --plate: #efefed;
+  --line: #e4e4e2;
+  --fg: #141414;
+  --fg-body: #3b3b3b;
+  --fg-muted: #666666;
 
   /* ── the one accent ───────────────────────────────────────────────────
      Annotation red, the colour a draughtsman marks a print with — pushed

@@ -171,3 +171,80 @@ html.dark .iso{
 .iso-legend{
   font-size:14px;
 }
+
+/* ── the teardown ───────────────────────────────────────────────────────
+   The switch sits at the top of the plate between its two corner labels:
+   one control, worded as the action it takes. A step in tone rather than
+   an outline, the text face, and it answers a press inside a frame. */
+.td-toggle{
+  position:absolute;
+  top:12px;
+  left:50%;
+  translate:-50% 0;
+  z-index:2;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  height:30px;
+  padding:0 13px 0 11px;
+  border-radius:999px;
+  background:var(--plate);
+  color:var(--fg);
+  font-family:var(--font-geist-sans),ui-sans-serif,system-ui,sans-serif;
+  font-size:13px;
+  font-weight:500;
+  white-space:nowrap;
+  transition:transform 160ms var(--ease-out),background-color 200ms var(--ease-out);
+  -webkit-tap-highlight-color:transparent;
+}
+.td-toggle svg{width:14px;height:14px}
+.td-toggle:active{transform:scale(.96)}
+@media (hover:hover) and (pointer:fine){
+  .td-toggle:hover{background:color-mix(in srgb,var(--fg) 9%,var(--plate))}
+}
+.td-toggle:focus-visible{outline:2px solid var(--mark);outline-offset:3px}
+.td-toggle[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
+
+/* The chain line a part travelled: long dash, short dash, drawn behind
+   every solid so only the gap it crosses shows. */
+.td-trails line{
+  stroke:var(--fg-muted);
+  stroke-width:.9;
+  stroke-dasharray:7 2.5 1.5 2.5;
+  vector-effect:non-scaling-stroke;
+}
+
+/* Annotation red for the leaders and the dot each one lands on — the one
+   place on the site where the accent is literally what it stands for. The
+   names sit on a halo of the plate's own colour so they stay legible where
+   a lane crosses a line of the drawing. */
+.td-leader{
+  fill:none;
+  stroke:var(--mark);
+  stroke-width:1;
+  vector-effect:non-scaling-stroke;
+}
+.td-dot{fill:var(--mark)}
+.td-name{
+  fill:var(--fg);
+  font-family:var(--font-geist-sans),ui-sans-serif,system-ui,sans-serif;
+  /* the size comes from the figure, in its own viewBox units */
+  font-size:inherit;
+  font-weight:500;
+  paint-order:stroke;
+  stroke:var(--anatomy-card);
+  stroke-width:5px;
+  stroke-linejoin:round;
+}
+
+/* On a phone the drawing is fitted so small that a name in a side lane
+   would be under 10px and its lane would run over the stack. The teardown
+   still opens; the names are left to the legend under the card, which
+   already gives every part its name at a size meant to be read. */
+@media (max-width:560px){
+  /* The top of a narrow plate is taken by its two corner labels, so the
+     switch gets a row of its own above the two at the bottom. */
+  .iso-plate:has(.td-toggle){padding-bottom:118px}
+  .td-toggle{top:auto;bottom:66px}
+  .td-labels{display:none}
+}

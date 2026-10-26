@@ -146,7 +146,8 @@ export const ART = (() => {
     posts: POST_X.map((x) => ({
       shelf: slabOf({ x: x - POST_W / 2 - 3, y: ROD_Y0 - 11, w: POST_W + 6, d: (ROWS - 1) * ROD_GAP + 22, r: 2 }, 0, 3, P, 3, 0.4),
       body: slabOf({ x: x - POST_W / 2, y: ROD_Y0 - 8, w: POST_W, d: (ROWS - 1) * ROD_GAP + 16, r: 2 }, 3, POST_H - 3, P, 3, 0.6),
-      cap: lineOnTop([x - POST_W / 2 + 2, ROD_Y0 - 6], [x + POST_W / 2 - 2, ROD_Y0 - 6], POST_H, P),
+      /* Edge to edge across the top, so it reads as a seam and not a scratch. */
+      cap: lineOnTop([x - POST_W / 2, ROD_Y0 - 6], [x + POST_W / 2, ROD_Y0 - 6], POST_H, P),
       screws: pointsAt(
         [
           [x, ROD_Y0 - 4, POST_H],

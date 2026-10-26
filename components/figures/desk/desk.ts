@@ -1,8 +1,8 @@
 import {
+  sideSeam,
   boxCorners,
   corners,
   cylinder,
-  dotGrid,
   fitProjection,
   haloOf,
   insetPlan,
@@ -143,7 +143,9 @@ export const ART = (() => {
       P,
     ),
     neck: slabOf(NECK, 3, CASE_Z - 3 + 6, P, 4, 0.5),
-    neckSeam: lineOnTop([NECK.x + 3, NECK.y + NECK.d], [NECK.x + NECK.w - 3, NECK.y + NECK.d], CASE_Z - 6, P),
+    /* Round the neck's visible sides and corners, ending on its silhouette,
+       rather than stopping short of the corners on one face. */
+    neckSeam: sideSeam(NECK, CASE_Z - 6, P),
     case: slabOf(CASE, CASE_Z, CASE_H, P, 3, 0.9),
     bezel: onFace(SCREEN.x0 - 1.4, SCREEN.z0 - 1.4, SCREEN.x1 + 1.4, SCREEN.z1 + 1.4),
     chinDot: pointsAt([[0, FACE_Y, CASE_Z + 3.6]] as Point3[], P),
@@ -151,11 +153,25 @@ export const ART = (() => {
     /* The keyboard: a tray, a lip, and a grid of keys. */
     keyTray: slabOf(KEYS, 0, 4, P, 3, 0.5),
     keyLip: planOutline(insetPlan(KEYS, 3.5), 4, P),
-    keys: dotGrid(KEYS.x + 8, KEYS.y + 8, 15, 4, 8.2, 4, P),
-    keySpace: lineOnTop([KEYS.x + 42, KEYS.y + KEYS.d - 7], [KEYS.x + 90, KEYS.y + KEYS.d - 7], 4, P),
+    /* Fifteen keys by four, less the ones the space bar stands in for:
+       a dot inside the bar's outline read as a key printed through it. */
+    keys: pointsAt(
+      Array.from({ length: 60 }, (_, i) => [KEYS.x + 8 + (i % 15) * 8.2, KEYS.y + 8 + Math.floor(i / 15) * 8.2, 4] as Point3)
+        .filter(([x, y]) => !(y > KEYS.y + KEYS.d - 13 && x > KEYS.x + 39 && x < KEYS.x + 93)),
+      P,
+    ),
+    /* The space bar as a key, not a stroke: a closed outline has no ends to
+       leave floating among the other keys. */
+    keySpace: planOutline({ x: KEYS.x + 42, y: KEYS.y + KEYS.d - 9.5, w: 48, d: 5, r: 1.5 }, 4, P),
 
     mouse: slabOf(MOUSE, 0, 6, P, 11, 0.8),
-    mouseSeam: lineOnTop([MOUSE.x + 13, MOUSE.y + 4], [MOUSE.x + 13, MOUSE.y + 20], 6, P),
+    /* The two buttons: a split from the front edge back to a seam that
+       crosses the whole top, so both lines end on something. Set on the
+       top face, inside the bevel. */
+    mouseSeam: [
+      lineOnTop([MOUSE.x + MOUSE.w / 2, MOUSE.y + 0.8], [MOUSE.x + MOUSE.w / 2, MOUSE.y + 15], 6, P),
+      lineOnTop([MOUSE.x + 0.8, MOUSE.y + 15], [MOUSE.x + MOUSE.w - 0.8, MOUSE.y + 15], 6, P),
+    ].join(""),
 
     /* The tower, with its vents and a power ring. */
     tower: slabOf(TOWER, 0, TOWER_H, P, 4, 0.8),
@@ -169,7 +185,11 @@ export const ART = (() => {
     ),
     power: ring(TOWER.x + 10, TOWER.y + TOWER.d - 6, 2.4, TOWER_H, P, 14),
     powerDot: pointsAt([[TOWER.x + 10, TOWER.y + TOWER.d - 6, TOWER_H]] as Point3[], P),
-    towerKnurl: knurl(TOWER.x + TOWER.w - 11, TOWER.y + TOWER.d - 8, 3.4, TOWER_H - 9, TOWER_H, 14, P),
+    /* A knurled knob standing on the top, so its grip lines run between
+       its own two edges. They were drawn into the tower's corner, where
+       they read as scratches on a flat face. */
+    towerKnob: cylinder(TOWER.x + TOWER.w - 11, TOWER.y + TOWER.d - 8, 3.4, TOWER_H, 3, P, 20, 0.3),
+    towerKnurl: knurl(TOWER.x + TOWER.w - 11, TOWER.y + TOWER.d - 8, 3.4, TOWER_H, TOWER_H + 3, 14, P),
   };
 })();
 

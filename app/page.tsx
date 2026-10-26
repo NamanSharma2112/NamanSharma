@@ -65,10 +65,9 @@ export default function Home() {
           <div className="home-arrive">
             <h1 className="home-name">Naman Sharma</h1>
             <p className="home-hero-lede">
-              I&rsquo;m a design engineer in Jalandhar, India. I build for the
-              web, and I care about how an interface <em>feels</em> — the
-              easing curve, the hairline, the way a thing behaves when you
-              interrupt it halfway.
+              I&rsquo;m a design engineer. I build for the web, and I care
+              about how an interface <em>feels</em> — the easing curve, the
+              hairline, the way a thing behaves when you interrupt it halfway.
             </p>
             <div className="home-hero-act">
               <a className="home-button" href={`mailto:${EMAIL}`}>

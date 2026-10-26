@@ -161,7 +161,7 @@ export function ChurnLive(props: {
 
         <g ref={td.lift(1, "Dial", [0.3, 0.5])}>
           {props.dial}
-          <path ref={needle} className="iso-line churn-needle" data-tone="lit" d={needleAt(1)} />
+          <path ref={needle} className="iso-line churn-needle" data-tone="lit" data-free="start" d={needleAt(1)} />
         </g>
         <TeardownLabels td={td} />
         </g>

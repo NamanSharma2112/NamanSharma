@@ -17,6 +17,7 @@ import {
   radialTicks,
   ring,
   sideArc,
+  sideRing,
   slabOf,
   topTicks,
   type Plan,
@@ -98,7 +99,14 @@ export const SLIDE_HOME = 16;
 export const SLIDE_SPAN = LIFT;
 
 const RAIL_Y = [-26, 22];
-const SLIDE: Plan = { x: -6, y: -30, w: 46, d: 56, r: 4 };
+/* The slide stands clear of the cam's widest point (46 at full lift) at
+   every angle, not just where the follower touches it: a cam is a disc,
+   and a plate parked beside it at 28 met its far side as it turned. */
+const SLIDE: Plan = { x: 16, y: -30, w: 40, d: 56, r: 4 };
+/* Where the follower's rod starts: the roller's centre at rest. */
+const ROD_X = -34 + 20 + 6.5;
+/* The fixed end the return spring seats against, clear of the dial. */
+const STOP_R = 94;
 const SLIDE_Z = 3;
 const SLIDE_H = 6;
 
@@ -172,12 +180,14 @@ export const ART = (() => {
       P,
     ),
 
-    rails: RAIL_Y.map((y) => slabOf({ x: -14, y: y - 2.5, w: 72, d: 5, r: 1 }, 0, 3, P, 3, 0.4)),
-    stops: [-16, 58].map((x) =>
-      slabOf({ x: x - 2.5, y: RAIL_Y[0] - 5, w: 5, d: RAIL_Y[1] - RAIL_Y[0] + 10, r: 1.2 }, 0, 7, P, 3, 0.5),
+    /* Long enough for the slide's whole travel, and the end stops low
+       enough that the follower's rod passes over the near one. */
+    rails: RAIL_Y.map((y) => slabOf({ x: 10, y: y - 2.5, w: STOP_R - 10, d: 5, r: 1 }, 0, 3, P, 3, 0.4)),
+    stops: [11, STOP_R].map((x) =>
+      slabOf({ x: x - 2.5, y: RAIL_Y[0] - 5, w: 5, d: RAIL_Y[1] - RAIL_Y[0] + 10, r: 1.2 }, 0, 4, P, 3, 0.5),
     ),
     stopScrews: pointsAt(
-      ([[-16, RAIL_Y[0] - 1, 7], [-16, RAIL_Y[1] + 1, 7], [58, RAIL_Y[0] - 1, 7], [58, RAIL_Y[1] + 1, 7]] as Point3[]),
+      ([[11, RAIL_Y[0] - 1, 4], [11, RAIL_Y[1] + 1, 4], [STOP_R, RAIL_Y[0] - 1, 4], [STOP_R, RAIL_Y[1] + 1, 4]] as Point3[]),
       P,
     ),
 
@@ -190,22 +200,27 @@ export const ART = (() => {
     knurl: knurl(CAM[0], CAM[1], KNOB_R, KNOB_Z, KNOB_Z + KNOB_H, 34, P),
     knobRing: ring(CAM[0], CAM[1], KNOB_R - 3, KNOB_Z + KNOB_H, P, 28),
 
-    arm: slabOf({ x: CAM[0] + 16, y: ARM_Y - 3.5, w: 30, d: 7, r: 1.6 }, CAM_Z + 2, 5, P, 3, 0.4),
-    bushings: [CAM[0] + 44, CAM[0] + 58].map((x) =>
-      slabOf({ x: x - 4, y: ARM_Y - 7, w: 8, d: 14, r: 1.8 }, 0, 12, P, 3, 0.5),
-    ),
+    /* Where the return spring seats on the slide's far face: a ring at
+       the coil's own radius, so the first turn starts on it. */
+    springSeat: sideRing([SLIDE.x + SLIDE.w, ARM_Y, SLIDE_Z + 3], 3, "x", P, 20),
+
+    /* The rod from the roller's pin to the slide's face. It moves with
+       the slide, so it is drawn at rest and translated with it; it sits
+       inside the roller's height and the slide's thickness, so it meets
+       both flush rather than standing proud of either. */
+    arm: slabOf({ x: ROD_X, y: ARM_Y - 3, w: SLIDE.x - ROD_X, d: 6, r: 1.4 }, 4.6, 3.5, P, 3, 0.4),
 
     slide: slabOf(SLIDE, SLIDE_Z, SLIDE_H, P, 4, 0.6),
     slideSeat: planOutline(insetPlan(SLIDE, 5), SLIDE_Z + SLIDE_H, P),
     slideRivets: pointsAt(
-      [-1, 9, 19, 29, 39].map((dx) => [SLIDE.x + 3 + dx, SLIDE.y + 4, SLIDE_Z + SLIDE_H] as Point3),
+      [1, 9, 17, 25, 33].map((dx) => [SLIDE.x + 3 + dx, SLIDE.y + 4, SLIDE_Z + SLIDE_H] as Point3),
       P,
     ),
     slideBushes: [
       slabOf({ x: SLIDE.x + 4, y: RAIL_Y[0] - 5, w: 12, d: 10, r: 2 }, SLIDE_Z - 1, 4, P, 3),
-      slabOf({ x: SLIDE.x + 30, y: RAIL_Y[0] - 5, w: 12, d: 10, r: 2 }, SLIDE_Z - 1, 4, P, 3),
+      slabOf({ x: SLIDE.x + 24, y: RAIL_Y[0] - 5, w: 12, d: 10, r: 2 }, SLIDE_Z - 1, 4, P, 3),
       slabOf({ x: SLIDE.x + 4, y: RAIL_Y[1] - 5, w: 12, d: 10, r: 2 }, SLIDE_Z - 1, 4, P, 3),
-      slabOf({ x: SLIDE.x + 30, y: RAIL_Y[1] - 5, w: 12, d: 10, r: 2 }, SLIDE_Z - 1, 4, P, 3),
+      slabOf({ x: SLIDE.x + 24, y: RAIL_Y[1] - 5, w: 12, d: 10, r: 2 }, SLIDE_Z - 1, 4, P, 3),
     ],
 
     dialStand: slabOf({ x: DIAL[0] - 9, y: DIAL[1] - 9, w: 18, d: 18, r: 3 }, 0, DIAL_Z, P, 3, 0.4),
@@ -227,7 +242,11 @@ export function camAt(angle: number) {
   const ring: Plane[] = [];
   for (let i = 0; i < 96; i += 1) {
     const a = (i / 96) * Math.PI * 2;
-    const r = radiusAt(a - angle);
+    /* Cut so the radius at the point of contact (+x, where the roller
+       rides) is the curve's own value at this turn. Wound the other way,
+       the contact read the curve backwards while the slide read it
+       forwards, and the two only agreed at the ends of the stroke. */
+    const r = radiusAt(angle - a);
     ring.push([CAM[0] + Math.cos(a) * r, CAM[1] + Math.sin(a) * r]);
   }
   return extrude(ring, CAM_Z, CAM_H, P, { convex: false, bevel: 0.6 });
@@ -242,13 +261,17 @@ export const markAt = (angle: number) =>
     P,
   );
 
-/** The roller that rides the cam, and the spring behind it. */
-export function followerAt(reach: number) {
-  const x = CAM[0] + reach + ROLLER_R;
+/** The roller that rides the cam, and the return spring that keeps it
+    there. `lift` is how far past the base circle the cam reaches at the
+    point of contact, so the roller sits ON the rim — it was placed at the
+    lift alone, twenty units inside the disc. The spring runs from the
+    slide's far face to the fixed stop, so it shortens as the cam pushes. */
+export function followerAt(lift: number) {
+  const x = CAM[0] + BASE_R + lift + ROLLER_R;
   return {
     roller: cylinder(x, ARM_Y, ROLLER_R, CAM_Z + 1, CAM_H - 2, P, 24, 0.4),
     pin: ring(x, ARM_Y, 1.8, CAM_Z + CAM_H - 1, P, 12),
-    spring: coil(x + ROLLER_R + 2, CAM[0] + 62, [ARM_Y, CAM_Z + 4.5], 4.4, 6, "x", P),
+    spring: coil(SLIDE.x + SLIDE.w + lift, STOP_R - 2.5, [ARM_Y, SLIDE_Z + 3], 3, 7, "x", P),
   };
 }
 

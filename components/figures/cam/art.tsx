@@ -67,9 +67,6 @@ const KNOB = (
 const ARM = (
   <g key="arm">
     <Solid paths={ART.arm} tone="mid" />
-    {ART.bushings.map((paths, i) => (
-      <Solid key={i} paths={paths} tone="mid" />
-    ))}
   </g>
 );
 

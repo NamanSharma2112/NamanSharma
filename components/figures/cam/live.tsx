@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { TeardownLabels, TeardownToggle, TeardownTrails, useTeardown } from "@/components/iso/react/teardown";
 import { IsoFigure, Line, Solid } from "@/components/iso/react/draw";
 import { follow, useInView, useLoop, useReadout } from "@/components/iso/react/live";
 import { translateAlong } from "@/components/iso/iso-kit";
@@ -39,6 +40,7 @@ export function CamLive(props: {
   dial: React.ReactNode;
 }) {
   const { anchor, say } = useReadout<HTMLDivElement>();
+  const td = useTeardown({ gap: 26, width: WIDTH });
   const visible = useInView(anchor);
 
   const cam = React.useRef<SVGGElement>(null);
@@ -119,6 +121,7 @@ export function CamLive(props: {
   };
 
   return (
+    <>
     <div
       ref={anchor}
       className="cam"
@@ -142,11 +145,17 @@ export function CamLive(props: {
       }}
     >
       <IsoFigure width={WIDTH} height={HEIGHT} label={LABEL}>
-        {props.base}
-        {props.rails}
-        {props.shaft}
+        <g ref={td.frame}>
+        {/* Taken apart along the way it was put together: the plate stays
+            down, the rails and the dial lift off it, the cam, its follower
+            and the slide come up a level above those, and the crank last. */}
+        <g ref={td.lift(0, "Base plate", [0.82, 0.86])}>{props.base}</g>
+        <TeardownTrails td={td} />
+        <g ref={td.lift(1, "Guide rails", [0.7, 0.62])}>{props.rails}</g>
+        <g ref={td.lift(1)}>{props.shaft}</g>
 
         {/* The cam is the one lit part: it is the curve. */}
+        <g ref={td.lift(2, "Cam", [0.25, 0.5])}>
         <g ref={cam} className="iso-solid cam-disc" data-lit>
           <path className="iso-fill" data-p="fill" d={rest.fill} />
           {rest.shades.map((d, i) => (
@@ -157,7 +166,9 @@ export function CamLive(props: {
           <path className="iso-line iso-bevel" data-tone="lo" data-p="bevel" d={rest.bevel ?? ""} />
           <path className="iso-line iso-edge" data-tone="hi" data-p="outline" d={rest.outline} />
         </g>
+        </g>
 
+        <g ref={td.lift(2, "Follower", [0.5, 0.3])}>
         <g ref={roll}>
           <path className="iso-line" data-tone="lo" data-p="back" d={restRoll.spring.back} />
           <g className="iso-solid">
@@ -172,15 +183,28 @@ export function CamLive(props: {
           <path className="iso-line" data-tone="mid" data-p="pin" d={restRoll.pin} />
           <path className="iso-line" data-tone="mid" data-p="front" d={restRoll.spring.front} />
         </g>
+        </g>
 
-        {props.arm}
-        <g ref={slide}>{props.slide}</g>
-        {props.knob}
-        <path ref={mark} className="iso-line" data-tone="hi" d={markAt(0)} />
-        {props.dial}
-        <path ref={needle} className="iso-line cam-needle" data-tone="lit" d={needleAt(ease(0))} />
+        <g ref={td.lift(2)}>{props.arm}</g>
+        <g ref={td.lift(2, "Slide", [0.6, 0.5])}>
+          <g ref={slide}>{props.slide}</g>
+        </g>
+        <g ref={td.lift(3, "Crank", [0.5, 0.4])}>{props.knob}</g>
+        <g ref={td.lift(2)}>
+          <path ref={mark} className="iso-line" data-tone="hi" d={markAt(0)} />
+        </g>
+        <g ref={td.lift(1, "Dial gauge", [0.5, 0.5])}>
+          {props.dial}
+          <path ref={needle} className="iso-line cam-needle" data-tone="lit" d={needleAt(ease(0))} />
+        </g>
+        <TeardownLabels td={td} />
+        </g>
       </IsoFigure>
     </div>
+    {/* Outside the figure's own control, so it is never a button inside
+        a slider. */}
+    <TeardownToggle td={td} />
+    </>
   );
 }
 

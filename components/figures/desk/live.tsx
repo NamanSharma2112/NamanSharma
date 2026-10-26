@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { TeardownLabels, TeardownToggle, TeardownTrails, useTeardown } from "@/components/iso/react/teardown";
 import { IsoFigure, Line } from "@/components/iso/react/draw";
 import { follow, useInView, useLoop, useReadout } from "@/components/iso/react/live";
 import {
@@ -31,6 +32,7 @@ export function DeskLive(props: {
   tower: React.ReactNode;
 }) {
   const { anchor, say } = useReadout<HTMLDivElement>();
+  const td = useTeardown({ gap: 34, width: WIDTH });
   const visible = useInView(anchor);
 
   const glass = React.useRef<SVGPathElement>(null);
@@ -95,6 +97,7 @@ export function DeskLive(props: {
   };
 
   return (
+    <>
     <div
       ref={anchor}
       className="desk"
@@ -110,9 +113,15 @@ export function DeskLive(props: {
       }}
     >
       <IsoFigure width={WIDTH} height={HEIGHT} label={LABEL}>
-        {props.base}
-        {props.tower}
-        {props.stand}
+        <g ref={td.frame}>
+        {/* Taken apart the way it was set up: the desk mat stays, the
+            tower, the stand and the keyboard lift off it, and the monitor
+            comes up off its stand with the screen still running in it. */}
+        <g ref={td.lift(0, "Desk mat", [0.86, 0.8])}>{props.base}</g>
+        <TeardownTrails td={td} />
+        <g ref={td.lift(1, "Tower", [0.5, 0.45])}>{props.tower}</g>
+        <g ref={td.lift(1, "Stand", [0.3, 0.75], "l")}>{props.stand}</g>
+        <g ref={td.lift(2, "Monitor", [0.2, 0.3])}>
         {props.frame}
 
         {/* The screen, in its own plane. Dark until it has booted. */}
@@ -143,8 +152,13 @@ export function DeskLive(props: {
         </g>
 
         <Line d={ART.bezel} tone="lo" />
-        {props.things}
+        </g>
+        <g ref={td.lift(1, "Keyboard", [0.3, 0.5])}>{props.things}</g>
+        <TeardownLabels td={td} />
+        </g>
       </IsoFigure>
     </div>
+    <TeardownToggle td={td} />
+    </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { TeardownLabels, TeardownToggle, TeardownTrails, useTeardown } from "@/components/iso/react/teardown";
 import { IsoFigure, Line } from "@/components/iso/react/draw";
 import { useInView, useLoop, useReadout } from "@/components/iso/react/live";
 import { translateAlong } from "@/components/iso/iso-kit";
@@ -60,6 +61,7 @@ export function BenchLive(props: {
   box: React.ReactNode;
 }) {
   const { anchor, say } = useReadout<HTMLDivElement>();
+  const td = useTeardown({ gap: 26, width: WIDTH, font: 9.5 });
   const visible = useInView(anchor);
 
   const car = React.useRef<SVGGElement>(null);
@@ -131,14 +133,25 @@ export function BenchLive(props: {
   );
 
   return (
+    <>
     <div ref={anchor} className="bench" tabIndex={0} role="img" aria-label={LABEL}>
       <IsoFigure width={WIDTH} height={HEIGHT} label={LABEL}>
-        {props.plate}
-        {props.back}
-        {props.rail}
+        <g ref={td.frame}>
+        {/* Taken apart in the order it would come apart: the gantries
+            bridge over the carriage, so they come off first, tools and gauge
+            with them; then the carriage with the piece on it; then the rail
+            and the control box, leaving the plate and the tray. */}
+        <g ref={td.lift(0, "Base plate", [0.08, 0.6])}>{props.plate}</g>
+        <TeardownTrails td={td} />
+        <g ref={td.lift(1)}>{props.back}</g>
+        <g ref={td.lift(1, "Rail", [0.25, 0.36])}>{props.rail}</g>
 
         {/* The work, on its carriage, drawn where it physically sits: after
             the rail it rides and before the tools that reach down to it. */}
+        {/* Unlabelled: it runs the length of the rail all the time, so a
+            name pinned where it stood when it was measured would point at
+            empty rail half the time. */}
+        <g ref={td.lift(2)}>
         <g ref={car}>
           {ART.carBushes.map((paths, i) => (
             <g key={i} className="iso-solid">
@@ -206,6 +219,9 @@ export function BenchLive(props: {
           </g>
         </g>
 
+        </g>
+
+        <g ref={td.lift(3, "Four stations", [0.12, 0.25])}>
         {props.stations}
 
         {/* The tools that come down onto the work. */}
@@ -224,7 +240,8 @@ export function BenchLive(props: {
 
         {props.gauge}
         <path ref={needle} className="iso-line bench-needle" data-tone="lit" d={needleAt(0)} />
-        {props.box}
+        </g>
+        <g ref={td.lift(1, "Control box", [0.6, 0.5])}>{props.box}</g>
         {props.front}
 
         {/* The output: set down on the tray at the end of the bench. */}
@@ -243,7 +260,11 @@ export function BenchLive(props: {
             <path className="iso-line" data-tone="mid" d={ART.outStamp[i]!} />
           </g>
         ))}
+        <TeardownLabels td={td} />
+        </g>
       </IsoFigure>
     </div>
+    <TeardownToggle td={td} />
+    </>
   );
 }

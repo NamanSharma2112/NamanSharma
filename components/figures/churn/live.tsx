@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { TeardownLabels, TeardownToggle, TeardownTrails, useTeardown } from "@/components/iso/react/teardown";
 import { IsoFigure } from "@/components/iso/react/draw";
 import { follow, useInView, useLoop, useReadout } from "@/components/iso/react/live";
 import { translateAlong } from "@/components/iso/iso-kit";
@@ -35,6 +36,7 @@ export function ChurnLive(props: {
   dial: React.ReactNode;
 }) {
   const { anchor, say } = useReadout<HTMLDivElement>();
+  const td = useTeardown({ gap: 34, width: WIDTH });
   const visible = useInView(anchor);
 
   const beads = React.useRef(new Map<string, SVGGElement | null>());
@@ -100,6 +102,7 @@ export function ChurnLive(props: {
   const rest = React.useMemo(() => restAt(0), [restAt]);
 
   return (
+    <>
     <div
       ref={anchor}
       className="churn"
@@ -108,12 +111,19 @@ export function ChurnLive(props: {
       aria-label={LABEL}
     >
       <IsoFigure width={WIDTH} height={HEIGHT} label={LABEL}>
-        {props.base}
-        {props.frame}
+        <g ref={td.frame}>
+        {/* Taken apart the way it was put together. The beads are threaded
+            on their rods, so they rise with them rather than off them; the
+            bar is set down across every rod last, so it comes off first and
+            shows the crossing it sits on. */}
+        <g ref={td.lift(0, "Base plate", [0.8, 0.84])}>{props.base}</g>
+        <TeardownTrails td={td} />
+        <g ref={td.lift(1, "Posts and rods", [0.12, 0.3])}>{props.frame}</g>
 
         {/* Rows run back to front, and within a row the beads are drawn from
             the far end in, so a bead in front is drawn over the one behind
             it however far along the rod they have slid. */}
+        <g ref={td.lift(1, "Beads", [0.82, 0.5])}>
         {Array.from({ length: ROWS }, (_, row) => (
           <g key={row}>
             {Array.from({ length: BEADS }, (_, k) => BEADS - 1 - k).map((i) => {
@@ -140,17 +150,24 @@ export function ChurnLive(props: {
             })}
           </g>
         ))}
+        </g>
 
         {/* The bar last. It is a solid plate standing across every rod, so
             everything on the far side of it is behind it — drawn before it,
             the beads came out on top of a plate they are physically behind,
             which is the overlap that showed. The kept beads sit down and
             right of its base and are not covered. */}
-        {props.bar}
+        <g ref={td.lift(2, "Churn bar", [0.85, 0.22], "r")}>{props.bar}</g>
 
-        {props.dial}
-        <path ref={needle} className="iso-line churn-needle" data-tone="lit" d={needleAt(1)} />
+        <g ref={td.lift(1, "Dial", [0.3, 0.5])}>
+          {props.dial}
+          <path ref={needle} className="iso-line churn-needle" data-tone="lit" d={needleAt(1)} />
+        </g>
+        <TeardownLabels td={td} />
+        </g>
       </IsoFigure>
     </div>
+    <TeardownToggle td={td} />
+    </>
   );
 }

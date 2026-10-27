@@ -8,13 +8,22 @@ import { FANS, GAP, HEIGHT, LEVEL, WIDTH, bladesAt, stateOf } from "./gpu";
 import "./gpu.css";
 
 const LABEL =
-  "A three-fan graphics card lying fans-up on a tray: a backplate and board, a fin stack the length of the card, three fans in a shroud with a light bar along its edge, and the I/O bracket at the end. The fans spin up with the load and stop below 30%.";
+  "A three-fan graphics card lying fans-up: a backplate, the board with the GPU, its memory and power stages, a fin stack the length of the card, three fans in a shroud with a light bar along its edge, and the I/O bracket at the end. The fans spin up with the load and stop below 30%.";
 
 /* Drawn on screen, a fan at 3,000 rpm would be a blur; this many turns a
    second for each rpm keeps the blades readable and the speeds in ratio. */
 const SHOWN = 1.5 / 3000;
 
-export function GpuLive(props: { tray: React.ReactNode; board: React.ReactNode; sink: React.ReactNode; shroud: React.ReactNode }) {
+export function GpuLive(props: {
+  back: React.ReactNode;
+  board: React.ReactNode;
+  power: React.ReactNode;
+  chip: React.ReactNode;
+  memory: React.ReactNode;
+  connectors: React.ReactNode;
+  sink: React.ReactNode;
+  shroud: React.ReactNode;
+}) {
   const { anchor, say } = useReadout<HTMLDivElement>();
   const td = useTeardown({ gap: GAP, width: WIDTH });
   const visible = useInView(anchor);
@@ -40,7 +49,9 @@ export function GpuLive(props: { tray: React.ReactNode; board: React.ReactNode; 
       if (!calm) s.turn = (s.turn + s.speed * dt) % 1;
       blades.current.forEach((node, i) => node?.setAttribute("d", bladesAt(i, s.turn)));
       say(card.readout);
-      anchor.current?.setAttribute("aria-valuenow", String(Math.round(s.load * 100)));
+      /* The text, not the number: the site ticks a sound for every step a
+         slider's value moves, and this one moves on its own every frame. */
+      anchor.current?.setAttribute("aria-valuetext", card.readout);
       return true;
     },
     visible,
@@ -84,12 +95,16 @@ export function GpuLive(props: { tray: React.ReactNode; board: React.ReactNode; 
         <IsoFigure width={WIDTH} height={HEIGHT} label={LABEL}>
           <g ref={td.frame}>
             {/* Taken apart straight up, the way it is built: the board on
-                the tray, the cooler on the board, the fans on the cooler
-                and the shroud over all of it. */}
-            <g ref={td.lift(LEVEL.tray, "Tray", [0.22, 0.86], "l")}>{props.tray}</g>
+                the backplate, the cooler on the board, the fans on the
+                cooler and the shroud over all of it. */}
+            <g ref={td.lift(LEVEL.back, "Backplate", [0.06, 0.8], "l")}>{props.back}</g>
             <TeardownTrails td={td} />
-            <g ref={td.lift(LEVEL.board, "Board", [0.12, 0.6], "l")}>{props.board}</g>
-            <g ref={td.lift(LEVEL.sink, "Fin stack", [0.06, 0.6], "l")}>{props.sink}</g>
+            <g ref={td.lift(LEVEL.board, undefined, [0.1, 0.1])}>{props.board}</g>
+            <g ref={td.lift(LEVEL.board, "Power stages", [0.3, 0.55], "l")}>{props.power}</g>
+            <g ref={td.lift(LEVEL.board, "GPU", [0.62, 0.35], "r")}>{props.chip}</g>
+            <g ref={td.lift(LEVEL.board, "Memory", [0.5, 0.95], "r")}>{props.memory}</g>
+            <g ref={td.lift(LEVEL.board, undefined, [0.2, 0.2])}>{props.connectors}</g>
+            <g ref={td.lift(LEVEL.sink, "Heatsink", [0.06, 0.6], "l")}>{props.sink}</g>
             <g ref={td.lift(LEVEL.fans, "Fans", [0.2, 0.5], "l")}>
               {FANS.map((fan, i) => (
                 <g key={i}>

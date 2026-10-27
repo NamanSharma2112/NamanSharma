@@ -1,0 +1,85 @@
+.watch {
+  --watch-ice-top: #dce9ef;
+  --watch-ice-side: #c5d8e1;
+  --watch-ice-edge: #7f9cab;
+  --watch-blue: #2f63a8;
+  --watch-glass: rgb(196 222 234 / 0.2);
+  border-radius: 10px;
+  cursor: ew-resize;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html.dark .watch {
+  --watch-ice-top: #22323a;
+  --watch-ice-side: #1a272d;
+  --watch-ice-edge: #5d7d8c;
+  --watch-blue: #7fa8e2;
+  --watch-glass: rgb(150 190 210 / 0.07);
+}
+
+.watch:focus-visible {
+  outline: 1px solid var(--anatomy-muted);
+  outline-offset: 6px;
+}
+
+.watch .iso-svg {
+  overflow: visible;
+}
+
+/* The dial is the one part in colour: the colour is what makes it this
+   watch rather than another. */
+.watch-dial > .iso-top,
+.watch-dial > .iso-fill {
+  fill: var(--watch-ice-top);
+}
+.watch-dial > .iso-shade {
+  fill: var(--watch-ice-side);
+}
+.watch-dial > .iso-edge {
+  stroke: var(--watch-ice-edge);
+}
+
+/* The bezel is a ring: its opening is cut through, not painted over. */
+.watch-ring > .iso-fill,
+.watch-ring > .iso-top,
+.watch-ring > .watch-wall {
+  fill-rule: evenodd;
+}
+
+.watch .watch-window {
+  fill: var(--anatomy-top);
+}
+
+.watch-hand {
+  fill: var(--anatomy-top);
+  stroke: var(--anatomy-hi);
+  stroke-width: var(--anatomy-weight);
+  stroke-linejoin: round;
+}
+.watch-hand.watch-seconds {
+  fill: var(--watch-blue);
+  stroke: var(--watch-blue);
+}
+
+.watch .watch-glass {
+  fill: var(--watch-glass);
+}
+.watch-glass-solid > .iso-fill,
+.watch-glass-solid > .iso-top,
+.watch-glass-solid > .iso-shade {
+  fill: var(--watch-glass);
+}
+
+.watch-day,
+.watch-date {
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .watch {
+    overflow: hidden;
+  }
+}

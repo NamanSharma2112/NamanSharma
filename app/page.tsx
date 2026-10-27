@@ -10,6 +10,7 @@ import { CamFigure } from "@/components/figures/cam/figure";
 import { DeskFigure } from "@/components/figures/desk/figure";
 import { ChurnFigure } from "@/components/figures/churn/figure";
 import { BenchFigure } from "@/components/figures/bench/figure";
+import { WatchFigure } from "@/components/figures/watch/figure";
 import "@/components/iso/iso.css";
 import "@/components/home/home.css";
 
@@ -226,6 +227,49 @@ export default function Home() {
           </p>
           <Reveal className="home-bench-band">
             <BenchFigure />
+          </Reveal>
+        </section>
+
+        {/* ── the list ────────────────────────────────────────────────
+            Not work: the one thing being saved for, drawn the same way
+            as the machines above it, because it is one. */}
+        <section className="home-split home-section-gap iso" aria-labelledby="list">
+          <div className="home-split-intro">
+            <h2 className="home-h2" id="list">
+              On my list
+            </h2>
+            <p className="home-lede">
+              Not something I&rsquo;ve built — something I&rsquo;m saving
+              for. Drawn the same way, because it is a machine too.
+            </p>
+          </div>
+
+          <Reveal className="home-bento" id="daydate">
+            <WatchFigure />
+          </Reveal>
+          <Reveal className="home-chapter" delay={80}>
+            <h3 className="home-chapter-name">Day-Date 40</h3>
+            <p className="home-chapter-role">Platinum, ice-blue dial</p>
+            <p>
+              A watch that tells you the day in full, in a window at 12, with
+              a movement that beats eight times a second. It is the most
+              careful interface I know: two windows, three hands, and nothing
+              you have to learn.
+            </p>
+            <dl className="home-chapter-spec">
+              <div>
+                <dt>Try</dt>
+                <dd>Move across it to turn the crown, or take it apart</dd>
+              </div>
+              <div>
+                <dt>Case</dt>
+                <dd>40 mm, fluted bezel, President bracelet</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>Saving for it</dd>
+              </div>
+            </dl>
           </Reveal>
         </section>
 

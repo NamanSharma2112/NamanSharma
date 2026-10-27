@@ -1,0 +1,51 @@
+.gpu {
+  border-radius: 10px;
+  cursor: ew-resize;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.gpu:focus-visible {
+  outline: 1px solid var(--anatomy-muted);
+  outline-offset: 6px;
+}
+
+.gpu .iso-svg {
+  overflow: visible;
+}
+
+/* The shroud's openings are cut through, not painted over. */
+.gpu-shroud > .iso-fill,
+.gpu-shroud > .iso-top,
+.gpu-shroud > .gpu-wall {
+  fill-rule: evenodd;
+}
+
+.gpu-blade {
+  fill: var(--anatomy-shade-2);
+  stroke: var(--anatomy-mid);
+  stroke-width: var(--anatomy-weight);
+  stroke-linejoin: round;
+}
+
+/* The light bar is the one part in colour, because it is a light: the
+   accent, drawn heavier so it reads as a strip rather than an edge. */
+.gpu .iso-line.gpu-bar {
+  stroke: var(--mark);
+  stroke-width: 1.6;
+}
+
+.gpu .gpu-port {
+  fill: var(--anatomy-shade-0);
+}
+
+.gpu .gpu-pin {
+  fill: var(--anatomy-shade-0);
+}
+
+@media (max-width: 640px) {
+  .gpu {
+    overflow: hidden;
+  }
+}

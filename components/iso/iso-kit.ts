@@ -375,6 +375,57 @@ export function coil(from: number, to: number, center: Plane, radius: number, tu
   return { back: back.join(""), front: front.join("") };
 }
 
+/** How far along the ground one unit of rise slides on screen: a point
+    one unit lower lines up with one this much farther from the viewer. */
+export function groundSlide(projection: Projection) {
+  const base = iso([0, 0, 0], projection);
+  const up = iso([0, 0, 1], projection);
+  const ex = iso([1, 0, 0], projection);
+  const ey = iso([0, 1, 0], projection);
+  const [ux, uy] = [up[0] - base[0], up[1] - base[1]];
+  const [ax, ay] = [ex[0] - base[0], ex[1] - base[1]];
+  const [bx, by] = [ey[0] - base[0], ey[1] - base[1]];
+  const det = ax * by - ay * bx;
+  return Math.hypot((ux * by - uy * bx) / det, (ax * uy - ay * ux) / det);
+}
+
+/** A round opening `depth` deep in a top face at `top`: the opening's
+    edge, the far inner wall as an even-odd crescent (the opening plus the
+    part of it the wall does not fill), and the wall's foot, which ends
+    exactly on the edge. The foot is the opening slid toward the viewer by
+    the depth; two equal circles, so where they cross is exact. Cut the
+    opening through the solid's fill and top with fill-rule evenodd and
+    whatever is under it shows. */
+export function opening(cx: number, cy: number, radius: number, top: number, depth: number, projection: Projection, steps = 96) {
+  const d = depth * groundSlide(projection);
+  const half = d / 2;
+  const h = Math.sqrt(radius * radius - half * half);
+  const [tx, ty] = towardViewer(projection);
+  const [vx, vy] = [-ty, tx];
+  const p: Plane = [cx + tx * half + vx * h, cy + ty * half + vy * h];
+  const q: Plane = [cx + tx * half - vx * h, cy + ty * half - vy * h];
+  const norm = (a: number) => ((a % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+  const arc = (ox: number, oy: number, from: Plane, to: Plane, through: Plane, count = steps / 2): Plane[] => {
+    const a0 = Math.atan2(from[1] - oy, from[0] - ox);
+    const a1 = Math.atan2(to[1] - oy, to[0] - ox);
+    const am = Math.atan2(through[1] - oy, through[0] - ox);
+    const end = norm(am - a0) < norm(a1 - a0) ? a0 + norm(a1 - a0) : a0 - norm(a0 - a1);
+    return Array.from({ length: count + 1 }, (_, i) => {
+      const a = a0 + ((end - a0) * i) / count;
+      return [ox + Math.cos(a) * radius, oy + Math.sin(a) * radius] as Plane;
+    });
+  };
+  const [fx, fy] = [cx + tx * d, cy + ty * d];
+  const foot = arc(fx, fy, p, q, [fx - tx * radius, fy - ty * radius]);
+  const rim = arc(cx, cy, q, p, [cx + tx * radius, cy + ty * radius]);
+  const hole = onTop(circleRing(cx, cy, radius, steps), top, projection, true);
+  return {
+    hole,
+    wall: hole + onTop([...foot, ...rim.slice(1, -1)], top, projection, true),
+    foot: onTop(foot, top, projection),
+  };
+}
+
 export interface Ticks {
   minor: string;
   major: string;

@@ -15,6 +15,7 @@ import {
   insetPlan,
   slabOf,
   topMatrix,
+  opening,
   towardViewer,
   type Plan,
   type Plane,
@@ -84,21 +85,6 @@ export const P = { ...P0, origin: [P0.origin[0], P0.origin[1] + SPARE] as [numbe
 
 const toward = towardViewer(P);
 const deep = (x: number, y: number) => x * toward[0] + y * toward[1];
-
-/* How far along the ground a drop of `dz` slides on screen: a point dz
-   lower lines up with one this much farther from the viewer. */
-const SLIDE = (() => {
-  const unit = iso([0, 0, 1], P);
-  const base = iso([0, 0, 0], P);
-  const ex = iso([1, 0, 0], P);
-  const ey = iso([0, 1, 0], P);
-  /* solve a·ex + b·ey = up, for the ground vector under one unit of rise */
-  const [ux, uy] = [unit[0] - base[0], unit[1] - base[1]];
-  const [ax, ay] = [ex[0] - base[0], ex[1] - base[1]];
-  const [bx, by] = [ey[0] - base[0], ey[1] - base[1]];
-  const det = ax * by - ay * bx;
-  return Math.hypot((ux * by - uy * bx) / det, (ax * uy - ay * ux) / det);
-})();
 
 /** A dial position: radius r at angle a, clockwise from 12. */
 const polar = (r: number, a: number): Plane => [Math.sin(a) * r, -Math.cos(a) * r];
@@ -214,49 +200,17 @@ const byDepth = (pieces: Piece[]) => [...pieces].sort((a, b) => a.depth - b.dept
     so whatever is under it shows, and the far inner wall as a crescent. */
 function bezelOf() {
   const outer = cylinder(0, 0, BEZEL_R, CASE_TOP, BEZEL_TOP - CASE_TOP, P, 72);
-  const hole = onTop(circleRing(0, 0, HOLE_R, 96), BEZEL_TOP, P, true);
-
-  /* The wall's bottom edge, seen from here, is the opening slid toward
-     the viewer by the wall's height. Two equal circles: where they
-     cross is exact, so the wall's far edge ends on the opening. */
-  const d = (BEZEL_TOP - CASE_TOP) * SLIDE;
-  const half = d / 2;
-  const h = Math.sqrt(HOLE_R * HOLE_R - half * half);
-  const [tx, ty] = toward;
-  const [vx, vy] = [-ty, tx];
-  const mx = tx * half;
-  const my = ty * half;
-  const p: Plane = [mx + vx * h, my + vy * h];
-  const q: Plane = [mx - vx * h, my - vy * h];
-
-  const arc = (cx: number, cy: number, from: Plane, to: Plane, through: Plane, steps = 48): Plane[] => {
-    const a0 = Math.atan2(from[1] - cy, from[0] - cx);
-    let a1 = Math.atan2(to[1] - cy, to[0] - cx);
-    const am = Math.atan2(through[1] - cy, through[0] - cx);
-    /* go the way that passes `through` */
-    const norm = (a: number) => ((a % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-    const ccw = norm(am - a0) < norm(a1 - a0);
-    a1 = a0 + (ccw ? norm(a1 - a0) : -norm(a0 - a1));
-    return Array.from({ length: steps + 1 }, (_, i) => {
-      const a = a0 + ((a1 - a0) * i) / steps;
-      return [cx + Math.cos(a) * HOLE_R, cy + Math.sin(a) * HOLE_R] as Plane;
-    });
-  };
-
-  /* the far arc of the slid circle, and the near arc of the opening */
-  const wallFoot = arc(tx * d, ty * d, p, q, [tx * d - tx * HOLE_R, ty * d - ty * HOLE_R]);
-  const nearRim = arc(0, 0, q, p, [tx * HOLE_R, ty * HOLE_R]);
-  const lens = onTop([...wallFoot, ...nearRim.slice(1, -1)], BEZEL_TOP, P, true);
+  const cut = opening(0, 0, HOLE_R, BEZEL_TOP, BEZEL_TOP - CASE_TOP, P);
 
   return {
-    fill: outer.fill + hole,
-    top: outer.top + hole,
+    fill: outer.fill + cut.hole,
+    top: outer.top + cut.hole,
     shades: outer.shades,
     crease: outer.crease,
     outline: outer.outline,
-    hole,
-    wall: hole + lens,
-    wallFoot: onTop(wallFoot, BEZEL_TOP, P),
+    hole: cut.hole,
+    wall: cut.wall,
+    wallFoot: cut.foot,
     flutesTop: Array.from({ length: 60 }, (_, i) => {
       const a = (i / 60) * Math.PI * 2;
       return lineOnTop(polar(HOLE_R, a), polar(BEZEL_R, a), BEZEL_TOP, P);

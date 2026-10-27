@@ -11,6 +11,7 @@ import { DeskFigure } from "@/components/figures/desk/figure";
 import { ChurnFigure } from "@/components/figures/churn/figure";
 import { BenchFigure } from "@/components/figures/bench/figure";
 import { WatchFigure } from "@/components/figures/watch/figure";
+import { GpuFigure } from "@/components/figures/gpu/figure";
 import "@/components/iso/iso.css";
 import "@/components/home/home.css";
 
@@ -239,8 +240,8 @@ export default function Home() {
               On my list
             </h2>
             <p className="home-lede">
-              Not something I&rsquo;ve built — something I&rsquo;m saving
-              for. Drawn the same way, because it is a machine too.
+              Not things I&rsquo;ve built — things I&rsquo;m saving for.
+              Drawn the same way, because they are machines too.
             </p>
           </div>
 
@@ -264,6 +265,34 @@ export default function Home() {
               <div>
                 <dt>Case</dt>
                 <dd>40 mm, fluted bezel, President bracelet</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>Saving for it</dd>
+              </div>
+            </dl>
+          </Reveal>
+
+          <Reveal className="home-bento" id="graphics">
+            <GpuFigure />
+          </Reveal>
+          <Reveal className="home-chapter" delay={80}>
+            <h3 className="home-chapter-name">A three-fan graphics card</h3>
+            <p className="home-chapter-role">For the work that needs one</p>
+            <p>
+              For rendering, local models and the odd game. The part I like
+              is the cooling: three fans that sit still when there is
+              nothing to do, and a middle one that turns the other way so
+              the air off its neighbours does not fight.
+            </p>
+            <dl className="home-chapter-spec">
+              <div>
+                <dt>Try</dt>
+                <dd>Move across it to set the load, or take it apart</dd>
+              </div>
+              <div>
+                <dt>Cooler</dt>
+                <dd>Three fans, full-length fin stack, 2.5 slots</dd>
               </div>
               <div>
                 <dt>Status</dt>

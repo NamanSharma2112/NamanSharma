@@ -2,7 +2,6 @@ import {
   boxCorners,
   circleRing,
   corners,
-  coil,
   cylinder,
   dotGrid,
   extrude,
@@ -330,9 +329,16 @@ export const ART = (() => {
 
 /* ── what moves ──────────────────────────────────────────────────────── */
 
-/** The pen at station one, down by `bite`. */
+/* ── the tools' travel ──────────────────────────────────────────────────
+   Each tool comes down until it touches the piece and no further: at full
+   bite its working end is exactly on PIECE_TOP. The pen stopped three short
+   of the surface it was meant to be scribing, the cutter went five into a
+   piece six thick, and the gauge read a surface it never reached. The press
+   was the one already right. */
+
+/** The pen at station one, down by `bite`: nib tip on the surface. */
 export const penAt = (bite: number) => {
-  const z = 50 - bite * 24;
+  const z = 50 - bite * (50 - 7 - PIECE_TOP);
   return {
     holder: slabOf({ x: STAGES[0].at - 4, y: -5, w: 8, d: 10, r: 1.4 }, z, 9, P, 2, 0.3),
     nib: cylinder(STAGES[0].at, 0, 1.6, z - 7, 7, P, 10),
@@ -341,7 +347,8 @@ export const penAt = (bite: number) => {
 
 /** The spindle at station two, plunged by `bite`, turned by `spin`. */
 export const spindleAt = (bite: number, spin: number) => {
-  const z = 46 - bite * 22;
+  /* cutter tip on the surface; the notch it leaves is the mark that appears */
+  const z = 46 - bite * (46 - 13 - PIECE_TOP);
   return {
     quill: cylinder(STAGES[1].at, 0, 5.5, z, 10, P, 18),
     collet: cylinder(STAGES[1].at, 0, 4.2, z - 6, 6, P, 16, 0.3),
@@ -355,21 +362,19 @@ export const spindleAt = (bite: number, spin: number) => {
   };
 };
 
-/** The ram at station three, down by `bite`, with its springs. */
+/** The ram at station three, down by `bite`: nose face on the surface. */
 export const ramAt = (bite: number) => {
-  const z = 40 - bite * 19;
+  const z = 40 - bite * (40 - 5 - PIECE_TOP);
   return {
     head: slabOf({ x: STAGES[2].at - 11, y: -11, w: 22, d: 22, r: 2 }, z, 10, P, 3, 0.5),
     nose: cylinder(STAGES[2].at, 0, 6, z - 5, 5, P, 20, 0.3),
-    springs: [-16, 16].map((dx) =>
-      coil(z + 10, 57, [0, 0], 4.2, 5, "x", P),
-    ),
   };
 };
 
 /** The gauge plunger, and the needle it drives. */
 export const probeAt = (bite: number) => {
-  const z = 44 - bite * 20;
+  /* pad face on the surface, which is the reading */
+  const z = 44 - bite * (44 - 3 - PIECE_TOP);
   return {
     stem: cylinder(STAGES[3].at, -4, 2.4, z, 12, P, 12),
     pad: cylinder(STAGES[3].at, -4, 4, z - 3, 3, P, 14, 0.3),

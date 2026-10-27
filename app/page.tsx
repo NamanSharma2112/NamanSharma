@@ -10,6 +10,8 @@ import { CamFigure } from "@/components/figures/cam/figure";
 import { DeskFigure } from "@/components/figures/desk/figure";
 import { ChurnFigure } from "@/components/figures/churn/figure";
 import { BenchFigure } from "@/components/figures/bench/figure";
+import { WatchFigure } from "@/components/figures/watch/figure";
+import { GpuFigure } from "@/components/figures/gpu/figure";
 import "@/components/iso/iso.css";
 import "@/components/home/home.css";
 
@@ -65,10 +67,9 @@ export default function Home() {
           <div className="home-arrive">
             <h1 className="home-name">Naman Sharma</h1>
             <p className="home-hero-lede">
-              I&rsquo;m a design engineer in Jalandhar, India. I build for the
-              web, and I care about how an interface <em>feels</em> — the
-              easing curve, the hairline, the way a thing behaves when you
-              interrupt it halfway.
+              I&rsquo;m a design engineer. I build for the web, and I care
+              about how an interface <em>feels</em> — the easing curve, the
+              hairline, the way a thing behaves when you interrupt it halfway.
             </p>
             <div className="home-hero-act">
               <a className="home-button" href={`mailto:${EMAIL}`}>
@@ -227,6 +228,77 @@ export default function Home() {
           </p>
           <Reveal className="home-bench-band">
             <BenchFigure />
+          </Reveal>
+        </section>
+
+        {/* ── the list ────────────────────────────────────────────────
+            Not work: the one thing being saved for, drawn the same way
+            as the machines above it, because it is one. */}
+        <section className="home-split home-section-gap iso" aria-labelledby="list">
+          <div className="home-split-intro">
+            <h2 className="home-h2" id="list">
+              On my list
+            </h2>
+            <p className="home-lede">
+              Not things I&rsquo;ve built — things I&rsquo;m saving for.
+              Drawn the same way, because they are machines too.
+            </p>
+          </div>
+
+          <Reveal className="home-bento" id="daydate">
+            <WatchFigure />
+          </Reveal>
+          <Reveal className="home-chapter" delay={80}>
+            <h3 className="home-chapter-name">Day-Date 40</h3>
+            <p className="home-chapter-role">Platinum, ice-blue dial</p>
+            <p>
+              A watch that tells you the day in full, in a window at 12, with
+              a movement that beats eight times a second. It is the most
+              careful interface I know: two windows, three hands, and nothing
+              you have to learn.
+            </p>
+            <dl className="home-chapter-spec">
+              <div>
+                <dt>Try</dt>
+                <dd>Move across it to turn the crown, or take it apart</dd>
+              </div>
+              <div>
+                <dt>Case</dt>
+                <dd>40 mm, fluted bezel, President bracelet</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>Saving for it</dd>
+              </div>
+            </dl>
+          </Reveal>
+
+          <Reveal className="home-bento" id="graphics">
+            <GpuFigure />
+          </Reveal>
+          <Reveal className="home-chapter" delay={80}>
+            <h3 className="home-chapter-name">A three-fan graphics card</h3>
+            <p className="home-chapter-role">For the work that needs one</p>
+            <p>
+              For rendering, local models and the odd game. The part I like
+              is the cooling: three fans that sit still when there is
+              nothing to do, and a middle one that turns the other way so
+              the air off its neighbours does not fight.
+            </p>
+            <dl className="home-chapter-spec">
+              <div>
+                <dt>Try</dt>
+                <dd>Move across it to set the load, or take it apart</dd>
+              </div>
+              <div>
+                <dt>Cooler</dt>
+                <dd>Three fans, full-length fin stack, 2.5 slots</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>Saving for it</dd>
+              </div>
+            </dl>
           </Reveal>
         </section>
 

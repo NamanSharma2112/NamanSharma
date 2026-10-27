@@ -6,6 +6,7 @@ import { IsoFigure, Line, Solid } from "@/components/iso/react/draw";
 import { follow, useInView, useLoop, useReadout } from "@/components/iso/react/live";
 import { translateAlong } from "@/components/iso/iso-kit";
 import {
+  ART,
   BASE_R,
   CAM_CENTRE,
   HEIGHT,
@@ -28,7 +29,8 @@ const LABEL =
   "A bench where a disc cam cut to an easing curve drives a slide: turn the crank and the follower rides the cam, pushing the slide along a ruler while a dial gauge reads how far it has travelled.";
 
 /** Where the roller sits: on the cam's edge, at the angle facing it. */
-const reachOf = (angle: number) => radiusAt(-angle);
+/* The cam's radius where the roller touches it. */
+const reachOf = (angle: number) => radiusAt(angle);
 
 export function CamLive(props: {
   base: React.ReactNode;
@@ -47,6 +49,8 @@ export function CamLive(props: {
   const mark = React.useRef<SVGPathElement>(null);
   const roll = React.useRef<SVGGElement>(null);
   const slide = React.useRef<SVGGElement>(null);
+  const rod = React.useRef<SVGGElement>(null);
+  const spring = React.useRef<SVGGElement>(null);
   const needle = React.useRef<SVGPathElement>(null);
 
   const state = React.useRef({ turn: 0, target: 0, touring: true, clock: 0 });
@@ -82,11 +86,18 @@ export function CamLive(props: {
         set("[data-p=crease]", f.roller.crease);
         set("[data-p=outline]", f.roller.outline);
         set("[data-p=pin]", f.pin);
-        set("[data-p=back]", f.spring.back);
-        set("[data-p=front]", f.spring.front);
+      }
+      /* The return spring runs from the slide's far face to the stop, so
+         it is painted after the slide, back turns then front. */
+      const sp = spring.current;
+      if (sp) {
+        sp.querySelector("[data-p=back]")?.setAttribute("d", f.spring.back);
+        sp.querySelector("[data-p=front]")?.setAttribute("d", f.spring.front);
       }
 
-      slide.current?.setAttribute("transform", translateAlong(P, [out * LIFT, 0, 0]));
+      const shove = translateAlong(P, [out * LIFT, 0, 0]);
+      slide.current?.setAttribute("transform", shove);
+      rod.current?.setAttribute("transform", shove);
       needle.current?.setAttribute("d", needleAt(out));
       say(readoutOf(turn));
     },
@@ -168,9 +179,14 @@ export function CamLive(props: {
         </g>
         </g>
 
+        {/* The rod first: the roller and its spring stand taller and are
+            drawn over the end of it that runs into the pin. */}
+        <g ref={td.lift(2)}>
+          <g ref={rod}>{props.arm}</g>
+        </g>
+
         <g ref={td.lift(2, "Follower", [0.5, 0.3])}>
         <g ref={roll}>
-          <path className="iso-line" data-tone="lo" data-p="back" d={restRoll.spring.back} />
           <g className="iso-solid">
             <path className="iso-fill" data-p="fill" d={restRoll.roller.fill} />
             {restRoll.roller.shades.map((d, i) => (
@@ -181,13 +197,18 @@ export function CamLive(props: {
             <path className="iso-line iso-edge" data-tone="mid" data-p="outline" d={restRoll.roller.outline} />
           </g>
           <path className="iso-line" data-tone="mid" data-p="pin" d={restRoll.pin} />
-          <path className="iso-line" data-tone="mid" data-p="front" d={restRoll.spring.front} />
         </g>
         </g>
 
-        <g ref={td.lift(2)}>{props.arm}</g>
         <g ref={td.lift(2, "Slide", [0.6, 0.5])}>
-          <g ref={slide}>{props.slide}</g>
+          <g ref={slide}>
+            {props.slide}
+            <path className="iso-line" data-tone="mid" d={ART.springSeat} />
+          </g>
+          <g ref={spring}>
+            <path className="iso-line" data-tone="lo" data-p="back" d={restRoll.spring.back} />
+            <path className="iso-line" data-tone="mid" data-p="front" d={restRoll.spring.front} />
+          </g>
         </g>
         <g ref={td.lift(3, "Crank", [0.5, 0.4])}>{props.knob}</g>
         <g ref={td.lift(2)}>
@@ -195,7 +216,7 @@ export function CamLive(props: {
         </g>
         <g ref={td.lift(1, "Dial gauge", [0.5, 0.5])}>
           {props.dial}
-          <path ref={needle} className="iso-line cam-needle" data-tone="lit" d={needleAt(ease(0))} />
+          <path ref={needle} className="iso-line cam-needle" data-tone="lit" data-free="start" d={needleAt(ease(0))} />
         </g>
         <TeardownLabels td={td} />
         </g>

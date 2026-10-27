@@ -64,6 +64,7 @@ const TOWER = (
   <g key="tower">
     <Solid paths={ART.tower} tone="mid" />
     {ART.vents.map((d, i) => <Line key={i} d={d} tone="faint" />)}
+    <Solid paths={ART.towerKnob} tone="mid" />
     <Line d={ART.towerKnurl} tone="lo" />
     <Line d={ART.power} tone="lo" />
     <Dots points={ART.powerDot} size={0.6} tone="mid" />

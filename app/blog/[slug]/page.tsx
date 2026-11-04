@@ -78,7 +78,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
 
         <p className="sign-off">
           Thanks for reading. Reach out on <a href="https://x.com/NamanSharma2112">X</a>,{" "}
-          <a href="https://www.linkedin.com/in/namansharma2112/">LinkedIn</a> or{" "}
+          <a href="https://www.linkedin.com/in/namansharma--ns/">LinkedIn</a> or{" "}
           <a href="mailto:namansharmans03@gmail.com">email</a>, or go <Link href="/">home</Link>.
         </p>
       </div>

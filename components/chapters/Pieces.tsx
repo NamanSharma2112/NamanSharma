@@ -37,7 +37,7 @@ export function Mark({ sleeping = false }: { sleeping?: boolean }) {
 export function ContactCta() {
   return (
     <BorderBeam size="pulse-inner" theme="dark" strength={0.85} style={{ display: "inline-block", borderRadius: 999 }}>
-      <a className="cta" href="https://www.linkedin.com/in/namansharma2112/" target="_blank" rel="noopener noreferrer">
+      <a className="cta" href="https://www.linkedin.com/in/namansharma--ns/" target="_blank" rel="noopener noreferrer">
         <LinkedIn />
         Connect on LinkedIn
       </a>
@@ -72,7 +72,7 @@ function Mail() {
 const LINKS = [
   { label: "X", href: "https://x.com/NamanSharma2112", icon: <SiX size={14} aria-hidden="true" /> },
   { label: "GitHub", href: "https://github.com/NamanSharma2112", icon: <SiGithub size={15} aria-hidden="true" /> },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/namansharma2112/", icon: <LinkedIn /> },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/namansharma--ns/", icon: <LinkedIn /> },
   { label: "Email", href: `mailto:${EMAIL}`, icon: <Mail /> },
 ];
 

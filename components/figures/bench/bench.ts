@@ -244,7 +244,10 @@ export const ART = (() => {
     cut: gantry(STAGES[1].at, 66, 11),
     cutHousing: cylinder(STAGES[1].at, 0, 9, 50, 17, P, 26, 0.6),
     cutSeam: sideArc(STAGES[1].at, 0, 9, 62, P, 22),
-    cutKnurl: knurl(STAGES[1].at, 0, 9, 52, 60, 24, P),
+    /* The grip band runs from its own foot seam up to the housing's seam,
+       so each rib starts and ends on an edge. */
+    cutKnurl: knurl(STAGES[1].at, 0, 9, 52, 62, 24, P, 0),
+    cutBand: sideArc(STAGES[1].at, 0, 9, 52, P, 22),
     cutGuard: slabOf({ x: STAGES[1].at - 15, y: -20, w: 30, d: 6, r: 1.5 }, 30, 14, P, 3, 0.4),
 
     /* ── station three: the press ── */
@@ -287,7 +290,7 @@ export const ART = (() => {
     ),
     boxKnobs: [0, 1].map((i) => ({
       body: cylinder(BOX.x + 16 + i * 20, BOX.y + 34, 5, BOX_H, 4.5, P, 20, 0.4),
-      knurl: knurl(BOX.x + 16 + i * 20, BOX.y + 34, 5, BOX_H, BOX_H + 4.5, 18, P),
+      knurl: knurl(BOX.x + 16 + i * 20, BOX.y + 34, 5, BOX_H, BOX_H + 4.5, 18, P, 0),
       mark: lineOnTop(
         [BOX.x + 16 + i * 20, BOX.y + 34],
         [BOX.x + 16 + i * 20 + 4, BOX.y + 34],

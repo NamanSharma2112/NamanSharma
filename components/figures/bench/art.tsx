@@ -74,6 +74,7 @@ const STATIONS = (
     {gantryOf(ART.cut, "cut")}
     <Solid paths={ART.cutGuard} tone="lo" />
     <Solid paths={ART.cutHousing} tone="mid" inner={<Line d={ART.cutSeam} tone="faint" />} />
+    <Line d={ART.cutBand} tone="faint" />
     <Line d={ART.cutKnurl} tone="lo" />
 
     {gantryOf(ART.press, "press")}

@@ -197,7 +197,7 @@ export const ART = (() => {
     shaftSeam: sideArc(CAM[0], CAM[1], SHAFT_R, KNOB_Z - 2, P, 20),
 
     knob: cylinder(CAM[0], CAM[1], KNOB_R, KNOB_Z, KNOB_H, P, 32, 0.6),
-    knurl: knurl(CAM[0], CAM[1], KNOB_R, KNOB_Z, KNOB_Z + KNOB_H, 34, P),
+    knurl: knurl(CAM[0], CAM[1], KNOB_R, KNOB_Z, KNOB_Z + KNOB_H, 34, P, 0),
     knobRing: ring(CAM[0], CAM[1], KNOB_R - 3, KNOB_Z + KNOB_H, P, 28),
 
     /* Where the return spring seats on the slide's far face: a ring at
@@ -252,11 +252,13 @@ export function camAt(angle: number) {
   return extrude(ring, CAM_Z, CAM_H, P, { convex: false, bevel: 0.6 });
 }
 
-/** The index line engraved on the knob, so the turn is readable. */
+/** The index line engraved on the knob, so the turn is readable: a notch
+    from the knob's inner ring out to its rim, so it ends on an edge at
+    both ends rather than stopping in the middle of the face. */
 export const markAt = (angle: number) =>
   lineOnTop(
-    [CAM[0] + Math.cos(angle) * 3.5, CAM[1] + Math.sin(angle) * 3.5],
-    [CAM[0] + Math.cos(angle) * (KNOB_R - 1.2), CAM[1] + Math.sin(angle) * (KNOB_R - 1.2)],
+    [CAM[0] + Math.cos(angle) * (KNOB_R - 3), CAM[1] + Math.sin(angle) * (KNOB_R - 3)],
+    [CAM[0] + Math.cos(angle) * KNOB_R, CAM[1] + Math.sin(angle) * KNOB_R],
     KNOB_Z + KNOB_H,
     P,
   );

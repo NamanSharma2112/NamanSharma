@@ -109,7 +109,9 @@ export function Socials() {
             key={l.label}
             style={slot}
             y={open ? -(i + 1) * STEP : 0}
-            transition="bouncy"
+            /* The "bouncy" preset (320/17) with a little more damping:
+               same speed, about half the overshoot and wobble. */
+            transition={{ stiffness: 320, damping: 22, mass: 1 }}
             /* out from the nearest, back in from the farthest */
             delay={open ? i * 45 : (last - i) * 35}
           >

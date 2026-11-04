@@ -62,6 +62,20 @@
   @media (hover: hover) {
     a:hover { color: var(--ink); text-decoration-color: var(--rule-hover); }
   }
+  /* Selecting text inverts it: the ink becomes the ground, crisp and
+     quiet, rather than the browser's blue. Links keep their underline in
+     the ground colour so they still read as links inside a selection. */
+  ::selection {
+    background: rgba(237, 237, 237, 0.92);
+    color: #0a0a0a;
+    text-shadow: none;
+  }
+  a::selection { text-decoration-color: rgba(10, 10, 10, 0.45); }
+  .name::selection { background: #ededed; }
+  /* Controls are not prose: a drag across the page selects the words and
+     leaves the dots, the counter and the socials alone. */
+  .dots, .count, .socials, .mark, .cta { -webkit-user-select: none; user-select: none; }
+
   a:focus-visible, button:focus-visible {
     outline: 1px solid var(--ink);
     outline-offset: 3px;
@@ -379,34 +393,57 @@
   });
 
   /* ── wheel and trackpad ───────────────────────────────────────────────
-     One gesture, one chapter. A flick is taken once it has moved 30px;
-     after that the wheel is ignored until it has been quiet for 180 ms and
-     at least 650 ms have passed, which is what swallows a trackpad's long
-     inertial tail without making a second deliberate flick wait. */
+     One gesture, one chapter. A flick is taken once it has moved 30px, and
+     after that the wheel is held so a trackpad's long inertial tail cannot
+     run on into a second chapter. The hold lets go when the wheel has been
+     quiet for 180 ms, and also, at once, on a new gesture:
+       - a reversal (the reader changed their mind), after 250 ms so the
+         rebound at the end of a tail is not read as one;
+       - a fresh flick the same way, after 500 ms: a tail only ever decays,
+         so deltas rising well above the last ones are a new swipe.
+     Holding until the wheel went quiet alone swallowed a swipe up made
+     while the swipe down was still coasting, and the swipe itself kept the
+     wheel from going quiet, so the page would not go back. */
   let acc = 0;
   let locked = false;
   let lockedAt = 0;
+  let lockDir = 0;
+  let last = 0;
   let quiet = 0;
+  const release = () => {
+    locked = false;
+    acc = 0;
+  };
   addEventListener(
     "wheel",
     (e) => {
       e.preventDefault();
+      const d = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      if (!d) return;
+      const since = performance.now() - lockedAt;
       if (locked) {
-        clearTimeout(quiet);
-        quiet = setTimeout(() => {
-          if (performance.now() - lockedAt > 650) locked = false;
-          else setTimeout(() => (locked = false), 650 - (performance.now() - lockedAt));
-        }, 180);
-        return;
+        const reversed = Math.sign(d) !== lockDir && since > 250;
+        const fresh = Math.sign(d) === lockDir && since > 500 && Math.abs(d) > last * 1.6 + 6;
+        if (reversed || fresh) release();
+        else {
+          last = Math.abs(d);
+          clearTimeout(quiet);
+          quiet = setTimeout(release, 180);
+          return;
+        }
       }
-      acc += e.deltaY;
+      /* a change of direction starts the count again */
+      if (acc && Math.sign(acc) !== Math.sign(d)) acc = 0;
+      acc += d;
+      last = Math.abs(d);
       if (Math.abs(acc) < 30) return;
-      go(at + Math.sign(acc));
+      lockDir = Math.sign(acc);
+      go(at + lockDir);
       acc = 0;
       locked = true;
       lockedAt = performance.now();
       clearTimeout(quiet);
-      quiet = setTimeout(() => (locked = false), 900);
+      quiet = setTimeout(release, 900);
     },
     { passive: false },
   );

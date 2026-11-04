@@ -1,11 +1,20 @@
-import type { Metadata } from "next";
-import Lost from "@/components/home/Lost";
+import Link from "next/link";
+import { Mark } from "@/components/chapters/Pieces";
 
-export const metadata: Metadata = {
-  title: "404 — Naman Sharma",
-  description: "That address does not go anywhere.",
-};
-
+/** Nowhere: the marshmallow asleep, and two ways back. */
 export default function NotFound() {
-  return <Lost />;
+  return (
+    <div className="page">
+      <main className="col">
+        <div className="mark-sleep" aria-hidden="true">
+          <Mark sleeping />
+        </div>
+        <h1 className="name">Nothing here.</h1>
+        <p>This address doesn&rsquo;t go anywhere.</p>
+        <p>
+          Go <Link href="/">home</Link> or read my <Link href="/blog">writing</Link>.
+        </p>
+      </main>
+    </div>
+  );
 }

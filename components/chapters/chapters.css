@@ -1,0 +1,219 @@
+/* The front page: one chapter at a time over the whole viewport, so the
+   page itself never scrolls. Tokens and base rules are in app/minimal.css. */
+html:has(.front),
+html:has(.front) body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.front {
+  position: fixed;
+  inset: 0;
+}
+
+/* Controls are not prose: a drag across the page selects the words and
+   leaves the dots, the counter and the socials alone. */
+.front .dots, .front .count, .front .socials, .front .mark, .front .cta { -webkit-user-select: none; user-select: none; }
+
+  /* ── chapters ──────────────────────────────────────────────────────────
+     Each chapter fills the screen and only one is in at a time. The text
+     block is narrow and left-aligned, set a little above centre, the way a
+     letter sits on a page. */
+  .front .stage { position: fixed; inset: 0; }
+  .front .ch {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-items: center;
+    padding: 0 24px 6vh;
+    visibility: hidden;
+  }
+  .front .ch.is-in, .front .ch.is-out, .front .ch.is-live { visibility: visible; }
+  .front .copy {
+    width: min(31rem, 100%);
+    margin-left: max(0px, calc(50% - 15.5rem - 4vw));
+  }
+  .front .copy :where(p, h1, h2) { margin: 0; font: inherit; }
+  .front .copy > * + * { margin-top: 24px; }
+  .front .name { color: var(--ink); font-weight: 500; }
+  .front .name + p { margin-top: 0 !important; }
+  .front .label {
+    color: var(--quiet);
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+  .front .label + p { margin-top: 4px !important; }
+  .front .hint { color: var(--quiet); }
+
+  /* ── the motion ────────────────────────────────────────────────────────
+     A line comes in out of a blur, rising a few pixels, one after another
+     at 70 ms apart; on the way out it goes back into the blur, quicker and
+     all but together, so the next chapter is never kept waiting. --dir is
+     1 going forward and -1 going back, so lines always travel the way the
+     reader is moving. */
+  .front .ln {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(calc(var(--dir, 1) * 12px));
+    transition:
+      opacity 640ms var(--ease) calc(120ms + var(--i) * 70ms),
+      filter 720ms var(--ease) calc(120ms + var(--i) * 70ms),
+      transform 900ms var(--ease) calc(120ms + var(--i) * 70ms);
+    will-change: opacity, filter, transform;
+  }
+  .front .is-in .ln { opacity: 1; filter: blur(0); transform: none; }
+  .front .is-out .ln {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(calc(var(--dir, 1) * -10px));
+    transition:
+      opacity 240ms var(--ease-in) calc(var(--i) * 18ms),
+      filter 240ms var(--ease-in) calc(var(--i) * 18ms),
+      transform 260ms var(--ease-in) calc(var(--i) * 18ms);
+  }
+
+  /* ── the pieces (Pieces.tsx) ───────────────────────────────────────────
+     The mark over the name, the Email me button with its border beam, and
+     the gooey socials in the corner. */
+  .front .mark-row { height: 64px; margin: 0 0 20px -6px; }
+  .front .mark { display: inline-block; cursor: pointer; }
+  .front .copy .mark-row + .name { margin-top: 0; }
+  .front .cta-row { margin-top: 20px !important; }
+  .front .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: #161616;
+    border: 1px solid #262626;
+    color: var(--ink);
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 160ms ease, border-color 160ms ease;
+  }
+  @media (hover: hover) { .front .cta:hover { background: #1c1c1c; border-color: #333; } }
+  .front .cta:active { transform: scale(0.97); }
+
+  .front .socials {
+    position: fixed;
+    left: 24px;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    z-index: 3;
+  }
+  .front .socials-inner { position: relative; }
+  .front .soc {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--body);
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+  @media (hover: hover) { .front .soc:hover { color: var(--ink); } }
+  /* The icons ride inside the drops, so while the drops are stacked under
+     the + or still travelling they would pile on top of each other: each
+     icon shows only once its drop has arrived, nearest first, and goes
+     before the drops are pulled back in. */
+  .front .soc-link svg {
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 120ms ease, transform 160ms ease;
+  }
+  .front .socials-inner[data-open] .soc-link svg {
+    opacity: 1;
+    transform: none;
+    transition: opacity 220ms ease calc(160ms + var(--i) * 50ms), transform 380ms var(--ease) calc(160ms + var(--i) * 50ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .front .soc-link svg, .front .socials-inner[data-open] .soc-link svg { transform: none; transition: opacity 120ms ease; }
+  }
+  .front .soc-toggle svg { transition: transform 420ms var(--ease); }
+  .front .soc-toggle[aria-expanded="true"] svg { transform: rotate(45deg); }
+  .front .soc-toggle:active svg { transform: scale(0.9); }
+  .front .soc-toggle[aria-expanded="true"]:active svg { transform: rotate(45deg) scale(0.9); }
+  .front .soc-names {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 52px;
+    bottom: 0;
+    pointer-events: none;
+  }
+  .front .soc-names li {
+    position: absolute;
+    left: 0;
+    transform: translate(-4px, 50%);
+    opacity: 0;
+    font-size: 13px;
+    color: var(--quiet);
+    white-space: nowrap;
+    transition: opacity 200ms ease, transform 300ms var(--ease);
+  }
+  .front .soc-names[data-open] li { opacity: 1; transform: translate(0, 50%); }
+
+  /* ── the dots ──────────────────────────────────────────────────────── */
+  .front .dots {
+    position: fixed;
+    left: 50%;
+    bottom: max(28px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2px;
+    z-index: 2;
+  }
+  .front .dots button {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .front .dots button::after {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--quiet);
+    opacity: 0.6;
+    transition: transform 400ms var(--ease), background-color 200ms ease, opacity 200ms ease;
+  }
+  .front .dots button[aria-current="step"]::after { background: var(--ink); opacity: 1; transform: scale(1.35); }
+  @media (hover: hover) { .front .dots button:hover::after { opacity: 1; } }
+
+  .front .count {
+    position: fixed;
+    right: 24px;
+    bottom: max(30px, env(safe-area-inset-bottom));
+    font-size: 13px;
+    color: var(--quiet);
+    font-variant-numeric: tabular-nums;
+    z-index: 2;
+  }
+
+  /* ── stillness: a plain cross-fade, nothing moves or blurs ─────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .front .ln, .front .is-out .ln {
+      filter: none !important;
+      transform: none !important;
+      transition: opacity 200ms ease 0ms !important;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .front .ch { padding: 0 20px 10vh; }
+    .front .copy { margin-left: 0; }
+    .front .count { display: none; }
+  }

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { use, useState } from "react";
 import { ALL_POSTS } from "@/lib/blog-data";
@@ -10,8 +9,6 @@ import SelectionToolbar from "@/components/SelectionToolbar";
 import TextToSpeech from "@/components/TextToSpeech";
 import { getIllustration } from "@/components/BlogIllustrations";
 import { getRlsIllustration } from "@/components/RlsIllustrations";
-import Panel from "@/components/Panel";
-import SiteFooter from "@/components/SiteFooter";
 import { useBlogTheme } from "@/components/BlogThemeProvider";
 
 const FONT_OPTIONS = [
@@ -20,115 +17,71 @@ const FONT_OPTIONS = [
   { label: "Mono", value: "var(--font-geist-mono), monospace" },
 ];
 
-export default function BlogPostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+/** A post, in the same column as everything else: the title in the ink at
+    the body's own size, its date, the read-aloud control, then the sections.
+    The contents pill floats at the foot of the viewport so the column stays
+    narrow enough to read. */
+export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const post = ALL_POSTS.find((p) => p.slug === slug);
   const [fontIndex, setFontIndex] = useState(0);
-  // These three build their palettes in JS, so they need the theme as a value
-  // rather than as a class on an ancestor.
+  // These build their palettes in JS, so they take the theme as a value.
   const { isDark } = useBlogTheme();
 
-  if (!post) {
-    notFound();
-  }
+  if (!post) notFound();
 
-  const tocItems = post.content.map((section) => ({
-    id: section.id,
-    heading: section.heading,
-  }));
+  const tocItems = post.content.map((section) => ({ id: section.id, heading: section.heading }));
 
   return (
-    <div className="pt-5 pb-28">
-      {/* The contents list floats at the bottom of the viewport rather than
-          sitting beside the article, so the column is free to stay narrow
-          enough to read comfortably. */}
-      <TableOfContents
-        items={tocItems}
-        isDark={isDark}
-        fontOptions={FONT_OPTIONS}
-        fontIndex={fontIndex}
-        onFontChange={setFontIndex}
-      />
+    <div className="page">
+      <TableOfContents items={tocItems} isDark={isDark} fontOptions={FONT_OPTIONS} fontIndex={fontIndex} onFontChange={setFontIndex} />
 
-      <div className="mx-auto w-full max-w-[640px] px-6">
-        <Panel>
-          <Link
-            href="/blog"
-            className="group inline-flex items-center gap-1.5 text-[13px] text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-200"
-          >
-            <ArrowLeft className="size-[14px] transition-transform duration-200 group-hover:-translate-x-0.5" />
-            Writing
-          </Link>
+      <div className="col">
+        <p className="crumb">
+          <Link href="/">Naman Sharma</Link> / <Link href="/blog">Writing</Link>
+        </p>
 
-          <article
-            className="mt-7"
-            style={{ fontFamily: FONT_OPTIONS[fontIndex].value }}
-          >
-            <header>
-              <h1 className="text-[19px] font-semibold leading-tight tracking-tight text-zinc-900 dark:text-white">
-                {post.title}
-              </h1>
-              <p className="mt-1.5 text-[12.5px] text-zinc-500 dark:text-zinc-500">
-                {post.date}
-              </p>
+        <article style={{ fontFamily: FONT_OPTIONS[fontIndex]!.value }}>
+          <header>
+            <h1 className="name">{post.title}</h1>
+            <p className="quiet">{post.date}</p>
+            <TextToSpeech title={post.title} contentSections={post.content} isDark={isDark} />
+          </header>
 
-              <TextToSpeech
-                title={post.title}
-                contentSections={post.content}
-                isDark={isDark}
-              />
-            </header>
+          {post.content.map((section) => {
+            const Illustration = getIllustration(section.id) || getRlsIllustration(section.id);
+            return (
+              <section key={section.id} id={section.id}>
+                <h2>{section.heading}</h2>
+                {section.paragraphs.map((p, i) =>
+                  p.includes("http") ? (
+                    <p key={i}>
+                      {p.split(/(https?:\/\/[^\s]+)/g).map((part, j) =>
+                        part.startsWith("http") ? (
+                          <a key={j} href={part} target="_blank" rel="noopener noreferrer">
+                            {part}
+                          </a>
+                        ) : (
+                          part
+                        ),
+                      )}
+                    </p>
+                  ) : (
+                    <p key={i}>{p}</p>
+                  ),
+                )}
+                {Illustration && <Illustration isDark={isDark} />}
+              </section>
+            );
+          })}
+        </article>
 
-            <div className="mt-9 flex flex-col gap-8">
-              {post.content.map((section) => {
-                const Illustration = getIllustration(section.id) || getRlsIllustration(section.id);
-                return (
-                  <section key={section.id} id={section.id} className="scroll-mt-24">
-                    <h2 className="mb-2.5 text-[15px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">
-                      {section.heading}
-                    </h2>
-                    <div className="flex flex-col gap-3 text-[13.5px] leading-[1.75] text-zinc-700 dark:text-zinc-300">
-                      {section.paragraphs.map((p, i) => {
-                        if (p.includes("http")) {
-                          const parts = p.split(/(https?:\/\/[^\s]+)/g);
-                          return (
-                            <p key={i}>
-                              {parts.map((part, j) =>
-                                part.startsWith("http") ? (
-                                  <a
-                                    key={j}
-                                    href={part}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="underline underline-offset-[3px] decoration-zinc-400 transition-colors duration-200 hover:text-zinc-900 hover:decoration-zinc-900 dark:decoration-zinc-600 dark:hover:text-zinc-100 dark:hover:decoration-zinc-100"
-                                  >
-                                    {part}
-                                  </a>
-                                ) : (
-                                  part
-                                )
-                              )}
-                            </p>
-                          );
-                        }
-                        return <p key={i}>{p}</p>;
-                      })}
-                    </div>
-
-                    {Illustration && <Illustration isDark={isDark} />}
-                  </section>
-                );
-              })}
-            </div>
-          </article>
-        </Panel>
+        <p className="sign-off">
+          Thanks for reading. Reach out on <a href="https://x.com/NamanSharma2112">X</a>,{" "}
+          <a href="https://www.linkedin.com/in/namansharma2112/">LinkedIn</a> or{" "}
+          <a href="mailto:namansharmans03@gmail.com">email</a>, or go <Link href="/">home</Link>.
+        </p>
       </div>
-
-      <SiteFooter />
 
       {/* Select text to share or copy it. */}
       <SelectionToolbar slug={slug} />

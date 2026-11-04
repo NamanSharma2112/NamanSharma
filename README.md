@@ -1,153 +1,57 @@
-# namansharma.com 
+# namansharma.com
 
-A personal portfolio site built with **Next.js**, **Tailwind CSS**, and **Framer Motion** — featuring interactive UI components, technical blog posts, and a showcase of design engineering work.
+The personal site of Naman Sharma, design engineer. Live at [namansharma.com](https://www.namansharma.com).
 
+A minimal, dark, one-screen-at-a-time front page and a blog, all in one design language: a near-black ground, Geist at 16/24, grey text with an off-white name, and one narrow left-aligned column on every page.
 
+## Pages
 
+| Route | What it is |
+| --- | --- |
+| `/` | The front page, in three chapters: intro, work, contact |
+| `/blog` | Notes and essays |
+| `/blog/[slug]` | A post, with a table of contents and read-aloud |
+| any other path | A 404, with the marshmallow asleep |
 
-https://github.com/user-attachments/assets/6c13e2b2-17a4-4eda-9ef2-abbac7cfa78a
+## The front page
 
+- **One gesture, one chapter.** A scroll, a swipe, a key (arrows, Page Up/Down, Space, Home, End) or a dot moves exactly one chapter. A trackpad's momentum tail is held so it never skips a chapter, and a swipe back the other way is taken at once, even while the last one is still coasting.
+- **Lines arrive out of a blur.** The leaving chapter's lines blur out quickly; the next chapter's come in one after another, in the direction you are moving. Interruptible at any point, and a plain fade under `prefers-reduced-motion`.
+- **Each chapter has an address**: `/#2` opens Work, `/#3` Contact.
+- **The marshmallow** above the name is a [`bot-avatars`](https://libraries.dev) avatar with a custom outline. It blinks, hops when you hover it and jumps when you click it.
+- **Connect on LinkedIn** carries a [`border-beam`](https://libraries.dev) pulse.
+- **The socials** in the corner are a [`liquid-gooey`](https://libraries.dev) menu: the buttons pour out of the + as liquid, settle as separate drops, and are pulled back in when it closes.
+- **Without JavaScript** the chapters stack into one readable page.
 
+## Stack
 
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Geist. Deployed on Vercel.
 
-
----
-
-## What's Inside
-
-**Portfolio** — Selected projects with live demos and case studies, covering frontend-heavy work, full-stack apps, and hardware prototypes.
-
-**Blog** — Technical writing on design engineering, component architecture, animation, and frontend craft.
-
-**Components** — A living library of reusable UI components built from scratch, each with source code and interactive previews.
-
----
-
-## Tech Stack
-
-| Layer | Tool |
-|---|---|
-| Framework | Next.js (App Router) |
-| Styling | Tailwind CSS |
-| Animations | Framer Motion |
-| Content | MDX (blog + component docs) |
-| Deployment | Vercel |
-
----
-
-## Project Structure
-
-```
-├── app/
-│   ├── page.tsx              # Home / hero
-│   ├── blog/
-│   │   ├── page.tsx          # Blog index
-│   │   └── [slug]/page.tsx   # Individual post
-│   ├── components/
-│   │   ├── page.tsx          # Component gallery
-│   │   └── [slug]/page.tsx   # Component detail + preview
-│   └── projects/
-│       └── page.tsx          # Project showcase
-├── content/
-│   ├── blog/                 # MDX blog posts
-│   └── components/           # MDX component docs
-├── components/
-│   ├── ui/                   # Reusable UI primitives
-│   └── sections/             # Page-level sections
-└── public/
-    └── assets/
-```
-
----
-
-## Getting Started
+## Run it
 
 ```bash
-# Clone the repo
-git clone https://github.com/NamanSharma2112/portfolio.git
-cd portfolio
-
-# Install dependencies
-npm install
-
-# Start dev server
-npm run dev
+pnpm install
+pnpm dev            # http://localhost:3000
+pnpm build && pnpm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see it locally.
+## Where things are
 
----
-
-## Writing a Blog Post
-
-Create a new `.mdx` file inside `content/blog/`:
-
-```mdx
----
-title: "Your Post Title"
-date: "2025-01-15"
-summary: "A one-line summary shown on the blog index."
-tags: ["animation", "react", "css"]
----
-
-Your content here...
+```
+app/
+  page.tsx                 the front page and its copy
+  layout.tsx               fonts, metadata, theme
+  blog/                    the blog index and posts
+  not-found.tsx            the 404
+  minimal.css              the shared design language: tokens, links, selection, the column
+components/
+  chapters/
+    Chapters.tsx           chapter navigation: wheel, touch, keys, dots, addresses
+    Pieces.tsx             the marshmallow, the LinkedIn button, the gooey socials
+    chapters.css           the front page's styles, scoped under .front
+  TableOfContents.tsx …    the blog's reading tools: contents, read-aloud, share
+lib/
+  blog-data.ts             the posts
 ```
 
-The post will be automatically picked up and rendered at `/blog/your-post-title`.
-
----
-
-## Adding a Component
-
-Create a new `.mdx` file inside `content/components/`:
-
-```mdx
----
-title: "Animated Counter"
-description: "A smooth count-up animation tied to scroll visibility."
-tags: ["animation", "framer-motion"]
----
-
-## Usage
-
-<ComponentPreview name="AnimatedCounter" />
-
-## Code
-
-<ComponentSource name="AnimatedCounter" />
-```
-
-Then add the actual component file to `components/ui/AnimatedCounter.tsx`.
-
----
-
-## Deployment
-
-The site is deployed on **Vercel** with automatic deploys on push to `main`.
-
-```bash
-# Production build check (run locally before pushing)
-npm run build
-```
-
----
-
-## Featured Projects
-
-| Project | Description | Stack |
-|---|---|---|
-| **CrudeIQ** | Crude oil intelligence dashboard with LSTM predictions | Next.js, FastAPI, PostgreSQL |
-| **TruePass** | Smart student ID & tracking system (patented) | IoT, Hardware |
-| **Cognitive Trainer** | Brain-training app for elderly patients with MCI | Node.js, Express, PostgreSQL |
-
----
-
-## Connect
-
-- **GitHub** — [NamanSharma2112](https://github.com/NamanSharma2112)
-- **X (Twitter)** — [@NamanSharma](https://x.com)
-- **Peerlist** — [naman](https://peerlist.io)
-
----
-
-*Designed and built by Naman Sharma.*
+To edit the front page copy, change the three chapters in `app/page.tsx`. To add a post, add it to `lib/blog-data.ts`.

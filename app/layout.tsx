@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./minimal.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -10,16 +11,6 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-/* The one serif on the site: the name, and the italic aside in the prose. A
-   display face, so it is only ever set large — at body size it would be thin. */
-const serif = Instrument_Serif({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -54,7 +45,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${serif.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       {/* One ground for the whole site, read off the tokens in globals.css
           rather than hardcoded per theme here. */}
@@ -62,7 +53,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className="flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300"
       >
-        <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" disableTransitionOnChange>
           {children}
         </ThemeProvider>
       </body>

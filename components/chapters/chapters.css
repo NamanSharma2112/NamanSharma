@@ -1,65 +1,20 @@
-/* The front page: one dark ground, three greys and an ink, set in Geist.
-   Never pure white on pure black: the name is the brightest thing on the
-   page and still sits a step under white, which is what stops a dark page
-   buzzing. Everything is scoped under .front so the blog keeps its own. */
+/* The front page: one chapter at a time over the whole viewport, so the
+   page itself never scrolls. Tokens and base rules are in app/minimal.css. */
 html:has(.front),
 html:has(.front) body {
   height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
-  background: #0a0a0a;
 }
 
 .front {
-  --ground: #0a0a0a;
-  --ink: #ededed;
-  --body: #8f8f8f;
-  --quiet: #5c5c5c;
-  --rule: #333;
-  --rule-hover: #8f8f8f;
-  /* the site's own ease-out: fast to start, long to settle */
-  --ease: cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
   position: fixed;
   inset: 0;
-  background: var(--ground);
-  color: var(--body);
-  font: 400 16px/24px var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
-.front a {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: var(--rule);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  transition: color 160ms ease, text-decoration-color 160ms ease;
-}
-@media (hover: hover) {
-  .front a:hover { color: var(--ink); text-decoration-color: var(--rule-hover); }
-}
-
-/* Selecting text inverts it: the ink becomes the ground, crisp and quiet,
-   rather than the browser's blue. Links keep their underline in the ground
-   colour so they still read as links inside a selection. */
-.front ::selection {
-  background: rgba(237, 237, 237, 0.92);
-  color: #0a0a0a;
-  text-shadow: none;
-}
-.front a::selection { text-decoration-color: rgba(10, 10, 10, 0.45); }
-.front .name::selection { background: #ededed; }
 /* Controls are not prose: a drag across the page selects the words and
    leaves the dots, the counter and the socials alone. */
 .front .dots, .front .count, .front .socials, .front .mark, .front .cta { -webkit-user-select: none; user-select: none; }
-
-.front a:focus-visible, .front button:focus-visible {
-  outline: 1px solid var(--ink);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
 
   /* ── chapters ──────────────────────────────────────────────────────────
      Each chapter fills the screen and only one is in at a time. The text

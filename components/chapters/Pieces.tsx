@@ -18,11 +18,11 @@ const EMAIL = "namansharmans03@gmail.com";
 const MARSHMALLOW =
   "M32 15C44 13 56 13 68 15C82 15.5 92 25 92 38C93.5 46 93.5 54 92 62C92 75 82 84.5 68 85C56 87 44 87 32 85C18 84.5 8 75 8 62C6.5 54 6.5 46 8 38C8 25 18 15.5 32 15Z";
 
-export function Mark() {
+export function Mark({ sleeping = false }: { sleeping?: boolean }) {
   const [awake, setAwake] = React.useState(false);
   return (
     <span className="mark" onPointerEnter={() => setAwake(true)} onPointerLeave={() => setAwake(false)}>
-      <BotAvatar type="square" path={MARSHMALLOW} color="#f4ece6" state={awake ? "working" : "default"} size={64} jumpHeight={14} jumpStretch={0.6} aria-hidden="true" />
+      <BotAvatar type="square" path={MARSHMALLOW} color="#f4ece6" state={sleeping && !awake ? "sleeping" : awake ? "working" : "default"} size={64} jumpHeight={14} jumpStretch={0.6} aria-hidden="true" />
     </span>
   );
 }

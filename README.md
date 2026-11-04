@@ -2,7 +2,7 @@
 
 The personal site of Naman Sharma, design engineer. Live at [namansharma.com](https://www.namansharma.com).
 
-A minimal, dark, one-screen-at-a-time front page and a blog.
+A minimal, dark, one-screen-at-a-time front page and a blog, all in one design language: a near-black ground, Geist at 16/24, grey text with an off-white name, and one narrow left-aligned column on every page.
 
 ## Pages
 
@@ -11,7 +11,7 @@ A minimal, dark, one-screen-at-a-time front page and a blog.
 | `/` | The front page, in three chapters: intro, work, contact |
 | `/blog` | Notes and essays |
 | `/blog/[slug]` | A post, with a table of contents and read-aloud |
-| any other path | A 404 with a ball pit you can push around |
+| any other path | A 404, with the marshmallow asleep |
 
 ## The front page
 
@@ -43,12 +43,13 @@ app/
   layout.tsx               fonts, metadata, theme
   blog/                    the blog index and posts
   not-found.tsx            the 404
+  minimal.css              the shared design language: tokens, links, selection, the column
 components/
   chapters/
     Chapters.tsx           chapter navigation: wheel, touch, keys, dots, addresses
     Pieces.tsx             the marshmallow, the LinkedIn button, the gooey socials
     chapters.css           the front page's styles, scoped under .front
-  home/ ui/ …              the blog's header, nav, footer and pieces
+  TableOfContents.tsx …    the blog's reading tools: contents, read-aloud, share
 lib/
   blog-data.ts             the posts
 ```

@@ -50,12 +50,9 @@ export default function Home() {
                   rewriting slightly differently every time, packaged once.
                 </p>
                 <p className="ln">
-                  <a href="https://www.churnrate.fun/">ChurnRate</a>, a SaaS dashboard. Churn is a number that hides what it
-                  means; this one makes you feel it rather than read it.
-                </p>
-                <p className="ln">
-                  <a href="https://taskmangementapplication-production.up.railway.app">Task Management</a>, a full-stack
-                  task app, built end to end.
+                  <a href="https://easing-nine.vercel.app/">Easing Lab</a>, a bench for motion. Easing curves and springs
+                  side by side on the same animation, so you can see which one feels right, and what each does when you
+                  interrupt it halfway.
                 </p>
               </>
             ),

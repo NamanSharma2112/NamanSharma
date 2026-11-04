@@ -23,12 +23,8 @@ export default function Footer() {
         </div>
 
         <nav className="foot-links" aria-label="Footer">
-          <Link href="/work">Work</Link>
+          <Link href="/">Home</Link>
           <Link href="/blog">Writing</Link>
-          <Link href="/inspiration">Inspiration</Link>
-          <Link href="/lab">Lab</Link>
-          <Link href="/desktop">Desktop</Link>
-          <Link href="/game">Game</Link>
         </nav>
       </div>
 

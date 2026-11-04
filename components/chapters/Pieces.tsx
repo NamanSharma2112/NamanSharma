@@ -1,31 +1,45 @@
-/**
- * The React pieces of the portfolio prototype (public/prototype.html), which
- * is otherwise plain HTML. Each mounts into its own placeholder and replaces
- * the plain fallback inside it.
- *
- * Build, from the repo root, with any esbuild:
- *   esbuild prototype/islands.tsx --bundle --format=esm --minify \
- *     --jsx=automatic --define:process.env.NODE_ENV='"production"' \
- *     --outfile=public/prototype/islands.js
- */
+"use client";
+
 import * as React from "react";
-import { createRoot } from "react-dom/client";
 import { BorderBeam } from "border-beam";
 import { Liquid } from "liquid-gooey";
-import { SiGithub, SiX } from "@icons-pack/react-simple-icons";
 import { BotAvatar } from "bot-avatars";
+import { SiGithub, SiX } from "@icons-pack/react-simple-icons";
 
 const EMAIL = "namansharmans03@gmail.com";
 
+/* ── the mark above the name ────────────────────────────────────────────
+   A marshmallow: a squat, puffy cylinder seen side-on, its top and bottom
+   bowed out and its sides soft, in powdered off-white. The square type only
+   places the face in the middle; the outline is our own. Hovering wakes it
+   into the working hop; a click makes it jump. The jump is kept low and
+   barely stretched: at the library's default (26 units up, full stretch)
+   the wide outline rose past the top of its canvas and was cut flat. */
+const MARSHMALLOW =
+  "M32 15C44 13 56 13 68 15C82 15.5 92 25 92 38C93.5 46 93.5 54 92 62C92 75 82 84.5 68 85C56 87 44 87 32 85C18 84.5 8 75 8 62C6.5 54 6.5 46 8 38C8 25 18 15.5 32 15Z";
+
+export function Mark() {
+  const [awake, setAwake] = React.useState(false);
+  return (
+    <span className="mark" onPointerEnter={() => setAwake(true)} onPointerLeave={() => setAwake(false)}>
+      <BotAvatar type="square" path={MARSHMALLOW} color="#f4ece6" state={awake ? "working" : "default"} size={64} jumpHeight={14} jumpStretch={0.6} aria-hidden="true" />
+    </span>
+  );
+}
+
+
 /* ── the one call to action ─────────────────────────────────────────────
-   A highlighted CTA button, so the Pulse type that breathes inside the
-   border (pulse-inner), per the libraries.dev placement rules. Pulse types
-   switch themselves off under reduced motion. */
-function EmailCta() {
+   LinkedIn rather than email: one click, no mail client, and it shows the
+   profile at the same time. Email stays in the socials and the last
+   chapter. A highlighted CTA, so the border beam's Pulse type that breathes inside
+   the border (pulse-inner). Pulse types switch themselves off under
+   reduced motion. */
+export function ContactCta() {
   return (
     <BorderBeam size="pulse-inner" theme="dark" strength={0.85} style={{ display: "inline-block", borderRadius: 999 }}>
-      <a className="cta" href={`mailto:${EMAIL}`}>
-        Email me
+      <a className="cta" href="https://www.linkedin.com/in/namansharma2112/" target="_blank" rel="noopener noreferrer">
+        <LinkedIn />
+        Connect on LinkedIn
       </a>
     </BorderBeam>
   );
@@ -65,7 +79,7 @@ const LINKS = [
 const SIZE = 40;
 const STEP = 58;
 
-function Socials() {
+export function Socials() {
   const [open, setOpen] = React.useState(false);
   const root = React.useRef<HTMLDivElement>(null);
 
@@ -141,31 +155,3 @@ function Socials() {
     </div>
   );
 }
-
-/* ── the mark above the name ────────────────────────────────────────────
-   A trial: bot avatars are made for agents, not people, so this is here to
-   see whether one reads as a friendly mark in the spot a portrait would
-   take. Hovering wakes it into the working hop; a click makes it jump. */
-/* A marshmallow: a squat, puffy cylinder seen side-on, its top and bottom
-   bowed out and its sides soft, in powdered off-white. The square type only
-   places the face in the middle; the outline is our own. */
-const MARSHMALLOW =
-  "M32 15C44 13 56 13 68 15C82 15.5 92 25 92 38C93.5 46 93.5 54 92 62C92 75 82 84.5 68 85C56 87 44 87 32 85C18 84.5 8 75 8 62C6.5 54 6.5 46 8 38C8 25 18 15.5 32 15Z";
-
-function Mark() {
-  const [awake, setAwake] = React.useState(false);
-  return (
-    <span className="mark" onPointerEnter={() => setAwake(true)} onPointerLeave={() => setAwake(false)}>
-      <BotAvatar type="square" path={MARSHMALLOW} color="#f4ece6" state={awake ? "working" : "default"} size={64} aria-hidden="true" />
-    </span>
-  );
-}
-
-const mark = document.getElementById("mark-root");
-if (mark) createRoot(mark).render(<Mark />);
-
-const cta = document.getElementById("cta-root");
-if (cta) createRoot(cta).render(<EmailCta />);
-
-const socials = document.getElementById("socials");
-if (socials) createRoot(socials).render(<Socials />);

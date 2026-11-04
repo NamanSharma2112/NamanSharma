@@ -43,14 +43,7 @@ export const metadata: Metadata = {
   },
 };
 
-import SiteAtmosphere from "@/components/SiteAtmosphere";
-import Boot from "@/components/Boot";
-import PhotoScope from "@/components/PhotoScope";
-import Landing from "@/components/Landing";
-import Menu from "@/components/home/Menu";
-import { SoundEffects } from "@/components/ui/sound";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { DesktopProvider } from "@/components/DesktopState";
 
 export default function RootLayout({
   children,
@@ -63,52 +56,15 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${serif.variable} h-full antialiased`}
     >
-      {/* Set before the first paint, so nothing has to be hidden and then
-          shown. `data-js` says script is running — anything that starts
-          hidden waiting for script only does so when script is there to
-          release it. `data-boarded` says no intro will play: the visitor has
-          seen it this session, or has asked for reduced motion, and in both
-          cases the page is finished on the first frame rather than held at
-          zero opacity until hydration catches up. */}
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              'try{var d=document.documentElement;d.setAttribute("data-js","");if(sessionStorage.getItem("introduced")==="true"||matchMedia("(prefers-reduced-motion: reduce)").matches)d.setAttribute("data-boarded","")}catch(e){}',
-          }}
-        />
-      </head>
       {/* One ground for the whole site, read off the tokens in globals.css
-          rather than hardcoded per theme here. Never pure black on white or
-          pure white on black — the foreground token is an off-white at night,
-          which is what stops long text buzzing. */}
+          rather than hardcoded per theme here. */}
       <body
         suppressHydrationWarning
         className="flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300"
       >
-        <SoundEffects>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            disableTransitionOnChange
-          >
-            <DesktopProvider>
-              {/* Photo, rain and the neon cat, behind every page. Both of these
-                hide themselves on /desktop, which brings its own. */}
-              {/* At the layout level so the intro plays once on entry rather
-                than on every client-side navigation. */}
-              <Boot>
-                <SiteAtmosphere />
-                <PhotoScope>
-                  <Landing delay={0.16} className="relative z-10 flex-1">
-                    {children}
-                  </Landing>
-                </PhotoScope>
-              </Boot>
-            </DesktopProvider>
-            <Menu />
-          </ThemeProvider>
-        </SoundEffects>
+        <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

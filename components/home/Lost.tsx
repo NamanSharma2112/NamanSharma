@@ -35,11 +35,7 @@ const BALLS = {
 
 const PAGES = [
   { label: "Home", href: "/" },
-  { label: "Work", href: "/work" },
   { label: "Writing", href: "/blog" },
-  { label: "Inspiration", href: "/inspiration" },
-  { label: "Lab", href: "/lab" },
-  { label: "Desktop", href: "/desktop" },
 ];
 
 export default function Lost() {

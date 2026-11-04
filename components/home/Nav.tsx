@@ -13,13 +13,17 @@ import {
 /**
  * The row of links under the prose.
  *
- * The two that have something behind them open it; the rest are plain links,
- * because a menu that drops a panel containing one item is a worse link.
+ * Work opens to the projects; the rest are plain links, because a menu that
+ * drops a panel containing one item is a worse link.
  */
 export default function Nav() {
   return (
     <NavigationMenu className="home-nav">
       <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink render={<Link href="/" />}>Home</NavigationMenuLink>
+        </NavigationMenuItem>
+
         <NavigationMenuItem>
           <NavigationMenuTrigger>Work</NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -34,50 +38,12 @@ export default function Nav() {
                   </NavigationMenuLink>
                 </li>
               ))}
-              <li>
-                <NavigationMenuLink render={<Link href="/work" />}>
-                  <span className="home-nav-name">All work</span>
-                  <span className="home-nav-note">The full list</span>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Play</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="home-nav-panel">
-              <li>
-                <NavigationMenuLink render={<Link href="/desktop" />}>
-                  <span className="home-nav-name">Desktop</span>
-                  <span className="home-nav-note">A machine in the browser</span>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink render={<Link href="/game" />}>
-                  <span className="home-nav-name">Game</span>
-                  <span className="home-nav-note">Fly the skimmer</span>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink render={<Link href="/lab" />}>
-                  <span className="home-nav-name">Lab</span>
-                  <span className="home-nav-note">Motion experiments</span>
-                </NavigationMenuLink>
-              </li>
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuLink render={<Link href="/blog" />}>Writing</NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink render={<Link href="/inspiration" />}>
-            Inspiration
-          </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>

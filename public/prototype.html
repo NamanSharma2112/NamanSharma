@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<title>Naman Sharma — prototype</title>
+<link rel="preload" href="/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
+<script>document.documentElement.classList.add("js");</script>
+<style>
+  /* Geist, self-hosted: the site's CSP allows no font CDN. One variable
+     file covers both weights. */
+  @font-face {
+    font-family: "Geist";
+    src: url("/fonts/geist-latin.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  /* Waldenburg is a licensed face. Put the files in public/fonts/ and
+     uncomment these; it is first in the stack, so it takes over at once.
+  @font-face { font-family: "waldenburg"; src: url("/fonts/waldenburg-regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "waldenburg"; src: url("/fonts/waldenburg-medium.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+  */
+
+  /* ── tokens ─────────────────────────────────────────────────────────────
+     One ground, three greys and an ink. Never pure white on pure black:
+     the name is the brightest thing on the page and still sits a step
+     under white, which is what stops a dark page buzzing. */
+  :root {
+    --ground: #0a0a0a;
+    --ink: #ededed;
+    --body: #8f8f8f;
+    --quiet: #5c5c5c;
+    --rule: #333;
+    --rule-hover: #8f8f8f;
+    /* the site's own ease-out: fast to start, long to settle */
+    --ease: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+    --sans: "waldenburg", "Geist", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--ground); }
+  body {
+    color: var(--body);
+    font: 400 16px/24px var(--sans);
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  html.js, html.js body { overflow: hidden; overscroll-behavior: none; }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color 160ms ease, text-decoration-color 160ms ease;
+  }
+  @media (hover: hover) {
+    a:hover { color: var(--ink); text-decoration-color: var(--rule-hover); }
+  }
+  a:focus-visible, button:focus-visible {
+    outline: 1px solid var(--ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ── chapters ──────────────────────────────────────────────────────────
+     Each chapter fills the screen and only one is in at a time. The text
+     block is narrow and left-aligned, set a little above centre, the way a
+     letter sits on a page. */
+  .stage { position: fixed; inset: 0; }
+  .ch {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-items: center;
+    padding: 0 24px 6vh;
+    visibility: hidden;
+  }
+  .ch.is-in, .ch.is-out { visibility: visible; }
+  .copy {
+    width: min(31rem, 100%);
+    margin-left: max(0px, calc(50% - 15.5rem - 4vw));
+  }
+  .copy p { margin: 0; }
+  .copy p + p { margin-top: 24px; }
+  .name { color: var(--ink); font-weight: 500; }
+  .name + p { margin-top: 0 !important; }
+  .label {
+    color: var(--quiet);
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+  .label + p { margin-top: 4px !important; }
+  .hint { color: var(--quiet); }
+
+  /* ── the motion ────────────────────────────────────────────────────────
+     A line comes in out of a blur, rising a few pixels, one after another
+     at 70 ms apart; on the way out it goes back into the blur, quicker and
+     all but together, so the next chapter is never kept waiting. --dir is
+     1 going forward and -1 going back, so lines always travel the way the
+     reader is moving. */
+  .ln {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(calc(var(--dir, 1) * 12px));
+    transition:
+      opacity 640ms var(--ease) calc(120ms + var(--i) * 70ms),
+      filter 720ms var(--ease) calc(120ms + var(--i) * 70ms),
+      transform 900ms var(--ease) calc(120ms + var(--i) * 70ms);
+    will-change: opacity, filter, transform;
+  }
+  .is-in .ln { opacity: 1; filter: blur(0); transform: none; }
+  .is-out .ln {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(calc(var(--dir, 1) * -10px));
+    transition:
+      opacity 240ms var(--ease-in) calc(var(--i) * 18ms),
+      filter 240ms var(--ease-in) calc(var(--i) * 18ms),
+      transform 260ms var(--ease-in) calc(var(--i) * 18ms);
+  }
+
+  /* ── the React pieces (prototype/islands.tsx) ──────────────────────────
+     The mark over the name, the Email me button with its border beam, and
+     the gooey socials in the corner. */
+  #mark-root { height: 64px; margin: 0 0 20px -6px; }
+  .mark { display: inline-block; cursor: pointer; }
+  .copy #mark-root + .name { margin-top: 0; }
+  .cta-row { margin-top: 20px !important; }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: #161616;
+    border: 1px solid #262626;
+    color: var(--ink);
+    font-size: 14px;
+    text-decoration: none;
+    transition: background-color 160ms ease, border-color 160ms ease;
+  }
+  @media (hover: hover) { .cta:hover { background: #1c1c1c; border-color: #333; } }
+  .cta:active { transform: scale(0.97); }
+
+  .socials {
+    position: fixed;
+    left: 24px;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    z-index: 3;
+  }
+  .socials-inner { position: relative; }
+  .soc {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--body);
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+  @media (hover: hover) { .soc:hover { color: var(--ink); } }
+  .soc-toggle svg { transition: transform 420ms var(--ease); }
+  .soc-toggle[aria-expanded="true"] svg { transform: rotate(45deg); }
+  .soc-toggle:active svg { transform: scale(0.9); }
+  .soc-toggle[aria-expanded="true"]:active svg { transform: rotate(45deg) scale(0.9); }
+  .soc-names {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 52px;
+    bottom: 0;
+    pointer-events: none;
+  }
+  .soc-names li {
+    position: absolute;
+    left: 0;
+    transform: translate(-4px, 50%);
+    opacity: 0;
+    font-size: 13px;
+    color: var(--quiet);
+    white-space: nowrap;
+    transition: opacity 200ms ease, transform 300ms var(--ease);
+  }
+  .soc-names[data-open] li { opacity: 1; transform: translate(0, 50%); }
+
+  /* ── the dots ──────────────────────────────────────────────────────── */
+  .dots {
+    position: fixed;
+    left: 50%;
+    bottom: max(28px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2px;
+    z-index: 2;
+  }
+  .dots button {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .dots button::after {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--quiet);
+    opacity: 0.6;
+    transition: transform 400ms var(--ease), background-color 200ms ease, opacity 200ms ease;
+  }
+  .dots button[aria-current="step"]::after { background: var(--ink); opacity: 1; transform: scale(1.35); }
+  @media (hover: hover) { .dots button:hover::after { opacity: 1; } }
+
+  .count {
+    position: fixed;
+    right: 24px;
+    bottom: max(30px, env(safe-area-inset-bottom));
+    font-size: 13px;
+    color: var(--quiet);
+    font-variant-numeric: tabular-nums;
+    z-index: 2;
+  }
+
+  /* ── without script: one long page, every chapter in order ─────────── */
+  html:not(.js) .stage { position: static; }
+  html:not(.js) .ch { position: static; visibility: visible; min-height: 100vh; }
+  html:not(.js) .ln { opacity: 1; filter: none; transform: none; }
+  html:not(.js) .dots, html:not(.js) .count { display: none; }
+
+  /* ── stillness: a plain cross-fade, nothing moves or blurs ─────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .ln, .is-out .ln {
+      filter: none !important;
+      transform: none !important;
+      transition: opacity 200ms ease 0ms !important;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .ch { padding: 0 20px 10vh; }
+    .copy { margin-left: 0; }
+    .count { display: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="stage" id="stage">
+    <section class="ch" aria-label="Intro">
+      <div class="copy">
+        <div class="ln" id="mark-root" aria-hidden="true"></div>
+        <p class="ln name">Naman Sharma</p>
+        <p class="ln">Design engineer. I build for the web, and I care about how an interface feels — the easing curve, the hairline, the way a thing behaves when you interrupt it halfway.</p>
+        <p class="ln">Open to roles and freelance work.</p>
+        <p class="ln cta-row"><span id="cta-root"><a class="cta" href="mailto:namansharmans03@gmail.com">Email me</a></span></p>
+        <p class="ln hint">Scroll for my work.</p>
+      </div>
+    </section>
+
+    <section class="ch" aria-label="Work">
+      <div class="copy">
+        <p class="ln label">Work</p>
+        <p class="ln"><a href="https://www.motionlib.me/">MotionKit</a>, an animation library. The curves and springs I kept rewriting slightly differently every time, packaged once.</p>
+        <p class="ln"><a href="https://www.churnrate.fun/">ChurnRate</a>, a SaaS dashboard. Churn is a number that hides what it means; this one makes you feel it rather than read it.</p>
+        <p class="ln"><a href="/desktop">Desktop</a>, a whole machine in a browser tab. A menu bar, a dock, windows that drag and resize — none of it a mockup.</p>
+      </div>
+    </section>
+
+    <section class="ch" aria-label="Contact">
+      <div class="copy">
+        <p class="ln name">Say hello</p>
+        <p class="ln">Design and build are the same job to me, and a thing is finished when it reads true. If yours has a mechanism in it, I'd like to hear about it.</p>
+        <p class="ln">Reach out anytime on <a href="https://x.com/NamanSharma2112">X</a>, <a href="https://github.com/NamanSharma2112">GitHub</a> or <a href="mailto:namansharmans03@gmail.com">email</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="dots" id="dots" role="group" aria-label="Chapters"></div>
+  <div class="count" id="count" aria-hidden="true">1 / 3</div>
+  <div class="socials" id="socials"></div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const chapters = [...document.querySelectorAll(".ch")];
+  const dots = document.getElementById("dots");
+  const count = document.getElementById("count");
+
+  /* Every line in a chapter gets its place in the stagger. */
+  chapters.forEach((ch) => ch.querySelectorAll(".ln").forEach((ln, i) => ln.style.setProperty("--i", i)));
+
+  chapters.forEach((ch, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", `${ch.getAttribute("aria-label")}, chapter ${i + 1} of ${chapters.length}`);
+    b.addEventListener("click", () => go(i));
+    dots.append(b);
+  });
+
+  let at = -1;
+  let leaving = null;
+  let leftTimer = 0;
+
+  /* Interruptible: a new move while lines are still arriving simply sends
+     the current chapter out from wherever its lines have got to. */
+  function go(next) {
+    next = Math.max(0, Math.min(chapters.length - 1, next));
+    if (next === at) return;
+    const dir = next > at ? 1 : -1;
+    root.style.setProperty("--dir", dir);
+
+    if (leaving) leaving.classList.remove("is-out");
+    clearTimeout(leftTimer);
+    const prev = chapters[at];
+    if (prev) {
+      prev.classList.remove("is-in");
+      prev.classList.add("is-out");
+      prev.setAttribute("aria-hidden", "true");
+      prev.inert = true;
+      leaving = prev;
+      leftTimer = setTimeout(() => prev.classList.remove("is-out"), 600);
+    }
+
+    const ch = chapters[next];
+    ch.removeAttribute("aria-hidden");
+    ch.inert = false;
+    /* one frame between, so the browser sees the start state */
+    requestAnimationFrame(() => requestAnimationFrame(() => at === next && ch.classList.add("is-in")));
+
+    at = next;
+    [...dots.children].forEach((b, i) => (i === at ? b.setAttribute("aria-current", "step") : b.removeAttribute("aria-current")));
+    count.textContent = `${at + 1} / ${chapters.length}`;
+    history.replaceState(null, "", at ? `#${at + 1}` : location.pathname);
+  }
+
+  chapters.forEach((ch) => {
+    ch.setAttribute("aria-hidden", "true");
+    ch.inert = true;
+  });
+  const fromHash = parseInt(location.hash.slice(1), 10);
+  go(Number.isFinite(fromHash) ? fromHash - 1 : 0);
+
+  /* A chapter's address works after load too, from a link or the bar. */
+  addEventListener("hashchange", () => {
+    const n = parseInt(location.hash.slice(1), 10);
+    go(Number.isFinite(n) ? n - 1 : 0);
+  });
+
+  /* ── wheel and trackpad ───────────────────────────────────────────────
+     One gesture, one chapter. A flick is taken once it has moved 30px;
+     after that the wheel is ignored until it has been quiet for 180 ms and
+     at least 650 ms have passed, which is what swallows a trackpad's long
+     inertial tail without making a second deliberate flick wait. */
+  let acc = 0;
+  let locked = false;
+  let lockedAt = 0;
+  let quiet = 0;
+  addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      if (locked) {
+        clearTimeout(quiet);
+        quiet = setTimeout(() => {
+          if (performance.now() - lockedAt > 650) locked = false;
+          else setTimeout(() => (locked = false), 650 - (performance.now() - lockedAt));
+        }, 180);
+        return;
+      }
+      acc += e.deltaY;
+      if (Math.abs(acc) < 30) return;
+      go(at + Math.sign(acc));
+      acc = 0;
+      locked = true;
+      lockedAt = performance.now();
+      clearTimeout(quiet);
+      quiet = setTimeout(() => (locked = false), 900);
+    },
+    { passive: false },
+  );
+
+  /* ── touch ────────────────────────────────────────────────────────── */
+  let startY = null;
+  addEventListener("touchstart", (e) => (startY = e.touches[0].clientY), { passive: true });
+  addEventListener(
+    "touchmove",
+    (e) => {
+      if (startY !== null) e.preventDefault();
+    },
+    { passive: false },
+  );
+  addEventListener("touchend", (e) => {
+    if (startY === null) return;
+    const dy = startY - e.changedTouches[0].clientY;
+    startY = null;
+    if (Math.abs(dy) > 40) go(at + Math.sign(dy));
+  });
+
+  /* ── keys ─────────────────────────────────────────────────────────── */
+  addEventListener("keydown", (e) => {
+    if (e.target.closest && e.target.closest("button, a") && (e.key === " " || e.key === "Enter")) return;
+    const next = { ArrowDown: 1, PageDown: 1, " ": 1, j: 1, ArrowUp: -1, PageUp: -1, k: -1 }[e.key];
+    if (next) { e.preventDefault(); go(at + (e.shiftKey && e.key === " " ? -1 : next)); }
+    if (e.key === "Home") { e.preventDefault(); go(0); }
+    if (e.key === "End") { e.preventDefault(); go(chapters.length - 1); }
+  });
+
+})();
+</script>
+<script type="module" src="/prototype/islands.js"></script>
+</body>
+</html>

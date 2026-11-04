@@ -86,7 +86,7 @@ function Socials() {
   const last = LINKS.length - 1;
 
   return (
-    <div ref={root} className="socials-inner">
+    <div ref={root} className="socials-inner" data-open={open ? "" : undefined}>
       {/* Sized to the open footprint: the liquid's filter region is the
           group's own box. */}
       <Liquid fill="#1c1c1c" blur={10} contrast={18} style={{ position: "relative", width: SIZE, height: SIZE + STEP * LINKS.length }}>
@@ -100,7 +100,8 @@ function Socials() {
             delay={open ? i * 45 : (last - i) * 35}
           >
             <a
-              className="soc"
+              className="soc soc-link"
+              style={{ "--i": i } as React.CSSProperties}
               href={l.href}
               target={l.href.startsWith("http") ? "_blank" : undefined}
               rel="noopener noreferrer"
@@ -145,11 +146,17 @@ function Socials() {
    A trial: bot avatars are made for agents, not people, so this is here to
    see whether one reads as a friendly mark in the spot a portrait would
    take. Hovering wakes it into the working hop; a click makes it jump. */
+/* A marshmallow: a squat, puffy cylinder seen side-on, its top and bottom
+   bowed out and its sides soft, in powdered off-white. The square type only
+   places the face in the middle; the outline is our own. */
+const MARSHMALLOW =
+  "M32 15C44 13 56 13 68 15C82 15.5 92 25 92 38C93.5 46 93.5 54 92 62C92 75 82 84.5 68 85C56 87 44 87 32 85C18 84.5 8 75 8 62C6.5 54 6.5 46 8 38C8 25 18 15.5 32 15Z";
+
 function Mark() {
   const [awake, setAwake] = React.useState(false);
   return (
     <span className="mark" onPointerEnter={() => setAwake(true)} onPointerLeave={() => setAwake(false)}>
-      <BotAvatar type="clover" state={awake ? "working" : "default"} size={64} aria-hidden="true" />
+      <BotAvatar type="square" path={MARSHMALLOW} color="#f4ece6" state={awake ? "working" : "default"} size={64} aria-hidden="true" />
     </span>
   );
 }

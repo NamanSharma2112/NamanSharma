@@ -170,6 +170,23 @@
     transition: color 160ms ease;
   }
   @media (hover: hover) { .soc:hover { color: var(--ink); } }
+  /* The icons ride inside the drops, so while the drops are stacked under
+     the + or still travelling they would pile on top of each other: each
+     icon shows only once its drop has arrived, nearest first, and goes
+     before the drops are pulled back in. */
+  .soc-link svg {
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 120ms ease, transform 160ms ease;
+  }
+  .socials-inner[data-open] .soc-link svg {
+    opacity: 1;
+    transform: none;
+    transition: opacity 220ms ease calc(160ms + var(--i) * 50ms), transform 380ms var(--ease) calc(160ms + var(--i) * 50ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .soc-link svg, .socials-inner[data-open] .soc-link svg { transform: none; transition: opacity 120ms ease; }
+  }
   .soc-toggle svg { transition: transform 420ms var(--ease); }
   .soc-toggle[aria-expanded="true"] svg { transform: rotate(45deg); }
   .soc-toggle:active svg { transform: scale(0.9); }

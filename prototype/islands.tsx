@@ -33,10 +33,10 @@ function EmailCta() {
 
 /* ── the socials ────────────────────────────────────────────────────────
    One round button in the corner that splits into four, Morph effect: the
-   pieces run out of it as liquid and are pulled back into it on close. The
-   buttons sit 6px apart under a 10px blur, so the goo bridges them: open,
-   the column settles into one liquid stem with a waist between each drop,
-   and in motion it stretches and pinches as the drops arrive. */
+   pieces run out of it as liquid and are pulled back into it on close. At
+   rest the buttons sit 18px apart, well past what a 10px blur can bridge,
+   so open they are separate drops; only in motion, while they pass close
+   to each other, does the goo stretch and pinch between them. */
 
 function LinkedIn() {
   return (
@@ -63,7 +63,7 @@ const LINKS = [
 ];
 
 const SIZE = 40;
-const STEP = 46;
+const STEP = 58;
 
 function Socials() {
   const [open, setOpen] = React.useState(false);

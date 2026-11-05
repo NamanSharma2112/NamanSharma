@@ -13,6 +13,13 @@ export const metadata: Metadata = {
 /* The work, front card first. Each is a screenshot in public/work. */
 const WORK: Project[] = [
   {
+    id: "isomatric",
+    name: "Isomatric",
+    href: "https://isomatric-eta.vercel.app/",
+    blurb: "isometric figures for React. Eleven interactive machines, each the explanation of an idea, and every one comes apart into a labelled teardown.",
+    shot: "/work/isomatric.jpg",
+  },
+  {
     id: "motionkit",
     name: "MotionKit",
     href: "https://www.motionlib.me/",

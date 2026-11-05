@@ -87,7 +87,7 @@ export function WorkStack({ projects }: { projects: Project[] }) {
       return;
     }
     const el = e.currentTarget;
-    drag.current = { pid: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, dy: 0, t: performance.now() };
+    drag.current = { pid: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, dy: 0, t: e.timeStamp };
     el.style.transition = "none";
     const rub = (d: number) => 150 * Math.tanh(d / 150);
     const mv = (ev: PointerEvent) => {
@@ -105,7 +105,7 @@ export function WorkStack({ projects }: { projects: Project[] }) {
       drag.current = null;
       unhook.current();
       const far = Math.hypot(d.dx, d.dy);
-      const quick = far / Math.max(1, performance.now() - d.t) > 0.6;
+      const quick = far / Math.max(1, ev.timeStamp - d.t) > 0.6;
       if (ev.type !== "pointercancel" && (far < 6 || far > 70 || (quick && far > 24))) next();
       else settle();
     };

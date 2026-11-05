@@ -2,7 +2,8 @@
 
 import * as React from "react";
 
-export type Chapter = { label: string; content: React.ReactNode };
+/* `wide` lets a chapter leave the column, for pieces set side by side */
+export type Chapter = { label: string; content: React.ReactNode; wide?: boolean };
 
 /**
  * The front page, one chapter at a time.
@@ -115,7 +116,11 @@ export function Chapters({ chapters }: { chapters: Chapter[] }) {
     };
 
     let startY: number | null = null;
-    const touchStart = (e: TouchEvent) => (startY = e.touches[0]!.clientY);
+    /* A drag on something that is itself dragged, like the work stack's
+       front card, is not a swipe between chapters. */
+    const touchStart = (e: TouchEvent) => {
+      startY = (e.target as Element | null)?.closest?.("[data-no-swipe]") ? null : e.touches[0]!.clientY;
+    };
     const touchMove = (e: TouchEvent) => {
       if (startY !== null) e.preventDefault();
     };
@@ -127,8 +132,11 @@ export function Chapters({ chapters }: { chapters: Chapter[] }) {
     };
 
     const key = (e: KeyboardEvent) => {
+      /* a control that took the key for itself, like the arrows inside a
+         radio group, has already said so */
+      if (e.defaultPrevented) return;
       const t = e.target as HTMLElement | null;
-      if (t?.closest?.("button, a") && (e.key === " " || e.key === "Enter")) return;
+      if (t?.closest?.("button, a, [data-keys]") && (e.key === " " || e.key === "Enter")) return;
       const step: Record<string, number> = { ArrowDown: 1, PageDown: 1, " ": 1, j: 1, ArrowUp: -1, PageUp: -1, k: -1 };
       const s = step[e.key];
       if (s) {
@@ -168,7 +176,7 @@ export function Chapters({ chapters }: { chapters: Chapter[] }) {
           const cls = live && shown ? "ch is-in" : i === leaving && !live ? "ch is-out" : live ? "ch is-live" : "ch";
           return (
             <section key={c.label} className={cls} aria-label={c.label} aria-hidden={!live} inert={!live}>
-              <div className="copy">{c.content}</div>
+              <div className={c.wide ? "copy copy-wide" : "copy"}>{c.content}</div>
             </section>
           );
         })}

@@ -57,9 +57,9 @@ html:has(.front) body {
     filter: blur(8px);
     transform: translateY(calc(var(--dir, 1) * 12px));
     transition:
-      opacity 640ms var(--ease) calc(120ms + var(--i) * 70ms),
-      filter 720ms var(--ease) calc(120ms + var(--i) * 70ms),
-      transform 900ms var(--ease) calc(120ms + var(--i) * 70ms);
+      opacity 640ms var(--ease) calc(120ms + var(--i, 1) * 70ms),
+      filter 720ms var(--ease) calc(120ms + var(--i, 1) * 70ms),
+      transform 900ms var(--ease) calc(120ms + var(--i, 1) * 70ms);
     will-change: opacity, filter, transform;
   }
   .front .is-in .ln { opacity: 1; filter: blur(0); transform: none; }
@@ -68,9 +68,9 @@ html:has(.front) body {
     filter: blur(6px);
     transform: translateY(calc(var(--dir, 1) * -10px));
     transition:
-      opacity 240ms var(--ease-in) calc(var(--i) * 18ms),
-      filter 240ms var(--ease-in) calc(var(--i) * 18ms),
-      transform 260ms var(--ease-in) calc(var(--i) * 18ms);
+      opacity 240ms var(--ease-in) calc(var(--i, 1) * 18ms),
+      filter 240ms var(--ease-in) calc(var(--i, 1) * 18ms),
+      transform 260ms var(--ease-in) calc(var(--i, 1) * 18ms);
   }
 
   /* ── the pieces (Pieces.tsx) ───────────────────────────────────────────
@@ -201,6 +201,389 @@ html:has(.front) body {
     color: var(--quiet);
     font-variant-numeric: tabular-nums;
     z-index: 2;
+  }
+
+  /* ── the work stack (WorkStack.tsx) ────────────────────────────────────
+     Screenshots on cards standing in depth. Each card's slot arrives as
+     --t. The card is a thin raised slab around the picture, its corner
+     concentric with the picture's; no shadows, the depth is the stack and
+     a hairline edge. */
+  .front .work-row { margin-top: 20px !important; }
+  .front .csw {
+    position: relative;
+    max-width: 100%;
+    border-radius: 16px;
+    outline: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .front .csw:focus-visible .csw-card[data-front] { box-shadow: 0 0 0 1px var(--edge), 0 0 0 3px var(--ground), 0 0 0 4px var(--body); }
+  .front .csw-stage {
+    position: absolute;
+    left: 0;
+    perspective: 1000px;
+  }
+  .front .csw-card {
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    border-radius: 14px;
+    background: var(--raised);
+    box-shadow: 0 0 0 1px var(--edge);
+    transform: var(--t);
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    backface-visibility: hidden;
+    cursor: pointer;
+  }
+  .front .csw-card[data-front] { cursor: grab; touch-action: none; }
+  .front .csw-card[data-front]:active { cursor: grabbing; }
+  /* the cards behind are a little dimmer, so the front one is the one being read */
+  .front .csw-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 11px;
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity 400ms ease;
+  }
+  .front .csw-card[data-front] .csw-photo { opacity: 1; }
+  @media (hover: hover) { .front .csw-card:not([data-front]):hover .csw-photo { opacity: 0.8; } }
+  .front .csw-tag {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ground) 82%, transparent);
+    box-shadow: 0 0 0 1px var(--edge);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 18px;
+    pointer-events: none;
+  }
+
+  /* the words under the stack, which follow the front card: each change
+     comes in out of a short blur, the same way the chapter's lines do */
+  .front .work-cap { min-height: 96px; }
+  .front .work-swap > * + * { margin-top: 8px; }
+  .front .work-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    color: var(--quiet);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .front .is-in .work-swap { animation: work-in 520ms var(--ease) both; }
+  @keyframes work-in {
+    from { opacity: 0; filter: blur(6px); transform: translateY(6px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .front .csw-card { transition-duration: 1ms; }
+    .front .is-in .work-swap { animation: work-fade 200ms ease both; }
+    @keyframes work-fade { from { opacity: 0; } }
+  }
+
+  /* ── the craft chapter (components/craft) ──────────────────────────────
+     On a wide screen the chapter leaves the column and three cards stand
+     side by side, each playing by itself until a hand is on it. Narrower,
+     they take turns under three words, with a hairline under the chosen
+     one that fills while it waits to move on. */
+  .front .copy.copy-wide { width: min(1200px, 100%); margin-left: auto; margin-right: auto; }
+  /* without room for the row the chapter goes back into the column, so
+     on a tablet or a phone it lines up with every other chapter */
+  @media (max-width: 1099px), (max-height: 699px) {
+    .front .copy.copy-wide { width: min(31rem, 100%); margin-left: max(0px, calc(50% - 15.5rem - 4vw)); margin-right: 0; }
+  }
+  .front .craft-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  /* one card for every piece: a raised slab, a hairline, the piece inset
+     on the slab's padding with a corner concentric to the slab's */
+  .front .craft-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #121212, #0e0e0e);
+    box-shadow: inset 0 0 0 1px #1c1c1c, inset 0 1px 0 rgba(237, 237, 237, 0.04);
+  }
+  .front .craft-head { display: flex; align-items: center; gap: 10px; padding: 2px 4px 0; font-size: 14px; line-height: 20px; }
+  .front .craft-n { color: var(--quiet); font: 500 12px/20px var(--font-geist-mono), ui-monospace, monospace; }
+  .front .craft-head h3 { margin: 0; font: inherit; font-weight: 500; color: var(--ink); }
+  .front .craft-hint {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--quiet);
+    font-variant-numeric: tabular-nums;
+  }
+  .front .craft-hint i { width: 6px; height: 6px; border-radius: 50%; background: var(--quiet); transition: background-color 200ms ease; }
+  .front .craft-hint[data-auto] i { background: var(--ink); animation: craft-beat 1.6s ease-in-out infinite; }
+  @keyframes craft-beat { 50% { opacity: 0.35; } }
+  .front .craft-piece { position: relative; display: grid; place-items: center; }
+  .front .craft-fit { display: grid; place-items: center; }
+  .front .craft-text { margin: 0; padding: 0 4px 2px; font-size: 14px; line-height: 21px; color: var(--body); min-height: 42px; text-wrap: pretty; }
+
+  .front .craft-one > * + * { margin-top: 20px; }
+  .front .craft-one .craft-card { width: min(100%, 460px); }
+  .front .craft-tabs { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  .front .craft-tabs button {
+    position: relative;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 14px;
+    color: var(--quiet);
+    cursor: pointer;
+    transition: color 160ms ease;
+  }
+  @media (hover: hover) { .front .craft-tabs button:hover { color: var(--body); } }
+  .front .craft-tabs button[aria-selected="true"] { color: var(--ink); }
+  .front .craft-tabs button:focus-visible { outline: 1px solid var(--body); outline-offset: 4px; border-radius: 4px; }
+  .front .craft-clock {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+    height: 1px;
+    background: var(--ink);
+    opacity: 0.5;
+    transform-origin: left;
+    animation: craft-clock 7s linear both;
+  }
+  @keyframes craft-clock { from { transform: scaleX(0); } }
+  .front .craft-swap { display: flex; }
+  .front .is-in .craft-swap { animation: work-in 520ms var(--ease) both; }
+  @media (prefers-reduced-motion: reduce) {
+    .front .is-in .craft-swap { animation: work-fade 200ms ease both; }
+    .front .craft-hint[data-auto] i { animation: none; }
+  }
+
+  /* ══ Image compare ════════════════════════════════════════
+     Compare.tsx. Bencho's --fill-on, --fill-slab and --signal are
+     this site's raised surface, ink and ground. */
+  .front .cmp {
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+    cursor: ew-resize;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+    background: var(--raised);
+    box-shadow: 0 0 0 1px var(--edge);
+  }
+  .front .cmp:focus-visible { box-shadow: 0 0 0 1px var(--edge), 0 0 0 3px var(--ground), 0 0 0 4px var(--body); }
+  .front .cmp-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    -webkit-user-drag: none;
+  }
+  /* no drift: two separate pictures have to stay exactly in register */
+  .front .cmp-before { position: absolute; inset: 0; }
+  .front .cmp-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    /* solid, not a backdrop blur: the picture under it repaints every
+       frame while the line sweeps, and a blur re-read on every frame is
+       the most expensive thing that could sit on it */
+    background: rgba(10, 10, 10, 0.78);
+    box-shadow: 0 0 0 1px rgba(237, 237, 237, 0.08);
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 20px;
+    pointer-events: none;
+  }
+  .front .cmp-tag.cmp-right { left: auto; right: 12px; }
+  /* the line is drawn, so it can bend: a 2px curve over a wide faint one
+     for its glow. Two strokes rather than a drop-shadow filter, which
+     would be recomputed over the whole block on every frame of a sweep */
+  .front .cmp-line {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .front .cmp-line path { fill: none; stroke: var(--ink); stroke-width: 2; }
+  .front .cmp-line path.cmp-glow { stroke-width: 8; opacity: 0.12; }
+  .front .cmp-grip { position: absolute; top: 0; bottom: 0; width: 0; pointer-events: none; }
+  .front .cmp-knob {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 36px;
+    height: 36px;
+    translate: -50% -50%;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--ground);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    transition: scale 220ms cubic-bezier(0.24, 1.34, 0.38, 1);
+  }
+  @media (hover: hover) { .front .cmp:hover .cmp-knob { scale: 1.08; } }
+  .front .cmp[data-held] .cmp-knob { scale: 0.9; }
+
+  /* ══ Liquid glass ══════════════════════════════════════════
+     LiquidGlass.tsx. The picture, the margin round it and the glass are
+     one WebGL canvas; the margin is clear, so the page shows through and
+     the canvas has no edge of its own. It is pulled left by its margin so
+     the picture, not the canvas, lines up with the words. */
+  .front .lqg { position: relative; display: grid; place-items: center; margin: -16px; }
+  .front .lqg-canvas {
+    display: block;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+  }
+  .front .lqg-canvas[data-over="true"] { cursor: grab; }
+  .front .lqg-canvas[data-over="true"]:active { cursor: grabbing; }
+
+  /* ══ Aspect ═════════════════════════════════════════════════
+     AspectRatio.tsx. A picture and three screens to put it on. Almost
+     everything that moves is written in the markup from the chosen
+     shape; what is here is the transition itself and the chrome.
+
+     Bencho's tokens, mapped: --ink is this site's ink, --ink-3 its body
+     grey (its quiet grey is too faint for an icon on the track),
+     --surface-2 its raised surface and --font-ui its Geist. There is no
+     site equivalent for a card colour above the raised surface, an ink
+     as bare numbers or a wash strength, so those three are defined here
+     on the block's own root and go no further.
+
+     No stroke rule here on purpose: a hairline that reads against a pane
+     disappears against a screenshot, so the block does not offer one
+     rather than offering one that reports a state it is not producing. */
+  .front .asp {
+    --card: #262626;
+    --ink-rgb: 237, 237, 237;
+    --wash: 0.06;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+  /* the full square, and it never changes size — the picture is
+     centred in a box that is not moving, so the tabs below do
+     not climb and drop as the shape changes */
+  .front .asp-stage { display: grid; place-items: center; width: 100%; }
+  .front .asp-pic {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--raised);
+    box-shadow: 0 0 0 1px var(--edge);
+    /* a frame that moves and a picture that does not stretch: the
+       layout inside changes, which is what a new screen does */
+    transition:
+      width var(--asp-ms, 600ms) cubic-bezier(0.22, 1, 0.36, 1),
+      height var(--asp-ms, 600ms) cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* one screenshot per screen, cross-fading while the frame moves;
+     pinned to the top, where a page starts */
+  .front .asp-shot {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: top center;
+    opacity: 0;
+    transition: opacity calc(var(--asp-ms, 600ms) * 0.6) ease;
+  }
+  .front .asp-shot[data-on] { opacity: 1; }
+
+  /* ── the tab strip ──────────────────────────────────────────
+     36 tall, 2 of padding, a 6% ink track and 999 on both. The tabs
+     are 40 wide: that is what an 18px glyph needs to stop being a hit
+     target you have to aim at. */
+  .front .asp-tabs {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 40px);
+    padding: 2px;
+    border-radius: 999px;
+    background: rgba(var(--ink-rgb), var(--wash));
+  }
+  .front .asp-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: calc((100% - 4px) / 3);
+    height: calc(100% - 4px);
+    border-radius: 999px;
+    background: var(--card);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    /* ── it LEADS the picture ──────────────────────────────
+       Both are the same event and both answer the one knob, so
+       the thumb is not on a duration of its own — it is a
+       fraction of the picture's. A control that takes as long
+       as the thing it controls feels like it did not hear you;
+       one that arrives first reads as the cause of what
+       follows. */
+    transition: transform calc(var(--asp-ms, 600ms) * 0.55) cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .front .asp-tab {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--body);
+    cursor: pointer;
+    transition: color 160ms ease, scale 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover: hover) { .front .asp-tab:hover { color: var(--ink); } }
+  .front .asp-tab[aria-checked="true"] { color: var(--ink); }
+  /* the same give every other control here has */
+  .front .asp-tab:active { scale: 0.96; }
+  .front .asp .asp-tab:focus-visible {
+    outline: none;
+    border-radius: 999px;
+    box-shadow: 0 0 0 2px var(--card), 0 0 0 4px rgba(var(--ink-rgb), 0.35);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .front .asp-pic, .front .asp-thumb, .front .asp-tab, .front .asp-shot { transition-duration: 160ms; }
+  }
+
+  /* ── a bigger page on a bigger screen ──────────────────────────────────
+     On a desktop with room to spare the column widens and the type steps
+     up to 18/28, with every gap, the mark and the button stepping with it,
+     so all four chapters stay on one scale. */
+  @media (min-width: 1024px) and (min-height: 740px) {
+    .front .copy { width: min(38rem, 100%); margin-left: max(0px, calc(50% - 19rem - 4vw)); font-size: 18px; line-height: 28px; }
+    .front .copy > * + * { margin-top: 28px; }
+    .front .label { font-size: 15px; }
+    .front .mark-row { height: 80px; margin-bottom: 24px; }
+    .front .mark { transform: scale(1.25); transform-origin: left bottom; }
+    .front .cta-row { margin-top: 24px !important; }
+    .front .cta { height: 42px; padding: 0 20px; font-size: 15px; }
+    .front .work-meta { font-size: 15px; }
+    .front .work-cap { min-height: 112px; }
   }
 
   /* ── stillness: a plain cross-fade, nothing moves or blurs ─────────── */

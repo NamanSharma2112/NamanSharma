@@ -167,7 +167,11 @@ export function LiquidGlass({
   fringe = 30,
   /* the picture's corner, px */
   corner = 16,
+  /* drift over the spec by itself until a hand takes the glass.
+     The parent turns this off while it is being used */
+  auto = false,
 }: {
+  auto?: boolean;
   picW?: number;
   picH?: number;
   pad?: number;
@@ -188,6 +192,7 @@ export function LiquidGlass({
   const state = useRef({ x: W * 0.68, y: H * 0.44, vx: 0, vy: 0, tx: W * 0.68, ty: H * 0.44 });
   const grab = useRef<{ dx: number; dy: number } | null>(null);
   const knobs = useRef({ size, bend, fringe, still: false });
+  const autoRef = useRef(auto);
 
   /* ── one frame ─────────────────────────────────────────── */
   const draw = () => {
@@ -227,6 +232,19 @@ export function LiquidGlass({
       const dt = prev ? clamp((t - prev) / 16.67, 0, 2.5) : 1;
       prev = t;
       const s = state.current;
+      /* ── playing by itself ────────────────────────────────
+         The target walks a slow figure over the picture — two
+         periods that do not divide into each other, so it never
+         quite repeats — and the same spring a hand drives carries
+         the glass after it. It visits the measurements rather than
+         the margin: the path stays inside the middle of the
+         picture. */
+      if (autoRef.current && !grab.current) {
+        const cx = pad + picW / 2;
+        const cy = pad + picH / 2;
+        s.tx = cx + Math.cos(t / 2300) * picW * 0.3;
+        s.ty = cy + Math.sin(t / 1700) * picH * 0.26;
+      }
       if (knobs.current.still) { s.x = s.tx; s.y = s.ty; s.vx = 0; s.vy = 0; }
       else {
         const k = 0.22;
@@ -238,7 +256,7 @@ export function LiquidGlass({
       }
       draw();
       const moving = Math.abs(s.tx - s.x) > 0.05 || Math.abs(s.ty - s.y) > 0.05
-        || Math.abs(s.vx) > 0.05 || Math.abs(s.vy) > 0.05 || grab.current;
+        || Math.abs(s.vx) > 0.05 || Math.abs(s.vy) > 0.05 || grab.current || autoRef.current;
       raf.current = moving ? requestAnimationFrame(tick) : 0;
     };
     raf.current = requestAnimationFrame(tick);
@@ -325,6 +343,13 @@ export function LiquidGlass({
     // remounts it with a new key when the column changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /* playing starts the loop; stopping lets it settle and park */
+  useEffect(() => {
+    autoRef.current = auto;
+    if (auto) run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auto]);
 
   /* the glass redraws when a knob moves */
   useEffect(() => {

@@ -2,7 +2,8 @@
 
 import * as React from "react";
 
-export type Chapter = { label: string; content: React.ReactNode };
+/* `wide` lets a chapter leave the column, for pieces set side by side */
+export type Chapter = { label: string; content: React.ReactNode; wide?: boolean };
 
 /**
  * The front page, one chapter at a time.
@@ -175,7 +176,7 @@ export function Chapters({ chapters }: { chapters: Chapter[] }) {
           const cls = live && shown ? "ch is-in" : i === leaving && !live ? "ch is-out" : live ? "ch is-live" : "ch";
           return (
             <section key={c.label} className={cls} aria-label={c.label} aria-hidden={!live} inert={!live}>
-              <div className="copy">{c.content}</div>
+              <div className={c.wide ? "copy copy-wide" : "copy"}>{c.content}</div>
             </section>
           );
         })}

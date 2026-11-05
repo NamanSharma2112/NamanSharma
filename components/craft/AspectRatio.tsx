@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /* Adapted from Bencho's "Aspect ratio" block, MIT licensed —
    bencho.dev/licence. Here the three shapes are three screens. */
@@ -111,8 +111,20 @@ export function AspectRatio({
   /* the square the shapes fit in, px. FULL on a wide column,
      smaller on a phone */
   side = FULL,
-}: { corner?: number; morph?: number; side?: number } = {}) {
+  /* step through the three screens by itself until a hand picks
+     one. The parent turns this off while it is being used */
+  auto = false,
+}: { corner?: number; morph?: number; side?: number; auto?: boolean } = {}) {
   const [at, setAt] = useState(2);
+
+  /* ── playing by itself ──────────────────────────────────
+     A screen every 2.4s: long enough to take in the layout once
+     the frame has arrived, which is a little under half of that. */
+  useEffect(() => {
+    if (!auto) return;
+    const id = window.setInterval(() => setAt((i) => (i + 1) % SHAPES.length), 2400);
+    return () => window.clearInterval(id);
+  }, [auto]);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const ms = Math.round(BASE * rate(clamp(morph, 0, 100)));

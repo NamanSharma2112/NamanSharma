@@ -4,59 +4,165 @@ import * as React from "react";
 import { AspectRatio } from "./AspectRatio";
 import { Compare } from "./Compare";
 import { LiquidGlass } from "./LiquidGlass";
+import { useLive } from "./useLive";
 
 /* ══ The craft chapter ═════════════════════════════════════════════════
-   Three ways of showing what design engineering does to an interface,
-   one at a time, so the chapter stays one column on one screen: the same
-   dialog before and after, the finished one under a glass with its
+   Three ways of showing what design engineering does to an interface: the
+   same dialog before and after, the finished one under a glass with its
    measurements drawn on, and one design across three screens.
 
-   The stage is one fixed height, the tallest of the three, so changing
-   piece never moves the words under it. Sizes come in two steps: full on
-   a wide, tall window, compact on a phone or a short laptop screen, where
-   the full stage and its caption would not fit above the dots. */
+   ── SIDE BY SIDE, PLAYING ─────────────────────────────────────────────
+   On a wide screen the three stand in a row, each in the same card, and
+   each plays by itself while the chapter is in: the line sweeps, the glass
+   drifts, the screens change. A hand on a piece stops that piece, and only
+   that one, and it starts again a few seconds after the hand has gone — so
+   the row is a demonstration until somebody wants to use it, and then it
+   is theirs.
 
-type Piece = { id: "compare" | "details" | "screens"; label: string; text: string };
+   ── ONE AT A TIME, NARROW ─────────────────────────────────────────────
+   Three cards will not stand side by side on a phone or a tablet held
+   upright, so there they take turns: the tabs above choose one, and the
+   chapter moves on to the next by itself every few seconds until the
+   reader touches anything in it.
+
+   Every piece is drawn from one measured size, the inner width of a card,
+   so the three are the same height and the row reads as one object. */
+
+type Id = "compare" | "details" | "screens";
+type Piece = { id: Id; n: string; label: string; hint: string; text: string };
 
 const PIECES: Piece[] = [
   {
     id: "compare",
+    n: "01",
     label: "Before and after",
-    text: "The same dialog, twice. Same words, same layout; what changed is spacing on one scale, radii that nest, type with a hierarchy, and contrast you can read. Drag the line.",
+    hint: "Drag the line",
+    text: "The same dialog, twice. Spacing on one scale, radii that nest, type with a hierarchy, contrast you can read.",
   },
   {
     id: "details",
+    n: "02",
     label: "Details",
-    text: "Pixel-perfect is a checklist, not a feeling: every gap on the scale, every height shared, every radius chosen. Drag the glass over the measurements.",
+    hint: "Drag the glass",
+    text: "Pixel-perfect is a checklist: every gap, every height and every radius measured, and none of them guessed.",
   },
   {
     id: "screens",
+    n: "03",
     label: "Every screen",
-    text: "One design on a phone, a tablet and a desktop, each given the same area, so what you see change is the layout and not the size.",
+    hint: "Pick a screen",
+    text: "One design on a phone, a tablet and a desktop, each given the same area, so the layout changes and not the size.",
   },
 ];
 
-const FULL = { cw: 400, ch: 300, gw: 360, gh: 270, pad: 20, glass: 128, side: 300, stage: 352 };
-const COMPACT = { cw: 320, ch: 240, gw: 288, gh: 216, pad: 16, glass: 104, side: 236, stage: 288 };
+/* how long a hand keeps a piece still after it lets go, and how long a
+   narrow screen shows each piece before moving on */
+const REST = 5000;
+const TURN = 7000;
+/* the row needs this much room before three cards are worth having */
+const ROW = "(min-width: 1100px) and (min-height: 700px)";
+
+function usePieceSize(box: React.RefObject<HTMLDivElement | null>) {
+  const [s, setS] = React.useState({ w: 0, h: 0 });
+  React.useLayoutEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const fit = () => {
+      const w = Math.floor(el.clientWidth);
+      /* a little under square, and never taller than the window can
+         give once the label, the card's header and caption are in */
+      const h = Math.floor(Math.max(220, Math.min(w * 0.84, innerHeight - 420)));
+      setS((o) => (o.w === w && o.h === h ? o : { w, h }));
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    addEventListener("resize", fit);
+    return () => {
+      ro.disconnect();
+      removeEventListener("resize", fit);
+    };
+  }, [box]);
+  return s;
+}
+
+function Card({ piece, live, chrome }: { piece: Piece; live: boolean; chrome: boolean }) {
+  const box = React.useRef<HTMLDivElement>(null);
+  const { w, h } = usePieceSize(box);
+  /* a hand on the piece, and when it was last there */
+  const [held, setHeld] = React.useState(false);
+  const rest = React.useRef(0);
+  const touch = () => {
+    setHeld(true);
+    window.clearTimeout(rest.current);
+    rest.current = window.setTimeout(() => setHeld(false), REST);
+  };
+  React.useEffect(() => () => window.clearTimeout(rest.current), []);
+  const auto = live && !held;
+  /* the glass's margin is the card's padding, so it can be carried off
+     the picture onto the card */
+  const pad = 16;
+
+  return (
+    <article className="craft-card" aria-label={piece.label}>
+      {chrome && (
+        <header className="craft-head">
+          <span className="craft-n">{piece.n}</span>
+          <h3>{piece.label}</h3>
+          <span className="craft-hint" data-auto={auto || undefined}>
+            <i aria-hidden="true" />
+            {auto ? "Playing" : piece.hint}
+          </span>
+        </header>
+      )}
+      <div
+        ref={box}
+        className="craft-piece"
+        style={{ height: h || undefined }}
+        onPointerDownCapture={touch}
+        onKeyDownCapture={touch}
+      >
+        {w > 0 && (
+          <div key={`${w}x${h}`} className="craft-fit">
+            {piece.id === "compare" && <Compare w={w} h={h} corner={12} auto={auto} />}
+            {piece.id === "details" && (
+              <LiquidGlass picW={w} picH={h} pad={pad} corner={12} size={Math.round(Math.min(w, h) * 0.42)} auto={auto} />
+            )}
+            {piece.id === "screens" && <AspectRatio side={h - 52} corner={12} auto={auto} />}
+          </div>
+        )}
+      </div>
+      <p className="craft-text">{piece.text}</p>
+    </article>
+  );
+}
 
 export function Craft() {
+  const root = React.useRef<HTMLDivElement>(null);
+  const live = useLive(root);
+  /* unknown until the window has been asked: rendering the row first and
+     then finding a phone would build the glass's WebGL context only to
+     throw it away, and on a phone that compile is a long, visible stall */
+  const [row, setRow] = React.useState<boolean | null>(null);
   const [at, setAt] = React.useState(0);
-  const [size, setSize] = React.useState(FULL);
+  const [held, setHeld] = React.useState(false);
   const tabs = React.useRef<(HTMLButtonElement | null)[]>([]);
 
   React.useEffect(() => {
-    const mq = matchMedia("(max-width: 560px), (max-height: 760px)");
-    const fit = () => setSize(mq.matches ? COMPACT : FULL);
+    const mq = matchMedia(ROW);
+    const fit = () => setRow(mq.matches);
     fit();
     mq.addEventListener("change", fit);
     return () => mq.removeEventListener("change", fit);
   }, []);
 
-  const piece = PIECES[at]!;
-  const compact = size === COMPACT;
+  /* narrow: on to the next piece every few seconds, until touched */
+  React.useEffect(() => {
+    if (row || !live || held) return;
+    const id = window.setTimeout(() => setAt((i) => (i + 1) % PIECES.length), TURN);
+    return () => window.clearTimeout(id);
+  }, [row, live, held, at]);
 
-  /* tabs, so the arrows move between them and only the chosen one is in
-     the tab order */
   const key = (e: React.KeyboardEvent) => {
     const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
     if (!d) return;
@@ -66,47 +172,46 @@ export function Craft() {
     tabs.current[i]?.focus();
   };
 
+  const piece = PIECES[at]!;
   return (
-    <>
-      <div className="ln craft-tabs" role="tablist" aria-label="Craft" onKeyDown={key}>
-        {PIECES.map((p, i) => (
-          <button
-            key={p.id}
-            ref={(el) => {
-              tabs.current[i] = el;
-            }}
-            type="button"
-            role="tab"
-            id={`craft-tab-${p.id}`}
-            aria-selected={i === at}
-            aria-controls="craft-panel"
-            tabIndex={i === at ? 0 : -1}
-            onClick={() => setAt(i)}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
-      <div
-        className="ln craft-stage"
-        id="craft-panel"
-        role="tabpanel"
-        aria-labelledby={`craft-tab-${piece.id}`}
-        style={{ height: size.stage }}
-      >
-        {/* keyed by the piece and the size, so a change of either is a
-            fresh mount: the glass's canvas is sized once, at mount */}
-        <div key={`${piece.id}-${compact}`} className="craft-swap">
-          {piece.id === "compare" && <Compare w={size.cw} h={size.ch} />}
-          {piece.id === "details" && <LiquidGlass picW={size.gw} picH={size.gh} pad={size.pad} size={size.glass} />}
-          {piece.id === "screens" && <AspectRatio side={size.side} />}
+    <div ref={root} className="craft">
+      {row === true && (
+        <div className="ln craft-row">
+          {PIECES.map((p) => (
+            <Card key={p.id} piece={p} live={live} chrome />
+          ))}
         </div>
-      </div>
-      <div className="ln craft-cap" aria-live="polite">
-        <p key={piece.id} className="craft-text">
-          {piece.text}
-        </p>
-      </div>
-    </>
+      )}
+      {row === false && (
+        <div className="craft-one" onPointerDownCapture={() => setHeld(true)} onKeyDownCapture={() => setHeld(true)}>
+          <div className="ln craft-tabs" role="tablist" aria-label="Craft" onKeyDown={key}>
+            {PIECES.map((p, i) => (
+              <button
+                key={p.id}
+                ref={(el) => {
+                  tabs.current[i] = el;
+                }}
+                type="button"
+                role="tab"
+                id={`craft-tab-${p.id}`}
+                aria-selected={i === at}
+                aria-controls="craft-panel"
+                tabIndex={i === at ? 0 : -1}
+                onClick={() => setAt(i)}
+              >
+                {p.label}
+                {/* how long until it moves on, while it is moving on by itself */}
+                {i === at && live && !held && <span key={at} className="craft-clock" aria-hidden="true" />}
+              </button>
+            ))}
+          </div>
+          <div className="ln craft-stage" id="craft-panel" role="tabpanel" aria-labelledby={`craft-tab-${piece.id}`}>
+            <div key={piece.id} className="craft-swap">
+              <Card piece={piece} live={live} chrome={false} />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

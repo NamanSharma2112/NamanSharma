@@ -27,6 +27,8 @@ export type Project = {
 
 const WIDE = { w: 360, h: 240, x: 36, y: 26, z: 70 };
 const NARROW = { w: 248, h: 165, x: 26, y: 19, z: 56 };
+/* the bigger page (chapters.css, 1024 wide and 740 tall and up) */
+const LARGE = { w: 440, h: 293, x: 44, y: 32, z: 84 };
 const SKEW = 6;
 
 export function WorkStack({ projects }: { projects: Project[] }) {
@@ -38,11 +40,14 @@ export function WorkStack({ projects }: { projects: Project[] }) {
 
   React.useEffect(() => {
     const mq = matchMedia("(max-width: 560px)");
-    const fit = () => setSize(mq.matches ? NARROW : WIDE);
+    const big = matchMedia("(min-width: 1024px) and (min-height: 740px)");
+    const fit = () => setSize(mq.matches ? NARROW : big.matches ? LARGE : WIDE);
     fit();
     mq.addEventListener("change", fit);
+    big.addEventListener("change", fit);
     return () => {
       mq.removeEventListener("change", fit);
+      big.removeEventListener("change", fit);
       unhook.current();
     };
   }, []);

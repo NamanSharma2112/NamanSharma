@@ -85,6 +85,7 @@ export default function Home() {
           },
           {
             label: "Craft",
+            wide: true,
             content: (
               <>
                 <h2 className="ln label">Craft</h2>
@@ -106,6 +107,9 @@ export default function Home() {
                   <a href="https://github.com/NamanSharma2112">GitHub</a> or{" "}
                   <a href="mailto:namansharmans03@gmail.com">email</a>, or read my <Link href="/blog">writing</Link>.
                 </p>
+                <div className="ln cta-row">
+                  <ContactCta />
+                </div>
               </>
             ),
           },

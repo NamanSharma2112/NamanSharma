@@ -57,9 +57,9 @@ html:has(.front) body {
     filter: blur(8px);
     transform: translateY(calc(var(--dir, 1) * 12px));
     transition:
-      opacity 640ms var(--ease) calc(120ms + var(--i) * 70ms),
-      filter 720ms var(--ease) calc(120ms + var(--i) * 70ms),
-      transform 900ms var(--ease) calc(120ms + var(--i) * 70ms);
+      opacity 640ms var(--ease) calc(120ms + var(--i, 1) * 70ms),
+      filter 720ms var(--ease) calc(120ms + var(--i, 1) * 70ms),
+      transform 900ms var(--ease) calc(120ms + var(--i, 1) * 70ms);
     will-change: opacity, filter, transform;
   }
   .front .is-in .ln { opacity: 1; filter: blur(0); transform: none; }
@@ -68,9 +68,9 @@ html:has(.front) body {
     filter: blur(6px);
     transform: translateY(calc(var(--dir, 1) * -10px));
     transition:
-      opacity 240ms var(--ease-in) calc(var(--i) * 18ms),
-      filter 240ms var(--ease-in) calc(var(--i) * 18ms),
-      transform 260ms var(--ease-in) calc(var(--i) * 18ms);
+      opacity 240ms var(--ease-in) calc(var(--i, 1) * 18ms),
+      filter 240ms var(--ease-in) calc(var(--i, 1) * 18ms),
+      transform 260ms var(--ease-in) calc(var(--i, 1) * 18ms);
   }
 
   /* ── the pieces (Pieces.tsx) ───────────────────────────────────────────
@@ -290,10 +290,57 @@ html:has(.front) body {
   }
 
   /* ── the craft chapter (components/craft) ──────────────────────────────
-     Three pieces, one at a time, chosen with three words. The stage holds
-     one fixed height so the caption never moves when the piece does. */
-  .front .craft-tabs { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 4px !important; }
+     On a wide screen the chapter leaves the column and three cards stand
+     side by side, each playing by itself until a hand is on it. Narrower,
+     they take turns under three words, with a hairline under the chosen
+     one that fills while it waits to move on. */
+  .front .copy.copy-wide { width: min(1200px, 100%); margin-left: auto; margin-right: auto; }
+  /* without room for the row the chapter goes back into the column, so
+     on a tablet or a phone it lines up with every other chapter */
+  @media (max-width: 1099px), (max-height: 699px) {
+    .front .copy.copy-wide { width: min(31rem, 100%); margin-left: max(0px, calc(50% - 15.5rem - 4vw)); margin-right: 0; }
+  }
+  .front .craft-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  /* one card for every piece: a raised slab, a hairline, the piece inset
+     on the slab's padding with a corner concentric to the slab's */
+  .front .craft-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #121212, #0e0e0e);
+    box-shadow: inset 0 0 0 1px #1c1c1c, inset 0 1px 0 rgba(237, 237, 237, 0.04);
+  }
+  .front .craft-head { display: flex; align-items: center; gap: 10px; padding: 2px 4px 0; font-size: 14px; line-height: 20px; }
+  .front .craft-n { color: var(--quiet); font: 500 12px/20px var(--font-geist-mono), ui-monospace, monospace; }
+  .front .craft-head h3 { margin: 0; font: inherit; font-weight: 500; color: var(--ink); }
+  .front .craft-hint {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--quiet);
+    font-variant-numeric: tabular-nums;
+  }
+  .front .craft-hint i { width: 6px; height: 6px; border-radius: 50%; background: var(--quiet); transition: background-color 200ms ease; }
+  .front .craft-hint[data-auto] i { background: var(--ink); animation: craft-beat 1.6s ease-in-out infinite; }
+  @keyframes craft-beat { 50% { opacity: 0.35; } }
+  .front .craft-piece { position: relative; display: grid; place-items: center; }
+  .front .craft-fit { display: grid; place-items: center; }
+  .front .craft-text { margin: 0; padding: 0 4px 2px; font-size: 14px; line-height: 21px; color: var(--body); min-height: 42px; text-wrap: pretty; }
+
+  .front .craft-one > * + * { margin-top: 20px; }
+  .front .craft-one .craft-card { width: min(100%, 460px); }
+  .front .craft-tabs { display: flex; flex-wrap: wrap; gap: 4px 16px; }
   .front .craft-tabs button {
+    position: relative;
     padding: 0;
     border: 0;
     background: none;
@@ -306,12 +353,23 @@ html:has(.front) body {
   @media (hover: hover) { .front .craft-tabs button:hover { color: var(--body); } }
   .front .craft-tabs button[aria-selected="true"] { color: var(--ink); }
   .front .craft-tabs button:focus-visible { outline: 1px solid var(--body); outline-offset: 4px; border-radius: 4px; }
-  .front .craft-stage { display: flex; align-items: center; margin-top: 20px !important; }
+  .front .craft-clock {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -5px;
+    height: 1px;
+    background: var(--ink);
+    opacity: 0.5;
+    transform-origin: left;
+    animation: craft-clock 7s linear both;
+  }
+  @keyframes craft-clock { from { transform: scaleX(0); } }
   .front .craft-swap { display: flex; }
-  .front .craft-cap { min-height: 72px; margin-top: 20px !important; }
-  .front .is-in .craft-swap, .front .is-in .craft-text { animation: work-in 520ms var(--ease) both; }
+  .front .is-in .craft-swap { animation: work-in 520ms var(--ease) both; }
   @media (prefers-reduced-motion: reduce) {
-    .front .is-in .craft-swap, .front .is-in .craft-text { animation: work-fade 200ms ease both; }
+    .front .is-in .craft-swap { animation: work-fade 200ms ease both; }
+    .front .craft-hint[data-auto] i { animation: none; }
   }
 
   /* ══ Image compare ════════════════════════════════════════
@@ -346,9 +404,10 @@ html:has(.front) body {
     left: 12px;
     padding: 2px 10px;
     border-radius: 999px;
-    background: rgba(10, 10, 10, 0.5);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    /* solid, not a backdrop blur: the picture under it repaints every
+       frame while the line sweeps, and a blur re-read on every frame is
+       the most expensive thing that could sit on it */
+    background: rgba(10, 10, 10, 0.78);
     box-shadow: 0 0 0 1px rgba(237, 237, 237, 0.08);
     color: var(--ink);
     font-size: 12px;
@@ -356,16 +415,17 @@ html:has(.front) body {
     pointer-events: none;
   }
   .front .cmp-tag.cmp-right { left: auto; right: 12px; }
-  /* the line is drawn, so it can bend: a 2px curve with a soft glow,
-     over the whole block */
+  /* the line is drawn, so it can bend: a 2px curve over a wide faint one
+     for its glow. Two strokes rather than a drop-shadow filter, which
+     would be recomputed over the whole block on every frame of a sweep */
   .front .cmp-line {
     position: absolute;
     inset: 0;
     overflow: visible;
     pointer-events: none;
-    filter: drop-shadow(0 0 6px rgba(237, 237, 237, 0.4));
   }
   .front .cmp-line path { fill: none; stroke: var(--ink); stroke-width: 2; }
+  .front .cmp-line path.cmp-glow { stroke-width: 8; opacity: 0.12; }
   .front .cmp-grip { position: absolute; top: 0; bottom: 0; width: 0; pointer-events: none; }
   .front .cmp-knob {
     position: absolute;
@@ -390,8 +450,7 @@ html:has(.front) body {
      one WebGL canvas; the margin is clear, so the page shows through and
      the canvas has no edge of its own. It is pulled left by its margin so
      the picture, not the canvas, lines up with the words. */
-  .front .lqg { position: relative; display: grid; place-items: center; margin-left: -20px; }
-  @media (max-width: 560px), (max-height: 760px) { .front .lqg { margin-left: -16px; } }
+  .front .lqg { position: relative; display: grid; place-items: center; margin: -16px; }
   .front .lqg-canvas {
     display: block;
     touch-action: none;
@@ -509,6 +568,22 @@ html:has(.front) body {
   }
   @media (prefers-reduced-motion: reduce) {
     .front .asp-pic, .front .asp-thumb, .front .asp-tab, .front .asp-shot { transition-duration: 160ms; }
+  }
+
+  /* ── a bigger page on a bigger screen ──────────────────────────────────
+     On a desktop with room to spare the column widens and the type steps
+     up to 18/28, with every gap, the mark and the button stepping with it,
+     so all four chapters stay on one scale. */
+  @media (min-width: 1024px) and (min-height: 740px) {
+    .front .copy { width: min(38rem, 100%); margin-left: max(0px, calc(50% - 19rem - 4vw)); font-size: 18px; line-height: 28px; }
+    .front .copy > * + * { margin-top: 28px; }
+    .front .label { font-size: 15px; }
+    .front .mark-row { height: 80px; margin-bottom: 24px; }
+    .front .mark { transform: scale(1.25); transform-origin: left bottom; }
+    .front .cta-row { margin-top: 24px !important; }
+    .front .cta { height: 42px; padding: 0 20px; font-size: 15px; }
+    .front .work-meta { font-size: 15px; }
+    .front .work-cap { min-height: 112px; }
   }
 
   /* ── stillness: a plain cross-fade, nothing moves or blurs ─────────── */

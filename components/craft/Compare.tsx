@@ -41,11 +41,15 @@ export function Compare({
   /* show the Before and After tags */
   labels = true,
   corner = 16,
+  /* play by itself: the line sweeps back and forth until a hand
+     takes it. The parent turns this off while it is being used */
+  auto = false,
 }: {
   w?: number;
   h?: number;
   labels?: boolean;
   corner?: number;
+  auto?: boolean;
 } = {}) {
   const [p, setP] = useState(0.5);
   const [bend, setBend] = useState(0);
@@ -89,6 +93,28 @@ export function Compare({
      only the ends are left to the loop */
   const place = (v: number) => { target.current = null; cur.current = v; setP(v); loop(); };
   useEffect(() => () => cancelAnimationFrame(raf.current), []);
+
+  /* ── playing by itself ──────────────────────────────────
+     Out to a quarter from each edge and back, a beat apart, on the
+     same glide a click uses — so the jelly bows on every turn and the
+     sweep shows the line is the thing to take hold of. It never runs
+     while the line is held. */
+  useEffect(() => {
+    if (!auto) return;
+    let side = cur.current > 0.5 ? 0.22 : 0.78;
+    const turn = () => {
+      if (drag.current) return;
+      glide(side);
+      side = side > 0.5 ? 0.22 : 0.78;
+    };
+    const first = window.setTimeout(turn, 500);
+    const id = window.setInterval(turn, 2200);
+    return () => {
+      window.clearTimeout(first);
+      window.clearInterval(id);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auto]);
 
   const at = (cx: number) => {
     const r = box.current!.getBoundingClientRect();
@@ -163,6 +189,7 @@ export function Compare({
         </>
       )}
       <svg className="cmp-line" width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
+        <path className="cmp-glow" d={curve} />
         <path d={curve} />
       </svg>
       <span className="cmp-grip" style={{ left: x }}>

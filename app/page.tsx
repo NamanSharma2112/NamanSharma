@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Chapters } from "@/components/chapters/Chapters";
 import { ContactCta, Mark, Socials } from "@/components/chapters/Pieces";
 import { WorkStack, type Project } from "@/components/chapters/WorkStack";
+import { Craft } from "@/components/craft/Craft";
 import "@/components/chapters/chapters.css";
 
 export const metadata: Metadata = {
@@ -79,6 +80,15 @@ export default function Home() {
               <>
                 <h2 className="ln label">Work</h2>
                 <WorkStack projects={WORK} />
+              </>
+            ),
+          },
+          {
+            label: "Craft",
+            content: (
+              <>
+                <h2 className="ln label">Craft</h2>
+                <Craft />
               </>
             ),
           },

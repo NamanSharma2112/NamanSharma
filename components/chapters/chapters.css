@@ -289,6 +289,228 @@ html:has(.front) body {
     @keyframes work-fade { from { opacity: 0; } }
   }
 
+  /* ── the craft chapter (components/craft) ──────────────────────────────
+     Three pieces, one at a time, chosen with three words. The stage holds
+     one fixed height so the caption never moves when the piece does. */
+  .front .craft-tabs { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 4px !important; }
+  .front .craft-tabs button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 14px;
+    color: var(--quiet);
+    cursor: pointer;
+    transition: color 160ms ease;
+  }
+  @media (hover: hover) { .front .craft-tabs button:hover { color: var(--body); } }
+  .front .craft-tabs button[aria-selected="true"] { color: var(--ink); }
+  .front .craft-tabs button:focus-visible { outline: 1px solid var(--body); outline-offset: 4px; border-radius: 4px; }
+  .front .craft-stage { display: flex; align-items: center; margin-top: 20px !important; }
+  .front .craft-swap { display: flex; }
+  .front .craft-cap { min-height: 72px; margin-top: 20px !important; }
+  .front .is-in .craft-swap, .front .is-in .craft-text { animation: work-in 520ms var(--ease) both; }
+  @media (prefers-reduced-motion: reduce) {
+    .front .is-in .craft-swap, .front .is-in .craft-text { animation: work-fade 200ms ease both; }
+  }
+
+  /* ══ Image compare ════════════════════════════════════════
+     Compare.tsx. Bencho's --fill-on, --fill-slab and --signal are
+     this site's raised surface, ink and ground. */
+  .front .cmp {
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+    cursor: ew-resize;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+    background: var(--raised);
+    box-shadow: 0 0 0 1px var(--edge);
+  }
+  .front .cmp:focus-visible { box-shadow: 0 0 0 1px var(--edge), 0 0 0 3px var(--ground), 0 0 0 4px var(--body); }
+  .front .cmp-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    -webkit-user-drag: none;
+  }
+  /* no drift: two separate pictures have to stay exactly in register */
+  .front .cmp-before { position: absolute; inset: 0; }
+  .front .cmp-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: rgba(10, 10, 10, 0.5);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 0 1px rgba(237, 237, 237, 0.08);
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 20px;
+    pointer-events: none;
+  }
+  .front .cmp-tag.cmp-right { left: auto; right: 12px; }
+  /* the line is drawn, so it can bend: a 2px curve with a soft glow,
+     over the whole block */
+  .front .cmp-line {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px rgba(237, 237, 237, 0.4));
+  }
+  .front .cmp-line path { fill: none; stroke: var(--ink); stroke-width: 2; }
+  .front .cmp-grip { position: absolute; top: 0; bottom: 0; width: 0; pointer-events: none; }
+  .front .cmp-knob {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 36px;
+    height: 36px;
+    translate: -50% -50%;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--ground);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    transition: scale 220ms cubic-bezier(0.24, 1.34, 0.38, 1);
+  }
+  @media (hover: hover) { .front .cmp:hover .cmp-knob { scale: 1.08; } }
+  .front .cmp[data-held] .cmp-knob { scale: 0.9; }
+
+  /* ══ Liquid glass ══════════════════════════════════════════
+     LiquidGlass.tsx. The picture, the margin round it and the glass are
+     one WebGL canvas; the margin is clear, so the page shows through and
+     the canvas has no edge of its own. It is pulled left by its margin so
+     the picture, not the canvas, lines up with the words. */
+  .front .lqg { position: relative; display: grid; place-items: center; margin-left: -20px; }
+  @media (max-width: 560px), (max-height: 760px) { .front .lqg { margin-left: -16px; } }
+  .front .lqg-canvas {
+    display: block;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+  }
+  .front .lqg-canvas[data-over="true"] { cursor: grab; }
+  .front .lqg-canvas[data-over="true"]:active { cursor: grabbing; }
+
+  /* ══ Aspect ═════════════════════════════════════════════════
+     AspectRatio.tsx. A picture and three screens to put it on. Almost
+     everything that moves is written in the markup from the chosen
+     shape; what is here is the transition itself and the chrome.
+
+     Bencho's tokens, mapped: --ink is this site's ink, --ink-3 its body
+     grey (its quiet grey is too faint for an icon on the track),
+     --surface-2 its raised surface and --font-ui its Geist. There is no
+     site equivalent for a card colour above the raised surface, an ink
+     as bare numbers or a wash strength, so those three are defined here
+     on the block's own root and go no further.
+
+     No stroke rule here on purpose: a hairline that reads against a pane
+     disappears against a screenshot, so the block does not offer one
+     rather than offering one that reports a state it is not producing. */
+  .front .asp {
+    --card: #262626;
+    --ink-rgb: 237, 237, 237;
+    --wash: 0.06;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+  /* the full square, and it never changes size — the picture is
+     centred in a box that is not moving, so the tabs below do
+     not climb and drop as the shape changes */
+  .front .asp-stage { display: grid; place-items: center; width: 100%; }
+  .front .asp-pic {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--raised);
+    box-shadow: 0 0 0 1px var(--edge);
+    /* a frame that moves and a picture that does not stretch: the
+       layout inside changes, which is what a new screen does */
+    transition:
+      width var(--asp-ms, 600ms) cubic-bezier(0.22, 1, 0.36, 1),
+      height var(--asp-ms, 600ms) cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  /* one screenshot per screen, cross-fading while the frame moves;
+     pinned to the top, where a page starts */
+  .front .asp-shot {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: top center;
+    opacity: 0;
+    transition: opacity calc(var(--asp-ms, 600ms) * 0.6) ease;
+  }
+  .front .asp-shot[data-on] { opacity: 1; }
+
+  /* ── the tab strip ──────────────────────────────────────────
+     36 tall, 2 of padding, a 6% ink track and 999 on both. The tabs
+     are 40 wide: that is what an 18px glyph needs to stop being a hit
+     target you have to aim at. */
+  .front .asp-tabs {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 40px);
+    padding: 2px;
+    border-radius: 999px;
+    background: rgba(var(--ink-rgb), var(--wash));
+  }
+  .front .asp-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: calc((100% - 4px) / 3);
+    height: calc(100% - 4px);
+    border-radius: 999px;
+    background: var(--card);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    /* ── it LEADS the picture ──────────────────────────────
+       Both are the same event and both answer the one knob, so
+       the thumb is not on a duration of its own — it is a
+       fraction of the picture's. A control that takes as long
+       as the thing it controls feels like it did not hear you;
+       one that arrives first reads as the cause of what
+       follows. */
+    transition: transform calc(var(--asp-ms, 600ms) * 0.55) cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .front .asp-tab {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--body);
+    cursor: pointer;
+    transition: color 160ms ease, scale 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (hover: hover) { .front .asp-tab:hover { color: var(--ink); } }
+  .front .asp-tab[aria-checked="true"] { color: var(--ink); }
+  /* the same give every other control here has */
+  .front .asp-tab:active { scale: 0.96; }
+  .front .asp .asp-tab:focus-visible {
+    outline: none;
+    border-radius: 999px;
+    box-shadow: 0 0 0 2px var(--card), 0 0 0 4px rgba(var(--ink-rgb), 0.35);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .front .asp-pic, .front .asp-thumb, .front .asp-tab, .front .asp-shot { transition-duration: 160ms; }
+  }
+
   /* ── stillness: a plain cross-fade, nothing moves or blurs ─────────── */
   @media (prefers-reduced-motion: reduce) {
     .front .ln, .front .is-out .ln {

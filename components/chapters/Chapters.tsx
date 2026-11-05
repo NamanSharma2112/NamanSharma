@@ -131,6 +131,9 @@ export function Chapters({ chapters }: { chapters: Chapter[] }) {
     };
 
     const key = (e: KeyboardEvent) => {
+      /* a control that took the key for itself, like the arrows inside a
+         radio group, has already said so */
+      if (e.defaultPrevented) return;
       const t = e.target as HTMLElement | null;
       if (t?.closest?.("button, a, [data-keys]") && (e.key === " " || e.key === "Enter")) return;
       const step: Record<string, number> = { ArrowDown: 1, PageDown: 1, " ": 1, j: 1, ArrowUp: -1, PageUp: -1, k: -1 };

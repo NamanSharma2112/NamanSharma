@@ -13,24 +13,28 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const DESCRIPTION =
+  "Design engineer. I build for the web, and I care about how an interface feels — the easing curve, the hairline, the way a thing behaves when you interrupt it halfway.";
+
+/* The share card itself is app/opengraph-image.png (and twitter-image.png),
+   rendered from the front page's intro so a shared link looks like the
+   site. The base is the www host the site answers on, so crawlers fetch the
+   image without a redirect. */
 export const metadata: Metadata = {
-  metadataBase: new URL("https://namansharma.com"),
+  metadataBase: new URL("https://www.namansharma.com"),
   title: "Naman Sharma",
-  description:
-    "Naman Sharma is a Design Engineer building modern web experiences.",
+  description: DESCRIPTION,
   openGraph: {
     title: "Naman Sharma",
-    description:
-      "Naman Sharma is a Design Engineer building modern web experiences.",
-    url: "https://namansharma.com",
+    description: DESCRIPTION,
+    url: "https://www.namansharma.com",
     siteName: "Naman Sharma",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Naman Sharma",
-    description:
-      "Naman Sharma is a Design Engineer building modern web experiences.",
+    description: DESCRIPTION,
   },
 };
 

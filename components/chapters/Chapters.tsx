@@ -115,7 +115,11 @@ export function Chapters({ chapters }: { chapters: Chapter[] }) {
     };
 
     let startY: number | null = null;
-    const touchStart = (e: TouchEvent) => (startY = e.touches[0]!.clientY);
+    /* A drag on something that is itself dragged, like the work stack's
+       front card, is not a swipe between chapters. */
+    const touchStart = (e: TouchEvent) => {
+      startY = (e.target as Element | null)?.closest?.("[data-no-swipe]") ? null : e.touches[0]!.clientY;
+    };
     const touchMove = (e: TouchEvent) => {
       if (startY !== null) e.preventDefault();
     };
@@ -128,7 +132,7 @@ export function Chapters({ chapters }: { chapters: Chapter[] }) {
 
     const key = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
-      if (t?.closest?.("button, a") && (e.key === " " || e.key === "Enter")) return;
+      if (t?.closest?.("button, a, [data-keys]") && (e.key === " " || e.key === "Enter")) return;
       const step: Record<string, number> = { ArrowDown: 1, PageDown: 1, " ": 1, j: 1, ArrowUp: -1, PageUp: -1, k: -1 };
       const s = step[e.key];
       if (s) {

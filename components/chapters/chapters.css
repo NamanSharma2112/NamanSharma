@@ -203,6 +203,92 @@ html:has(.front) body {
     z-index: 2;
   }
 
+  /* ── the work stack (WorkStack.tsx) ────────────────────────────────────
+     Screenshots on cards standing in depth. Each card's slot arrives as
+     --t. The card is a thin raised slab around the picture, its corner
+     concentric with the picture's; no shadows, the depth is the stack and
+     a hairline edge. */
+  .front .work-row { margin-top: 20px !important; }
+  .front .csw {
+    position: relative;
+    max-width: 100%;
+    border-radius: 16px;
+    outline: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .front .csw:focus-visible .csw-card[data-front] { box-shadow: 0 0 0 1px var(--edge), 0 0 0 3px var(--ground), 0 0 0 4px var(--body); }
+  .front .csw-stage {
+    position: absolute;
+    left: 0;
+    perspective: 1000px;
+  }
+  .front .csw-card {
+    position: absolute;
+    inset: 0;
+    padding: 3px;
+    border-radius: 14px;
+    background: var(--raised);
+    box-shadow: 0 0 0 1px var(--edge);
+    transform: var(--t);
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    backface-visibility: hidden;
+    cursor: pointer;
+  }
+  .front .csw-card[data-front] { cursor: grab; touch-action: none; }
+  .front .csw-card[data-front]:active { cursor: grabbing; }
+  /* the cards behind are a little dimmer, so the front one is the one being read */
+  .front .csw-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 11px;
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity 400ms ease;
+  }
+  .front .csw-card[data-front] .csw-photo { opacity: 1; }
+  @media (hover: hover) { .front .csw-card:not([data-front]):hover .csw-photo { opacity: 0.8; } }
+  .front .csw-tag {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ground) 82%, transparent);
+    box-shadow: 0 0 0 1px var(--edge);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: var(--ink);
+    font-size: 12px;
+    line-height: 18px;
+    pointer-events: none;
+  }
+
+  /* the words under the stack, which follow the front card: each change
+     comes in out of a short blur, the same way the chapter's lines do */
+  .front .work-cap { min-height: 96px; }
+  .front .work-swap > * + * { margin-top: 8px; }
+  .front .work-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    color: var(--quiet);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .front .is-in .work-swap { animation: work-in 520ms var(--ease) both; }
+  @keyframes work-in {
+    from { opacity: 0; filter: blur(6px); transform: translateY(6px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .front .csw-card { transition-duration: 1ms; }
+    .front .is-in .work-swap { animation: work-fade 200ms ease both; }
+    @keyframes work-fade { from { opacity: 0; } }
+  }
+
   /* ── stillness: a plain cross-fade, nothing moves or blurs ─────────── */
   @media (prefers-reduced-motion: reduce) {
     .front .ln, .front .is-out .ln {

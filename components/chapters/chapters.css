@@ -571,24 +571,11 @@ html:has(.front) body {
   }
 
   /* ── the signature (Signature.tsx) ─────────────────────────────────────
-     Written in each time Contact comes in, once its lines have arrived:
-     each letter's outline drawn as a line at the pen's speed, then filled
-     as the pen moves on, and the swash last. At rest it is simply ink. */
+     The old site's hand, written in stroke order each time Contact comes
+     in; the motion is in the component. Ink at rest, lit blue under the
+     cursor. */
   .front .sign-row { margin-top: 32px !important; }
-  .front .sign { display: block; width: min(220px, 62%); height: auto; overflow: visible; color: var(--ink); }
-  .front .sign path { fill: currentColor; stroke: currentColor; stroke-width: 0.9; stroke-dasharray: 1; stroke-linecap: round; stroke-linejoin: round; }
-  .front .sign .sign-swash { fill: none; stroke-width: 1.6; }
-  .front .is-in .sign path {
-    animation:
-      sign-pen var(--t) cubic-bezier(0.45, 0.05, 0.55, 0.95) calc(700ms + var(--at)) both,
-      sign-ink 320ms ease calc(700ms + var(--at) + var(--t) * 0.6) both;
-  }
-  .front .is-in .sign .sign-swash { animation: sign-pen var(--t) cubic-bezier(0.3, 0, 0.2, 1) calc(700ms + var(--at)) both; }
-  @keyframes sign-pen { from { stroke-dashoffset: 1; } }
-  @keyframes sign-ink { from { fill-opacity: 0; } }
-  @media (prefers-reduced-motion: reduce) {
-    .front .is-in .sign path, .front .is-in .sign .sign-swash { animation: none; }
-  }
+  .front .sign { display: block; height: 44px; width: auto; overflow: visible; color: var(--ink); }
 
   /* ── a bigger page on a bigger screen ──────────────────────────────────
      On a desktop with room to spare the column widens and the type steps
@@ -604,7 +591,7 @@ html:has(.front) body {
     .front .cta { height: 42px; padding: 0 20px; font-size: 15px; }
     .front .work-meta { font-size: 15px; }
     .front .work-cap { min-height: 112px; }
-    .front .sign { width: 260px; }
+    .front .sign { height: 52px; }
   }
 
   /* ── stillness: a plain cross-fade, nothing moves or blurs ─────────── */

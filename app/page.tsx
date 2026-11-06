@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Chapters } from "@/components/chapters/Chapters";
 import { ContactCta, Mark, Socials } from "@/components/chapters/Pieces";
 import { WorkStack, type Project } from "@/components/chapters/WorkStack";
+import { Signature } from "@/components/chapters/Signature";
 import { Craft } from "@/components/craft/Craft";
 import "@/components/chapters/chapters.css";
 
@@ -109,6 +110,9 @@ export default function Home() {
                 </p>
                 <div className="ln cta-row">
                   <ContactCta />
+                </div>
+                <div className="ln sign-row">
+                  <Signature />
                 </div>
               </>
             ),

@@ -485,38 +485,18 @@ html:has(.front) body {
   .front .craft-row {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
+    gap: 40px;
   }
-  /* one card for every piece: a raised slab, a hairline, the piece inset
-     on the slab's padding with a corner concentric to the slab's */
-  .front .craft-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 16px;
-    border-radius: 24px;
-    background: linear-gradient(180deg, #121212, #0e0e0e);
-    box-shadow: inset 0 0 0 1px #1c1c1c, inset 0 1px 0 rgba(237, 237, 237, 0.04);
-  }
-  .front .craft-head { display: flex; align-items: center; gap: 10px; padding: 2px 4px 0; font-size: 14px; line-height: 20px; }
-  .front .craft-n { color: var(--quiet); font: 500 12px/20px var(--font-geist-mono), ui-monospace, monospace; }
-  .front .craft-head h3 { margin: 0; font: inherit; font-weight: 500; color: var(--ink); }
-  .front .craft-hint {
-    margin-left: auto;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--quiet);
-    font-variant-numeric: tabular-nums;
-  }
-  .front .craft-hint i { width: 6px; height: 6px; border-radius: 50%; background: var(--quiet); transition: background-color 200ms ease; }
-  .front .craft-hint[data-auto] i { background: var(--ink); animation: craft-beat 1.6s ease-in-out infinite; }
-  @keyframes craft-beat { 50% { opacity: 0.35; } }
+  /* no card: the pieces stand on the ground like everything else on the
+     page, each with its words under it, set as the rest of the site sets
+     them — a name in ink, a line in the body grey */
+  .front .craft-card { position: relative; display: flex; flex-direction: column; gap: 20px; }
   .front .craft-piece { position: relative; display: grid; place-items: center; }
   .front .craft-fit { display: grid; place-items: center; }
-  .front .craft-text { margin: 0; padding: 0 4px 2px; font-size: 14px; line-height: 21px; color: var(--body); min-height: 42px; text-wrap: pretty; }
+  .front .craft-words { min-height: 72px; }
+  .front .craft-title { margin: 0; font: inherit; font-weight: 500; color: var(--ink); }
+  .front .craft-text { margin: 0; color: var(--body); text-wrap: pretty; }
+  .front .craft-do { color: var(--quiet); }
 
   .front .craft-one > * + * { margin-top: 20px; }
   .front .craft-one .craft-card { width: min(100%, 460px); }
@@ -551,7 +531,6 @@ html:has(.front) body {
   .front .is-in .craft-swap { animation: work-in 520ms var(--ease) both; }
   @media (prefers-reduced-motion: reduce) {
     .front .is-in .craft-swap { animation: work-fade 200ms ease both; }
-    .front .craft-hint[data-auto] i { animation: none; }
   }
 
   /* ══ Image compare ════════════════════════════════════════

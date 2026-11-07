@@ -30,20 +30,41 @@ export type Project = {
    card flies, so the flight lands true at any scale. */
 
 const MOST = 1.2;
+/* a card taken out comes out up to this much larger than the deck allows */
+const VIEW_MOST = 1.45;
 
 export function WorkDeck({ projects }: { projects: Project[] }) {
   const [focus, setFocus] = React.useState<number | null>(null);
   const box = React.useRef<HTMLDivElement>(null);
   const [k, setK] = React.useState(1);
+  const [view, setView] = React.useState(1);
 
   React.useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const fit = () => setK(Math.min(MOST, el.clientWidth / CARD_STACK_SIZE.w));
+    const fit = () => {
+      const kk = Math.min(MOST, el.clientWidth / CARD_STACK_SIZE.w);
+      setK(kk);
+      /* ── how big a card taken out can be ─────────────────────
+         It grows upward from the foot of the deck, so the room it
+         has is the deck's own height plus the air above it, less a
+         margin under the top of the window: as large as VIEW_MOST
+         asks where there is room, and smaller on a short screen,
+         never past the top. In the stack's own units. */
+      const top = el.getBoundingClientRect().top;
+      /* 36 under the top: 20 of margin, and 16 for the line's own rise as the
+         chapter comes in, which this may be measured before */
+      const room = CARD_STACK_SIZE.h - 12 + (top - 36) / kk;
+      setView(Math.max(1, Math.min(VIEW_MOST, room / (CARD_STACK_SIZE.h - 24))));
+    };
     fit();
     const ro = new ResizeObserver(fit);
     ro.observe(el);
-    return () => ro.disconnect();
+    addEventListener("resize", fit);
+    return () => {
+      ro.disconnect();
+      removeEventListener("resize", fit);
+    };
   }, []);
 
   const p = focus === null ? null : projects[focus]!;
@@ -55,7 +76,9 @@ export function WorkDeck({ projects }: { projects: Project[] }) {
         <div className="deck-fit" style={{ width: CARD_STACK_SIZE.w, transform: `scale(${k})` }}>
           <CardStack
             photos={projects.map((x) => x.card)}
-            marks={projects.map((_, i) => String(i + 1).padStart(2, "0"))}
+            /* a card taken out comes out well past the deck's size,
+               upward into the air above it, so it can be read */
+            viewScale={view}
             /* the words keep the last card looked at rather than going
                blank when the pointer leaves the deck, so the link in
                them can still be reached */

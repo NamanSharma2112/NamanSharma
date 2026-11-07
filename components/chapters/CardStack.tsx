@@ -351,11 +351,11 @@ export const CARD_STACK_SIZE = { w: STAGE_W, h: STAGE_H };
    on each side, both the photograph, so the turn reads as a
    card being flipped over rather than a picture spinning.
 
-   Sized to the stage, never past it: the wall clips at the
+   Sized to the stage by default: Bencho's wall clips at the
    block's box, so a viewer bigger than the fan is a viewer cut
-   off square. */
-const VIEW_H = STAGE_H - 24;
-const VIEW_W = Math.round((VIEW_H * CARD_W) / CARD_H);
+   off square there. A page that does not clip can ask for a
+   bigger one with `viewScale` — see the prop. */
+const VIEW_H0 = STAGE_H - 24;
 const VIEW_IN = 920;
 const VIEW_OUT = 660;
 /* the most the card in view leans under the pointer, at its edge */
@@ -373,7 +373,7 @@ export function CardStack({
      crops nothing. */
   photos,
   /* the numeral in each card's left edge, by photo index;
-     omitted, the cards are numbered 01, 02, … */
+     omitted, the cards carry nothing but their picture */
   marks,
   /* which card is being looked at — drawn out of the fan under
      the pointer, or taken out to view — as a photo index, or
@@ -389,6 +389,13 @@ export function CardStack({
   count = photos.length,
   /* the card's corner, px; the card in view keeps the same roundness, scaled */
   corner = 14,
+  /* ── how large the card in view is, against the stage ─────
+     1 is Bencho's: as tall as the stage allows. Above 1 the
+     card comes out bigger than the deck's own box, which only a
+     page that does not clip can afford; it then grows UPWARD
+     from the stage's foot, into the air above the deck, so it
+     never lands on the words underneath. */
+  viewScale = 1,
 }: {
   photos: string[];
   marks?: string[];
@@ -398,10 +405,16 @@ export function CardStack({
   scatter?: number;
   count?: number;
   corner?: number;
+  viewScale?: number;
 }) {
   const n = clamp(Math.round(count), 3, MAX);
   const sc = clamp(scatter, 0, 100) / 100;
   const still = stillness();
+  /* the card in view: its size, and where its centre rests */
+  const VIEW_H = Math.round(VIEW_H0 * Math.max(1, viewScale));
+  const VIEW_W = Math.round((VIEW_H * CARD_W) / CARD_H);
+  const VIEW_TOP = viewScale > 1 ? STAGE_H - 12 - VIEW_H : (STAGE_H - VIEW_H) / 2;
+  const VIEW_CY = VIEW_TOP + VIEW_H / 2;
 
   /* `on` is the pointer. `lit` is what each spring is aiming
      at, which is the same thing a moment later — and the
@@ -459,8 +472,11 @@ export function CardStack({
     const p = poses.current[i] ?? { rot: 0, scale: 1 };
     if (!r || !f || !r.width) return VIEW_AT;
     const k = r.width / STAGE_W;
+    /* measured from where the card in view rests, which is the
+       stage's middle at the default size and higher when it is
+       asked to come out bigger */
     const dx = (f.left + f.width / 2 - (r.left + r.width / 2)) / k;
-    const dy = (f.top + f.height / 2 - (r.top + r.height / 2)) / k;
+    const dy = (f.top + f.height / 2 - r.top) / k - VIEW_CY;
     const s = (CARD_W / VIEW_W) * p.scale;
     return `perspective(2000px) translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) rotate(${p.rot.toFixed(3)}deg) rotateY(0deg) scale(${s.toFixed(4)})`;
   };
@@ -827,9 +843,11 @@ export function CardStack({
               }}
             >
               <img className="stk-img" src={photos[photo]} alt="" draggable={false} />
-              <span className="stk-no" aria-hidden="true">
-                {marks?.[photo] ?? String(photo + 1).padStart(2, "0")}
-              </span>
+              {marks && (
+                <span className="stk-no" aria-hidden="true">
+                  {marks[photo]}
+                </span>
+              )}
             </span>
           </span>
         );
@@ -843,7 +861,7 @@ export function CardStack({
           aria-label="Card in view; click outside or press Escape to put it back"
           style={{
             left: (STAGE_W - VIEW_W) / 2,
-            top: (STAGE_H - VIEW_H) / 2,
+            top: VIEW_TOP,
             width: VIEW_W,
             height: VIEW_H,
             transform: view.from,

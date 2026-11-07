@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Mark } from "@/components/chapters/Pieces";
 
-/** Nowhere: the marshmallow asleep, and two ways back. */
+/** Nowhere: the ghost asleep, and two ways back. */
 export default function NotFound() {
   return (
     <div className="page">

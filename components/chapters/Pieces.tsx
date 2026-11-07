@@ -9,20 +9,17 @@ import { SiGithub, SiX } from "@icons-pack/react-simple-icons";
 const EMAIL = "namansharmans03@gmail.com";
 
 /* ── the mark above the name ────────────────────────────────────────────
-   A marshmallow: a squat, puffy cylinder seen side-on, its top and bottom
-   bowed out and its sides soft, in powdered off-white. The square type only
-   places the face in the middle; the outline is our own. Hovering wakes it
-   into the working hop; a click makes it jump. The jump is kept low and
-   barely stretched: at the library's default (26 units up, full stretch)
-   the wide outline rose past the top of its canvas and was cut flat. */
-const MARSHMALLOW =
-  "M32 15C44 13 56 13 68 15C82 15.5 92 25 92 38C93.5 46 93.5 54 92 62C92 75 82 84.5 68 85C56 87 44 87 32 85C18 84.5 8 75 8 62C6.5 54 6.5 46 8 38C8 25 18 15.5 32 15Z";
-
+   A ghost, the library's own outline, in a cool soft blue. It was a cream
+   marshmallow; the ghost has more character for its size and is at its
+   best asleep on the 404. Hovering wakes it into the working hop; a click
+   makes it jump. The jump is kept low and barely stretched: at the
+   library's default (26 units up, full stretch) a wide outline rose past
+   the top of its canvas and was cut flat. */
 export function Mark({ sleeping = false }: { sleeping?: boolean }) {
   const [awake, setAwake] = React.useState(false);
   return (
     <span className="mark" onPointerEnter={() => setAwake(true)} onPointerLeave={() => setAwake(false)}>
-      <BotAvatar type="square" path={MARSHMALLOW} color="#8cb2ff" state={sleeping && !awake ? "sleeping" : awake ? "working" : "default"} size={64} jumpHeight={14} jumpStretch={0.6} aria-hidden="true" />
+      <BotAvatar type="ghost" color="#8cb2ff" state={sleeping && !awake ? "sleeping" : awake ? "working" : "default"} size={64} jumpHeight={14} jumpStretch={0.6} aria-hidden="true" />
     </span>
   );
 }

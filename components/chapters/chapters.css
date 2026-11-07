@@ -203,71 +203,254 @@ html:has(.front) body {
     z-index: 2;
   }
 
-  /* ── the work stack (WorkStack.tsx) ────────────────────────────────────
-     Screenshots on cards standing in depth. Each card's slot arrives as
-     --t. The card is a thin raised slab around the picture, its corner
-     concentric with the picture's; no shadows, the depth is the stack and
-     a hairline edge. */
-  .front .work-row { margin-top: 20px !important; }
-  .front .csw {
+  /* ── the work deck (WorkDeck.tsx, CardStack.tsx) ───────────────────────
+     The deck is drawn at the column's width by one scale on a wrapper; the
+     row keeps the scaled height so the words under it sit where it ends. */
+  .front .deck-row { position: relative; margin-top: 12px !important; }
+  /* out of the flow: its own box is the widest fan, wider than a phone's
+     column, and in the flow that width would widen the page itself */
+  .front .deck-fit { position: absolute; left: 0; top: 0; transform-origin: left top; }
+
+  /* ── and the card stack, by OUTLINE rather than by shadow ──
+     Every block in the list above takes its ring from a 1px
+     spread shadow, and this one cannot. The cards carry a
+     box-shadow of their own — it is the whole of how six
+     identical rectangles lying on each other stay separate in
+     the light theme — and a spread shadow in the same
+     declaration would replace it rather than join it.
+
+     An outline is the same hairline by another means. It sits
+     outside the box model, so it costs no layout, and it draws
+     beside the shadow instead of instead of it. Pulled in by a
+     pixel so it traces the card's corner rather than standing
+     off it.
+
+     Bencho's tokens, mapped to this site's: --pane-edge is the
+     site's --edge hairline, --card and --fill-slab its raised
+     surface, --font-num its Geist Mono and --ink-4 its quiet
+     grey. The site has no stroke switch, so the hairline is
+     always on — the only reading of [data-stroke="on"] a page
+     without the switch can have. */
+  .front .stk-face {
+    outline: 1px solid var(--edge);
+    outline-offset: -1px;
+  }
+
+  /* ══ Card stack ═════════════════════════════════════════════
+     A pile of cards that fans out on approach. All of the
+     geometry is in CardStack.tsx — one rotation per card about a
+     point 200px below the block — and what is here is the
+     material: what a card is made of, how six of them
+     overlapping stay separate, and the one card that slides out
+     of the fan under the pointer. */
+  .front .stk {
     position: relative;
-    max-width: 100%;
-    border-radius: 16px;
-    outline: none;
+    /* ── THE AIR IN THIS BOX IS AIR ───────────────────────────
+       The wrapper is nearly three times the width of the pile,
+       because it has to hold the fan at its widest — and a
+       cursor crossing that tile on its way somewhere else must
+       not open anything. So the wrapper takes no pointer events
+       and the two things inside it that are real take them
+       back: the hit pad, which is the pile's own footprint
+       until the fan is out, and the cards. */
+    pointer-events: none;
     -webkit-user-select: none;
     user-select: none;
   }
-  .front .csw:focus-visible .csw-card[data-front] { box-shadow: 0 0 0 1px var(--edge), 0 0 0 3px var(--ground), 0 0 0 4px var(--body); }
-  .front .csw-stage {
+
+  /* what you have to be touching for the fan to open. Its size
+     is set in the component, because it is the pile's footprint
+     when shut and the whole stage when open. */
+  .front .stk-hit {
     position: absolute;
     left: 0;
-    perspective: 1000px;
-  }
-  .front .csw-card {
-    position: absolute;
-    inset: 0;
-    padding: 3px;
-    border-radius: 14px;
-    background: var(--raised);
-    box-shadow: 0 0 0 1px var(--edge);
-    transform: var(--t);
-    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
-    backface-visibility: hidden;
-    cursor: pointer;
-  }
-  .front .csw-card[data-front] { cursor: grab; touch-action: none; }
-  .front .csw-card[data-front]:active { cursor: grabbing; }
-  /* the cards behind are a little dimmer, so the front one is the one being read */
-  .front .csw-photo {
-    display: block;
+    top: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: top;
-    border-radius: 11px;
-    pointer-events: none;
-    opacity: 0.7;
-    transition: opacity 400ms ease;
-  }
-  .front .csw-card[data-front] .csw-photo { opacity: 1; }
-  @media (hover: hover) { .front .csw-card:not([data-front]):hover .csw-photo { opacity: 0.8; } }
-  .front .csw-tag {
-    position: absolute;
-    left: 12px;
-    bottom: 12px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--ground) 82%, transparent);
-    box-shadow: 0 0 0 1px var(--edge);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    color: var(--ink);
-    font-size: 12px;
-    line-height: 18px;
-    pointer-events: none;
+    pointer-events: auto;
   }
 
-  /* the words under the stack, which follow the front card: each change
+  .front .stk-card {
+    position: absolute;
+    pointer-events: auto;
+    /* NO `will-change`, for the reason the tilt card gives: it
+       would hold a composited layer per card — six of them, on
+       every copy of this block on the wall, permanently — to
+       save one frame on a hover that may never come. The
+       browser promotes these on its own once the spring starts
+       moving them. */
+  }
+
+  .front .stk-face {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--stk-r, 14px);
+    background: var(--raised);
+    /* ── each theme separates them its own way ────────────────
+       Six identical rectangles overlapping have to stay six,
+       and neither answer works in both themes.
+
+       In LIGHT the cards are a shade under the ground and the
+       shadow does it — a real one, tight and close, because
+       these are cards lying on each other rather than panels
+       floating over a page.
+
+       In DARK a shadow is invisible: the card is #14161a and
+       the page is #101114, so black on black separates nothing.
+       What separates them there is the lit rim — brightest
+       along the top where the light is, a whisper round the
+       rest — which is the same argument the glass panes make
+       for their own edge, and the reason it is not a border:
+       this is the card's material, not a line drawn round it.
+       Stroke still adds its hairline on top and still takes it
+       away, because the two are different things.
+
+       Both are always present. Each is nearly invisible in the
+       theme that does not need it, which is what lets this be
+       one declaration rather than a branch. (This site is dark
+       only, so it is the rim that is doing the work here.) */
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.035),
+      0 1px 2px rgba(15, 23, 42, 0.1),
+      0 8px 18px -6px rgba(15, 23, 42, 0.16);
+    /* `translate` and not `transform`, which is the whole point
+       of it being here: the card above is being turned by a
+       spring every frame, and a transition on the same property
+       would be two animations arguing over one value. Separate
+       element, separate property, and the curve comes off the
+       Bounce knob so the lift and the fan settle alike. */
+    /* the way DOWN: slow and eased at both ends, so a card left
+       behind by a quick sweep sinks back rather than dropping */
+    transition:
+      translate 480ms var(--stk-ease, ease),
+      box-shadow 480ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ── the card you are pointing at leaves the fan ───────────
+     Along its own axis, because the face is inside the rotated
+     card — so it slides out radially, the way a card is drawn
+     from a hand, rather than simply moving up the screen.
+
+     And the shadow GROWS here, which is the opposite of what
+     the tilt card does and right for the opposite reason: that
+     one is pressed into the page and this one is lifted off the
+     deck. */
+  .front .stk-face[data-lift] {
+    translate: 0 calc(var(--stk-lift, 16px) * -1);
+    /* the way UP waits a beat (15ms) before it goes: running the
+       pointer across the fan like an accordion passes each card in
+       less than that, so a fast sweep leaves the cards it only
+       grazed where they are, and lifts the one it slows on */
+    transition:
+      translate 300ms cubic-bezier(0.2, 0.7, 0.3, 1) 15ms,
+      box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 15ms;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.045),
+      0 2px 5px rgba(15, 23, 42, 0.12),
+      0 18px 32px -10px rgba(15, 23, 42, 0.28);
+  }
+
+  /* ── the numeral, and it is in the left edge on purpose ────
+     A fanned card shows one sliver of itself — about 23px at
+     the default spread — and that sliver is its left edge,
+     because the card to its right covers everything else.
+     Anything that tells one card from another has to live
+     inside that strip, or it is legible on exactly one card:
+     the one at the end of the fan.
+
+     Small and quiet. It is a mark that says which card this is,
+     not a label anybody has to read. Here the cards are
+     screenshots rather than plain slabs, so the numeral sits on
+     a small chip of the ground, or a busy picture would swallow
+     it. */
+  .front .stk-no {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 3px 5px;
+    border-radius: 6px;
+    background: rgba(10, 10, 10, 0.78);
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+    color: var(--quiet);
+  }
+
+  /* a card can be taken out to look at */
+  .front .stk-card { cursor: pointer; }
+
+  /* ── the card in view ──────────────────────────────────────
+     One element flying from the card's place to the middle,
+     turning over once on the way (see VIEW_AT in CardStack.tsx).
+     Its corner is the card's 14 at the card's size, so it lands
+     at the same roundness, scaled. The deck stays at full
+     strength behind it (2026-11-06: no fade). */
+  .front .stk-view {
+    position: absolute;
+    z-index: 20;
+    pointer-events: auto;
+    cursor: default;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+    will-change: transform;
+  }
+
+  .front .stk-view-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: var(--stk-vr, 20px);
+    background: var(--raised);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.045),
+      0 4px 10px rgba(15, 23, 42, 0.12),
+      0 28px 48px -16px rgba(15, 23, 42, 0.32);
+  }
+
+  .front .stk-view-face[data-back] { transform: rotateY(180deg); }
+
+  /* the tilt layer: holds both faces in the card's 3D space and
+     eases after the pointer, so the lean follows a hand rather than
+     snapping to it, and settles back level when the hand leaves */
+  .front .stk-view-tilt {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .front .stk-view-tilt { transition: none; }
+  }
+
+  .front .stk-card { transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+  /* the card in view goes back on TOP, so the ones it passed move
+     down a slot. Only for that moment: the fan is held open and its
+     springs are at rest, so a transition here argues with nothing */
+  .front .stk[data-shuffle] .stk-card {
+    transition:
+      opacity 360ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* the photograph fills the face and takes its corner */
+  .front .stk-face { overflow: hidden; }
+
+  .front .stk-img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: inherit; -webkit-user-drag: none; pointer-events: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .front .stk-face, .front .stk-face[data-lift] { transition-duration: 1ms; transition-delay: 0ms; }
+  }
+
+  /* the words under the deck, which follow the card being looked at: each change
      comes in out of a short blur, the same way the chapter's lines do */
   .front .work-cap { min-height: 96px; }
   .front .work-swap > * + * { margin-top: 8px; }
@@ -284,7 +467,6 @@ html:has(.front) body {
     from { opacity: 0; filter: blur(6px); transform: translateY(6px); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .front .csw-card { transition-duration: 1ms; }
     .front .is-in .work-swap { animation: work-fade 200ms ease both; }
     @keyframes work-fade { from { opacity: 0; } }
   }

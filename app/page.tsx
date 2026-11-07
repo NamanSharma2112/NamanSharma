@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Chapters } from "@/components/chapters/Chapters";
 import { ContactCta, Mark, Socials } from "@/components/chapters/Pieces";
-import { WorkStack, type Project } from "@/components/chapters/WorkStack";
+import { WorkDeck, type Project } from "@/components/chapters/WorkDeck";
 import { Signature } from "@/components/chapters/Signature";
 import { Craft } from "@/components/craft/Craft";
 import "@/components/chapters/chapters.css";
@@ -12,35 +12,35 @@ export const metadata: Metadata = {
   description: "Naman Sharma is a design engineer who builds for the web and cares how an interface feels.",
 };
 
-/* The work, front card first. Each is a screenshot in public/work. */
+/* The work, top card first. Each card is a 3:4 screenshot in public/work. */
 const WORK: Project[] = [
   {
     id: "isomatric",
     name: "Isomatric",
     href: "https://isomatric-eta.vercel.app/",
     blurb: "isometric figures for React. Eleven interactive machines, each the explanation of an idea, and every one comes apart into a labelled teardown.",
-    shot: "/work/isomatric.jpg",
+    card: "/work/card-isomatric.jpg",
   },
   {
     id: "motionkit",
     name: "MotionKit",
     href: "https://www.motionlib.me/",
     blurb: "an animation library. The curves and springs I kept rewriting slightly differently every time, packaged once.",
-    shot: "/work/motionkit.jpg",
+    card: "/work/card-motionkit.jpg",
   },
   {
     id: "easing",
     name: "Easing Lab",
     href: "https://easing-nine.vercel.app/",
     blurb: "a bench for motion. Easing curves and springs side by side on the same animation, so you can see which one feels right.",
-    shot: "/work/easing.jpg",
+    card: "/work/card-easing.jpg",
   },
   {
     id: "writing",
     name: "Writing",
     href: "/blog",
     blurb: "notes from building: on developing taste, and on the things I had to learn properly, like Postgres row-level security.",
-    shot: "/work/writing.jpg",
+    card: "/work/card-writing.jpg",
   },
 ];
 
@@ -80,7 +80,7 @@ export default function Home() {
             content: (
               <>
                 <h2 className="ln label">Work</h2>
-                <WorkStack projects={WORK} />
+                <WorkDeck projects={WORK} />
               </>
             ),
           },

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import * as React from "react";
 import { CARD_STACK_SIZE, CardStack } from "./CardStack";
+import { useLive } from "../craft/useLive";
 
 export type Project = {
   id: string;
@@ -38,6 +39,15 @@ export function WorkDeck({ projects }: { projects: Project[] }) {
   const box = React.useRef<HTMLDivElement>(null);
   const [k, setK] = React.useState(1);
   const [view, setView] = React.useState(1);
+  /* the first time the chapter comes in, the deck fans out by itself
+     once, so a screen with no hover still learns it opens */
+  const live = useLive(box);
+  const [peeked, setPeeked] = React.useState(false);
+  React.useEffect(() => {
+    if (!live || peeked) return;
+    const id = window.setTimeout(() => setPeeked(true), 3000);
+    return () => window.clearTimeout(id);
+  }, [live, peeked]);
 
   React.useLayoutEffect(() => {
     const el = box.current;
@@ -79,6 +89,8 @@ export function WorkDeck({ projects }: { projects: Project[] }) {
             /* a card taken out comes out well past the deck's size,
                upward into the air above it, so it can be read */
             viewScale={view}
+            labels={projects.map((x) => x.name)}
+            peek={live && !peeked}
             /* the words keep the last card looked at rather than going
                blank when the pointer leaves the deck, so the link in
                them can still be reached */

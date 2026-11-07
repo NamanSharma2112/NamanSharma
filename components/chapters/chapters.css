@@ -381,7 +381,10 @@ html:has(.front) body {
   }
 
   /* a card can be taken out to look at */
-  .front .stk-card { cursor: pointer; }
+  .front .stk-card { cursor: pointer; outline: none; }
+  /* and reached from the keyboard: the ring is on the face, which is
+     what is drawn, and it rides out of the fan with it */
+  .front .stk-card:focus-visible .stk-face { outline: 2px solid var(--body); outline-offset: 2px; }
 
   /* ── the card in view ──────────────────────────────────────
      One element flying from the card's place to the middle,
@@ -544,10 +547,12 @@ html:has(.front) body {
     outline: none;
     user-select: none;
     -webkit-user-select: none;
-    background: var(--raised);
-    box-shadow: 0 0 0 1px var(--edge);
+    /* no frame: both pictures are rendered on the page's own ground, so
+       the dialogs float on the page like everything else on it, and the
+       line is the only edge there is */
+    background: var(--ground);
   }
-  .front .cmp:focus-visible { box-shadow: 0 0 0 1px var(--edge), 0 0 0 3px var(--ground), 0 0 0 4px var(--body); }
+  .front .cmp:focus-visible { box-shadow: 0 0 0 1px var(--edge); }
   .front .cmp-img {
     position: absolute;
     inset: 0;

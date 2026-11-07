@@ -33,8 +33,9 @@ import { useEffect, useRef, useState } from "react";
 const rate = (speed: number) => 1.6 - (speed / 100) * 1.2;
 
 /* SHEEP was Bencho's own picture. Here there is one picture
-   per shape: the Isomatric site screenshotted on each screen,
-   at that screen's own size, in public/craft. */
+   per shape: this site's own front page screenshotted on each
+   screen, at that screen's own size, in public/craft — the one
+   design here that is not already a card in the Work deck. */
 const SHOTS = {
   pc: "/craft/pc.jpg",
   tablet: "/craft/tablet.jpg",
@@ -174,7 +175,7 @@ export function AspectRatio({
         <div
           className="asp-pic"
           role="img"
-          aria-label={`The Isomatric site on a ${shape.label.toLowerCase()}`}
+          aria-label={`This site on a ${shape.label.toLowerCase()}`}
           style={{
             width: Math.round(shape.w * k),
             height: Math.round(shape.h * k),

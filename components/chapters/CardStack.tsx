@@ -396,6 +396,15 @@ export function CardStack({
      from the stage's foot, into the air above the deck, so it
      never lands on the words underneath. */
   viewScale = 1,
+  /* the name of each card, by photo index, for a screen reader
+     and for the keyboard: each card is a button that takes it out */
+  labels,
+  /* ── fan out once, by itself ─────────────────────────────
+     When this turns true the deck opens as if reached and packs
+     itself away again a moment later — a hint, on a screen with
+     no hover, that the pile is a thing that opens. Not under
+     reduced motion, and never while a hand is already on it. */
+  peek = false,
 }: {
   photos: string[];
   marks?: string[];
@@ -406,6 +415,8 @@ export function CardStack({
   count?: number;
   corner?: number;
   viewScale?: number;
+  labels?: string[];
+  peek?: boolean;
 }) {
   const n = clamp(Math.round(count), 3, MAX);
   const sc = clamp(scatter, 0, 100) / 100;
@@ -432,7 +443,22 @@ export function CardStack({
   /* the fan stays out while a card is in view, wherever the
      pointer goes; it folds once the card is home and nobody is
      over the deck */
-  const on = hover || !!view;
+  const [peeking, setPeeking] = useState(false);
+  const on = hover || !!view || peeking;
+  useEffect(() => {
+    if (!peek || still) return;
+    const go = window.setTimeout(() => setPeeking(true), 250);
+    /* long enough for the slowest card to arrive and be seen open */
+    const back = window.setTimeout(() => setPeeking(false), 250 + 2000);
+    return () => {
+      window.clearTimeout(go);
+      window.clearTimeout(back);
+      setPeeking(false);
+    };
+  }, [peek, still]);
+  /* a card opened from the keyboard hands the focus back to its
+     place in the deck when it goes home */
+  const byKey = useRef(false);
   /* the order of the deck, top first, as card ids (a photo each,
      photos[id % length]). A card looked at goes back on TOP, so
      this changes; slot i shows deck[n - 1 - i] */
@@ -505,6 +531,12 @@ export function CardStack({
     const done = () => {
       setView(null);
       setShuffle(false);
+      if (byKey.current) {
+        byKey.current = false;
+        /* it went back on top, which is the last slot — once it is
+           drawn again, since a hidden card cannot take the focus */
+        window.setTimeout(() => root.current?.querySelectorAll<HTMLElement>(".stk-card")[n - 1]?.focus(), 40);
+      }
     };
     if (!el || still) {
       done();
@@ -667,6 +699,8 @@ export function CardStack({
     <div
       ref={root}
       className="stk"
+      /* Space and Enter on a card are the card's, not the page's */
+      data-keys=""
       data-viewing={view ? "" : undefined}
       data-shuffle={shuffle ? "" : undefined}
       style={
@@ -804,6 +838,32 @@ export function CardStack({
                  hand, which is a thing that happens without
                  anybody reshuffling the deck. */
               zIndex: i,
+            }}
+            tabIndex={0}
+            role="button"
+            aria-label={labels?.[photo] ? `${labels[photo]}: take it out to look` : undefined}
+            /* ── the keyboard is a hand too ─────────────────────
+               Focus is reaching the deck: it fans out and the
+               focused card is drawn, as the pointer over it would
+               be; Tab walks the fan from left to right, Enter or
+               Space takes the card out, Escape puts it back.
+               Leaving the deck with focus folds it again. */
+            onFocus={() => {
+              setHover(true);
+              setNear(i);
+            }}
+            onBlur={(e) => {
+              const to = e.relatedTarget as Node | null;
+              if (to && root.current?.contains(to)) return;
+              if (view) return;
+              setHover(false);
+              setNear(null);
+            }}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter" && e.key !== " ") return;
+              e.preventDefault();
+              byKey.current = true;
+              open(i);
             }}
             onPointerEnter={() => {
               if (near === i) return;

@@ -4,7 +4,7 @@ import { Chapters } from "@/components/chapters/Chapters";
 import { ContactCta, Mark, Socials } from "@/components/chapters/Pieces";
 import { WorkDeck, type Project } from "@/components/chapters/WorkDeck";
 import { Signature } from "@/components/chapters/Signature";
-import { Craft } from "@/components/craft/Craft";
+import { CraftLazy } from "@/components/craft/CraftLazy";
 import "@/components/chapters/chapters.css";
 
 export const metadata: Metadata = {
@@ -90,7 +90,7 @@ export default function Home() {
             content: (
               <>
                 <h2 className="ln label">Craft</h2>
-                <Craft />
+                <CraftLazy />
               </>
             ),
           },

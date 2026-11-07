@@ -98,7 +98,7 @@ body {
   .page .col { margin-left: 0; }
 }
 
-/* the 404's sleeping marshmallow, in the place the front page's sits */
+/* the 404's sleeping ghost, in the place the front page's sits */
 .page .mark-sleep { height: 64px; margin: 0 0 20px -6px; }
 .page .mark-sleep + .name { margin-top: 0; }
 .page .excerpt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

@@ -22,7 +22,7 @@ export function Mark({ sleeping = false }: { sleeping?: boolean }) {
   const [awake, setAwake] = React.useState(false);
   return (
     <span className="mark" onPointerEnter={() => setAwake(true)} onPointerLeave={() => setAwake(false)}>
-      <BotAvatar type="square" path={MARSHMALLOW} color="#f4ece6" state={sleeping && !awake ? "sleeping" : awake ? "working" : "default"} size={64} jumpHeight={14} jumpStretch={0.6} aria-hidden="true" />
+      <BotAvatar type="square" path={MARSHMALLOW} color="#8cb2ff" state={sleeping && !awake ? "sleeping" : awake ? "working" : "default"} size={64} jumpHeight={14} jumpStretch={0.6} aria-hidden="true" />
     </span>
   );
 }

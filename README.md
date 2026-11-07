@@ -18,7 +18,7 @@ A minimal, dark, one-screen-at-a-time front page and a blog, all in one design l
 - **One gesture, one chapter.** A scroll, a swipe, a key (arrows, Page Up/Down, Space, Home, End) or a dot moves exactly one chapter. A trackpad's momentum tail is held so it never skips a chapter, and a swipe back the other way is taken at once, even while the last one is still coasting.
 - **Lines arrive out of a blur.** The leaving chapter's lines blur out quickly; the next chapter's come in one after another, in the direction you are moving. Interruptible at any point, and a plain fade under `prefers-reduced-motion`.
 - **Each chapter has an address**: `/#2` opens Work, `/#3` Craft, `/#4` Contact.
-- **Work is a stack of cards**, one screenshot per project. Press the front card or throw it and it goes to the back; the words under the stack follow the front card.
+- **Work is a deck of cards** ([Card stack](https://bencho.dev), MIT), one 3:4 screenshot per project. Reach it and it fans out; press a card and it comes out of the deck and turns over to be looked at. The words under the deck follow the card you are on.
 - **Craft shows the work on the work**: the same dialog before and after under a bending compare line, the finished dialog's measurements under a WebGL glass lens, and one design on a phone, a tablet and a desktop ([Aspect ratio](https://bencho.dev), MIT). On a desktop the three stand side by side and play by themselves until touched; narrower, they take turns.
 - **The marshmallow** above the name is a [`bot-avatars`](https://libraries.dev) avatar with a custom outline. It blinks, hops when you hover it and jumps when you click it.
 - **Connect on LinkedIn** carries a [`border-beam`](https://libraries.dev) pulse.
@@ -50,7 +50,8 @@ components/
   chapters/
     Chapters.tsx           chapter navigation: wheel, touch, keys, dots, addresses
     Pieces.tsx             the marshmallow, the LinkedIn button, the gooey socials
-    WorkStack.tsx          the work, as a stack of project cards
+    CardStack.tsx          Bencho's card stack, the deck itself
+    WorkDeck.tsx           the work: the deck and the words that follow it
     chapters.css           the front page's styles, scoped under .front
   craft/                   the craft chapter: Compare, LiquidGlass, AspectRatio
 public/
@@ -60,4 +61,4 @@ lib/
   blog-data.ts             the posts
 ```
 
-To edit the front page copy, change the chapters in `app/page.tsx`; to add a project, add it to `WORK` there with a 1200x800 screenshot in `public/work`. To add a post, add it to `lib/blog-data.ts`.
+To edit the front page copy, change the chapters in `app/page.tsx`; to add a project, add it to `WORK` there with a 3:4 screenshot (a phone-sized 390x520 view) in `public/work`. To add a post, add it to `lib/blog-data.ts`.

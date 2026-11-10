@@ -3,7 +3,7 @@
 import Link from "next/link";
 import * as React from "react";
 import { CARD_STACK_SIZE, CardStack } from "./CardStack";
-import { useLive } from "../craft/useLive";
+import { useLive } from "./useLive";
 
 export type Project = {
   id: string;

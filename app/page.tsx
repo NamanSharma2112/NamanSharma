@@ -4,7 +4,6 @@ import { Chapters } from "@/components/chapters/Chapters";
 import { ContactCta, Mark, Socials } from "@/components/chapters/Pieces";
 import { WorkDeck, type Project } from "@/components/chapters/WorkDeck";
 import { Signature } from "@/components/chapters/Signature";
-import { CraftLazy } from "@/components/craft/CraftLazy";
 import "@/components/chapters/chapters.css";
 
 export const metadata: Metadata = {
@@ -81,16 +80,6 @@ export default function Home() {
               <>
                 <h2 className="ln label">Work</h2>
                 <WorkDeck projects={WORK} />
-              </>
-            ),
-          },
-          {
-            label: "Craft",
-            wide: true,
-            content: (
-              <>
-                <h2 className="ln label">Craft</h2>
-                <CraftLazy />
               </>
             ),
           },

@@ -20,8 +20,8 @@ import { PROJECTS, type Frame } from "@/lib/work-frames";
    Pressing a shot opens its project. The ring unrolls into a strip along
    the foot of the screen, every shot in its ring order, the pressed one
    in the middle. The strip is a magnifier: the nearer a shot is to the
-   middle the larger it is, the one in the middle running off the bottom
-   edge, those out at the ends small. The words come in above: a way
+   middle the larger it is, those out at the ends small, every one
+   standing whole on the same line a little above the bottom edge. The words come in above: a way
    back, the project, the role, and what it is — of whichever shot is in
    the middle. Scroll or drag to travel along it, and each shot swells as
    it passes the middle and the words change as the projects do; press a
@@ -60,10 +60,8 @@ const SETTLE = 4.2;
 
 /* ── the open strip is a magnifier ──────────────────────────────────
    How much larger the shot in the middle is than the shots out at the
-   ends, and how far down past the foot the largest one sinks, as a share
-   of how much it has grown. */
+   ends. */
 const MAG = 2.4;
-const DROP = 0.3;
 
 const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 /* the error function, to a few parts in a hundred thousand: the area
@@ -98,6 +96,7 @@ type Geo = {
   slot: number;
   sigma: number;
   span: number;
+  base: number;
 };
 
 export function WorkRing({ frames }: { frames: Frame[] }) {
@@ -121,9 +120,11 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
       const bigW = narrow ? W * 0.74 : Math.min(W * 0.34, H * 0.5 * 1.6);
       const bigH = bigW / 1.6;
       const slot = bigW / MAG + (narrow ? 6 : 10);
+      /* the line every shot stands on, clear of the bottom edge */
+      const base = H - clamp(H * 0.08, 28, 72);
       const sigma = slot * 1.15;
       const span = 2 * reach((slot * n) / 2, sigma);
-      setGeo({ W, H, cx: W / 2, cy: H / 2, r, ringW, bigW, bigH, smallH: bigH / MAG, slot, sigma, span });
+      setGeo({ W, H, cx: W / 2, cy: H / 2, r, ringW, bigW, bigH, smallH: bigH / MAG, slot, sigma, span, base });
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -198,14 +199,15 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
        bent through a magnifier: a shot grows the nearer it comes to the
        middle, up to MAG times the size of the ones at the ends, and its
        room grows with it, so the row swells round the middle and nothing
-       overlaps. Every shot stands on the foot of the screen; the larger it
-       is the further it sinks past it, so the one in the middle runs off
-       the bottom edge. Travelling, a shot grows as it comes in and shrinks
-       as it goes, all the way along — never a jump between two sizes. */
+       overlaps. Every shot, large or small, stands whole on one line a
+       little above the bottom edge, so the row reads as one even line
+       however far it has travelled. Travelling, a shot grows as it comes
+       in and shrinks as it goes, all the way along — never a jump between
+       two sizes. */
     const stripPose = (i: number): Pose => {
       const u = wrap((i + pan.current) * g.slot, g.slot * n);
       const h = g.smallH * magAt(u, g.sigma);
-      return { x: g.cx + reach(u, g.sigma), y: g.H + (h - g.smallH) * DROP - h / 2, s: h / g.bigH };
+      return { x: g.cx + reach(u, g.sigma), y: g.base - h / 2, s: h / g.bigH };
     };
     const paint = (now: number, dt: number) => {
       const m = mode.current;

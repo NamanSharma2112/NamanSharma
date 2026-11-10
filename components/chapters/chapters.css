@@ -474,6 +474,111 @@ html:has(.front) body {
     @keyframes work-fade { from { opacity: 0; } }
   }
 
+  /* ── the work ring (WorkRing.tsx) ──────────────────────────────────────
+     The ring fills the whole chapter, not the column: it is placed against
+     the chapter itself, and each shot's place is written by the component.
+     The middle says what is being pointed at, in the site's own two
+     voices, the name in ink and the rest in grey. */
+  .front .ring {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: grab;
+    transition: opacity 240ms var(--ease-in), filter 240ms var(--ease-in);
+  }
+  .front .ring:active { cursor: grabbing; }
+  /* leaving, it goes back into the blur the lines go into */
+  .front .is-out .ring { opacity: 0; filter: blur(6px); }
+
+  .front .ring-mid {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(320px, 60%);
+    translate: -50% -50%;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity 260ms ease;
+  }
+  .front .ring[data-open] .ring-mid { opacity: 0; }
+  .front .ring-say { animation: ring-say 420ms var(--ease) both; }
+  @keyframes ring-say { from { opacity: 0; filter: blur(4px); transform: translateY(4px); } }
+  .front .ring-name { margin: 0; font: inherit; font-weight: 500; color: var(--ink); text-wrap: balance; }
+  .front .ring-sub { margin: 0; color: var(--body); }
+  .front .ring-hint { margin: 12px 0 0; font-size: 14px; color: var(--quiet); text-wrap: balance; transition: opacity 400ms ease; }
+  .front .ring-hint[data-gone] { opacity: 0; }
+
+  /* a shot: a small screenshot on a hairline, which grows when pointed at
+     and lifts above its neighbours; the others step back a little */
+  .front .ring-shot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    will-change: transform;
+  }
+  .front .ring-shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 4px;
+    /* the shots are dark sites on a dark page, so each carries a hairline
+       a step brighter than the page's own, which is what draws the ring */
+    box-shadow: 0 0 0 1px rgba(237, 237, 237, 0.16);
+    pointer-events: none;
+    transition: scale 420ms var(--ease), opacity 300ms ease, box-shadow 300ms ease;
+  }
+  .front .ring-shot[data-near] { z-index: 2; }
+  .front .ring-shot[data-near] img { scale: 2.4; border-radius: 3px; box-shadow: 0 0 0 0.5px rgba(237, 237, 237, 0.2), 0 10px 24px -8px rgba(0, 0, 0, 0.7); }
+  .front .ring:has(.ring-shot[data-near]) .ring-shot:not([data-near]) img { opacity: 0.55; }
+  .front .ring-shot[data-out] img { opacity: 0 !important; }
+  .front .ring-shot:focus-visible { outline: none; }
+  .front .ring-shot:focus-visible img { box-shadow: 0 0 0 1.5px var(--body); }
+
+  /* the shot taken out: large in the middle, the ring dimmed behind it */
+  .front .ring[data-open] .ring-shot { opacity: 0.12 !important; transition: opacity 300ms ease; }
+  .front .ring-view {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 20px;
+    padding: 24px;
+    cursor: default;
+  }
+  .front .ring-big {
+    width: min(68vw, 1040px, calc((100vh - 200px) * 1.6));
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(237, 237, 237, 0.1), 0 40px 80px -24px rgba(0, 0, 0, 0.8);
+    transform-origin: center;
+  }
+  .front .ring-big img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .front .ring-cap { text-align: center; animation: ring-say 420ms var(--ease) 260ms both; }
+  .front .ring-cap p { margin: 0; }
+  .front .ring-cap-title { color: var(--ink); font-weight: 500; }
+  .front .ring-cap-proj { color: var(--body); }
+  .front .ring-cap-meta { display: flex; justify-content: center; gap: 8px; margin-top: 4px !important; font-size: 14px; color: var(--quiet); font-variant-numeric: tabular-nums; }
+  .front .ring-close { padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer; text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+  @media (max-width: 560px) {
+    .front .ring-big { width: calc(100vw - 32px); }
+    .front .ring-shot[data-near] img { scale: 1.8; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .front .ring-shot img, .front .ring-say, .front .ring-cap { transition: none; animation: none; }
+  }
+
   /* ── the signature (Signature.tsx) ─────────────────────────────────────
      The old site's hand, written in stroke order each time Contact comes
      in; the motion is in the component. Ink at rest, lit blue under the

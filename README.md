@@ -8,7 +8,7 @@ A minimal, dark, one-screen-at-a-time front page and a blog, all in one design l
 
 | Route | What it is |
 | --- | --- |
-| `/` | The front page, in three chapters: intro, work, contact |
+| `/` | The front page, in two chapters: intro and contact |
 | `/work` | Everything, round a ring: scroll to turn it, press a shot to open its project |
 | `/blog` | Notes and essays |
 | `/blog/[slug]` | A post, with a table of contents and read-aloud |
@@ -26,8 +26,7 @@ Thirty shots from every project stand round a ring that drifts by itself; a scro
 
 - **One gesture, one chapter.** A scroll, a swipe, a key (arrows, Page Up/Down, Space, Home, End) or a dot moves exactly one chapter. A trackpad's momentum tail is held so it never skips a chapter, and a swipe back the other way is taken at once, even while the last one is still coasting.
 - **Lines arrive out of a blur.** The leaving chapter's lines blur out quickly; the next chapter's come in one after another, in the direction you are moving. Interruptible at any point, and a plain fade under `prefers-reduced-motion`.
-- **Each chapter has an address**: `/#2` opens Work, `/#3` Contact.
-- **Work is a deck of cards** ([Card stack](https://bencho.dev), MIT), one 3:4 screenshot per project. Reach it and it fans out; press a card and it comes out of the deck and turns over to be looked at. The words under the deck follow the card you are on.
+- **Each chapter has an address**: `/#2` opens Contact.
 - **The ghost** above the name is a blue [`bot-avatars`](https://libraries.dev) avatar. It blinks, hops when you hover it and jumps when you click it.
 - **Connect on LinkedIn** carries a [`border-beam`](https://libraries.dev) pulse.
 - **The socials** in the corner are a [`liquid-gooey`](https://libraries.dev) menu: the buttons pour out of the + as liquid, settle as separate drops, and are pulled back in when it closes.

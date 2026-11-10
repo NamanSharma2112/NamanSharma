@@ -18,8 +18,8 @@ import { BotAvatar } from "bot-avatars";
    hold, both measured, never guessed; the two contents cross-fade through
    a blur inside it while it changes size, and the ghost sits in the same
    place in both, so the eye has one thing that does not move. The curve
-   is a long, soft ease-out with no overshoot: a thing growing to show
-   you something, not a thing bouncing for attention.
+   is a soft spring, unhurried, that swells a hair past its size and
+   settles back: the way something alive breathes out.
 
    ── IT NOTICES WHERE YOU ARE ──────────────────────────────────────────
    Going to another page, the pill gives a small breath — out and back —

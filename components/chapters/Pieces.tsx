@@ -9,17 +9,159 @@ import { SiGithub, SiX } from "@icons-pack/react-simple-icons";
 const EMAIL = "namansharmans03@gmail.com";
 
 /* ── the mark above the name ────────────────────────────────────────────
-   A ghost, the library's own outline, in a cool soft blue. It was a cream
-   marshmallow; the ghost has more character for its size and is at its
-   best asleep on the 404. Hovering wakes it into the working hop; a click
-   makes it jump. The jump is kept low and barely stretched: at the
-   library's default (26 units up, full stretch) a wide outline rose past
-   the top of its canvas and was cut flat. */
+   A ghost, the library's own outline, in a cool soft blue, at its best
+   asleep on the 404. The jump is kept low and barely stretched: at the
+   library's default (26 units up, full stretch) the outline rose past the
+   top of its canvas and was cut flat.
+
+   ── IT HAS MOODS ──────────────────────────────────────────────────────
+   Left alone it does not hold still like a logo. Every so often it drifts
+   into a mood for a few seconds and out again: it says something (the
+   face with a mouth, and a word in a bubble), it hums with headphones on,
+   it reads with its glasses, it hops for no reason, and once in a while
+   it is pleased with itself in a party hat. The library's own idle — the
+   blink, and the eyes and head following a pointer that comes near — runs
+   underneath all of it.
+
+   It notices you. Pointing at it wakes it into the working hop and it
+   says hello; a press makes it jump, and enough presses earn the crown.
+   Nobody near it for half a minute and it dozes off, and the first move of
+   the pointer anywhere wakes it. The moods are chosen at random but never
+   the same one twice running, and the pauses between them are uneven, so
+   it never settles into a rhythm you can see. Under reduced motion it
+   keeps its idle and nothing else. */
+
+type Mood = "idle" | "talk" | "hum" | "read" | "hop" | "party" | "doze" | "hello" | "crown";
+
+const MOODS: { mood: Mood; weight: number }[] = [
+  { mood: "talk", weight: 4 },
+  { mood: "hum", weight: 3 },
+  { mood: "read", weight: 3 },
+  { mood: "hop", weight: 3 },
+  { mood: "party", weight: 1 },
+];
+
+/* what it says, in each mood that says something; one at random */
+const SAYS: Partial<Record<Mood, string[]>> = {
+  talk: ["hi", "hello there", "nice to see you", "psst, my work →", "scroll down, say hi"],
+  hello: ["oh, hi!", "hello!", "hey you"],
+  hum: ["♪", "♪ ♫", "la la"],
+  read: ["hmm…", "interesting", "reading up"],
+  party: ["yay", "ta-da"],
+  doze: ["zzz"],
+  crown: ["thank you, thank you"],
+};
+
+const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)]!;
+
 export function Mark({ sleeping = false }: { sleeping?: boolean }) {
   const [awake, setAwake] = React.useState(false);
+  const [mood, setMood] = React.useState<Mood>("idle");
+  const [line, setLine] = React.useState<string | null>(null);
+  const presses = React.useRef(0);
+  const last = React.useRef<Mood>("idle");
+
+  const show = React.useCallback((m: Mood) => {
+    setMood(m);
+    const says = SAYS[m];
+    setLine(says ? pick(says) : null);
+  }, []);
+
+  /* the moods, on an uneven clock, and the dozing off when left alone */
+  React.useEffect(() => {
+    if (sleeping || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let t = 0;
+    let idleSince = performance.now();
+    const next = () => {
+      t = window.setTimeout(
+        () => {
+          if (document.hidden) return next();
+          if (performance.now() - idleSince > 30000) {
+            show("doze");
+            return;
+          }
+          const pool = MOODS.filter((x) => x.mood !== last.current);
+          let r = Math.random() * pool.reduce((a, x) => a + x.weight, 0);
+          const m = pool.find((x) => (r -= x.weight) < 0)?.mood ?? "talk";
+          last.current = m;
+          show(m);
+          t = window.setTimeout(
+            () => {
+              show("idle");
+              next();
+            },
+            2600 + Math.random() * 2200,
+          );
+        },
+        5000 + Math.random() * 6000,
+      );
+    };
+    next();
+    /* any move anywhere counts as company, and wakes it from a doze */
+    const stir = () => {
+      idleSince = performance.now();
+      setMood((m) => {
+        if (m !== "doze") return m;
+        window.clearTimeout(t);
+        setLine(pick(SAYS.hello!));
+        window.setTimeout(() => {
+          show("idle");
+          next();
+        }, 1800);
+        return "hello";
+      });
+    };
+    addEventListener("pointermove", stir, { passive: true });
+    addEventListener("keydown", stir);
+    return () => {
+      window.clearTimeout(t);
+      removeEventListener("pointermove", stir);
+      removeEventListener("keydown", stir);
+    };
+  }, [sleeping, show]);
+
+  const m: Mood = awake ? (mood === "crown" ? "crown" : "hello") : mood;
+  const state = sleeping && !awake ? "sleeping" : m === "doze" ? "sleeping" : awake || m === "hop" || m === "party" || m === "crown" ? "working" : "default";
+  const said = awake ? (mood === "crown" ? line : line ?? "hi!") : line;
+
   return (
-    <span className="mark" onPointerEnter={() => setAwake(true)} onPointerLeave={() => setAwake(false)}>
-      <BotAvatar type="ghost" color="#8cb2ff" state={sleeping && !awake ? "sleeping" : awake ? "working" : "default"} size={64} jumpHeight={14} jumpStretch={0.6} aria-hidden="true" />
+    <span
+      className="mark"
+      data-mood={m}
+      onPointerEnter={() => {
+        setAwake(true);
+        if (!sleeping && mood !== "crown") setLine(pick(SAYS.hello!));
+      }}
+      onPointerLeave={() => {
+        setAwake(false);
+        if (mood !== "crown") setLine(null);
+      }}
+      onPointerDown={() => {
+        presses.current += 1;
+        /* enough presses and it is crowned, and says so */
+        if (presses.current === 5) {
+          show("crown");
+          window.setTimeout(() => show("idle"), 4000);
+        }
+      }}
+    >
+      <BotAvatar
+        type="ghost"
+        color="#8cb2ff"
+        state={state}
+        face={m === "talk" || m === "hello" || m === "party" || m === "crown" ? "mouth" : "eyes"}
+        hat={m === "party" ? "party" : m === "crown" ? "crown" : "none"}
+        glasses={m === "read" ? "round" : "none"}
+        headphones={m === "hum"}
+        size={64}
+        jumpHeight={14}
+        jumpStretch={0.6}
+        aria-hidden="true"
+      />
+      {/* what it says, in a small bubble beside it */}
+      <span className="mark-say" data-on={(!!said && state !== "sleeping") || m === "doze" || undefined} aria-hidden="true">
+        {m === "doze" ? "zzz" : said}
+      </span>
     </span>
   );
 }

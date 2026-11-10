@@ -48,9 +48,12 @@ const SCROLL = 0.0016;
 const STAGGER = 22;
 const ENTER = 760;
 /* between ring and strip: the beat between one shot and the next,
-   counted outward from the one pressed, and how quickly each settles */
-const WAVE = 14;
-const SETTLE = 9;
+   counted outward from the one pressed, and how quickly each settles.
+   Slow on purpose: a shot is a heavy thing coming toward you, so it
+   takes its time to start and drags a little as it arrives — about a
+   second and a half for the wave to reach the far end and land. */
+const WAVE = 26;
+const SETTLE = 4.2;
 
 const ease = (t: number) => 1 - Math.pow(1 - t, 3);
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
@@ -172,7 +175,7 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
         /* each shot waits its turn in the wave, then eases to its place;
            once the ring has settled it simply follows the ring */
         const wait = still.current ? 0 : Math.abs(i - m.from) * WAVE;
-        if (!cur || still.current || (m.sel === null && since > 1400)) cur = target;
+        if (!cur || still.current || (m.sel === null && since > 2600)) cur = target;
         else if (since > wait) {
           const k = 1 - Math.exp(-dt * SETTLE);
           cur = { x: cur.x + (target.x - cur.x) * k, y: cur.y + (target.y - cur.y) * k, s: cur.s + (target.s - cur.s) * k };

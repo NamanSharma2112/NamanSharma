@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Chapters } from "@/components/chapters/Chapters";
 import { ContactCta, Mark, Socials } from "@/components/chapters/Pieces";
-import { WorkRing } from "@/components/chapters/WorkRing";
-import { FRAMES } from "@/lib/work-frames";
+import { WorkDeck, type Project } from "@/components/chapters/WorkDeck";
 import { Signature } from "@/components/chapters/Signature";
 import "@/components/chapters/chapters.css";
 
@@ -12,6 +11,38 @@ export const metadata: Metadata = {
   description: "Naman Sharma is a design engineer who builds for the web and cares how an interface feels.",
 };
 
+
+/* The work, top card first. Each card is a 3:4 screenshot in public/work. */
+const WORK: Project[] = [
+  {
+    id: "isomatric",
+    name: "Isomatric",
+    href: "https://isomatric-eta.vercel.app/",
+    blurb: "isometric figures for React. Eleven interactive machines, each the explanation of an idea, and every one comes apart into a labelled teardown.",
+    card: "/work/card-isomatric.jpg",
+  },
+  {
+    id: "motionkit",
+    name: "MotionKit",
+    href: "https://www.motionlib.me/",
+    blurb: "an animation library. The curves and springs I kept rewriting slightly differently every time, packaged once.",
+    card: "/work/card-motionkit.jpg",
+  },
+  {
+    id: "easing",
+    name: "Easing Lab",
+    href: "https://easing-nine.vercel.app/",
+    blurb: "a bench for motion. Easing curves and springs side by side on the same animation, so you can see which one feels right.",
+    card: "/work/card-easing.jpg",
+  },
+  {
+    id: "writing",
+    name: "Writing",
+    href: "/blog",
+    blurb: "notes from building: on developing taste, and on the things I had to learn properly, like Postgres row-level security.",
+    card: "/work/card-writing.jpg",
+  },
+];
 
 /* Without script the chapters cannot move, so they stack into one page. */
 const STILL = `.front{position:static}.front .stage{position:static}.front .ch{position:static;visibility:visible;min-height:100vh}.front .ln{opacity:1;filter:none;transform:none}.front .dots,.front .count,.front .socials{display:none}html:has(.front),html:has(.front) body{overflow:auto}`;
@@ -47,7 +78,14 @@ export default function Home() {
           {
             label: "Work",
             content: (
-              <WorkRing frames={FRAMES} />
+              <>
+                <h2 className="ln label">Work</h2>
+                <WorkDeck projects={WORK} />
+                {/* everything else, on its own page, as a ring */}
+                <p className="ln work-all">
+                  <Link href="/work">See all of it, round a ring</Link>
+                </p>
+              </>
             ),
           },
           {

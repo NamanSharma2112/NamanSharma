@@ -1,0 +1,137 @@
+/* ══ /work: the ring, and the strip it opens into ══════════════════════
+   WorkRing.tsx. The page is one fixed screen, like the front page; every
+   shot's place is written by the component, so what is here is what a
+   shot is made of, the words in the middle, and the project's words above
+   the strip. Tokens come from minimal.css (.workpage takes them). */
+html:has(.workpage),
+html:has(.workpage) body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.workpage { position: fixed; inset: 0; }
+
+.workpage .ring {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: grab;
+}
+.workpage .ring:active { cursor: grabbing; }
+.workpage .ring[data-open] { cursor: default; }
+
+/* the middle: the page's name, or the shot pointed at, in the site's own
+   two voices, the name in ink and the rest in grey */
+.workpage .ring-mid {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(320px, 60%);
+  translate: -50% -50%;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 260ms ease, filter 260ms ease;
+}
+.workpage .ring[data-open] .ring-mid { opacity: 0; filter: blur(6px); }
+.workpage .ring-say { animation: ring-say 420ms var(--ease) both; }
+@keyframes ring-say { from { opacity: 0; filter: blur(4px); transform: translateY(4px); } }
+.workpage .ring-name { margin: 0; font: inherit; font-weight: 500; color: var(--ink); text-wrap: balance; }
+.workpage .ring-sub { margin: 0; color: var(--body); }
+.workpage .ring-hint { margin: 12px 0 0; font-size: 14px; color: var(--quiet); text-wrap: balance; transition: opacity 400ms ease; }
+.workpage .ring-hint[data-gone] { opacity: 0; }
+
+/* a shot: laid out at the strip's large size and drawn smaller by the
+   component's scale, so its corner and hairline are set large and scale
+   with it */
+.workpage .ring-shot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform-origin: center;
+}
+.workpage .ring-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 14px;
+  background: var(--raised);
+  /* the shots are dark sites on a dark page, so each carries a hairline a
+     step brighter than the page's own, which is what draws the ring */
+  box-shadow: 0 0 0 3px rgba(237, 237, 237, 0.16);
+  pointer-events: none;
+  transition: scale 420ms var(--ease), opacity 300ms ease, box-shadow 300ms ease;
+}
+.workpage .ring-shot[data-near] { z-index: 2; }
+.workpage .ring-shot[data-near] img { scale: 2.4; box-shadow: 0 0 0 2px rgba(237, 237, 237, 0.22), 0 30px 60px -20px rgba(0, 0, 0, 0.7); }
+.workpage .ring:has(.ring-shot[data-near]) .ring-shot:not([data-near]) img { opacity: 0.55; }
+.workpage .ring-shot[data-big] img { box-shadow: 0 0 0 1px rgba(237, 237, 237, 0.12), 0 40px 80px -30px rgba(0, 0, 0, 0.8); }
+.workpage .ring-shot[data-dim] img { opacity: 0.55; }
+@media (hover: hover) { .workpage .ring-shot[data-dim]:hover img { opacity: 0.9; } }
+.workpage .ring-shot:focus-visible { outline: none; }
+.workpage .ring-shot:focus-visible img { box-shadow: 0 0 0 4px var(--body); }
+
+/* ── the project's words, above the strip ──────────────────────────────
+   A way back, then the facts in a narrow column and what it is in a wide
+   one; each part comes in out of a blur, a beat after the last. */
+.workpage .ring-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: clamp(72px, 12vh, 120px);
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 12rem) minmax(0, 30rem) 1fr;
+  gap: 24px 48px;
+  padding: 0 24px;
+  align-items: start;
+}
+.workpage .ring-info > * { animation: ring-say 560ms var(--ease) both; }
+.workpage .ring-info > :nth-child(2) { animation-delay: 220ms; }
+.workpage .ring-info > :nth-child(3) { animation-delay: 300ms; }
+.workpage .ring-close {
+  justify-self: end;
+  margin-top: 2px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--raised);
+  box-shadow: 0 0 0 1px var(--edge);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  animation-delay: 160ms !important;
+  transition: background-color 160ms ease;
+}
+@media (hover: hover) { .workpage .ring-close:hover { background: #1c1c1c; } }
+.workpage .ring-close:active { transform: scale(0.97); }
+.workpage .ring-facts { margin: 0; display: grid; gap: 20px; }
+.workpage .ring-facts dt, .workpage .ring-about h2 { margin: 0; font: inherit; font-weight: 500; color: var(--ink); }
+.workpage .ring-facts dd { margin: 0; color: var(--body); }
+.workpage .ring-about p { margin: 0; color: var(--body); text-wrap: pretty; }
+.workpage .ring-about .ring-go { margin-top: 12px; font-size: 14px; color: var(--quiet); }
+
+@media (max-width: 700px) {
+  /* on a phone: the way back, then the project and its role side by side,
+     then what it is across the width, a size down, so it all sits above
+     the strip */
+  .workpage .ring-info { grid-template-columns: 1fr; gap: 14px; top: 64px; padding: 0 20px; font-size: 15px; line-height: 22px; }
+  .workpage .ring-close { justify-self: start; }
+  .workpage .ring-facts { grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .workpage .ring-facts > div:last-child dd { display: inline; }
+  .workpage .ring-facts > div:last-child dd + dd::before { content: ", "; }
+  .workpage .ring-about .ring-go { margin-top: 6px; }
+  .workpage .ring-shot[data-near] img { scale: 1.8; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workpage .ring-shot img, .workpage .ring-say, .workpage .ring-info > * { transition: none; animation: none; }
+}

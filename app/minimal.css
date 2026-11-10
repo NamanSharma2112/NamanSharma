@@ -9,7 +9,7 @@ body {
   background: #0a0a0a;
 }
 
-:is(.front, .page) {
+:is(.front, .page, .workpage) {
   --ground: #0a0a0a;
   --ink: #ededed;
   --body: #8f8f8f;
@@ -28,7 +28,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-:is(.front, .page) a {
+:is(.front, .page, .workpage) a {
   color: inherit;
   text-decoration: underline;
   text-decoration-color: var(--rule);
@@ -37,7 +37,7 @@ body {
   transition: color 160ms ease, text-decoration-color 160ms ease;
 }
 @media (hover: hover) {
-  :is(.front, .page) a:hover { color: var(--ink); text-decoration-color: var(--rule-hover); }
+  :is(.front, .page, .workpage) a:hover { color: var(--ink); text-decoration-color: var(--rule-hover); }
 }
 
 /* Selecting text inverts it: the ink becomes the ground, crisp and quiet,
@@ -51,7 +51,7 @@ body {
 :is(.front, .page) a::selection { text-decoration-color: rgba(10, 10, 10, 0.45); }
 :is(.front, .page) .name::selection { background: #ededed; }
 
-:is(.front, .page) :is(a, button):focus-visible {
+:is(.front, .page, .workpage) :is(a, button):focus-visible {
   outline: 1px solid var(--ink);
   outline-offset: 3px;
   border-radius: 2px;

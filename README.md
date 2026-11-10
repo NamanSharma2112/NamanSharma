@@ -9,9 +9,18 @@ A minimal, dark, one-screen-at-a-time front page and a blog, all in one design l
 | Route | What it is |
 | --- | --- |
 | `/` | The front page, in three chapters: intro, work, contact |
+| `/work` | Everything, round a ring: scroll to turn it, press a shot to open its project |
 | `/blog` | Notes and essays |
 | `/blog/[slug]` | A post, with a table of contents and read-aloud |
 | any other path | A 404, with the ghost asleep |
+
+## The island
+
+A small dark pill at the top of every page, with the ghost in it and the name of where you are. Point at it, tab to it or tap it and it swells into Home, Work and Writing, with a highlight that slides to the one you are on or pointing at (`components/Island.tsx`).
+
+## /work
+
+Thirty shots from every project stand round a ring that drifts by itself; a scroll, a drag or a swipe turns it and it coasts when let go. Press a shot and the ring unrolls into a strip along the foot of the screen: that project's shots large in the middle, the rest small either side, and its role and what it is above. Close or Escape rolls it back up (`components/work/WorkRing.tsx`, shots in `public/work/ring`, listed in `lib/work-frames.ts`).
 
 ## The front page
 

@@ -44,3 +44,42 @@ export const FRAMES: Frame[] = [
   { id: "mk-templates", project: "MotionKit", title: "Bigger pieces, ready to drop in", href: "https://www.motionlib.me/templates" },
   { id: "site-contact", project: "This site", title: "Say hello, signed" },
 ];
+
+/* What each project is, for the page a shot opens onto: the role, in the
+   order it was done, and a line or two on what it is. */
+export type ProjectInfo = { name: string; role: string[]; about: string; href?: string };
+
+export const PROJECTS: Record<string, ProjectInfo> = {
+  Isomatric: {
+    name: "Isomatric",
+    role: ["Concept", "Design", "Development"],
+    about:
+      "Isometric figures for React: eleven interactive machines, each the explanation of an idea, drawn from one small kit of real solids. Every one comes apart into a labelled teardown.",
+    href: "https://isomatric-eta.vercel.app/",
+  },
+  MotionKit: {
+    name: "MotionKit",
+    role: ["Design", "Development"],
+    about:
+      "An animation library: the curves and springs I kept rewriting slightly differently every time, packaged once, with playgrounds for SVG, shaders, ASCII and isometric scenes.",
+    href: "https://www.motionlib.me/",
+  },
+  "Easing Lab": {
+    name: "Easing Lab",
+    role: ["Concept", "Design", "Development"],
+    about:
+      "A bench for motion. Easing curves and springs side by side on the same animation, so you can see which one feels right, and what each does when you interrupt it halfway.",
+    href: "https://easing-nine.vercel.app/",
+  },
+  Writing: {
+    name: "Writing",
+    role: ["Writing"],
+    about: "Notes from building: on developing taste, and on the things I had to learn properly, like Postgres row-level security.",
+    href: "/blog",
+  },
+  "This site": {
+    name: "This site",
+    role: ["Design", "Development"],
+    about: "This portfolio: one chapter at a time, a ghost that hops when you reach for it, a ring of everything I have made, and a signature that writes itself in.",
+  },
+};

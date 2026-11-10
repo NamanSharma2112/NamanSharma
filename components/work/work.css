@@ -100,9 +100,6 @@ html:has(.workpage) body {
 .workpage .ring-shot[data-near] { z-index: 2; }
 .workpage .ring-shot[data-near] img { scale: 2.4; box-shadow: 0 0 0 2px rgba(237, 237, 237, 0.22), 0 30px 60px -20px rgba(0, 0, 0, 0.7); }
 .workpage .ring:has(.ring-shot[data-near]) .ring-shot:not([data-near]) img { opacity: 0.55; }
-.workpage .ring-shot[data-big] img { box-shadow: 0 0 0 1px rgba(237, 237, 237, 0.12), 0 40px 80px -30px rgba(0, 0, 0, 0.8); }
-.workpage .ring-shot[data-dim] img { opacity: 0.85; }
-@media (hover: hover) { .workpage .ring-shot[data-dim]:hover img { opacity: 1; } }
 .workpage .ring-shot:focus-visible { outline: none; }
 .workpage .ring-shot:focus-visible img { box-shadow: 0 0 0 4px var(--body); }
 
@@ -114,7 +111,8 @@ html:has(.workpage) body {
   left: 0;
   right: 0;
   top: clamp(72px, 12vh, 120px);
-  z-index: 3;
+  /* above every shot, whose order the loop sets as they grow */
+  z-index: 200;
   display: grid;
   grid-template-columns: 1fr minmax(0, 12rem) minmax(0, 30rem) 1fr;
   gap: 24px 48px;

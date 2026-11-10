@@ -103,6 +103,10 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
   const vel = React.useRef(0);
   const pan = React.useRef(0);
   const panVel = React.useRef(0);
+  /* when the strip was last moved by a scroll, and where a shot that
+     becomes the open one by travelling should stay */
+  const travelled = React.useRef(0);
+  const carry = React.useRef<number | null>(null);
   const hand = React.useRef<null | { id: number; touch: boolean; a: number; x: number; y: number; t: number; moved: boolean }>(null);
   const turned = React.useRef(false);
   const entered = React.useRef(0);
@@ -119,28 +123,27 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
       m.from = sel ?? m.sel ?? 0;
       m.at = performance.now();
       m.sel = sel;
-      pan.current = 0;
+      /* travelling into the next project keeps the shot where it is;
+         pressing or stepping to one brings it to the middle */
+      pan.current = carry.current ?? 0;
+      carry.current = null;
     }
     m.held = near !== null || sel !== null;
   }, [sel, near]);
 
-  /* the strip, laid out for the open project. Its shots come together in
-     the middle, in ring order, however far apart they stood on the ring;
-     every other shot keeps its ring order and stands small on either side,
-     the ones before the pressed shot to the left and the rest to the
-     right. The pressed shot's middle is the middle of the screen. */
+  /* the strip, laid out for the open project: every shot in ring order —
+     each project's shots already stand together — the open project's large
+     and the rest small, the pressed shot's middle at the middle of the
+     screen */
   const strip = React.useMemo(() => {
     if (!geo || project === null || sel === null) return null;
-    const ids = frames.map((_, i) => i);
-    const mine = ids.filter((i) => frames[i]!.project === project);
-    const order = [...ids.filter((i) => frames[i]!.project !== project && i < sel), ...mine, ...ids.filter((i) => frames[i]!.project !== project && i > sel)];
-    const xs: number[] = new Array(frames.length);
+    const xs: number[] = [];
     let x = 0;
-    order.forEach((i, k) => {
-      const big = frames[i]!.project === project;
+    frames.forEach((f, i) => {
+      const big = f.project === project;
       const w = big ? geo.bigW : geo.smallH * 1.6;
-      if (k > 0) x += big || frames[order[k - 1]!]!.project === project ? 24 : 10;
-      xs[i] = x + w / 2;
+      if (i > 0) x += big || frames[i - 1]!.project === project ? 24 : 10;
+      xs.push(x + w / 2);
       x += w;
     });
     const shift = geo.W / 2 - xs[sel]!;
@@ -225,6 +228,31 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
       }
       /* a hidden tab draws nothing, and picks up where it was */
       if (!document.hidden) paint(now, dt);
+      /* ── the project follows the middle ─────────────────────────────
+         Travelling along the strip, whichever shot comes to rest nearest
+         the middle of the screen opens its project, once the strip has
+         stopped moving: its shots grow, the last project's shrink, and
+         the words above change, on the same heavy settle as opening — so
+         every project gets its turn at full size, one after another. */
+      const m = mode.current;
+      if (m.sel !== null && strip && !hand.current && Math.abs(panVel.current) < 40 && now - travelled.current > 220 && now - m.at > 1200) {
+        let best = -1;
+        let gap = Infinity;
+        for (let i = 0; i < n; i++) {
+          const q = poses.current[i];
+          if (!q) continue;
+          const d = Math.abs(q.x - g.cx);
+          if (d < gap) {
+            gap = d;
+            best = i;
+          }
+        }
+        if (best >= 0 && frames[best]!.project !== project) {
+          carry.current = poses.current[best]!.x - g.cx;
+          m.at = now;
+          setSel(best);
+        }
+      }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -242,6 +270,7 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
   /* the strip is a loop, so travel along it has no limit */
   const travel = (d: number) => {
     pan.current += d;
+    travelled.current = performance.now();
   };
   const down = (e: React.PointerEvent) => {
     if (e.button !== 0) return;

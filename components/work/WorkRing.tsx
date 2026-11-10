@@ -102,6 +102,7 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
   const angle = React.useRef(0);
   const vel = React.useRef(0);
   const pan = React.useRef(0);
+  const panVel = React.useRef(0);
   const hand = React.useRef<null | { id: number; touch: boolean; a: number; x: number; y: number; t: number; moved: boolean }>(null);
   const turned = React.useRef(false);
   const entered = React.useRef(0);
@@ -143,7 +144,8 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
       x += w;
     });
     const shift = geo.W / 2 - xs[sel]!;
-    return { xs: xs.map((v) => v + shift), len: x };
+    /* the loop's length: the strip, and the gap that closes it */
+    return { xs: xs.map((v) => v + shift), len: x + 24 };
   }, [geo, project, sel, frames]);
 
   /* ── the loop ───────────────────────────────────────────────────────── */
@@ -158,8 +160,14 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
       const rr = g.r * (0.72 + 0.28 * p);
       return { x: g.cx + Math.cos(th) * rr, y: g.cy + Math.sin(th) * rr, s: (g.ringW / g.bigW) * (0.5 + 0.5 * p) };
     };
+    /* ── the strip has no ends ───────────────────────────────────────
+       It is a loop: each shot's place is taken round the loop's length, so
+       travelling either way never runs out — the shots that leave one
+       side come back on the other, as the ring's own did. The loop is
+       always far longer than the screen, so the seam is never in view. */
     const stripPose = (i: number): Pose => {
-      const x = strip!.xs[i]! + pan.current;
+      const L = strip!.len;
+      const x = g.W / 2 + ((((strip!.xs[i]! + pan.current - g.W / 2 + L / 2) % L) + L) % L) - L / 2;
       if (frames[i]!.project === project) return { x, y: g.top + g.bigH / 2, s: 1 };
       const h = g.smallH;
       return { x, y: g.foot - h / 2, s: h / g.bigH };
@@ -175,9 +183,16 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
         /* each shot waits its turn in the wave, then eases to its place;
            once the ring has settled it simply follows the ring */
         const wait = still.current ? 0 : Math.abs(i - m.from) * WAVE;
+        /* a shot carried round the loop's seam jumps by the loop's length
+           off screen, rather than flying back across it */
+        if (cur && m.sel !== null && strip && Math.abs(target.x - cur.x) > strip.len / 2) {
+          cur = { ...cur, x: cur.x + Math.sign(target.x - cur.x) * strip.len };
+        }
         if (!cur || still.current || (m.sel === null && since > 2600)) cur = target;
         else if (since > wait) {
-          const k = 1 - Math.exp(-dt * SETTLE);
+          /* heavy while it opens or changes project; once there, the strip
+             follows the hand closely, so travelling along it feels direct */
+          const k = 1 - Math.exp(-dt * (m.sel !== null && since > 1800 ? 16 : SETTLE));
           cur = { x: cur.x + (target.x - cur.x) * k, y: cur.y + (target.y - cur.y) * k, s: cur.s + (target.s - cur.s) * k };
         }
         poses.current[i] = cur;
@@ -196,6 +211,11 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - prev) / 1000);
       prev = now;
+      if (!hand.current && mode.current.sel !== null && Math.abs(panVel.current) > 1) {
+        /* let go of the strip and it coasts on, slowing */
+        pan.current += panVel.current * dt;
+        panVel.current *= Math.pow(COAST, dt * 60);
+      }
       if (!hand.current && mode.current.sel === null) {
         /* the coast decays toward the drift; pointing at a shot holds the
            ring still under it */
@@ -219,14 +239,14 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
     const b = stage.current!.getBoundingClientRect();
     return Math.atan2(y - b.top - (geo?.cy ?? 0), x - b.left - (geo?.cx ?? 0));
   };
+  /* the strip is a loop, so travel along it has no limit */
   const travel = (d: number) => {
-    if (!strip || !geo) return;
-    const lim = strip.len / 2 + geo.W / 4;
-    pan.current = clamp(pan.current + d, -lim, lim);
+    pan.current += d;
   };
   const down = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
     turned.current = false;
+    panVel.current = 0;
     hand.current = { id: e.pointerId, touch: e.pointerType === "touch", a: angleAt(e.clientX, e.clientY), x: e.clientX, y: e.clientY, t: e.timeStamp, moved: false };
   };
   const move = (e: React.PointerEvent) => {
@@ -256,6 +276,9 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
     if (!g.moved) return;
     if (sel !== null) {
       travel(d);
+      const ms = Math.max(1, e.timeStamp - g.t) / 1000;
+      g.t = e.timeStamp;
+      panVel.current = panVel.current * 0.5 + (d / ms) * 0.5;
       return;
     }
     const dt = Math.max(1, e.timeStamp - g.t) / 1000;
@@ -270,6 +293,7 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
     turned.current = g.moved;
     /* a turn keeps going a little, never wildly */
     vel.current = clamp(vel.current, -6, 6);
+    panVel.current = g.moved ? clamp(panVel.current, -3000, 3000) : 0;
   };
 
   /* ── the scroll ───────────────────────────────────────────────────────
@@ -283,6 +307,7 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
       e.preventDefault();
       const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * (e.deltaMode === 1 ? 16 : 1);
       if (mode.current.sel !== null) {
+        panVel.current = 0;
         travel(-d);
         return;
       }

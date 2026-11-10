@@ -9,7 +9,7 @@ body {
   background: #0a0a0a;
 }
 
-:is(.front, .page) {
+:is(.front, .page, .workpage) {
   --ground: #0a0a0a;
   --ink: #ededed;
   --body: #8f8f8f;
@@ -28,7 +28,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-:is(.front, .page) a {
+:is(.front, .page, .workpage) a {
   color: inherit;
   text-decoration: underline;
   text-decoration-color: var(--rule);
@@ -37,7 +37,7 @@ body {
   transition: color 160ms ease, text-decoration-color 160ms ease;
 }
 @media (hover: hover) {
-  :is(.front, .page) a:hover { color: var(--ink); text-decoration-color: var(--rule-hover); }
+  :is(.front, .page, .workpage) a:hover { color: var(--ink); text-decoration-color: var(--rule-hover); }
 }
 
 /* Selecting text inverts it: the ink becomes the ground, crisp and quiet,
@@ -51,7 +51,7 @@ body {
 :is(.front, .page) a::selection { text-decoration-color: rgba(10, 10, 10, 0.45); }
 :is(.front, .page) .name::selection { background: #ededed; }
 
-:is(.front, .page) :is(a, button):focus-visible {
+:is(.front, .page, .workpage) :is(a, button):focus-visible {
   outline: 1px solid var(--ink);
   outline-offset: 3px;
   border-radius: 2px;
@@ -102,3 +102,33 @@ body {
 .page .mark-sleep { height: 64px; margin: 0 0 20px -6px; }
 .page .mark-sleep + .name { margin-top: 0; }
 .page .excerpt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ── the ghost's speech bubble (Mark, in Pieces.tsx) ─────────────────────
+   A small pill up and to the right of the ghost, as if it had spoken. It
+   grows out of the corner nearest the ghost with a soft spring and fades
+   away again; while it sleeps it says zzz, slowly breathing. */
+:is(.front, .page) .mark { position: relative; }
+:is(.front, .page) .mark-say {
+  position: absolute;
+  left: 58px;
+  bottom: 46px;
+  padding: 3px 9px;
+  border-radius: 10px 10px 10px 3px;
+  background: #1a1a1a;
+  box-shadow: 0 0 0 1px #2a2a2a;
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-4px, 4px) scale(0.6);
+  transform-origin: left bottom;
+  transition: opacity 260ms ease, transform 520ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+:is(.front, .page) .mark-say[data-on] { opacity: 1; transform: none; }
+:is(.front, .page) .mark[data-mood="doze"] .mark-say { color: var(--quiet); animation: mark-zzz 3.2s ease-in-out infinite; }
+@keyframes mark-zzz { 50% { opacity: 0.45; transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) {
+  :is(.front, .page) .mark-say { transition: opacity 160ms ease; transform: none; }
+}

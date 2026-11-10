@@ -1,0 +1,103 @@
+/* ══ The island (Island.tsx) ════════════════════════════════════════════
+   A dark pill at the top of every page. Its width is set by the component
+   from the two contents it holds, so the size change is a transition on
+   one number; inside, the two contents cross-fade through a blur. Its own
+   colours, since it sits above every page's own scope. */
+.island {
+  --i-ground: #111;
+  --i-edge: rgba(237, 237, 237, 0.09);
+  --i-ink: #ededed;
+  --i-body: #8f8f8f;
+  /* a soft spring: it swells a hair past its size and settles back, the
+     way something alive breathes out, never the snap of a machine */
+  --i-ease: cubic-bezier(0.34, 1.18, 0.64, 1);
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 50;
+  height: 38px;
+  min-width: 38px;
+  translate: -50% 0;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--i-ground);
+  box-shadow: 0 0 0 1px var(--i-edge), 0 10px 30px -12px rgba(0, 0, 0, 0.8);
+  font: 500 14px/38px var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: width 720ms var(--i-ease), scale 600ms var(--i-ease);
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* the breath on arriving somewhere new: out a little and back */
+.island[data-hop] { animation: island-breath 900ms var(--i-ease); }
+@keyframes island-breath { 40% { scale: 1.06; } }
+
+.island-ghost {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  translate: 0 -50%;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* both contents start after the ghost and are as wide as their words; the
+   component reads those widths to size the pill */
+.island-now, .island-nav {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 14px 0 38px;
+  white-space: nowrap;
+  transition: opacity 420ms ease, filter 420ms ease;
+}
+.island-nav { gap: 2px; padding-right: 5px; }
+.island[data-open] .island-now, .island:not([data-open]) .island-nav { opacity: 0; filter: blur(4px); pointer-events: none; }
+.island[data-open] .island-nav { transition-delay: 140ms; }
+
+.island-here {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--i-ink);
+  cursor: pointer;
+}
+
+.island-link {
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: 0 12px;
+  line-height: 28px;
+  border-radius: 999px;
+  color: var(--i-body);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+.island-link[aria-current="page"] { color: var(--i-ink); }
+@media (hover: hover) { .island-link:hover { color: var(--i-ink); } }
+.island-link:focus-visible { outline: none; color: var(--i-ink); }
+
+/* the highlight under what is pointed at, or where you are */
+.island-pill {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 28px;
+  margin-top: -14px;
+  border-radius: 999px;
+  background: rgba(237, 237, 237, 0.09);
+  transition: transform 560ms var(--i-ease), width 560ms var(--i-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .island, .island-pill { transition-duration: 1ms; }
+  .island[data-hop] { animation: none; }
+}

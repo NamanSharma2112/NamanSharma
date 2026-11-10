@@ -39,6 +39,8 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Island } from "@/components/Island";
+import "@/components/island.css";
 
 export default function RootLayout({
   children,
@@ -58,6 +60,8 @@ export default function RootLayout({
         className="flex min-h-full flex-col bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300"
       >
         <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark" disableTransitionOnChange>
+          {/* the one way round the site, on every page */}
+          <Island />
           {children}
         </ThemeProvider>
       </body>

@@ -12,7 +12,9 @@ import { useLive } from "./useLive";
    measurements drawn on, and one design across three screens.
 
    ── SIDE BY SIDE, PLAYING ─────────────────────────────────────────────
-   On a wide screen the three stand in a row, each in the same card, and
+   On a wide screen the three stand in a row on the bare ground, the way
+   everything else on the page does — no panel, no badge, no chrome — each
+   with its name and a line under it, and
    each plays by itself while the chapter is in: the line sweeps, the glass
    drifts, the screens change. A hand on a piece stops that piece, and only
    that one, and it starts again a few seconds after the hand has gone — so
@@ -25,30 +27,27 @@ import { useLive } from "./useLive";
    chapter moves on to the next by itself every few seconds until the
    reader touches anything in it.
 
-   Every piece is drawn from one measured size, the inner width of a card,
+   Every piece is drawn from one measured size, the width of its column,
    so the three are the same height and the row reads as one object. */
 
 type Id = "compare" | "details" | "screens";
-type Piece = { id: Id; n: string; label: string; hint: string; text: string };
+type Piece = { id: Id; label: string; hint: string; text: string };
 
 const PIECES: Piece[] = [
   {
     id: "compare",
-    n: "01",
     label: "Before and after",
     hint: "Drag the line",
     text: "The same dialog, twice. Spacing on one scale, radii that nest, type with a hierarchy, contrast you can read.",
   },
   {
     id: "details",
-    n: "02",
     label: "Details",
     hint: "Drag the glass",
     text: "Pixel-perfect is a checklist: every gap, every height and every radius measured, and none of them guessed.",
   },
   {
     id: "screens",
-    n: "03",
     label: "Every screen",
     hint: "Pick a screen",
     text: "One design on a phone, a tablet and a desktop, each given the same area, so the layout changes and not the size.",
@@ -70,8 +69,8 @@ function usePieceSize(box: React.RefObject<HTMLDivElement | null>) {
     const fit = () => {
       const w = Math.floor(el.clientWidth);
       /* a little under square, and never taller than the window can
-         give once the label, the card's header and caption are in */
-      const h = Math.floor(Math.max(220, Math.min(w * 0.84, innerHeight - 420)));
+         give once the label and the words under it are in */
+      const h = Math.floor(Math.max(220, Math.min(w * 0.8, innerHeight - 400)));
       setS((o) => (o.w === w && o.h === h ? o : { w, h }));
     };
     fit();
@@ -86,7 +85,7 @@ function usePieceSize(box: React.RefObject<HTMLDivElement | null>) {
   return s;
 }
 
-function Card({ piece, live, chrome }: { piece: Piece; live: boolean; chrome: boolean }) {
+function Card({ piece, live, title }: { piece: Piece; live: boolean; title: boolean }) {
   const box = React.useRef<HTMLDivElement>(null);
   const { w, h } = usePieceSize(box);
   /* a hand on the piece, and when it was last there */
@@ -99,22 +98,12 @@ function Card({ piece, live, chrome }: { piece: Piece; live: boolean; chrome: bo
   };
   React.useEffect(() => () => window.clearTimeout(rest.current), []);
   const auto = live && !held;
-  /* the glass's margin is the card's padding, so it can be carried off
-     the picture onto the card */
+  /* the glass's margin, so it can be carried off the picture onto the
+     page; it spills into the gap between the pieces, which is wider */
   const pad = 16;
 
   return (
     <article className="craft-card" aria-label={piece.label}>
-      {chrome && (
-        <header className="craft-head">
-          <span className="craft-n">{piece.n}</span>
-          <h3>{piece.label}</h3>
-          <span className="craft-hint" data-auto={auto || undefined}>
-            <i aria-hidden="true" />
-            {auto ? "Playing" : piece.hint}
-          </span>
-        </header>
-      )}
       <div
         ref={box}
         className="craft-piece"
@@ -132,7 +121,15 @@ function Card({ piece, live, chrome }: { piece: Piece; live: boolean; chrome: bo
           </div>
         )}
       </div>
-      <p className="craft-text">{piece.text}</p>
+      {/* the words under it, as the rest of the page sets them: the name in
+          ink, then the line in the body grey, and the one thing to do in the
+          quiet one. On a narrow screen the tabs above already name it */}
+      <div className="craft-words">
+        {title && <h3 className="craft-title">{piece.label}</h3>}
+        <p className="craft-text">
+          {piece.text} <span className="craft-do">{piece.hint}.</span>
+        </p>
+      </div>
     </article>
   );
 }
@@ -178,7 +175,7 @@ export function Craft() {
       {row === true && (
         <div className="ln craft-row">
           {PIECES.map((p) => (
-            <Card key={p.id} piece={p} live={live} chrome />
+            <Card key={p.id} piece={p} live={live} title />
           ))}
         </div>
       )}
@@ -207,7 +204,7 @@ export function Craft() {
           </div>
           <div className="ln craft-stage" id="craft-panel" role="tabpanel" aria-labelledby={`craft-tab-${piece.id}`}>
             <div key={piece.id} className="craft-swap">
-              <Card piece={piece} live={live} chrome={false} />
+              <Card piece={piece} live={live} title={false} />
             </div>
           </div>
         </div>

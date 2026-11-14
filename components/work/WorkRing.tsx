@@ -3,6 +3,7 @@
 import Link from "next/link";
 import * as React from "react";
 import { PROJECTS, type Frame } from "@/lib/work-frames";
+import { setActivity } from "@/lib/island";
 
 /* ══ The work, as a ring that opens into a strip ════════════════════════
    The /work page. Every shot of every project, small, standing round a
@@ -443,6 +444,21 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
 
   const f = near === null ? null : frames[near]!;
   const info = project ? PROJECTS[project] : null;
+
+  /* ── the island shows what is open ──────────────────────────────────
+     While a project is open, the island at the top holds its name and
+     which of its shots is in the middle, and lets it go when the strip
+     rolls back up or the page is left. */
+  React.useEffect(() => {
+    if (sel === null || !project) {
+      setActivity(null);
+      return;
+    }
+    const mine = frames.filter((x) => x.project === project);
+    const k = mine.findIndex((x) => x === frames[centre]);
+    setActivity({ label: project, detail: `${k + 1} / ${mine.length}` });
+  }, [sel, project, centre, frames]);
+  React.useEffect(() => () => setActivity(null), []);
   const count = new Set(frames.map((x) => x.project)).size;
 
   return (

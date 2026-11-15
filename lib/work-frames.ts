@@ -1,6 +1,6 @@
 /* The shots on the Work ring, in ring order. Each is a 1280x800 screenshot
-   in public/work/ring/<id>.jpg with a 320x200 thumbnail beside it as
-   <id>-t.jpg. Each project's shots stand together, one project after
+   in public/work/ring/<id>.webp with a 320x200 thumbnail beside it as
+   <id>-t.webp, and a blurred speck of it in lib/work-blur.ts. Each project's shots stand together, one project after
    another round the ring, so when the ring opens into a strip a project is
    one stretch of it, and travelling along the strip passes from one
    project to the next. */

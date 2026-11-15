@@ -27,6 +27,12 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        /* the ring's shots never change under their names — a changed
+           picture gets a new name — so they are kept for a year */
+        source: "/work/ring/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
         source: "/(.*)",
         headers: [
           {

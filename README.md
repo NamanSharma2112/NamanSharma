@@ -20,7 +20,7 @@ A small dark pill at the top of every page, with the ghost in it and the name of
 
 ## /work
 
-Thirty shots from every project stand round a ring that drifts by itself; a scroll, a drag or a swipe turns it and it coasts when let go. Press a shot and the ring unrolls into a strip along the foot of the screen: that project's shots large in the middle, the rest small either side, and its role and what it is above. Close or Escape rolls it back up (`components/work/WorkRing.tsx`, shots in `public/work/ring`, listed in `lib/work-frames.ts`).
+Thirty shots from every project stand round a ring that drifts by itself; a scroll, a drag or a swipe turns it and it coasts when let go. Press a shot and the ring unrolls into a strip along the foot of the screen: that project's shots large in the middle, the rest small either side, and its role and what it is above. Close or Escape rolls it back up (`components/work/WorkRing.tsx`, shots as WebP in `public/work/ring` with blurred placeholders in `lib/work-blur.ts`, listed in `lib/work-frames.ts`).
 
 ## The front page
 

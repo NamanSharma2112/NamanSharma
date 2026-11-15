@@ -4,6 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 import { PROJECTS, type Frame } from "@/lib/work-frames";
 import { setActivity } from "@/lib/island";
+import { BLUR } from "@/lib/work-blur";
 
 /* ══ The work, as a ring that opens into a strip ════════════════════════
    The /work page. Every shot of every project, small, standing round a
@@ -242,12 +243,20 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
         const grown = clamp((cur.s * MAG - 1) / (MAG - 1), 0, 1);
         el.style.opacity = (ringIn * (open ? 0.6 + 0.4 * grown : 1)).toFixed(3);
         el.style.zIndex = open ? String(10 + Math.round(grown * 80)) : "";
-        /* drawn large, a shot swaps its thumbnail for the full picture, and
-           keeps it */
-        if (open && grown > 0.25 && !full.current[i]) {
+        /* as a shot starts to grow — well before it is large — its full
+           picture is fetched and decoded off to the side, and only then
+           swapped in, so it sharpens in one step and never flashes empty */
+        if (open && grown > 0.04 && !full.current[i]) {
           full.current[i] = true;
           const img = el.querySelector("img");
-          if (img) img.src = `/work/ring/${frames[i]!.id}.jpg`;
+          const src = `/work/ring/${frames[i]!.id}.webp`;
+          const im = new Image();
+          im.src = src;
+          im.decode()
+            .catch(() => {})
+            .then(() => {
+              if (img) img.src = src;
+            });
         }
       }
     };
@@ -546,12 +555,21 @@ export function WorkRing({ frames }: { frames: Frame[] }) {
             onMouseEnter={() => {
               /* the large one, fetched before it is asked for */
               const im = new Image();
-              im.src = `/work/ring/${x.id}.jpg`;
+              im.src = `/work/ring/${x.id}.webp`;
             }}
           >
-            {/* the thumbnail; the loop swaps in the full picture once the
-                shot is drawn large */}
-            <img src={`/work/ring/${x.id}-t.jpg`} alt="" width={1280} height={800} draggable={false} />
+            {/* the thumbnail, over a blurred speck of itself that is there
+                from the first frame; the loop swaps in the full picture
+                once the shot is drawn large */}
+            <img
+              src={`/work/ring/${x.id}-t.webp`}
+              alt=""
+              width={1280}
+              height={800}
+              decoding="async"
+              draggable={false}
+              style={BLUR[x.id] ? { backgroundImage: `url(${BLUR[x.id]})` } : undefined}
+            />
           </button>
         );
       })}

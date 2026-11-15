@@ -90,7 +90,9 @@ html:has(.workpage) body {
   object-fit: cover;
   object-position: top;
   border-radius: 14px;
-  background: #141414;
+  /* under the picture, the blurred speck of it the component sets, so the
+     shot has its colours before its thumbnail has arrived */
+  background: #141414 center top / cover no-repeat;
   /* on the sky a shot is lifted off it by a soft shadow, with the faintest
      light rim to keep its edge where the sky is darkest */
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14), 0 18px 40px -18px rgba(5, 10, 30, 0.55);

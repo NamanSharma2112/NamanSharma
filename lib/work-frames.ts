@@ -1,7 +1,7 @@
 /* The shots on the Work ring, in ring order. Each is a 1280x800 screenshot
    in public/work/ring/<id>.webp with a 320x200 thumbnail beside it as
-   <id>-t.webp, and a blurred speck of it in lib/work-blur.ts. Each project's shots stand together, one project after
-   another round the ring, so when the ring opens into a strip a project is
+   <id>-t.webp, and a blurred speck of it in lib/work-blur.ts. Each
+   project's shots stand together, one project after another round the ring, so when the ring opens into a strip a project is
    one stretch of it, and travelling along the strip passes from one
    project to the next. */
 
@@ -21,24 +21,24 @@ export const FRAMES: Frame[] = [
   { id: "iso-desk", project: "Isomatric", title: "Desk computer", href: "https://isomatric-eta.vercel.app/figures/desk" },
   { id: "iso-watch", project: "Isomatric", title: "Day-Date 40", href: "https://isomatric-eta.vercel.app/figures/watch" },
   { id: "iso-gpu", project: "Isomatric", title: "Three-fan graphics card", href: "https://isomatric-eta.vercel.app/figures/gpu" },
-  { id: "iso-sorter", project: "Isomatric", title: "Task sorter", href: "https://isomatric-eta.vercel.app/figures/sorter" },
-  { id: "iso-scale", project: "Isomatric", title: "Progress scale", href: "https://isomatric-eta.vercel.app/figures/scale" },
-  { id: "iso-kit", project: "Isomatric", title: "The kit", href: "https://isomatric-eta.vercel.app/kit" },
-  { id: "iso-shuttle", project: "Isomatric", title: "Save and undo", href: "https://isomatric-eta.vercel.app/figures/shuttle" },
-  { id: "iso-bench", project: "Isomatric", title: "Workbench line", href: "https://isomatric-eta.vercel.app/figures/bench" },
   { id: "mk-home", project: "MotionKit", title: "Motion components", href: "https://www.motionlib.me/" },
   { id: "mk-components", project: "MotionKit", title: "Component gallery", href: "https://www.motionlib.me/" },
   { id: "mk-svg", project: "MotionKit", title: "SVG studio", href: "https://www.motionlib.me/svg" },
   { id: "mk-shaders", project: "MotionKit", title: "Shader playground", href: "https://www.motionlib.me/shaders" },
   { id: "mk-ascii", project: "MotionKit", title: "ASCII animator", href: "https://www.motionlib.me/ascii" },
-  { id: "mk-isometric", project: "MotionKit", title: "Isometric maker", href: "https://www.motionlib.me/isometric" },
-  { id: "mk-shadow", project: "MotionKit", title: "Shadow studio", href: "https://www.motionlib.me/shadow" },
-  { id: "mk-background", project: "MotionKit", title: "Background playground", href: "https://www.motionlib.me/background" },
-  { id: "mk-css", project: "MotionKit", title: "CSS playground", href: "https://www.motionlib.me/css" },
-  { id: "mk-templates", project: "MotionKit", title: "Bigger pieces, ready to drop in", href: "https://www.motionlib.me/templates" },
+  { id: "acc-card", project: "AI Control Center", title: "The island, opened", href: "https://github.com/NamanSharma2112/AI-Control-Center" },
+  { id: "acc-panel", project: "AI Control Center", title: "Usage and agents", href: "https://github.com/NamanSharma2112/AI-Control-Center" },
+  { id: "acc-activity", project: "AI Control Center", title: "What just happened", href: "https://github.com/NamanSharma2112/AI-Control-Center" },
+  { id: "churn-hero", project: "ChurnRate", title: "Know who is about to leave", href: "https://churnrate-app.vercel.app/" },
+  { id: "churn-steps", project: "ChurnRate", title: "From export to at-risk list", href: "https://churnrate-app.vercel.app/" },
+  { id: "churn-features", project: "ChurnRate", title: "Built around the work", href: "https://churnrate-app.vercel.app/" },
+  { id: "churn-signin", project: "ChurnRate", title: "Sign in", href: "https://churnrate-app.vercel.app/customers" },
+  { id: "oil-overview", project: "CrudeIQ", title: "Market overview", href: "https://crude-oil-prediction-b9wu.vercel.app/" },
+  { id: "oil-forecast", project: "CrudeIQ", title: "Price forecasting", href: "https://crude-oil-prediction-b9wu.vercel.app/forecasting" },
+  { id: "oil-production", project: "CrudeIQ", title: "Production by country", href: "https://crude-oil-prediction-b9wu.vercel.app/production" },
+  { id: "oil-supply", project: "CrudeIQ", title: "Tanker routes", href: "https://crude-oil-prediction-b9wu.vercel.app/supply-chain" },
   { id: "ease-compare", project: "Easing Lab", title: "Compare curves", href: "https://easing-nine.vercel.app/" },
   { id: "ease-dialog", project: "Easing Lab", title: "Dialog, three ways", href: "https://easing-nine.vercel.app/" },
-  { id: "ease-toast", project: "Easing Lab", title: "Toast, three ways", href: "https://easing-nine.vercel.app/" },
   { id: "ease-tune", project: "Easing Lab", title: "Tune a spring", href: "https://easing-nine.vercel.app/" },
   { id: "write-index", project: "Writing", title: "Notes and essays", href: "/blog" },
   { id: "write-taste", project: "Writing", title: "Developing taste", href: "/blog/developing-taste" },
@@ -65,6 +65,27 @@ export const PROJECTS: Record<string, ProjectInfo> = {
     about:
       "An animation library: the curves and springs I kept rewriting slightly differently every time, packaged once, with playgrounds for SVG, shaders, ASCII and isometric scenes.",
     href: "https://www.motionlib.me/",
+  },
+  "AI Control Center": {
+    name: "AI Control Center",
+    role: ["Concept", "Design", "Development"],
+    about:
+      "A desktop island for your AI agents. A ghost at the top of the screen says what Claude Code and Codex are doing, who needs you, and how much usage is left; click it for every session and what just happened. Local-first, for Windows and macOS.",
+    href: "https://github.com/NamanSharma2112/AI-Control-Center",
+  },
+  ChurnRate: {
+    name: "ChurnRate",
+    role: ["Design", "Development", "Machine learning"],
+    about:
+      "Churn prediction for SaaS teams. Drop in any customer export or connect Stripe; columns are mapped for you, a gradient-boosted model scores every account with the reasons behind it, and the at-risk list is ranked by the revenue on the line.",
+    href: "https://churnrate-app.vercel.app/",
+  },
+  CrudeIQ: {
+    name: "CrudeIQ",
+    role: ["Data", "Machine learning", "Development"],
+    about:
+      "Oil market intelligence: live benchmark prices, WTI and Brent forecasts from an LSTM, XGBoost and LightGBM ensemble retrained every week, world production on a map and the routes tankers take.",
+    href: "https://crude-oil-prediction-b9wu.vercel.app/",
   },
   "Easing Lab": {
     name: "Easing Lab",

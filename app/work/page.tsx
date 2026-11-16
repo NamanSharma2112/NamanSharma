@@ -7,7 +7,7 @@ import "@/components/work/work.css";
 
 export const metadata: Metadata = {
   title: "Work — Naman Sharma",
-  description: "Everything I have made, round a ring: Isomatric, MotionKit, Easing Lab, the writing and this site.",
+  description: "Everything I have made, round a ring: Isomatric, MotionKit, AI Control Center, ChurnRate, CrudeIQ, Easing Lab, the writing and this site.",
 };
 
 export default function Work() {
